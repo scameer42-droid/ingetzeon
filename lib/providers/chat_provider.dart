@@ -11,6 +11,8 @@ import '../services/natural_parser.dart';
 import '../services/note_parser.dart';
 import '../services/voice_service.dart';
 import 'cycle_provider.dart';
+import 'muslim_provider.dart';
+import '../services/islam_logic.dart';
 import 'notes_provider.dart';
 import 'reminder_provider.dart';
 import 'settings_provider.dart';
@@ -120,6 +122,51 @@ class ChatNotifier extends Notifier<ChatState> {
     greet();
   }
 
+  /// Jadwal sholat, kiblat, Hijriah & doa — dijawab langsung tanpa internet.
+  bool _answerIslam(String text) {
+    final doa = IslamAsk.doa(text);
+    if (doa != null) {
+      _bot('${doa.emoji} **Doa ${doa.judul.toLowerCase()}**\n\n${doa.arab}\n\n_${doa.latin}_\n\nArtinya: "${doa.arti}"\n(${doa.sumber})',
+          tools: ['muslim:doa:${doa.judul}', 'muslim'], speech: 'Ini doa ${doa.judul.toLowerCase()}. Artinya: ${doa.arti}');
+      return true;
+    }
+    final k = IslamAsk.prayer(text);
+    if (k == null) return false;
+    final s = ref.read(muslimProvider);
+    final now = DateTime.now();
+    if (k == 'kiblat') {
+      final q = PrayerCalc.qibla(s.lat, s.lng);
+      _bot('🧭 Arah kiblat dari **${s.city}**: **${q.toStringAsFixed(0)}°** dari utara (kira-kira ke barat laut). Buka kompas kiblat biar dipandu sampai pas 👇',
+          tools: const ['muslim:kiblat']);
+      return true;
+    }
+    if (k == 'hijri') {
+      _bot('📅 Hari ini **${Hijri.fromDate(now)}** (perkiraan, bisa beda ±1 hari dari ketetapan resmi).', tools: const ['muslim']);
+      return true;
+    }
+    final t = s.timesOn(now);
+    if (k == 'jadwal') {
+      final n = s.next(now);
+      final rows = [for (final x in const ['imsak', 'subuh', 'terbit', 'dzuhur', 'ashar', 'maghrib', 'isya']) '• ${prayerNames[x]}: **${PrayerCalc.hm(t[x]!)}**'].join('\n');
+      _bot('🕌 Jadwal sholat hari ini di **${s.city}**:\n$rows\n\nBerikutnya ${prayerNames[n.key]} pukul ${fmtTime(n.at)}.',
+          tools: const ['muslim'], speech: 'Sholat berikutnya ${prayerNames[n.key]} pukul ${fmtTime(n.at)}.');
+      return true;
+    }
+    final at = PrayerCalc.at(now, t[k]!);
+    final name = prayerNames[k] ?? k;
+    String extra;
+    if (at.isAfter(now)) {
+      final d = at.difference(now);
+      final h = d.inHours, m = d.inMinutes % 60;
+      extra = '— ${h > 0 ? '$h jam ' : ''}$m menit lagi.';
+    } else {
+      final tm = s.timesOn(now.add(const Duration(days: 1)));
+      extra = '(sudah lewat — besok pukul ${PrayerCalc.hm(tm[k]!)}).';
+    }
+    _bot('🕌 $name hari ini di **${s.city}** pukul **${fmtTime(at)}** $extra', tools: const ['muslim']);
+    return true;
+  }
+
   Future<void> send(String input, {String? photoPath}) async {
     final text = input.trim();
     if (text.isEmpty || state.thinking) return;
@@ -143,6 +190,9 @@ class ChatNotifier extends Notifier<ChatState> {
                 ? 'Ada ${PsyTest.all.length} tes yang bisa kamu coba: stres-cemas-depresi, suasana hati, kecemasan, burnout, kebahagiaan, kesepian, percaya diri, tidur, dan trauma. Mulai dari yang paling kamu rasakan ya 🌈\n*Hasilnya skrining, bukan diagnosis.*'
                 : '${t.emoji} **Tes ${t.title}** — ${t.items.length} pertanyaan singkat (${t.short}). Ketuk tombol di bawah untuk mulai, semangat! 💪\n*Hasilnya skrining, bukan diagnosis.*',
             tools: t == null ? const ['tes:dass21', 'tes:phq9', 'tes:gad7', 'tes:burnout', 'tes:menu'] : ['tes:${t.id}']);
+        return;
+      }
+      if (photoPath == null && !RegExp(r'^(?:tolong\s+|tlg\s+)?(?:ingatkan|ingetin|ingatin|ingetkan|alarm|catat|catet|setel|bangunkan)').hasMatch(lower) && _answerIslam(text)) {
         return;
       }
       final aboutParking = lower.contains('parkir');

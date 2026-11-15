@@ -65,7 +65,10 @@ class NoteParser {
   static const _generic = {'password', 'pin', 'nomor', 'gram', 'kode', 'akun'};
   static bool isGeneric(String t) => _generic.contains(t);
 
-  static final secretRe = RegExp(r'\b(password|pasword|passwrd|paswd|passwd|pass|pw|pwd|sandi|kata sandi|kata kunci|pin|passcode|kode rahasia|kode akses|pola kunci|cvv)\w*\b', caseSensitive: false);
+  static final secretRe = RegExp(
+      r'\b(?:pass(?:word|wrd|wd)?\w*|pasword\w*|paswd|pw|pwd|sandi\w*|kata sandi|kata kunci|pin|passcode|kode rahasia|kode akses|pola kunci|cvv|rekening|rek|norek|no\.?\s?rek|nomor kartu|no\.?\s?kartu|kartu kredit|kartu debit|kartu atm|nomor va|virtual account)\b',
+      caseSensitive: false);
+  static final _pwRe = RegExp(r'\b(?:pass(?:word|wrd|wd)?\w*|pasword\w*|paswd|pw|pwd|sandi\w*|kata sandi|kata kunci|pin|passcode|kode rahasia|kode akses|pola kunci|cvv)\b', caseSensitive: false);
   static final _trigger = RegExp(
       r'^\s*(?:(?:tolong|tlg|minta|coba|bisa)\s+)?(?:(?:kamu|km)\s+)?(?:catat|catet|cttn|ctt|catatin|catetin|catatkan|dicatat|tulis|tulisin|tuliskan|note|noted|save|simpan catatan|simpen catatan|buat catatan|bikin catatan|tambah catatan|tambahkan catatan|masukkan catatan|catatan baru|ingat|inget|simpan|simpen|simpankan|rekam)\b\s*(?:(?:ya|yah|dong|deh|nih|ini|baik baik|baik2)\b\s*)*(?:(?:bahwa|kalau|kalo|klo|kl)\b\s*)?[:\-–]?\s*',
       caseSensitive: false);
@@ -124,7 +127,7 @@ class NoteParser {
       content = _clean(raw);
     }
     if (content.replaceAll(RegExp(r'\W'), '').length < 2) return null;
-    final secret0 = secretRe.hasMatch(content);
+    final secret0 = secretRe.hasMatch(content) && (_pwRe.hasMatch(content) || RegExp(r'\d{4}').hasMatch(content));
     if (!secret0 &&
         RegExp(r'\b(jam \d|pukul|besok|lusa|nanti (pagi|siang|sore|malam)|\d+ (menit|jam) lagi|setiap|tiap (hari|minggu|bulan|senin|selasa|rabu|kamis|jumat|sabtu|minggu))\b', caseSensitive: false)
             .hasMatch(content) &&
@@ -132,11 +135,21 @@ class NoteParser {
       return null;
     }
     if (!secret0) return NoteDraft(text: content, label: content, value: content, secret: false);
+    return splitSecret(content);
+  }
+
+  /// Pisahkan judul & isi rahasia: "nomor rekening BCA 9015 4630 1700" → judul "nomor rekening BCA", isi angkanya.
+  static NoteDraft? splitSecret(String content) {
     String label, value;
     final ms = RegExp(r'^(.*?)\s*(?:[:=]|\s(?:adalah|yaitu|ialah|itu|nya|sama dengan|=)\s)\s*(.+)$', caseSensitive: false).firstMatch(content);
+    final num = RegExp(r'^(.*?[^\d\s\-.])\s+(\d[\d\s\-.]{3,}\d)\s*(.*)$').firstMatch(content);
     if (ms != null && ms[1]!.trim().isNotEmpty && ms[2]!.trim().isNotEmpty) {
       label = ms[1]!.trim();
       value = ms[2]!.trim();
+    } else if (num != null && tokens(num[1]!).isNotEmpty) {
+      final rest = num[3]!.trim();
+      label = rest.isEmpty ? num[1]!.trim() : '${num[1]!.trim()} $rest';
+      value = num[2]!.trim();
     } else {
       final i = content.lastIndexOf(' ');
       if (i < 0) return null;

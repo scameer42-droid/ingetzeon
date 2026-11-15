@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../providers/muslim_provider.dart';
+import 'muslim/muslim_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -294,6 +296,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: 'Catatan & rahasia',
               subtitle: '${ref.watch(notesProvider).length} catatan · password dikunci sidik jari/PIN',
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotesScreen())),
+            ),
+          ]),
+          _groupTitle('Ibadah'),
+          _Group(children: [
+            _Row(
+              icon: Icons.mosque_rounded,
+              color: kGreen,
+              title: 'Muslim Harian',
+              subtitle: '${ref.watch(muslimProvider).city} · jadwal sholat, kiblat, Al-Qur\'an, doa',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MuslimScreen())),
             ),
           ]),
           _groupTitle('Kesehatan'),

@@ -82,6 +82,30 @@ class NotesNotifier extends Notifier<List<Note>> {
     await _persist();
   }
 
+  /// Catatan lama berisi nomor rekening/kartu/PIN → dipindah ke penyimpanan rahasia.
+  Future<void> migrateSecrets() async {
+    var changed = false;
+    final out = <Note>[];
+    for (final n in state) {
+      if (!n.secret && NoteParser.secretRe.hasMatch(n.value) && RegExp(r'\d{4}').hasMatch(n.value)) {
+        final d = NoteParser.splitSecret(n.value);
+        if (d != null) {
+          try {
+            await _secure.write(key: 'note_${n.id}', value: d.value);
+            out.add(Note(id: n.id, label: d.label, value: '', secret: true, createdAt: n.createdAt));
+            changed = true;
+            continue;
+          } catch (_) {}
+        }
+      }
+      out.add(n);
+    }
+    if (changed) {
+      state = out;
+      await _persist();
+    }
+  }
+
   Future<void> remove(String id) async {
     state = state.where((n) => n.id != id).toList();
     await _persist();

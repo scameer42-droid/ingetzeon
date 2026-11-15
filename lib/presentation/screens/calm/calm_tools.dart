@@ -13,6 +13,8 @@ import '../../../providers/wellbeing_provider.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/wellbeing_logic.dart';
 import '../../widgets/common.dart';
+import '../muslim/muslim_screen.dart';
+import '../muslim/muslim_tools.dart';
 import 'calm_screen.dart';
 import 'tests_screen.dart';
 
@@ -22,6 +24,10 @@ const kCalmGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bo
 /// Buka alat bantu dari nama alat (dipakai chat & layar Ruang Tenang).
 Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {
   Widget? page;
+  if (tool.startsWith('muslim:doa:')) page = DoaScreen(focus: tool.substring(11));
+  if (tool == 'muslim') page = const MuslimScreen();
+  if (tool == 'muslim:kiblat') page = const QiblaScreen();
+  if (tool == 'muslim:quran') page = const QuranListScreen();
   if (tool.startsWith('tes:')) {
     final t = PsyTest.byId(tool.substring(4));
     page = t == null ? const TestsScreen() : TestRunScreen(test: t);
@@ -60,6 +66,10 @@ Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {
 
 /// Label tombol alat.
 String toolLabel(String tool) {
+  if (tool.startsWith('muslim:doa:')) return '🤲 Buka doa harian';
+  if (tool == 'muslim') return '🕌 Buka Muslim Harian';
+  if (tool == 'muslim:kiblat') return '🧭 Kompas kiblat';
+  if (tool == 'muslim:quran') return "📖 Al-Qur'an";
   if (tool.startsWith('tes:')) {
     final t = PsyTest.byId(tool.substring(4));
     return t == null ? '🌈 Semua tes psikologi' : '${t.emoji} Tes ${t.title}';

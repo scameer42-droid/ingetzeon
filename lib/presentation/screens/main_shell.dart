@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/cycle_provider.dart';
+import '../../providers/muslim_provider.dart';
+import '../../providers/notes_provider.dart';
 import '../../providers/wellbeing_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../services/notification_service.dart';
@@ -16,6 +18,7 @@ import 'calendar_screen.dart';
 import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'home_screen.dart';
+import 'muslim/muslim_screen.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
 import '../widgets/common.dart';
@@ -43,6 +46,8 @@ class _MainShellState extends ConsumerState<MainShell> {
       await ref.read(cycleProvider.notifier).reschedule();
       await ref.read(calmSettingsProvider.notifier).reschedule();
       await ref.read(habitsProvider.notifier).reschedule();
+      await ref.read(muslimProvider.notifier).reschedule();
+      await ref.read(notesProvider.notifier).migrateSecrets();
       final launch = notif.takeLaunchResponse();
       if (launch != null) await _onNotification(launch);
     });
@@ -55,6 +60,11 @@ class _MainShellState extends ConsumerState<MainShell> {
     if (id == 'cycle') {
       if (!mounted) return;
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen()));
+      return;
+    }
+    if (id == 'muslim') {
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MuslimScreen()));
       return;
     }
     if (id.startsWith('calm:')) {

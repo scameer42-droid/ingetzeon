@@ -13,6 +13,10 @@ import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
 import 'calm/calm_screen.dart';
+import 'calm/tests_screen.dart';
+import '../../providers/cycle_provider.dart';
+import '../../providers/muslim_provider.dart';
+import 'muslim/muslim_screen.dart';
 import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'item_sheet.dart';
@@ -20,6 +24,8 @@ import 'notes_screen.dart';
 import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
+import 'stats_screen.dart';
+import '../../services/islam_logic.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key, required this.onOpenAi, required this.onGoTo});
@@ -106,68 +112,62 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
           ],
-          const CycleHomeCard(),
-          _CalmCard(onOpenAi: onOpenAi),
-          if (items.isNotEmpty) ...[
-            const SectionHeader('Barang yang kamu simpan'),
-            SoftCard(
-              padding: EdgeInsets.zero,
-              child: Column(children: [
-                for (var i = 0; i < items.length && i < 6; i++) ...[
-                  if (i > 0) Divider(height: 1, color: context.line),
-                  _ItemRow(item: items[i]),
-                ],
-              ]),
-            ),
-          ],
-          Builder(builder: (context) {
-            final notes = ref.watch(notesProvider);
-            if (notes.isEmpty) return const SizedBox.shrink();
-            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              SectionHeader('Catatan', action: 'Lihat semua', onAction: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotesScreen()))),
-              for (final n in notes.take(3)) NoteTile(n, key: ValueKey(n.id)),
-            ]);
-          }),
+          const SectionHeader('Fitur'),
+          _FeatureGrid(onOpenAi: onOpenAi, itemCount: items.length, onItems: () => _showItems(context, items)),
           SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
-          if (totalCount > 0) ...[
-            SoftCard(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              radius: 18,
-              child: Row(children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(99),
-                    child: Stack(children: [
-                      Container(height: 8, color: context.card2),
-                      FractionallySizedBox(
-                        widthFactor: doneCount / totalCount,
-                        child: Container(height: 8, decoration: const BoxDecoration(gradient: AppColors.gradient)),
-                      ),
-                    ]),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Text('$doneCount/$totalCount selesai', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-              ]),
-            ),
-            const SizedBox(height: 12),
-            if (today.isEmpty)
-              const EmptyState(title: 'Semua selesai 🎉', subtitle: 'Kerja bagus! Tidak ada lagi pengingat hari ini.', icon: Icons.task_alt_rounded)
-            else
-              ...today.map((x) => ReminderTile(x)),
-          ] else
-            EmptyState(
-              title: 'Hari ini kosong',
-              subtitle: 'Nikmati harimu, atau tambahkan pengingat baru.',
-              actionLabel: 'Tambah pengingat',
-              onAction: () => _openForm(context),
-            ),
-          if (upcoming.isNotEmpty) ...[
-            SectionHeader('Akan datang', action: 'Kalender', onAction: () => onGoTo(1)),
-            ...upcoming.take(6).map((x) => ReminderTile(x, showDay: true)),
-          ],
+          _TodaySection(
+            today: today,
+            upcoming: upcoming,
+            doneCount: doneCount,
+            totalCount: totalCount,
+            onAdd: () => _openForm(context),
+            onCalendar: () => onGoTo(1),
+          ),
         ],
       ),
+    );
+  }
+
+  void _showItems(BuildContext context, List<Reminder> items) {
+    if (items.isEmpty) {
+      startItemFlow(context);
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) => Consumer(builder: (ctx, ref, _) {
+        final list = activeItems(ref.watch(remindersProvider));
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * .75),
+            child: ListView(shrinkWrap: true, padding: const EdgeInsets.fromLTRB(12, 0, 12, 16), children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Row(children: [
+                  const Expanded(child: Text('Barang yang kamu simpan', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      startItemFlow(context);
+                    },
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Tambah'),
+                  ),
+                ]),
+              ),
+              if (list.isEmpty)
+                const Padding(padding: EdgeInsets.all(24), child: Text('Semua barang sudah diambil 👍', textAlign: TextAlign.center))
+              else
+                for (var i = 0; i < list.length; i++) ...[
+                  if (i > 0) Divider(height: 1, color: ctx.line),
+                  _ItemRow(item: list[i]),
+                ],
+            ]),
+          ),
+        );
+      }),
     );
   }
 
@@ -410,81 +410,255 @@ class _ItemRow extends ConsumerWidget {
 }
 
 
-/// Kartu Ruang Tenang di beranda: cek mood harian + pintu ke fitur psikologi.
-class _CalmCard extends ConsumerWidget {
-  const _CalmCard({required this.onOpenAi});
+/// Kotak fitur ringkas di beranda — satu kotak per fitur, isi lengkap dibuka saat diketuk.
+class _FeatureGrid extends ConsumerWidget {
+  const _FeatureGrid({required this.onOpenAi, required this.itemCount, required this.onItems});
   final VoidCallback onOpenAi;
+  final int itemCount;
+  final VoidCallback onItems;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(tickerProvider).value ?? DateTime.now();
+    final muslim = ref.watch(muslimProvider);
     ref.watch(moodProvider);
-    final today = ref.read(moodProvider.notifier).today;
+    final mood = ref.read(moodProvider.notifier).today;
     final habits = ref.watch(habitsProvider);
-    final done = habits.where((h) => h.doneOn(DateTime.now())).length;
-    return Padding(
-      padding: const EdgeInsets.only(top: 14),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: kCalmGradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: kCalm.withValues(alpha: .3), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -14)],
+    final habitsDone = habits.where((h) => h.doneOn(now)).length;
+    final notes = ref.watch(notesProvider);
+    final secretCount = notes.where((n) => n.secret).length;
+    final cycle = ref.watch(cycleProvider);
+    final cycleInfo = cycle.enabled ? CycleInfo.from(cycle) : null;
+    final next = muslim.next(now);
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+
+    final tiles = <Widget>[
+      _FeatureTile(
+        emoji: '🕌',
+        title: 'Muslim Harian',
+        subtitle: '${prayerNames[next.key]} ${fmtTime(next.at)}',
+        gradient: kMuslimGradient,
+        onTap: () => push(const MuslimScreen()),
+      ),
+      _FeatureTile(
+        emoji: mood == null ? '🌿' : MoodAdvice.moodEmoji[mood.mood - 1],
+        title: 'Ruang Tenang',
+        subtitle: mood == null ? 'Cek mood hari ini' : (habits.isEmpty ? 'Mood tercatat ✓' : 'Kebiasaan $habitsDone/${habits.length}'),
+        gradient: kCalmGradient,
+        onTap: () => push(CalmScreen(onOpenChat: onOpenAi)),
+      ),
+      _FeatureTile(
+        emoji: '📝',
+        title: 'Catatan',
+        subtitle: notes.isEmpty ? 'Belum ada catatan' : '${notes.length} catatan${secretCount > 0 ? ' · $secretCount 🔒' : ''}',
+        gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
+        onTap: () => push(const NotesScreen()),
+      ),
+      _FeatureTile(
+        emoji: '🎒',
+        title: 'Barang',
+        subtitle: itemCount == 0 ? 'Belum ada barang' : '$itemCount barang disimpan',
+        gradient: const LinearGradient(colors: [Color(0xFFF59E0B), Color(0xFFEA580C)]),
+        onTap: onItems,
+      ),
+      if (cycleInfo != null)
+        _FeatureTile(
+          emoji: '🩸',
+          title: 'Siklus haid',
+          subtitle: cycleInfo.status().title,
+          gradient: kHaidGradient,
+          onTap: () => push(const CycleScreen()),
         ),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CalmScreen(onOpenChat: onOpenAi))),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(13)),
-                    alignment: Alignment.center,
-                    child: Text(today == null ? '🌿' : MoodAdvice.moodEmoji[today.mood - 1], style: const TextStyle(fontSize: 22)),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(today == null ? 'Gimana perasaanmu hari ini?' : 'Ruang Tenang', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16)),
-                      Text(
-                        today == null
-                            ? 'Catat mood, dapatkan saran jadwal hari ini'
-                            : '${MoodAdvice.forDay(today.mood, today.energy).title}${habits.isEmpty ? '' : ' · kebiasaan $done/${habits.length}'}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.white.withValues(alpha: .88), fontSize: 12.5),
-                      ),
-                    ]),
-                  ),
-                  Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: .9)),
-                ]),
-                if (today == null) ...[
-                  const SizedBox(height: 12),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    for (var i = 1; i <= 5; i++)
-                      GestureDetector(
-                        onTap: () async {
-                          await ref.read(moodProvider.notifier).log(i, 3);
-                          if (context.mounted) await showMoodCheckin(context, ref);
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 44,
-                          decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(12)),
-                          alignment: Alignment.center,
-                          child: Text(MoodAdvice.moodEmoji[i - 1], style: const TextStyle(fontSize: 22)),
-                        ),
-                      ),
-                  ]),
-                ],
+      _FeatureTile(
+        emoji: '🧠',
+        title: 'Tes psikologi',
+        subtitle: 'Kenali dirimu',
+        gradient: const LinearGradient(colors: [Color(0xFFEC4899), Color(0xFFF97316)]),
+        onTap: () => push(const TestsScreen()),
+      ),
+    ];
+    if (tiles.length.isOdd) {
+      tiles.add(_FeatureTile(
+        emoji: '📊',
+        title: 'Statistik',
+        subtitle: 'Lihat progresmu',
+        gradient: const LinearGradient(colors: [Color(0xFF0EA5E9), Color(0xFF2563EB)]),
+        onTap: () => push(const _StatsPage()),
+      ));
+    }
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 1.7,
+      children: tiles,
+    );
+  }
+}
+
+class _StatsPage extends StatelessWidget {
+  const _StatsPage();
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Statistik')), body: const StatsScreen());
+}
+
+class _FeatureTile extends StatelessWidget {
+  const _FeatureTile({required this.emoji, required this.title, required this.subtitle, required this.gradient, required this.onTap});
+  final String emoji, title, subtitle;
+  final Gradient gradient;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 18, offset: const Offset(0, 10), spreadRadius: -12)],
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(11)),
+                  alignment: Alignment.center,
+                  child: Text(emoji, style: const TextStyle(fontSize: 18)),
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white.withValues(alpha: .85)),
               ]),
-            ),
+              const Spacer(),
+              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14.5)),
+              Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: .88), fontSize: 12)),
+            ]),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Jadwal hari ini yang rapi: progres + 3 jadwal teratas, sisanya dibuka saat diketuk.
+class _TodaySection extends StatefulWidget {
+  const _TodaySection({
+    required this.today,
+    required this.upcoming,
+    required this.doneCount,
+    required this.totalCount,
+    required this.onAdd,
+    required this.onCalendar,
+  });
+  final List<Occurrence> today, upcoming;
+  final int doneCount, totalCount;
+  final VoidCallback onAdd, onCalendar;
+
+  @override
+  State<_TodaySection> createState() => _TodaySectionState();
+}
+
+class _TodaySectionState extends State<_TodaySection> {
+  bool _all = false;
+  bool _soon = false;
+  static const _show = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final w = widget;
+    final shown = _all ? w.today : w.today.take(_show).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (w.totalCount > 0) ...[
+        SoftCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          radius: 18,
+          child: Row(children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(99),
+                child: Stack(children: [
+                  Container(height: 8, color: context.card2),
+                  FractionallySizedBox(
+                    widthFactor: w.doneCount / w.totalCount,
+                    child: Container(height: 8, decoration: const BoxDecoration(gradient: AppColors.gradient)),
+                  ),
+                ]),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Text('${w.doneCount}/${w.totalCount} selesai', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          ]),
+        ),
+        const SizedBox(height: 12),
+        if (w.today.isEmpty)
+          const EmptyState(title: 'Semua selesai 🎉', subtitle: 'Kerja bagus! Tidak ada lagi pengingat hari ini.', icon: Icons.task_alt_rounded)
+        else ...[
+          ...shown.map((x) => ReminderTile(x)),
+          if (w.today.length > _show)
+            _MoreButton(
+              label: _all ? 'Tutup' : 'Lihat ${w.today.length - _show} jadwal lainnya',
+              open: _all,
+              onTap: () => setState(() => _all = !_all),
+            ),
+        ],
+      ] else
+        EmptyState(
+          title: 'Hari ini kosong',
+          subtitle: 'Nikmati harimu, atau tambahkan pengingat baru.',
+          actionLabel: 'Tambah pengingat',
+          onAction: w.onAdd,
+        ),
+      if (w.upcoming.isNotEmpty) ...[
+        const SizedBox(height: 10),
+        SoftCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          radius: 18,
+          onTap: () => setState(() => _soon = !_soon),
+          child: Row(children: [
+            const Icon(Icons.upcoming_rounded, color: AppColors.primary, size: 20),
+            const SizedBox(width: 10),
+            Expanded(child: Text('Akan datang · ${w.upcoming.length} jadwal', style: const TextStyle(fontWeight: FontWeight.w700))),
+            AnimatedRotation(turns: _soon ? .5 : 0, duration: const Duration(milliseconds: 200), child: Icon(Icons.expand_more_rounded, color: context.muted)),
+          ]),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          child: _soon
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                    ...w.upcoming.take(6).map((x) => ReminderTile(x, showDay: true)),
+                    TextButton(onPressed: w.onCalendar, child: const Text('Buka kalender')),
+                  ]),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
+      ],
+    ]);
+  }
+}
+
+class _MoreButton extends StatelessWidget {
+  const _MoreButton({required this.label, required this.open, required this.onTap});
+  final String label;
+  final bool open;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onTap,
+      icon: Icon(open ? Icons.expand_less_rounded : Icons.expand_more_rounded),
+      label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
     );
   }
 }

@@ -351,6 +351,26 @@ class NotificationService {
     }
   }
 
+  // ---------- Adzan ----------
+  static const _prayerBase = 850000;
+
+  /// Notifikasi waktu sholat (maks. 40 slot, dijadwalkan ulang tiap aplikasi dibuka).
+  Future<void> schedulePrayers(List<({int id, DateTime at, String title, String body})> items) async {
+    for (var i = 0; i < 40; i++) {
+      await _plugin.cancel(_prayerBase + i);
+    }
+    final mode = await _mode();
+    for (final it in items) {
+      if (it.id >= 40 || !it.at.isAfter(DateTime.now())) continue;
+      try {
+        await _plugin.zonedSchedule(_prayerBase + it.id, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _simple(it.body, const Color(0xFF059669)),
+            androidScheduleMode: mode, payload: 'muslim');
+      } catch (e) {
+        debugPrint('Gagal jadwal adzan: $e');
+      }
+    }
+  }
+
   Future<void> cancelParkingHourly() async {
     for (var h = 1; h <= 12; h++) {
       await _plugin.cancel(_hourlyBase + h);

@@ -32,6 +32,9 @@ dependencies:
   # Catatan rahasia: terenkripsi & dibuka dengan sidik jari/PIN HP
   flutter_secure_storage: ^9.2.2
   local_auth: ^2.3.0
+  # Muslim Harian: lokasi (jadwal sholat) & sensor kompas (kiblat)
+  geolocator: ^13.0.1
+  sensors_plus: ^6.0.1
   # AI (Gemini lewat REST API)
   http: ^1.2.0
   url_launcher: ^6.3.0
