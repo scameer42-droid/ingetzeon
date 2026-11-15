@@ -12,7 +12,7 @@ class PhotoService {
   final ImagePicker _picker = ImagePicker();
 
   /// Mengembalikan path foto yang sudah disalin ke folder aplikasi, atau null bila batal.
-  Future<String?> pick({bool camera = true}) async {
+  Future<String?> pick({bool camera = true, double maxSize = 1280, bool front = false}) async {
     if (camera) {
       // izin kamera wajib diminta dulu (aplikasi juga memakai kamera untuk scan tiket)
       final st = await Permission.camera.request();
@@ -20,8 +20,9 @@ class PhotoService {
     }
     final x = await _picker.pickImage(
       source: camera ? ImageSource.camera : ImageSource.gallery,
-      maxWidth: 1280,
-      maxHeight: 1280,
+      maxWidth: maxSize,
+      maxHeight: maxSize,
+      preferredCameraDevice: front ? CameraDevice.front : CameraDevice.rear,
       imageQuality: 80,
     );
     if (x == null) return null;

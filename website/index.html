@@ -666,6 +666,14 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .day.subur .dots::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--c-subur)}
 .cyc-note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- foto profil ---- */
+.av-wrap{position:relative;z-index:1;border:0;padding:0;background:none;cursor:pointer;flex:none;color:#fff}
+.av-wrap .av{display:grid}
+.avatar.has-photo,.av.has-photo{background-size:cover!important;background-position:center!important;border:2px solid rgba(255,255,255,.75)}
+.avatar.has-photo{border-color:#fff}
+.av-cam{position:absolute;right:-5px;bottom:-5px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--primary);display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.av-cam .i{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -780,7 +788,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
   <section class="screen" id="s-profile">
     <div class="top"><div><div class="eyebrow">Pengaturan</div><h1>Profil</h1></div></div>
     <div class="profile-card">
-      <div class="av" id="pfAv">I</div>
+      <button class="av-wrap" id="pfAvBtn" aria-label="Ganti foto profil"><span class="av" id="pfAv">I</span><span class="av-cam"><svg class="i"><use href="#i-camera"/></svg></span></button>
       <div style="position:relative;z-index:1;flex:1;min-width:0">
         <h3 id="pfName">Pengguna IngetZeon</h3>
         <p id="pfSub">0 pengingat tersimpan</p>
@@ -1166,12 +1174,51 @@ function compressImage(file, max = 1280, q = .78){
     img.src = url;
   });
 }
+/** Potong tengah jadi persegi (untuk foto profil). */
+function squareImage(file, size = 480, q = .85){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const side = Math.min(img.width, img.height), out = Math.min(size, side);
+      const c = document.createElement('canvas'); c.width = c.height = out;
+      c.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, out, out);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('gambar')); };
+    img.src = url;
+  });
+}
+/** Tampilkan foto profil (atau inisial) di elemen avatar. */
+function paintAvatar(el){
+  const name = state.settings.name.trim(), src = photoSrc(state.settings.avatar);
+  el.classList.toggle('has-photo', !!src);
+  el.style.backgroundImage = src ? `url("${src}")` : '';
+  el.textContent = src ? '' : (name || 'I')[0].toUpperCase();
+}
+function changeAvatar(){
+  const has = !!photoSrc(state.settings.avatar);
+  $('#sheetBody').innerHTML = `
+    <h3 style="margin:4px 0 14px">Foto profil</h3>
+    <button class="btn btn-soft btn-block" id="avCam" style="margin-bottom:10px">${icon('i-camera')}Ambil foto (selfie)</button>
+    <button class="btn btn-soft btn-block" id="avGal" style="margin-bottom:10px">${icon('i-image')}Pilih dari galeri</button>
+    ${has ? `<button class="btn btn-block" id="avDel" style="color:#E5484D;background:rgba(229,72,77,.1)">${icon('i-trash')}Hapus foto</button>` : ''}`;
+  const pick = async cam => {
+    closeSheet();
+    const k = await pickPhoto(cam, {front:true, square:true, max:480, prefix:'av_'});
+    if(!k) return;
+    photoDel(state.settings.avatar); state.settings.avatar = k; save(); renderAll(); toast('Foto profil diperbarui ✨');
+  };
+  $('#avCam').onclick = () => pick(true);
+  $('#avGal').onclick = () => pick(false);
+  if($('#avDel')) $('#avDel').onclick = () => { photoDel(state.settings.avatar); state.settings.avatar = null; save(); closeSheet(); renderAll(); toast('Foto profil dihapus'); };
+  $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
+}
 /** Buka kamera (atau galeri). Mengembalikan key foto, atau null bila batal. */
-function pickPhoto(camera = true){
+function pickPhoto(camera = true, opt = {}){
   return new Promise(res => {
     const inp = document.createElement('input');
     inp.type = 'file'; inp.accept = 'image/*';
-    if(camera) inp.setAttribute('capture', 'environment');
+    if(camera) inp.setAttribute('capture', opt.front ? 'user' : 'environment');
     inp.style.display = 'none';
     document.body.appendChild(inp);
     let done = false;
@@ -1180,8 +1227,8 @@ function pickPhoto(camera = true){
       const f = inp.files[0]; inp.remove();
       if(!f) return res(null);
       try{
-        const data = await compressImage(f);
-        const key = 'ph_' + Date.now().toString(36);
+        const data = opt.square ? await squareImage(f, opt.max || 480) : await compressImage(f, opt.max || 1280);
+        const key = (opt.prefix || 'ph_') + Date.now().toString(36);
         photoPut(key, data);
         res(key);
       }catch(e){ toast('Foto tidak bisa dibaca'); res(null); }
@@ -1486,7 +1533,7 @@ function renderHome(){
   const name = state.settings.name.trim();
   $('#todayLabel').textContent = fmtDateLong(now);
   $('#greetText').innerHTML = `${greeting()},<br><span>${esc(name || 'Kamu')}</span> 👋`;
-  $('#homeAvatar').textContent = (name || 'I')[0].toUpperCase();
+  paintAvatar($('#homeAvatar'));
 
   const nx = nextUpcoming();
   if(nx){
@@ -1708,7 +1755,7 @@ function renderProfile(){
   { const ci = state.cycle.enabled ? cycleInfo() : null; $('#cycState').textContent = ci ? cycleStatus(ci).title + ' · ' + cycleStatus(ci).sub : 'Atur pengingat & perkiraan haid'; }
   const s = state.settings;
   const name = s.name.trim();
-  $('#pfAv').textContent = (name || 'I')[0].toUpperCase();
+  paintAvatar($('#pfAv'));
   $('#pfName').textContent = name || 'Pengguna IngetZeon';
   $('#pfSub').textContent = `${state.reminders.length} pengingat tersimpan`;
   $('#keyState').textContent = s.apiKey ? `Terpasang${workingModel ? ' · ' + workingModel + (workingEp==='vertex' ? ' (Vertex)' : '') : ''}` : 'Belum diisi — asisten pakai mode offline';
@@ -1724,6 +1771,7 @@ $('#themeSeg').onclick = e => {
   const b = e.target.closest('[data-theme-opt]'); if(!b) return;
   state.settings.theme = b.dataset.themeOpt; save(); applyTheme();
 };
+$('#pfAvBtn').onclick = changeAvatar;
 $('#pfEdit').onclick = async () => {
   const v = await confirmDlg({title:'Nama kamu', text:'Dipakai untuk sapaan di beranda.', ok:'Simpan',
     extra:`<input class="input" id="dlgInput" style="margin-bottom:16px" maxlength="30" value="${esc(state.settings.name)}" placeholder="Nama panggilan">`});

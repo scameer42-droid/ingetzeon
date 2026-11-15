@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/repositories/settings_repository.dart';
 import '../services/notification_service.dart';
+import '../services/photo_service.dart';
 
 class AppSettings {
   const AppSettings({
@@ -12,6 +13,7 @@ class AppSettings {
     this.model = 'gemini-flash-latest',
     this.voice = true,
     this.alarmSound = AlarmSound.melodi,
+    this.avatarPath = '',
   });
 
   final String name;
@@ -21,9 +23,12 @@ class AppSettings {
   final bool voice;
   final AlarmSound alarmSound;
 
+  /// Foto profil (path file di HP), kosong = pakai inisial nama.
+  final String avatarPath;
+
   bool get hasAi => apiKey.trim().isNotEmpty;
 
-  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound}) =>
+  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound, String? avatarPath}) =>
       AppSettings(
         name: name ?? this.name,
         themeMode: themeMode ?? this.themeMode,
@@ -31,6 +36,7 @@ class AppSettings {
         model: model ?? this.model,
         voice: voice ?? this.voice,
         alarmSound: alarmSound ?? this.alarmSound,
+        avatarPath: avatarPath ?? this.avatarPath,
       );
 }
 
@@ -50,12 +56,21 @@ class SettingsNotifier extends Notifier<AppSettings> {
       model: repo.get<String>('model', 'gemini-flash-latest'),
       voice: repo.get<bool>('voice', true),
       alarmSound: AlarmSound.fromName(repo.get<String>('alarmSound', 'melodi')),
+      avatarPath: repo.get<String>('avatar', ''),
     );
   }
 
   Future<void> setName(String v) async {
     state = state.copyWith(name: v.trim());
     await _repo.set('name', state.name);
+  }
+
+  /// Ganti foto profil; foto lama dihapus dari HP. [path] null = hapus foto.
+  Future<void> setAvatar(String? path) async {
+    final old = state.avatarPath;
+    state = state.copyWith(avatarPath: path ?? '');
+    await _repo.set('avatar', state.avatarPath);
+    if (old.isNotEmpty && old != path) await PhotoService.instance.delete(old);
   }
 
   Future<void> setTheme(ThemeMode m) async {

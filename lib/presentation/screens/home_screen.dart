@@ -59,14 +59,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               GestureDetector(
                 onTap: () => onGoTo(3),
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(16), boxShadow: context.glowShadow),
-                  alignment: Alignment.center,
-                  child: Text((name.isEmpty ? 'I' : name[0]).toUpperCase(),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
-                ),
+                child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46),
               ),
             ],
           ),

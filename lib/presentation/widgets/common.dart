@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -275,4 +277,43 @@ class MeshCard extends StatelessWidget {
       ]),
     );
   }
+}
+
+
+/// Foto profil pengguna; bila belum ada foto, tampil inisial nama di atas gradasi.
+class UserAvatar extends StatelessWidget {
+  const UserAvatar({super.key, required this.name, required this.path, this.size = 42, this.radius, this.onGradient = false});
+  final String name;
+  final String path;
+  final double size;
+  final double? radius;
+
+  /// true bila diletakkan di atas kartu gradasi (latar inisial jadi transparan putih).
+  final bool onGradient;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = BorderRadius.circular(radius ?? size * .36);
+    final hasPhoto = path.isNotEmpty && File(path).existsSync();
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: hasPhoto || onGradient ? null : AppColors.gradient,
+        color: onGradient && !hasPhoto ? Colors.white.withValues(alpha: .2) : null,
+        borderRadius: r,
+        border: hasPhoto ? Border.all(color: Colors.white.withValues(alpha: onGradient ? .7 : 1), width: 2) : null,
+        boxShadow: onGradient ? null : context.glowShadow,
+      ),
+      clipBehavior: Clip.antiAlias,
+      alignment: Alignment.center,
+      child: hasPhoto
+          ? Image.file(File(path), width: size, height: size, fit: BoxFit.cover, gaplessPlayback: true,
+              errorBuilder: (_, __, ___) => _initial())
+          : _initial(),
+    );
+  }
+
+  Widget _initial() => Text((name.trim().isEmpty ? 'I' : name.trim()[0]).toUpperCase(),
+      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: size * .4));
 }

@@ -8,6 +8,7 @@ import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
 import '../../services/notification_service.dart';
+import '../../services/photo_service.dart';
 import '../widgets/common.dart';
 import 'cycle_screen.dart';
 
@@ -56,13 +57,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const SizedBox(height: 18),
           MeshCard(
             child: Row(children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(18)),
-                alignment: Alignment.center,
-                child: Text((s.name.isEmpty ? 'I' : s.name[0]).toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+              GestureDetector(
+                onTap: () => _changeAvatar(s.avatarPath.isNotEmpty),
+                child: Stack(clipBehavior: Clip.none, children: [
+                  UserAvatar(name: s.name, path: s.avatarPath, size: 64, onGradient: true),
+                  Positioned(
+                    right: -4,
+                    bottom: -4,
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: context.softShadow),
+                      child: const Icon(Icons.photo_camera_rounded, size: 15, color: AppColors.primary),
+                    ),
+                  ),
+                ]),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -295,6 +304,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  /// Pilih foto profil dari kamera / galeri, atau hapus.
+  Future<void> _changeAvatar(bool hasPhoto) async {
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text('Foto profil', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_camera_rounded, color: AppColors.primary),
+            title: const Text('Ambil foto (selfie)'),
+            onTap: () => Navigator.pop(ctx, 'camera'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library_rounded, color: AppColors.primary),
+            title: const Text('Pilih dari galeri'),
+            onTap: () => Navigator.pop(ctx, 'gallery'),
+          ),
+          if (hasPhoto)
+            ListTile(
+              leading: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+              title: const Text('Hapus foto', style: TextStyle(color: Colors.redAccent)),
+              onTap: () => Navigator.pop(ctx, 'delete'),
+            ),
+          const SizedBox(height: 8),
+        ]),
+      ),
+    );
+    if (choice == null || !mounted) return;
+    final notifier = ref.read(settingsProvider.notifier);
+    if (choice == 'delete') {
+      await notifier.setAvatar(null);
+      if (mounted) showToast(context, 'Foto profil dihapus');
+      return;
+    }
+    try {
+      final path = await PhotoService.instance.pick(camera: choice == 'camera', maxSize: 600, front: true);
+      if (path == null) return;
+      await notifier.setAvatar(path);
+      if (mounted) showToast(context, 'Foto profil diperbarui ✨');
+    } catch (_) {
+      if (mounted) showToast(context, choice == 'camera' ? 'Kamera tidak bisa dibuka — cek izin kamera' : 'Galeri tidak bisa dibuka');
+    }
   }
 
   Widget _groupTitle(String t) => Padding(
