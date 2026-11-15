@@ -24,7 +24,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final list = ref.watch(remindersProvider);
-    final items = occurrencesOn(list, _selected);
+    final items = occurrencesOn(list, _selected).where((x) => !x.done).toList();
     final today = DateTime.now();
     final rect = BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10));
 

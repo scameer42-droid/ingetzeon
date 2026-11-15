@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
 import '../data/repositories/reminder_repository.dart';
 import '../services/notification_service.dart';
 import '../services/photo_service.dart';
+import 'settings_provider.dart';
 
 final reminderRepositoryProvider = Provider<ReminderRepository>((ref) => ReminderRepository());
 
@@ -58,6 +62,53 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     await upsert(cur.withDone(day, value));
   }
 
+  // ---------- selesai = hapus otomatis ----------
+
+  /// Riwayat pengingat yang selesai lalu dihapus (untuk statistik): {d: tanggal, c: kategori}.
+  List<Map> get doneLog => ref.read(settingsRepositoryProvider).get<List>('doneLog', const []).whereType<Map>().toList();
+
+  int doneLogOn(DateTime day) {
+    final k = dayKey(day);
+    return doneLog.where((x) => x['d'] == k).length;
+  }
+
+  Future<void> _saveLog(List<Map> log) =>
+      ref.read(settingsRepositoryProvider).set('doneLog', log.length > 3000 ? log.sublist(log.length - 3000) : log);
+
+  /// Tandai selesai. Pengingat sekali langsung dihapus; yang berulang ditandai selesai untuk hari itu.
+  /// Mengembalikan salinan pengingat yang dihapus (untuk tombol Urungkan), atau null.
+  Future<Reminder?> complete(Reminder r, DateTime day) async {
+    final cur = byId(r.id) ?? r;
+    await _notif.stopSnooze(cur);
+    if (cur.repeat != RepeatType.once) {
+      await setDone(cur, day, true);
+      return null;
+    }
+    await _notif.cancel(cur);
+    await _repo.delete(cur.id);
+    state = state.where((x) => x.id != cur.id).toList();
+    await _saveLog([...doneLog, {'d': dayKey(DateTime.now()), 'c': cur.category.name}]);
+    // foto dihapus setelah waktu urungkan habis
+    if (cur.photoPath != null) {
+      Timer(const Duration(seconds: 7), () {
+        if (byId(cur.id) == null) PhotoService.instance.delete(cur.photoPath);
+      });
+    }
+    return cur;
+  }
+
+  /// Kembalikan pengingat yang baru saja diselesaikan.
+  Future<void> undoComplete(Reminder r) async {
+    final log = doneLog;
+    final k = dayKey(DateTime.now());
+    final i = log.lastIndexWhere((x) => x['d'] == k && x['c'] == r.category.name);
+    if (i >= 0) log.removeAt(i);
+    await _saveLog(log);
+    await upsert(r);
+  }
+
+  Future<void> clearLog() => _saveLog(const []);
+
   Future<void> snooze(String id, {Duration delay = const Duration(minutes: 10)}) async {
     final r = byId(id);
     if (r == null) return;
@@ -97,8 +148,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     final r = byId(id);
     if (r == null) return;
     if (resp.actionId == NotificationService.actionDone) {
-      await _notif.stopSnooze(r);
-      await setDone(r, DateTime.now(), true);
+      await complete(r, DateTime.now());
     } else if (resp.actionId == NotificationService.actionSnooze) {
       await snooze(id);
     }

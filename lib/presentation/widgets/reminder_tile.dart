@@ -67,8 +67,11 @@ class ReminderTile extends ConsumerWidget {
             _CheckButton(
               done: item.done,
               onTap: () async {
-                await ref.read(remindersProvider.notifier).setDone(r, item.at, !item.done);
-                if (!item.done && context.mounted) showToast(context, '"${r.title}" selesai 🎉');
+                if (item.done) {
+                  await ref.read(remindersProvider.notifier).setDone(r, item.at, false);
+                } else {
+                  await completeWithUndo(ScaffoldMessenger.of(context), ref, r, item.at);
+                }
               },
             ),
           ],
@@ -182,12 +185,16 @@ Future<void> showReminderDetail(BuildContext context, WidgetRef ref, Reminder r,
             ),
             const SizedBox(height: 16),
             GradientButton(
-              label: done ? 'Batalkan selesai' : 'Tandai selesai',
+              label: done ? 'Batalkan selesai' : (r.repeat == RepeatType.once ? 'Selesai & hapus' : 'Selesai untuk hari ini'),
               icon: Icons.check_rounded,
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
                 Navigator.pop(c);
-                await ref.read(remindersProvider.notifier).setDone(r, day, !done);
-                if (!done && context.mounted) showToast(context, '"${r.title}" selesai 🎉');
+                if (done) {
+                  await ref.read(remindersProvider.notifier).setDone(r, day, false);
+                } else {
+                  await completeWithUndo(messenger, ref, r, day);
+                }
               },
             ),
             const SizedBox(height: 10),
@@ -234,3 +241,16 @@ Widget _metaRow(IconData icon, String text) => Row(children: [
       const SizedBox(width: 10),
       Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
     ]);
+
+/// Selesaikan pengingat + tampilkan tombol "Urungkan" (pengingat sekali langsung terhapus).
+Future<void> completeWithUndo(ScaffoldMessengerState messenger, WidgetRef ref, Reminder r, DateTime day) async {
+  final notifier = ref.read(remindersProvider.notifier);
+  final removed = await notifier.complete(r, day);
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      duration: Duration(seconds: removed != null ? 5 : 2),
+      content: Text(removed != null ? '"${r.title}" selesai & dihapus ✓' : '"${r.title}" selesai untuk hari ini ✓'),
+      action: removed != null ? SnackBarAction(label: 'Urungkan', onPressed: () => notifier.undoComplete(removed)) : null,
+    ));
+}

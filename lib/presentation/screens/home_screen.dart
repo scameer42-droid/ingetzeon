@@ -24,8 +24,11 @@ class HomeScreen extends ConsumerWidget {
     final name = ref.watch(settingsProvider.select((s) => s.name));
 
     // catatan parkir tanpa alarm sudah tampil di kartu parkir
-    final today = occurrencesOn(list, now).where((x) => !(x.reminder.category == ReminderCategory.parkir && !x.reminder.alarm)).toList();
-    final doneCount = today.where((x) => x.done).length;
+    final all = occurrencesOn(list, now).where((x) => !(x.reminder.category == ReminderCategory.parkir && !x.reminder.alarm)).toList();
+    final today = all.where((x) => !x.done).toList(); // yang selesai otomatis disembunyikan
+    final logToday = ref.read(remindersProvider.notifier).doneLogOn(now);
+    final totalCount = all.length + logToday;
+    final doneCount = all.length - today.length + logToday;
     final next = nextUpcoming(list, now);
     final parking = activeParking(list, now);
     final upcoming = <Occurrence>[
@@ -88,7 +91,7 @@ class HomeScreen extends ConsumerWidget {
             _ParkingCard(parking: parking),
           ],
           SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
-          if (today.isNotEmpty) ...[
+          if (totalCount > 0) ...[
             SoftCard(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               radius: 18,
@@ -99,18 +102,21 @@ class HomeScreen extends ConsumerWidget {
                     child: Stack(children: [
                       Container(height: 8, color: context.card2),
                       FractionallySizedBox(
-                        widthFactor: doneCount / today.length,
+                        widthFactor: doneCount / totalCount,
                         child: Container(height: 8, decoration: const BoxDecoration(gradient: AppColors.gradient)),
                       ),
                     ]),
                   ),
                 ),
                 const SizedBox(width: 14),
-                Text('$doneCount/${today.length} selesai', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                Text('$doneCount/$totalCount selesai', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
               ]),
             ),
             const SizedBox(height: 12),
-            ...today.map((x) => ReminderTile(x)),
+            if (today.isEmpty)
+              const EmptyState(title: 'Semua selesai 🎉', subtitle: 'Kerja bagus! Tidak ada lagi pengingat hari ini.', icon: Icons.task_alt_rounded)
+            else
+              ...today.map((x) => ReminderTile(x)),
           ] else
             EmptyState(
               title: 'Hari ini kosong',
@@ -283,10 +289,7 @@ class _ParkingCard extends ConsumerWidget {
         ),
         const SizedBox(width: 6),
         TextButton(
-          onPressed: () async {
-            await ref.read(remindersProvider.notifier).setDone(parking, parking.scheduledAt, true);
-            if (context.mounted) showToast(context, 'Sip, kendaraan sudah diambil 🚗');
-          },
+          onPressed: () => completeWithUndo(ScaffoldMessenger.of(context), ref, parking, parking.scheduledAt),
           style: TextButton.styleFrom(foregroundColor: c, visualDensity: VisualDensity.compact),
           child: const Text('Sudah\ndiambil', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
         ),

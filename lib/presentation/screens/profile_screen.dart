@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/ai_service.dart';
 import '../../services/notification_service.dart';
 import '../widgets/common.dart';
 
@@ -107,18 +108,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: Icons.key_rounded,
               color: AppColors.primary,
               title: 'Kunci API Gemini',
-              subtitle: s.hasAi ? 'Terpasang · model ${s.model}' : 'Belum diisi — asisten pakai mode offline',
+              subtitle: s.hasAi
+                  ? 'Terpasang · ${AiService.isVertexKey(s.apiKey) ? 'Vertex AI' : 'Google AI Studio'}${AiService.workingModel != null ? ' · ${AiService.workingModel}' : ''}'
+                  : 'Belum diisi — asisten pakai mode offline',
               onTap: () async {
                 final v = await inputDialog(
                   context,
                   title: 'Kunci API Gemini',
-                  message: 'Buat gratis di aistudio.google.com → Get API key. Kunci hanya disimpan di HP ini. Kosongkan untuk mode offline.',
+                  message: 'Bisa kunci Google AI Studio (AIza…) atau Vertex AI express (AQ.…). Kunci hanya disimpan di HP ini. Kosongkan untuk mode offline.',
                   initial: s.apiKey,
                   hint: 'AIza…',
                 );
                 if (v == null) return;
                 await notifier.setApiKey(v);
-                if (context.mounted) showToast(context, v.trim().isEmpty ? 'Mode offline aktif' : 'Kunci tersimpan. Asisten pakai Gemini.');
+                AiService.workingModel = null;
+                if (v.trim().isEmpty) {
+                  if (context.mounted) showToast(context, 'Mode offline aktif');
+                  return;
+                }
+                if (context.mounted) showToast(context, 'Mengecek kunci…');
+                try {
+                  final m = await ref.read(aiServiceProvider).testKey(v.trim(), ref.read(settingsProvider).model);
+                  if (context.mounted) {
+                    setState(() {});
+                    showToast(context, 'Kunci berfungsi ✓ ($m)');
+                  }
+                } on AiException catch (e) {
+                  if (context.mounted) showToast(context, e.friendly);
+                }
               },
             ),
             _Row(
@@ -127,7 +144,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: 'Model Gemini',
               subtitle: s.model,
               onTap: () async {
-                final v = await inputDialog(context, title: 'Model Gemini', message: 'Biarkan "gemini-flash-latest" kalau ragu.', initial: s.model);
+                final v = await inputDialog(context, title: 'Model Gemini', message: 'Biarkan "otomatis" kalau ragu — aplikasi memilih model yang tersedia.', initial: s.model == 'gemini-flash-latest' ? 'otomatis' : s.model);
                 if (v != null) notifier.setModel(v);
               },
             ),
@@ -241,6 +258,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     title: 'Hapus semua data?', message: 'Semua pengingat dan riwayat chat akan dihapus dan tidak bisa dikembalikan.', ok: 'Hapus', danger: true);
                 if (!ok) return;
                 await ref.read(remindersProvider.notifier).clearAll();
+                await ref.read(remindersProvider.notifier).clearLog();
                 await ref.read(chatProvider.notifier).clear();
                 if (context.mounted) showToast(context, 'Semua data dihapus');
               },

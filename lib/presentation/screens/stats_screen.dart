@@ -23,6 +23,8 @@ class StatsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(remindersProvider);
+    final notifier = ref.read(remindersProvider.notifier);
+    final log = notifier.doneLog;
     final today = dateOnly(DateTime.now());
 
     final days = <_DayStat>[
@@ -30,7 +32,8 @@ class StatsScreen extends ConsumerWidget {
         () {
           final d = addDays(today, -i);
           final its = occurrencesOn(list, d);
-          return _DayStat(d, its.length, its.where((x) => x.done).length);
+          final lg = notifier.doneLogOn(d);
+          return _DayStat(d, its.length + lg, its.where((x) => x.done).length + lg);
         }(),
     ];
     final total = days.fold<int>(0, (a, b) => a + b.total);
@@ -42,7 +45,7 @@ class StatsScreen extends ConsumerWidget {
     var streak = 0;
     for (var i = 0; i < 365; i++) {
       final its = occurrencesOn(list, addDays(today, -i));
-      if (its.isEmpty) continue;
+      if (its.isEmpty && notifier.doneLogOn(addDays(today, -i)) == 0) continue;
       if (its.every((x) => x.done)) {
         streak++;
       } else if (i == 0) {
@@ -52,7 +55,9 @@ class StatsScreen extends ConsumerWidget {
       }
     }
 
-    final counts = {for (final c in ReminderCategory.values) c: list.where((r) => r.category == c).length};
+    final counts = {
+      for (final c in ReminderCategory.values) c: list.where((r) => r.category == c).length + log.where((x) => x['c'] == c.name).length,
+    };
     final maxCount = math.max(1, counts.values.fold<int>(0, math.max));
     final maxY = math.max(4, days.map((d) => d.total).fold<int>(0, math.max)).toDouble();
 

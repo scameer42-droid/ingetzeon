@@ -9,6 +9,7 @@ import '../../data/models/reminder.dart';
 import '../../providers/reminder_provider.dart';
 import '../../services/notification_service.dart';
 import '../widgets/photo_view.dart';
+import '../widgets/reminder_tile.dart';
 
 /// Layar alarm penuh: muncul saat alarm berbunyi / notifikasi diketuk.
 /// Bunyi berhenti setelah memilih Selesai, Tunda, atau Matikan.
@@ -110,12 +111,14 @@ class _AlarmScreenState extends ConsumerState<AlarmScreen> with SingleTickerProv
                       ),
                       icon: const Icon(Icons.check_rounded),
                       label: Text(isTest ? 'Matikan' : 'Selesai', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-                      onPressed: () => _close(() async {
-                        if (isTest) return NotificationService.instance.stopTest();
-                        if (r == null) return;
-                        await NotificationService.instance.stopSnooze(r);
-                        await notifier.setDone(r, now, true);
-                      }),
+                      onPressed: () {
+                        final messenger = ScaffoldMessenger.of(context);
+                        _close(() async {
+                          if (isTest) return NotificationService.instance.stopTest();
+                          if (r == null) return;
+                          await completeWithUndo(messenger, ref, r, now);
+                        });
+                      },
                     ),
                   ),
                   if (!isTest) ...[

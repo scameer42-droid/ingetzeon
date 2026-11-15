@@ -16,11 +16,15 @@ class AiException implements Exception {
   String get friendly {
     if (status == -1) return 'Gemini terlalu lama merespons';
     if (status == -2) return 'Tidak ada koneksi internet';
-    if (status == 400 && message.toLowerCase().contains('api key')) return 'Kunci API Gemini tidak valid';
-    if (status == 403) return 'Kunci API ditolak (cek izin kunci)';
-    if (status == 404) return 'Model Gemini tidak ditemukan';
-    if (status == 429) return 'Kuota Gemini habis untuk sementara';
-    return 'Gemini tidak bisa dihubungi';
+    final m = message.toLowerCase();
+    final detail = message.isEmpty ? '' : ' (${message.length > 140 ? message.substring(0, 140) : message})';
+    if ((status == 400 || status == 401) && (m.contains('api key') || m.contains('credential') || m.contains('auth'))) {
+      return 'Kunci API Gemini tidak valid$detail';
+    }
+    if (status == 401 || status == 403) return 'Kunci API ditolak — pastikan Vertex AI API / Gemini API aktif untuk kunci ini$detail';
+    if (status == 404) return 'Model Gemini tidak tersedia untuk kunci ini$detail';
+    if (status == 429) return 'Kuota Gemini habis untuk sementara, coba lagi sebentar lagi';
+    return 'Gemini tidak bisa dihubungi$detail';
   }
 
   @override
@@ -52,7 +56,24 @@ class AiService {
   AiService({http.Client? client}) : _client = client ?? http.Client();
   final http.Client _client;
 
-  static const _base = 'https://generativelanguage.googleapis.com/v1beta/models';
+  /// Kunci "AQ." = Vertex AI express mode; kunci "AIza" = Google AI Studio.
+  static bool isVertexKey(String key) => key.trim().startsWith('AQ.');
+
+  /// Model yang terakhir berhasil dipakai.
+  static String? workingModel;
+
+  static List<String> _candidates(String apiKey, String userModel) {
+    final vertex = isVertexKey(apiKey);
+    final auto = userModel.trim().isEmpty || userModel == 'gemini-flash-latest' || userModel == 'otomatis';
+    final defaults = vertex
+        ? ['gemini-3.5-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-3.1-flash-lite-preview']
+        : ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+    return {if (workingModel != null) workingModel!, if (!auto) userModel.trim(), ...defaults}.toList();
+  }
+
+  static Uri _endpoint(String apiKey, String model) => isVertexKey(apiKey)
+      ? Uri.parse('https://aiplatform.googleapis.com/v1/publishers/google/models/${Uri.encodeComponent(model)}:generateContent')
+      : Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/${Uri.encodeComponent(model)}:generateContent');
 
   /// Prompt dari pengguna, dengan waktu sekarang diisi otomatis.
   static String reminderPrompt(DateTime now) {
@@ -94,7 +115,34 @@ Contoh Output:
   }) async =>
       (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json)).text;
 
+  /// Mencoba beberapa model sampai ada yang tersedia untuk kunci ini.
   Future<AiReply> _generateFull({
+    required String apiKey,
+    required String model,
+    required String system,
+    required List<Map<String, dynamic>> contents,
+    bool json = false,
+    bool search = false,
+  }) async {
+    AiException? last;
+    for (final m in _candidates(apiKey, model)) {
+      try {
+        final r = await _generateOnce(apiKey: apiKey, model: m, system: system, contents: contents, json: json, search: search);
+        workingModel = m;
+        return r;
+      } on AiException catch (e) {
+        last = e;
+        final msg = e.message.toLowerCase();
+        if (e.status == 404 || (e.status == 400 && (msg.contains('model') || msg.contains('not found') || msg.contains('not supported')))) {
+          continue;
+        }
+        rethrow;
+      }
+    }
+    throw last ?? AiException(404, 'model tidak tersedia');
+  }
+
+  Future<AiReply> _generateOnce({
     required String apiKey,
     required String model,
     required String system,
@@ -112,18 +160,18 @@ Contoh Output:
       if (json) 'generationConfig': {'responseMimeType': 'application/json'},
       if (search)
         'tools': [
-          {'google_search': <String, dynamic>{}}
+          {'googleSearch': <String, dynamic>{}}
         ],
     };
     final http.Response res;
     try {
       res = await _client
           .post(
-            Uri.parse('$_base/${Uri.encodeComponent(model)}:generateContent'),
-            headers: {'Content-Type': 'application/json', 'x-goog-api-key': apiKey},
+            _endpoint(apiKey, model),
+            headers: {'Content-Type': 'application/json', 'x-goog-api-key': apiKey.trim()},
             body: jsonEncode(body),
           )
-          .timeout(const Duration(seconds: 25));
+          .timeout(const Duration(seconds: 30));
     } on TimeoutException {
       throw AiException(-1, 'timeout');
     } catch (e) {
@@ -205,6 +253,24 @@ Contoh Output:
     );
   }
 
+  /// Cek cepat apakah kunci berfungsi. Mengembalikan nama model yang dipakai.
+  Future<String> testKey(String apiKey, String model) async {
+    await _generate(
+      apiKey: apiKey,
+      model: model,
+      system: 'Jawab satu kata saja.',
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {'text': 'Tes. Balas: oke'}
+          ]
+        }
+      ],
+    );
+    return workingModel ?? model;
+  }
+
   /// Ngobrol bebas dengan Gemini (dengan Google Search untuk info terbaru).
   Future<AiReply> chat({
     required String text,
@@ -236,7 +302,7 @@ Contoh Output:
       return await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, search: true);
     } on AiException catch (e) {
       // model yang tidak mendukung Google Search → coba tanpa
-      if (e.status == 400) return _generateFull(apiKey: apiKey, model: model, system: system, contents: contents);
+      if (e.status == 400 || e.status == 403) return _generateFull(apiKey: apiKey, model: model, system: system, contents: contents);
       rethrow;
     }
   }
