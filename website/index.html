@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
 <title>IngetZeon</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -384,6 +384,112 @@ textarea.input{height:84px;padding:14px 16px;resize:none}
 @media (min-width:520px){
   body{background:radial-gradient(1200px 600px at 50% -10%,var(--primary-soft),var(--bg))}
 }
+/* =========== TAMPILAN ESTETIK (pastel glass) =========== */
+:root{
+  --bg:#F5F3FF;
+  --glass:rgba(255,255,255,.66);
+  --glass-strong:rgba(255,255,255,.82);
+  --glass-line:rgba(255,255,255,.9);
+  --card:var(--glass-strong);
+  --card-2:rgba(240,237,255,.75);
+  --line:rgba(108,99,255,.12);
+  --grad:linear-gradient(135deg,#7B6CFF 0%,#A47BFF 38%,#FF7AA2 72%,#FFB38A 100%);
+  --shadow:0 1px 1px rgba(60,40,140,.03),0 12px 32px -18px rgba(92,70,200,.35);
+  --shadow-lg:0 20px 44px -20px rgba(120,80,230,.6);
+  --r:22px;
+}
+[data-theme="dark"]{
+  --bg:#110E22;
+  --glass:rgba(34,29,66,.55);
+  --glass-strong:rgba(36,31,70,.72);
+  --glass-line:rgba(255,255,255,.07);
+  --card:var(--glass-strong);
+  --card-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.08);
+}
+body{background:var(--bg)}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 30% at 12% 8%,rgba(184,170,255,.75),transparent 70%),
+    radial-gradient(34% 28% at 92% 14%,rgba(255,182,206,.7),transparent 70%),
+    radial-gradient(40% 32% at 85% 78%,rgba(255,214,186,.55),transparent 70%),
+    radial-gradient(36% 30% at 8% 88%,rgba(186,240,226,.55),transparent 70%);
+  filter:blur(10px);animation:drift 24s ease-in-out infinite alternate}
+[data-theme="dark"] body::before{opacity:.28}
+@keyframes drift{to{transform:translate3d(-2%,2%,0) scale(1.05)}}
+@media (min-width:520px){body{background:var(--bg)}}
+
+/* kaca */
+.item,.ask,.progress-mini,.empty-state,.cal,.stat,.card,.group,.quick button,.park,.icon-btn,.msg.bot,.suggest button{
+  background:var(--glass)!important;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid var(--glass-line);box-shadow:var(--shadow)}
+.item{border-radius:20px}
+.item .cat,.park .ph:not(img){background-image:linear-gradient(145deg,rgba(255,255,255,.55),rgba(255,255,255,0))}
+
+/* tipografi */
+.top h1{font-size:24px;letter-spacing:-.5px}
+.greet h1{font-size:26px;font-weight:600;letter-spacing:-.6px;line-height:1.15}
+.greet h1 span{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:31px;letter-spacing:-.3px;padding-right:4px}
+.eyebrow{letter-spacing:.2px}
+.section-h h2{font-size:16px;letter-spacing:-.2px}
+.section-h h2::before{content:"";display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--grad);margin-right:8px;vertical-align:2px}
+
+/* hero mesh */
+.hero{border-radius:28px;background:
+  radial-gradient(60% 80% at 100% 0%,rgba(255,179,138,.95),transparent 60%),
+  radial-gradient(70% 90% at 0% 100%,rgba(123,108,255,1),transparent 65%),
+  linear-gradient(135deg,#8B72FF,#FF7AA2);
+  box-shadow:0 24px 50px -24px rgba(140,90,240,.75),inset 0 1px 0 rgba(255,255,255,.35)}
+.hero::before{background:rgba(255,255,255,.16);filter:blur(2px)}
+.hero::after{background:rgba(255,255,255,.10)}
+.hero h3{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:25px;letter-spacing:-.2px}
+.hero-label{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35)}
+.hero .count b{border-radius:14px;box-shadow:0 6px 16px -8px rgba(60,30,120,.5)}
+.hero .done-btn{border-radius:14px;backdrop-filter:blur(6px);background:rgba(255,255,255,.12)}
+.avatar{border-radius:18px;box-shadow:0 10px 24px -10px rgba(140,90,240,.8),inset 0 1px 0 rgba(255,255,255,.4)}
+
+/* nav melayang */
+.nav{bottom:calc(12px + var(--safe-b))}
+.nav-in{width:calc(100% - 28px);border-radius:28px;height:var(--nav-h);padding-bottom:0;
+  background:var(--glass-strong);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);
+  border:1px solid var(--glass-line);box-shadow:0 18px 40px -18px rgba(80,60,180,.45)}
+.fab{box-shadow:0 16px 30px -12px rgba(140,90,240,.85),0 0 0 6px rgba(255,255,255,.55);transform:translateY(-22px)}
+[data-theme="dark"] .fab{box-shadow:0 16px 30px -12px rgba(140,90,240,.85),0 0 0 6px rgba(17,14,34,.8)}
+.fab:active{transform:translateY(-22px) scale(.93)}
+.nav-b.active{color:var(--primary)}
+.screen{padding-bottom:calc(var(--nav-h) + 60px + var(--safe-b))}
+.toast{bottom:calc(var(--nav-h) + 40px + var(--safe-b));border-radius:16px}
+
+/* tombol & input */
+.btn{border-radius:18px}
+.btn-primary{background:var(--grad);box-shadow:0 14px 28px -14px rgba(140,90,240,.8),inset 0 1px 0 rgba(255,255,255,.3)}
+.input{background:var(--glass-strong);border-color:var(--line);border-radius:18px}
+.chip{border-radius:14px;background:var(--glass-strong);border-color:var(--line)}
+.check{border-radius:11px}
+.day.sel{background:var(--grad)}
+
+/* lembar & layar penuh */
+.sheet{background:var(--glass-strong);backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);border-top:1px solid var(--glass-line)}
+.full{background:transparent}
+.full::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--bg)}
+.full::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(45% 30% at 0% 0%,rgba(184,170,255,.55),transparent 70%),radial-gradient(40% 30% at 100% 20%,rgba(255,182,206,.45),transparent 70%)}
+[data-theme="dark"] .full::after{opacity:.3}
+.composer{background:var(--glass-strong);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid var(--glass-line)}
+.msg{border-radius:22px}
+.msg.bot{line-height:1.6}
+.msg.bot ul{margin:6px 0 2px 18px;padding:0}
+.msg.bot li{margin:2px 0}
+.msg.bot h4{font-size:14.5px;margin:6px 0 2px}
+.msg.bot a{color:var(--primary)}
+.msg .srcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;white-space:normal}
+.msg .srcs a{font-size:11.5px;padding:3px 9px;border-radius:99px;background:var(--card-2);text-decoration:none;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alarm-box{background:var(--glass-strong);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--glass-line);border-radius:32px}
+.profile-card{border-radius:28px;background:
+  radial-gradient(60% 80% at 100% 0%,rgba(255,179,138,.9),transparent 60%),
+  radial-gradient(70% 90% at 0% 100%,rgba(123,108,255,1),transparent 65%),
+  linear-gradient(135deg,#8B72FF,#FF7AA2)}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -600,7 +706,7 @@ textarea.input{height:84px;padding:14px 16px;resize:none}
     <div style="flex:1;min-width:0;display:flex;flex-direction:column">
       <div class="pending" id="pending"><img id="pendingImg" alt=""><span>Foto terlampir — tulis atau ucapkan keterangannya</span><button id="pendingRm" aria-label="Hapus foto"><svg class="i"><use href="#i-x"/></svg></button></div>
       <div class="listening" id="listening"><div class="wave"><i></i><i></i><i></i><i></i><i></i></div>Mendengarkan… bicara sekarang</div>
-      <textarea id="aiInput" rows="1" placeholder="Ketik atau tekan mic…"></textarea>
+      <textarea id="aiInput" rows="1" placeholder="Tanya apa saja…"></textarea>
     </div>
     <button class="cam-b" id="camBtn" aria-label="Foto"><svg class="i"><use href="#i-camera"/></svg></button>
     <button class="mic-b" id="micBtn" aria-label="Rekam suara"><svg class="i"><use href="#i-mic"/></svg></button>
@@ -1040,7 +1146,7 @@ function confirmDlg({title, text, ok='OK', danger=false, extra=''}){
 }
 
 function itemHTML({r, at, done}, opts = {}){
-  const late = !done && at < new Date() && sameDay(at, new Date());
+  const late = r.alarm!==false && !done && at < new Date() && sameDay(at, new Date());
   const showDay = opts.showDay;
   return `<div class="item ${done?'done':''} ${late?'late':''}" data-id="${r.id}" data-date="${dayKey(at)}">
     <div class="cat" style="${catStyle(r.category)}">${icon('c-'+r.category)}</div>
@@ -1973,16 +2079,20 @@ function chatPrompt(){
   const now = new Date();
   const today = itemsOn(now).map(x => `- ${fmtTime(x.at)} ${x.r.title}${x.done?' (selesai)':''}`).join('\n') || '(kosong)';
   const tmr = itemsOn(addDays(startOfDay(now),1)).map(x => `- ${fmtTime(x.at)} ${x.r.title}`).join('\n') || '(kosong)';
-  return `Kamu adalah "Asisten IngetZeon", asisten pengingat harian yang ramah, berbahasa Indonesia santai dan sopan.
-Jawab singkat (maksimal 3 kalimat), tanpa markdown tabel, karena jawabanmu juga akan dibacakan dengan suara.
+  return `Kamu adalah "Asisten IngetZeon", asisten pribadi yang ramah, cerdas, dan serba bisa, berbahasa Indonesia santai dan sopan.
+Kamu boleh menjawab pertanyaan APA SAJA: pengetahuan umum, berita & info terbaru (pakai Google Search bila perlu), resep, tips usaha & jualan online, hitung-hitungan, terjemahan, ide konten, kesehatan umum, dan lain-lain.
+Jawab langsung ke intinya. Untuk pertanyaan sederhana cukup 1–3 kalimat; untuk penjelasan/langkah boleh lebih panjang dengan poin-poin singkat. Jangan pakai tabel.
 Sekarang: ${fmtDateLong(now)} jam ${fmtTime(now)}. Nama pengguna: ${state.settings.name || 'tidak diketahui'}.
 Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}
 Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", contoh: "ingatkan besok jam 7 olahraga".`;
 }
-async function gemini(system, contents, json){
+let lastSources = [];
+async function gemini(system, contents, json, search = false){
   const model = state.settings.model || 'gemini-flash-latest';
   const body = {systemInstruction:{parts:[{text:system}]}, contents};
   if(json) body.generationConfig = {responseMimeType:'application/json'};
+  if(search) body.tools = [{google_search:{}}];
+  lastSources = [];
   const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 25000);
   try{
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
@@ -1995,6 +2105,8 @@ async function gemini(system, contents, json){
       const msg = data?.error?.message || res.statusText;
       const err = new Error(msg); err.status = res.status; throw err;
     }
+    const chunks = data?.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    lastSources = chunks.map(c => c.web).filter(w => w && w.uri).slice(0, 4);
     const parts = data?.candidates?.[0]?.content?.parts || [];
     return parts.filter(p => !p.thought).map(p => p.text || '').join('').trim();
   } finally { clearTimeout(to); }
@@ -2055,14 +2167,27 @@ $('#sendBtn').onclick = () => send();
 
 function greetBot(){
   const n = state.settings.name ? ' ' + state.settings.name : '';
-  pushBot(`Halo${n}! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. Kamu juga bisa tanya "jadwal hari ini apa?"`, null, false);
+  pushBot(`Halo${n}! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. Kamu juga bisa tanya apa saja — jadwal hari ini, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.`, null, false);
 }
 function pushMe(text, photo){ state.chat.push({role:'me', text, photo: photo || null, ts:Date.now()}); save(); renderChat(); }
 function pushBot(text, reminderId = null, voice = true){
   state.chat.push({role:'bot', text, rid: reminderId, ts:Date.now()}); save(); renderChat();
   if(voice) speak(text);
 }
-function mdLite(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'); }
+function mdLite(s){
+  const lines = esc(s).split('\n');
+  let html = '', inList = false;
+  for(let ln of lines){
+    const li = ln.match(/^\s*(?:[*\-•]|\d+[.)])\s+(.*)/);
+    const h = ln.match(/^\s*#{1,4}\s+(.*)/);
+    if(li){ if(!inList){ html += '<ul>'; inList = true; } html += `<li>${li[1]}</li>`; continue; }
+    if(inList){ html += '</ul>'; inList = false; }
+    if(h){ html += `<h4>${h[1]}</h4>`; continue; }
+    html += ln + '\n';
+  }
+  if(inList) html += '</ul>';
+  return html.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<i>$2</i>').replace(/\n+$/,'').replace(/<\/(ul|h4)>\n/g,'</$1>');
+}
 function renderChat(){
   const box = $('#msgs');
   box.innerHTML = state.chat.map((m,i) => {
@@ -2078,7 +2203,8 @@ function renderChat(){
           <button data-undo="${r.id}">Batalkan</button></div>`;
       } else card = `<div class="rcard undone"><div class="tx"><small>Pengingat ini sudah dihapus</small></div></div>`;
     }
-    return `<div class="msg bot">${mdLite(m.text)}${card}</div>`;
+    const srcs = (m.src||[]).length ? `<div class="srcs">${m.src.map(w=>`<a href="${esc(w.uri)}" target="_blank" rel="noopener">${esc(w.title||'sumber')}</a>`).join('')}</div>` : '';
+    return `<div class="msg bot">${mdLite(m.text)}${srcs}${card}</div>`;
   }).join('') + (thinking ? `<div class="msg bot typing"><i></i><i></i><i></i></div>` : '');
   $('#suggest').style.display = state.chat.filter(m=>m.role==='me').length ? 'none' : 'flex';
   requestAnimationFrame(() => box.scrollTop = box.scrollHeight);
@@ -2195,12 +2321,12 @@ function localAnswer(text){
   if(/ (terima kasih|makasih|thanks|thx|mksh) /.test(t)) return 'Sama-sama! Semoga harimu lancar 😊';
   if(/ (jam berapa|pukul berapa) /.test(t)) return `Sekarang jam ${fmtTime(new Date())}.`;
   if(/ (tanggal berapa|hari apa) /.test(t)) return `Hari ini ${fmtDateLong(new Date())}.`;
-  return 'Aku bisa membuat pengingat dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" atau "jadwal hari ini apa?"' + (state.settings.apiKey ? '' : '\n\nUntuk ngobrol lebih bebas, isi kunci API Gemini di menu Profil.');
+  return 'Aku bisa membuat pengingat, mencatat lokasi parkir, dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" atau "jadwal hari ini apa?"' + (state.settings.apiKey ? '' : '\n\nUntuk ngobrol lebih bebas, isi kunci API Gemini di menu Profil.');
 }
 async function handleChat(text){
   const t = text.toLowerCase();
   // pertanyaan jadwal dijawab langsung dari data (lebih akurat)
-  if(/jadwal|agenda|acara|kegiatan|terdekat|berikutnya/.test(t) || !state.settings.apiKey){
+  if(/\bjadwal(ku| saya| aku| hari ini| besok| lusa| terdekat| berikutnya)\b|^jadwal\??$|\bagenda(ku| saya| hari ini| besok)\b|pengingat(ku| saya)|jadwal apa/.test(t) || !state.settings.apiKey){
     const a = localAnswer(text);
     state.chat.push({role:'bot', text:a, ts:Date.now()}); save(); renderChat();
     speak(a.replace(/•/g,'').replace(/\n/g,'. ').replace(/(\d{2})\.(\d{2})/g, (s,h,m)=> m==='00' ? `jam ${+h}` : `jam ${+h} lewat ${+m}`).replace(/jam jam/g,'jam').replace(/—/g,','));
@@ -2211,8 +2337,14 @@ async function handleChat(text){
     const contents = [...hist, {role:'user', parts:[{text}]}];
     // Gemini mewajibkan giliran pertama dari user
     while(contents.length && contents[0].role!=='user') contents.shift();
-    const out = await gemini(chatPrompt(), contents, false);
-    pushBot(out || 'Hmm, aku belum punya jawaban untuk itu.');
+    let out;
+    try{ out = await gemini(chatPrompt(), contents, false, true); }
+    catch(e){ if(e.status===400) out = await gemini(chatPrompt(), contents, false, false); else throw e; } // model tanpa Google Search
+    const reply = out || 'Hmm, aku belum punya jawaban untuk itu.';
+    state.chat.push({role:'bot', text: reply, src: lastSources, ts:Date.now()}); save(); renderChat();
+    // bacakan bagian awal saja agar tidak terlalu panjang
+    const plain = reply.replace(/[#*_`>-]/g,'').replace(/\n+/g,'. ');
+    speak(plain.length > 320 ? plain.slice(0, plain.lastIndexOf('.', 320) + 1 || 320) : plain);
   }catch(e){
     console.warn(e);
     pushBot(`${geminiErrorText(e)}. ` + localAnswer(text));

@@ -34,6 +34,19 @@ class AiTurn {
   final String text;
 }
 
+/// Jawaban Gemini beserta sumber (Google Search).
+class AiReply {
+  const AiReply(this.text, [this.sources = const []]);
+  final String text;
+  final List<AiSource> sources;
+}
+
+class AiSource {
+  const AiSource(this.title, this.uri);
+  final String title;
+  final String uri;
+}
+
 /// Menghubungi Google Gemini lewat REST API (tanpa Firebase).
 class AiService {
   AiService({http.Client? client}) : _client = client ?? http.Client();
@@ -78,6 +91,16 @@ Contoh Output:
     required String system,
     required List<Map<String, dynamic>> contents,
     bool json = false,
+  }) async =>
+      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json)).text;
+
+  Future<AiReply> _generateFull({
+    required String apiKey,
+    required String model,
+    required String system,
+    required List<Map<String, dynamic>> contents,
+    bool json = false,
+    bool search = false,
   }) async {
     final body = <String, dynamic>{
       'systemInstruction': {
@@ -87,6 +110,10 @@ Contoh Output:
       },
       'contents': contents,
       if (json) 'generationConfig': {'responseMimeType': 'application/json'},
+      if (search)
+        'tools': [
+          {'google_search': <String, dynamic>{}}
+        ],
     };
     final http.Response res;
     try {
@@ -114,16 +141,24 @@ Contoh Output:
       throw AiException(res.statusCode, msg);
     }
     final candidates = data is Map ? data['candidates'] : null;
-    if (candidates is! List || candidates.isEmpty) return '';
-    final content = candidates.first is Map ? candidates.first['content'] : null;
+    if (candidates is! List || candidates.isEmpty) return const AiReply('');
+    final first = candidates.first is Map ? candidates.first as Map : const {};
+    final content = first['content'];
     final parts = content is Map ? content['parts'] : null;
-    if (parts is! List) return '';
-    return parts
-        .whereType<Map>()
-        .where((p) => p['thought'] != true)
-        .map((p) => (p['text'] ?? '').toString())
-        .join()
-        .trim();
+    final text = parts is! List
+        ? ''
+        : parts.whereType<Map>().where((p) => p['thought'] != true).map((p) => (p['text'] ?? '').toString()).join().trim();
+    final sources = <AiSource>[];
+    final gm = first['groundingMetadata'];
+    final chunks = gm is Map ? gm['groundingChunks'] : null;
+    if (chunks is List) {
+      for (final c in chunks.whereType<Map>()) {
+        final web = c['web'];
+        if (web is Map && web['uri'] != null) sources.add(AiSource((web['title'] ?? 'sumber').toString(), web['uri'].toString()));
+        if (sources.length >= 4) break;
+      }
+    }
+    return AiReply(text, sources);
   }
 
   /// Mengubah kalimat menjadi pengingat dengan Gemini. Melempar [AiException] bila gagal.
@@ -170,8 +205,8 @@ Contoh Output:
     );
   }
 
-  /// Ngobrol bebas dengan Gemini.
-  Future<String> chat({
+  /// Ngobrol bebas dengan Gemini (dengan Google Search untuk info terbaru).
+  Future<AiReply> chat({
     required String text,
     required List<AiTurn> history,
     required String system,
@@ -197,6 +232,12 @@ Contoh Output:
     while (contents.isNotEmpty && contents.first['role'] != 'user') {
       contents.removeAt(0);
     }
-    return _generate(apiKey: apiKey, model: model, system: system, contents: contents);
+    try {
+      return await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, search: true);
+    } on AiException catch (e) {
+      // model yang tidak mendukung Google Search → coba tanpa
+      if (e.status == 400) return _generateFull(apiKey: apiKey, model: model, system: system, contents: contents);
+      rethrow;
+    }
   }
 }

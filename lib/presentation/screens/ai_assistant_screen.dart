@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_utils.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/ai_service.dart';
 import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
@@ -140,6 +142,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     final userSent = chat.messages.any((m) => m.fromUser);
 
     return Scaffold(
+      backgroundColor: context.bg,
       appBar: AppBar(
         toolbarHeight: 68,
         leading: Padding(
@@ -179,7 +182,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
+      body: AestheticBackground(
+        child: Column(
         children: [
           Expanded(
             child: ListView.builder(
@@ -212,8 +216,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             ),
           Container(
             decoration: BoxDecoration(
-              color: context.card,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              color: context.isDark ? const Color(0xFF241F46).withValues(alpha: .94) : Colors.white.withValues(alpha: .9),
+              border: Border(top: BorderSide(color: context.glassLine)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
               boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .15), blurRadius: 30, offset: const Offset(0, -10), spreadRadius: -20)],
             ),
             padding: EdgeInsets.fromLTRB(14, 10, 14, 12 + MediaQuery.of(context).padding.bottom),
@@ -256,7 +261,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _send(),
                         decoration: InputDecoration(
-                          hintText: 'Ketik atau tekan mic…',
+                          hintText: 'Tanya apa saja…',
                           prefixIcon: IconButton(
                             tooltip: 'Foto',
                             icon: const Icon(Icons.photo_camera_rounded, color: AppColors.primary),
@@ -285,6 +290,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -336,7 +342,8 @@ class _Bubble extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
         decoration: BoxDecoration(
           gradient: me ? AppColors.gradient : null,
-          color: me ? null : context.card,
+          color: me ? null : context.glass,
+          border: me ? null : Border.all(color: context.glassLine),
           boxShadow: me ? null : context.softShadow,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
@@ -356,6 +363,7 @@ class _Bubble extends ConsumerWidget {
             me
                 ? Text(message.text, style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.5))
                 : _RichText(message.text),
+            if (!me && message.sources.isNotEmpty) _Sources(message.sources),
             if (message.reminderId != null) ...[
               const SizedBox(height: 10),
               if (reminder != null && reminderExists)
@@ -405,23 +413,87 @@ class _Bubble extends ConsumerWidget {
   }
 }
 
-/// Teks dengan **tebal** sederhana.
+/// Markdown sederhana: **tebal**, *miring*, poin (-, *, 1.), dan judul (#).
 class _RichText extends StatelessWidget {
   const _RichText(this.text);
   final String text;
 
-  @override
-  Widget build(BuildContext context) {
-    final spans = <TextSpan>[];
-    final re = RegExp(r'\*\*(.+?)\*\*');
+  List<InlineSpan> _inline(String t, Color ink) {
+    final spans = <InlineSpan>[];
+    final re = RegExp(r'\*\*(.+?)\*\*|\*([^*\n]+)\*');
     var last = 0;
-    for (final m in re.allMatches(text)) {
-      if (m.start > last) spans.add(TextSpan(text: text.substring(last, m.start)));
-      spans.add(TextSpan(text: m.group(1), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary)));
+    for (final m in re.allMatches(t)) {
+      if (m.start > last) spans.add(TextSpan(text: t.substring(last, m.start)));
+      if (m.group(1) != null) {
+        spans.add(TextSpan(text: m.group(1), style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary)));
+      } else {
+        spans.add(TextSpan(text: m.group(2), style: const TextStyle(fontStyle: FontStyle.italic)));
+      }
       last = m.end;
     }
-    if (last < text.length) spans.add(TextSpan(text: text.substring(last)));
-    return Text.rich(TextSpan(style: TextStyle(fontSize: 14.5, height: 1.5, color: context.ink), children: spans));
+    if (last < t.length) spans.add(TextSpan(text: t.substring(last)));
+    return spans;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = context.ink;
+    final base = TextStyle(fontSize: 14.5, height: 1.55, color: ink);
+    final children = <Widget>[];
+    for (final raw in text.trimRight().split('\n')) {
+      final bullet = RegExp(r'^\s*(?:[*\-•]|\d+[.)])\s+(.*)').firstMatch(raw);
+      final heading = RegExp(r'^\s*#{1,4}\s+(.*)').firstMatch(raw);
+      if (bullet != null) {
+        children.add(Padding(
+          padding: const EdgeInsets.only(left: 4, top: 2),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('•  ', style: base.copyWith(color: AppColors.primary, fontWeight: FontWeight.w700)),
+            Expanded(child: Text.rich(TextSpan(style: base, children: _inline(bullet.group(1)!, ink)))),
+          ]),
+        ));
+      } else if (heading != null) {
+        children.add(Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(heading.group(1)!.replaceAll('**', ''), style: base.copyWith(fontWeight: FontWeight.w700)),
+        ));
+      } else if (raw.trim().isEmpty) {
+        children.add(const SizedBox(height: 6));
+      } else {
+        children.add(Text.rich(TextSpan(style: base, children: _inline(raw, ink))));
+      }
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: children);
+  }
+}
+
+class _Sources extends StatelessWidget {
+  const _Sources(this.sources);
+  final List<AiSource> sources;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Wrap(spacing: 6, runSpacing: 6, children: [
+        for (final s in sources)
+          InkWell(
+            borderRadius: BorderRadius.circular(99),
+            onTap: () => launchUrl(Uri.parse(s.uri), mode: LaunchMode.externalApplication),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 190),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(99)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.link_rounded, size: 13, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(s.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11.5, color: AppColors.primary)),
+                ),
+              ]),
+            ),
+          ),
+      ]),
+    );
   }
 }
 

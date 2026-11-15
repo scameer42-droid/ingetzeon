@@ -9,18 +9,28 @@ import 'reminder_provider.dart';
 import 'settings_provider.dart';
 
 class ChatMessage {
-  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath});
+  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath, this.sources = const []});
   final bool fromUser;
   final String text;
   final String? reminderId;
   final String? photoPath;
+  final List<AiSource> sources;
 
-  Map<String, dynamic> toMap() => {'u': fromUser, 't': text, 'r': reminderId, 'p': photoPath};
+  Map<String, dynamic> toMap() => {
+        'u': fromUser,
+        't': text,
+        'r': reminderId,
+        'p': photoPath,
+        's': [for (final x in sources) {'t': x.title, 'u': x.uri}],
+      };
   factory ChatMessage.fromMap(Map m) => ChatMessage(
         fromUser: m['u'] == true,
         text: (m['t'] ?? '').toString(),
         reminderId: m['r']?.toString(),
         photoPath: m['p']?.toString(),
+        sources: [
+          for (final x in (m['s'] as List? ?? const []).whereType<Map>()) AiSource((x['t'] ?? '').toString(), (x['u'] ?? '').toString()),
+        ],
       );
 }
 
@@ -54,9 +64,17 @@ class ChatNotifier extends Notifier<ChatState> {
     ref.read(settingsRepositoryProvider).set('chat', state.messages.map((e) => e.toMap()).toList());
   }
 
-  void _bot(String text, {String? reminderId, String? speech}) {
-    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId));
-    if (_settings.voice) VoiceService.instance.speak(speech ?? text);
+  void _bot(String text, {String? reminderId, String? speech, List<AiSource> sources = const []}) {
+    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId, sources: sources));
+    if (_settings.voice) {
+      // bacakan bagian awal saja agar tidak terlalu panjang
+      var plain = (speech ?? text).replaceAll(RegExp(r'[#*_`>]'), '').replaceAll(RegExp(r'\n+'), '. ');
+      if (plain.length > 320) {
+        final cut = plain.lastIndexOf('.', 320);
+        plain = plain.substring(0, cut > 40 ? cut + 1 : 320);
+      }
+      VoiceService.instance.speak(plain);
+    }
   }
 
   void greet() {
@@ -65,7 +83,7 @@ class ChatNotifier extends Notifier<ChatState> {
     _push(ChatMessage(
       fromUser: false,
       text: 'Halo$n! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. '
-          'Kamu juga bisa tanya "jadwal hari ini apa?"',
+          'Kamu juga bisa tanya apa saja — jadwal hari ini, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.',
     ));
   }
 
@@ -191,7 +209,7 @@ class ChatNotifier extends Notifier<ChatState> {
     if (RegExp(r' (terima kasih|makasih|thanks|thx|mksh) ').hasMatch(t)) return 'Sama-sama! Semoga harimu lancar 😊';
     if (RegExp(r' (jam berapa|pukul berapa) ').hasMatch(t)) return 'Sekarang jam ${fmtTime(now)}.';
     if (RegExp(r' (tanggal berapa|hari apa) ').hasMatch(t)) return 'Hari ini ${fmtDateLong(now)}.';
-    return 'Aku bisa membuat pengingat dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" '
+    return 'Aku bisa membuat pengingat, mencatat lokasi parkir, dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" '
         'atau "jadwal hari ini apa?"${_settings.hasAi ? '' : '\n\nUntuk ngobrol lebih bebas, isi kunci API Gemini di menu Profil.'}';
   }
 
@@ -204,8 +222,10 @@ class ChatNotifier extends Notifier<ChatState> {
     final now = DateTime.now();
     String fmt(List<Occurrence> l) =>
         l.isEmpty ? '(kosong)' : l.map((x) => '- ${fmtTime(x.at)} ${x.reminder.title}${x.done ? ' (selesai)' : ''}').join('\n');
-    return 'Kamu adalah "Asisten IngetZeon", asisten pengingat harian yang ramah, berbahasa Indonesia santai dan sopan.\n'
-        'Jawab singkat (maksimal 3 kalimat), tanpa tabel, karena jawabanmu juga dibacakan dengan suara.\n'
+    return 'Kamu adalah "Asisten IngetZeon", asisten pribadi yang ramah, cerdas, dan serba bisa, berbahasa Indonesia santai dan sopan.\n'
+        'Kamu boleh menjawab pertanyaan APA SAJA: pengetahuan umum, berita & info terbaru (pakai Google Search bila perlu), resep, '
+        'tips usaha & jualan online, hitung-hitungan, terjemahan, ide konten, kesehatan umum, dan lain-lain.\n'
+        'Jawab langsung ke intinya. Pertanyaan sederhana cukup 1–3 kalimat; penjelasan/langkah boleh lebih panjang dengan poin-poin singkat. Jangan pakai tabel.\n'
         'Sekarang: ${fmtDateLong(now)} jam ${fmtTime(now)}. Nama pengguna: ${_settings.name.isEmpty ? 'tidak diketahui' : _settings.name}.\n'
         'Jadwal hari ini:\n${fmt(occurrencesOn(list, now))}\n'
         'Jadwal besok:\n${fmt(occurrencesOn(list, addDays(dateOnly(now), 1)))}\n'
@@ -216,7 +236,10 @@ class ChatNotifier extends Notifier<ChatState> {
   Future<void> _handleChat(String text) async {
     final s = _settings;
     final lower = text.toLowerCase();
-    if (!s.hasAi || RegExp(r'jadwal|agenda|acara|kegiatan|terdekat|berikutnya').hasMatch(lower)) {
+    final ownSchedule = RegExp(
+            r'\bjadwal(ku| saya| aku| hari ini| besok| lusa| terdekat| berikutnya)\b|^jadwal\??$|\bagenda(ku| saya| hari ini| besok)\b|pengingat(ku| saya)|jadwal apa')
+        .hasMatch(lower);
+    if (!s.hasAi || ownSchedule) {
       final a = _localAnswer(text);
       _bot(a, speech: _speechOf(a));
       return;
@@ -232,7 +255,7 @@ class ChatNotifier extends Notifier<ChatState> {
             apiKey: s.apiKey,
             model: s.model,
           );
-      _bot(out.isEmpty ? 'Hmm, aku belum punya jawaban untuk itu.' : out);
+      _bot(out.text.isEmpty ? 'Hmm, aku belum punya jawaban untuk itu.' : out.text, sources: out.sources);
     } on AiException catch (e) {
       final a = '${e.friendly}. ${_localAnswer(text)}';
       _bot(a, speech: _speechOf(a));

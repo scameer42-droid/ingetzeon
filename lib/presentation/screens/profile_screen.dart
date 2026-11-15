@@ -51,9 +51,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Text('Pengaturan', style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
           const Text('Profil', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
           const SizedBox(height: 18),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(24), boxShadow: context.glowShadow),
+          MeshCard(
             child: Row(children: [
               Container(
                 width: 60,
@@ -66,8 +64,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name, style: accentFont(size: 22, color: Colors.white)),
                   Text('$count pengingat tersimpan', style: TextStyle(color: Colors.white.withValues(alpha: .9), fontSize: 13)),
                 ]),
               ),

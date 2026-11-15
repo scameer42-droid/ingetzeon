@@ -13,6 +13,7 @@ import 'calendar_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
+import '../widgets/common.dart';
 
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
@@ -72,29 +73,32 @@ class _MainShellState extends ConsumerState<MainShell> {
 
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(index: _index, children: screens),
+      backgroundColor: Colors.transparent,
+      body: AestheticBackground(child: IndexedStack(index: _index, children: screens)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _GradientFab(onTap: _openAi),
-      bottomNavigationBar: BottomAppBar(
-        height: 72,
-        color: context.card,
-        surfaceTintColor: Colors.transparent,
-        elevation: 12,
-        shadowColor: AppColors.primary.withValues(alpha: .3),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        shape: const AutomaticNotchedShape(
-          RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
-          RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24))),
-        ),
-        notchMargin: 7,
-        child: Row(
-          children: [
-            _NavItem(icon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => setState(() => _index = 0)),
-            _NavItem(icon: Icons.calendar_month_rounded, label: 'Kalender', active: _index == 1, onTap: () => setState(() => _index = 1)),
-            const SizedBox(width: 76),
-            _NavItem(icon: Icons.insert_chart_rounded, label: 'Statistik', active: _index == 2, onTap: () => setState(() => _index = 2)),
-            _NavItem(icon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => setState(() => _index = 3)),
-          ],
+      floatingActionButton: Padding(padding: const EdgeInsets.only(top: 18), child: _GradientFab(onTap: _openAi)),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(
+              color: context.isDark ? const Color(0xFF241F46).withValues(alpha: .92) : Colors.white.withValues(alpha: .9),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: context.glassLine),
+              boxShadow: [BoxShadow(color: const Color(0xFF503CB4).withValues(alpha: .28), blurRadius: 36, offset: const Offset(0, 16), spreadRadius: -16)],
+            ),
+            child: Row(
+              children: [
+                _NavItem(icon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => setState(() => _index = 0)),
+                _NavItem(icon: Icons.calendar_month_rounded, label: 'Kalender', active: _index == 1, onTap: () => setState(() => _index = 1)),
+                const SizedBox(width: 76),
+                _NavItem(icon: Icons.insert_chart_rounded, label: 'Statistik', active: _index == 2, onTap: () => setState(() => _index = 2)),
+                _NavItem(icon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => setState(() => _index = 3)),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -152,12 +156,13 @@ class _GradientFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 64,
-      height: 64,
+      width: 70,
+      height: 70,
       decoration: BoxDecoration(
         gradient: AppColors.gradient,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .55), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -8)],
+        border: Border.all(color: context.isDark ? AppColors.bgDark : Colors.white.withValues(alpha: .8), width: 5),
+        boxShadow: [BoxShadow(color: const Color(0xFF8C5AF0).withValues(alpha: .6), blurRadius: 26, offset: const Offset(0, 14), spreadRadius: -8)],
       ),
       child: Material(
         type: MaterialType.transparency,

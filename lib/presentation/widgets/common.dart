@@ -1,4 +1,7 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/models/reminder.dart';
@@ -17,8 +20,9 @@ class SoftCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: color ?? context.card,
+        color: color ?? context.glass,
         borderRadius: BorderRadius.circular(radius),
+        border: Border.all(color: context.glassLine),
         boxShadow: context.softShadow,
       ),
       child: Material(
@@ -67,7 +71,13 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(2, 24, 2, 12),
       child: Row(
         children: [
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600))),
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(3)),
+          ),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 16.5, fontWeight: FontWeight.w600, letterSpacing: -.2))),
           if (action != null)
             GestureDetector(
               onTap: onAction,
@@ -220,4 +230,83 @@ Future<String?> inputDialog(BuildContext context, {required String title, String
       ],
     ),
   );
+}
+
+/// Huruf serif miring untuk aksen estetik (nama, judul kartu).
+TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWeight.w600}) =>
+    GoogleFonts.fraunces(fontSize: size, fontStyle: FontStyle.italic, fontWeight: weight, color: color, height: 1.15);
+
+/// Latar pastel dengan gumpalan warna lembut.
+class AestheticBackground extends StatelessWidget {
+  const AestheticBackground({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final a = context.isDark ? .22 : 1.0;
+    Widget blob(double size, Color c) => Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: c.withValues(alpha: c.a * a)),
+        );
+    return Stack(children: [
+      Positioned.fill(child: ColoredBox(color: context.bg)),
+      Positioned.fill(
+        child: RepaintBoundary(
+          child: ImageFiltered(
+            imageFilter: ui.ImageFilter.blur(sigmaX: 70, sigmaY: 70),
+            child: Stack(children: [
+              Positioned(left: -80, top: -60, child: blob(280, const Color(0xBFB8AAFF))),
+              Positioned(right: -90, top: 40, child: blob(260, const Color(0xB3FFB6CE))),
+              Positioned(right: -60, bottom: 120, child: blob(240, const Color(0x8CFFD6BA))),
+              Positioned(left: -70, bottom: -40, child: blob(260, const Color(0x8CBAF0E2))),
+            ]),
+          ),
+        ),
+      ),
+      child,
+    ]);
+  }
+}
+
+/// Kartu bergradasi "mesh" (ungu–pink–peach).
+class MeshCard extends StatelessWidget {
+  const MeshCard({super.key, required this.child, this.radius = 28, this.padding = const EdgeInsets.all(20)});
+  final Widget child;
+  final double radius;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.meshBase,
+        borderRadius: BorderRadius.circular(radius),
+        boxShadow: [BoxShadow(color: const Color(0xFF8C5AF0).withValues(alpha: .55), blurRadius: 40, offset: const Offset(0, 22), spreadRadius: -18)],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(children: [
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(center: const Alignment(1.1, -1.1), radius: 1.0, colors: [AppColors.peach.withValues(alpha: .95), AppColors.peach.withValues(alpha: 0)]),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(center: const Alignment(-1.1, 1.2), radius: 1.1, colors: [const Color(0xFF7B6CFF), const Color(0xFF7B6CFF).withValues(alpha: 0)]),
+            ),
+          ),
+        ),
+        Positioned(right: -50, top: -70, child: _circle(180, .16)),
+        Positioned(right: 40, bottom: -70, child: _circle(120, .10)),
+        Padding(padding: padding, child: child),
+      ]),
+    );
+  }
+
+  Widget _circle(double s, double a) =>
+      Container(width: s, height: s, decoration: BoxDecoration(color: Colors.white.withValues(alpha: a), shape: BoxShape.circle));
 }

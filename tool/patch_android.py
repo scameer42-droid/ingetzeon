@@ -48,6 +48,10 @@ QUERIES = """
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
 """
 
 

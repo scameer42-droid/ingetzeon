@@ -9,8 +9,8 @@ class AppColors {
   static const violetMid = Color(0xFF8E6BFF);
   static const pink = Color(0xFFFF6584);
 
-  static const bgLight = Color(0xFFF6F5FF);
-  static const bgDark = Color(0xFF0E0D1A);
+  static const bgLight = Color(0xFFF5F3FF);
+  static const bgDark = Color(0xFF110E22);
   static const cardLight = Colors.white;
   static const cardDark = Color(0xFF191730);
   static const card2Light = Color(0xFFF1F0FB);
@@ -24,11 +24,20 @@ class AppColors {
   static const faintLight = Color(0xFFA9A5C4);
   static const faintDark = Color(0xFF6F6B94);
 
+  static const peach = Color(0xFFFFB38A);
+
   static const gradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primary, violetMid, pink],
-    stops: [0, .45, 1],
+    colors: [Color(0xFF7B6CFF), Color(0xFFA47BFF), Color(0xFFFF7AA2), peach],
+    stops: [0, .38, .72, 1],
+  );
+
+  /// Gradasi "mesh" untuk kartu utama.
+  static const meshBase = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF8B72FF), Color(0xFFFF7AA2)],
   );
 }
 
@@ -39,6 +48,10 @@ extension ThemeX on BuildContext {
   Color get muted => isDark ? AppColors.mutedDark : AppColors.mutedLight;
   Color get faint => isDark ? AppColors.faintDark : AppColors.faintLight;
   Color get card => isDark ? AppColors.cardDark : AppColors.cardLight;
+
+  /// Kartu kaca (transparan lembut di atas latar pastel).
+  Color get glass => isDark ? const Color(0xFF241F46).withValues(alpha: .72) : Colors.white.withValues(alpha: .74);
+  Color get glassLine => isDark ? Colors.white.withValues(alpha: .07) : Colors.white.withValues(alpha: .92);
   Color get card2 => isDark ? AppColors.card2Dark : AppColors.card2Light;
   Color get line => isDark ? AppColors.lineDark : AppColors.lineLight;
   Color get bg => isDark ? AppColors.bgDark : AppColors.bgLight;

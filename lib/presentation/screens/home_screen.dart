@@ -43,12 +43,14 @@ class HomeScreen extends ConsumerWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 2),
-                  Text('${greeting(now)},', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, height: 1.2)),
-                  ShaderMask(
-                    shaderCallback: (b) => AppColors.gradient.createShader(b),
-                    child: Text('${name.isEmpty ? 'Kamu' : name} 👋',
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white, height: 1.25)),
-                  ),
+                  Text('${greeting(now)},', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w600, height: 1.15, letterSpacing: -.6)),
+                  Row(children: [
+                    ShaderMask(
+                      shaderCallback: (b) => AppColors.gradient.createShader(b),
+                      child: Text(name.isEmpty ? 'Kamu' : name, style: accentFont(size: 31, color: Colors.white)),
+                    ),
+                    const Text(' 👋', style: TextStyle(fontSize: 24)),
+                  ]),
                 ]),
               ),
               GestureDetector(
@@ -145,17 +147,10 @@ class _HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final n = next;
-    return Container(
-      constraints: const BoxConstraints(minHeight: 150),
-      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(24), boxShadow: context.glowShadow),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned(right: -50, top: -70, child: _bubble(180, .12)),
-          Positioned(right: 40, bottom: -70, child: _bubble(120, .08)),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
+    return MeshCard(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 110, minWidth: double.infinity),
+        child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
@@ -170,9 +165,7 @@ class _HeroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(n == null ? 'Belum ada jadwal berikutnya' : n.reminder.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w600, height: 1.25)),
+                    maxLines: 2, overflow: TextOverflow.ellipsis, style: accentFont(size: 25, color: Colors.white)),
                 const SizedBox(height: 4),
                 Text(
                   n == null
@@ -203,18 +196,10 @@ class _HeroCard extends StatelessWidget {
                   ]),
                 ],
               ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-
-  Widget _bubble(double size, double alpha) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(color: Colors.white.withValues(alpha: alpha), shape: BoxShape.circle),
-      );
 }
 
 class _AskBar extends StatelessWidget {
