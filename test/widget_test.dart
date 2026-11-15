@@ -6,6 +6,7 @@ import 'package:ingetzeon/services/memory_parser.dart';
 import 'package:ingetzeon/services/natural_parser.dart';
 import 'package:ingetzeon/services/cycle_parser.dart';
 import 'package:ingetzeon/services/note_parser.dart';
+import 'package:ingetzeon/services/speech_text.dart';
 import 'package:ingetzeon/providers/cycle_provider.dart';
 import 'package:ingetzeon/services/vocab.dart';
 
@@ -258,6 +259,21 @@ void main() {
     });
   });
 
+  group('Suara', () {
+    test('teks untuk dibacakan', () {
+      expect(SpeechText.forTts('Siap! Aku ingatkan **Rapat** besok jam 09.00. ✅'), 'Siap! Aku ingatkan Rapat besok jam 9.');
+      expect(SpeechText.forTts('Kunci motor kamu ada di laci 📍 (dicatat hari ini jam 17.18).'), 'Kunci motor kamu ada di laci, dicatat hari ini jam 17 lewat 18.');
+      expect(SpeechText.forTts('Harga emas Rp 1.250.000 per gr, naik 2,5% dari kemarin.'), 'Harga emas 1250000 rupiah per gram, naik 2 koma 5 persen dari kemarin.');
+      expect(SpeechText.forTts('Masa subur: Sab, 21 Nov – Jum, 27 Nov · siklus 28 hari.'), 'Masa subur: Sabtu, 21 November sampai Jumat, 27 November, siklus 28 hari.');
+    });
+    test('hasil dengar', () {
+      expect(SpeechText.fromStt('saya parkir di be dua'), 'Saya parkir di B2');
+      expect(SpeechText.fromStt('parkir di B 2 dekat lift'), 'Parkir di B2 dekat lift');
+      expect(SpeechText.fromStt('parkir di lantai tiga'), 'Parkir di lantai 3');
+      expect(SpeechText.fromStt('ingatkan jam 7:30 olahraga'), 'Ingatkan jam 7.30 olahraga');
+    });
+  });
+
   group('Catatan', () {
     test('simpan catatan', () {
       final a = NoteParser.parseStore('tolong catat saya punya emas 10 gr')!;
@@ -303,6 +319,7 @@ void main() {
     });
   });
 }
+
 
 class _N implements NoteLike {
   _N(this.label, this.value, this.secret, int t) : createdAt = DateTime(2026, 1, t);

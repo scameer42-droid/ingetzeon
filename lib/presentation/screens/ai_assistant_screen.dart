@@ -123,7 +123,17 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
       onStatus: (s) {
         if (!mounted) return;
         if (s == 'listening') setState(() => _listening = true);
-        if (s == 'notListening' || s == 'done') setState(() => _listening = false);
+        if (s == 'notListening' || s == 'done') {
+          setState(() => _listening = false);
+          // sebagian HP tidak mengirim hasil "final" saat berhenti → kirim yang terakhir terdengar
+          Future.delayed(const Duration(milliseconds: 900), () {
+            final t = _ctrl.text.trim();
+            if (mounted && !_heardFinal && t.isNotEmpty && !VoiceService.instance.isListening) {
+              _heardFinal = true;
+              _send(t);
+            }
+          });
+        }
       },
       onError: (e) {
         if (!mounted) return;

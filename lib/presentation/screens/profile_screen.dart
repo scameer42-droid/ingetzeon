@@ -10,6 +10,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/photo_service.dart';
+import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 import 'cycle_screen.dart';
 import 'notes_screen.dart';
@@ -24,11 +25,15 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool? _notifOn;
   bool? _exactOn;
+  bool? _idVoice;
 
   @override
   void initState() {
     super.initState();
     _refreshPermissions();
+    VoiceService.instance.checkIndonesianVoice().then((v) {
+      if (mounted) setState(() => _idVoice = v);
+    });
   }
 
   Future<void> _refreshPermissions() async {
@@ -169,6 +174,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               subtitle: 'Asisten membacakan jawabannya',
               trailing: Switch(value: s.voice, onChanged: notifier.setVoice),
               onTap: () => notifier.setVoice(!s.voice),
+            ),
+            _Row(
+              icon: Icons.record_voice_over_rounded,
+              color: const Color(0xFF0EA5E9),
+              title: 'Tes suara asisten',
+              subtitle: _idVoice == false
+                  ? '⚠ Suara Bahasa Indonesia belum terpasang — ketuk untuk cara memasang'
+                  : 'Dengarkan contoh suara balasan',
+              onTap: () async {
+                await VoiceService.instance.speak('Halo${s.name.isEmpty ? '' : ' ${s.name}'}! Ini suara asisten IngetZeon. Rapat besok jam 09.00, jangan lupa ya.');
+                if (_idVoice == false && context.mounted) {
+                  await confirmDialog(context,
+                      title: 'Pasang suara Indonesia',
+                      message: 'Supaya asisten terdengar jelas:\n1. Buka Pengaturan HP → cari "Text-to-speech" (Output teks ke ucapan).\n'
+                          '2. Pilih mesin "Google" (Speech Services by Google).\n3. Buka ⚙ → Instal data suara → Bahasa Indonesia, lalu unduh.\n'
+                          '4. Tutup lalu buka lagi IngetZeon.\n\nUntuk input suara, pastikan aplikasi Google terpasang & bahasa Indonesia aktif.',
+                      ok: 'Mengerti');
+                }
+              },
             ),
           ]),
           _groupTitle('Bunyi alarm'),

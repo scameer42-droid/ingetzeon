@@ -3033,6 +3033,54 @@ function checkDue(){
 }
 
 /* ---------------- VOICE: TTS ---------------- */
+/* ---- Teks untuk suara (sinkron dengan lib/services/speech_text.dart) ---- */
+const SP_HARI = {Min:'Minggu',Sen:'Senin',Sel:'Selasa',Rab:'Rabu',Kam:'Kamis',Jum:'Jumat',Sab:'Sabtu'};
+const SP_BULAN = {Jan:'Januari',Feb:'Februari',Mar:'Maret',Apr:'April',Mei:'Mei',Jun:'Juni',Jul:'Juli',Agu:'Agustus',Sep:'September',Okt:'Oktober',Nov:'November',Des:'Desember'};
+const SP_ABBR = [[/\bgr\b/gi,'gram'],[/\bkg\b/gi,'kilo'],[/\brb\b/gi,'ribu'],[/\bjt\b/gi,'juta'],[/\bdll\b\.?/gi,'dan lain-lain'],[/\bdsb\b\.?/gi,'dan sebagainya'],
+  [/\bmis\.\s?/gi,'misalnya '],[/\byg\b/gi,'yang'],[/\btgl\b/gi,'tanggal'],[/\bno\.\s?/gi,'nomor '],[/\bHP\b/g,'ha pe'],[/\bQR\b/g,'kiu ar'],[/\bAPK\b/g,'a pe ka'],
+  [/\bIngetZeon\b/g,'Inget Zeon'],[/\bAI\b/g,'a i'],[/\bOK\b/g,'oke'],[/\bWA\b/g,'we a'],[/\bFB\b/gi,'facebook'],[/\bIG\b/g,'instagram'],[/\bvs\b/gi,'lawan'],[/\bsdt\b/gi,'sendok teh'],[/\bsdm\b/gi,'sendok makan'],[/\bdkk\b/gi,'dan kawan-kawan']];
+/** Rapikan teks balasan supaya dibacakan TTS dengan benar (jam, tanggal, singkatan, emoji). */
+function spokenText(s){
+  let t = String(s)
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/•{3,}/g, '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\u{20E3}]/gu, '')
+    .replace(/[*_#`>~]/g, '')
+    .replace(/^\s*[-•]\s+/gm, '')
+    .replace(/^\s*(\d+)[.)]\s+/gm, '$1, ');
+  t = t.replace(/\bRp\.?\s?([\d.,]+)/gi, '$1 rupiah');
+  // jam: "09.00" → "jam 9", "17.18" → "jam 17 lewat 18"
+  t = t.replace(/(\b(?:jam|pukul)\s+)?(?<![\d.,])([01]?\d|2[0-4])[.:]([0-5]\d)(?![\d.,]*\d)/gi, (m, pre, h, mm) => `${pre ? pre.trim() + ' ' : 'jam '}${+h}${+mm ? ' lewat ' + (+mm) : ''}`);
+  t = t.replace(/\bjam\s+jam\b/gi, 'jam');
+  // ribuan "50.000" → "50000"
+  while(/(\d)\.(\d{3})(?!\d)/.test(t)) t = t.replace(/(\d)\.(\d{3})(?!\d)/g, '$1$2');
+  t = t.replace(/(\d),(\d)/g, '$1 koma $2');
+  t = t.replace(/\b(Min|Sen|Sel|Rab|Kam|Jum|Sab),/g, (m, d) => SP_HARI[d] + ',');
+  t = t.replace(/\b(\d{1,2}) (Jan|Feb|Mar|Apr|Mei|Jun|Jul|Agu|Sep|Okt|Nov|Des)\b/g, (m, d, b) => `${d} ${SP_BULAN[b]}`);
+  for(const [re, to] of SP_ABBR) t = t.replace(re, to);
+  t = t.replace(/(\d)\s*[–-]\s*(\d)/g, '$1 sampai $2').replace(/\s*–\s*/g, ' sampai ').replace(/\s*—\s*/g, ', ').replace(/\s*·\s*/g, ', ')
+    .replace(/\b1\/2\b/g, 'setengah').replace(/(\d)\/(\d)/g, '$1 per $2').replace(/\(/g, ', ').replace(/\)/g, ', ')
+    .replace(/±\s?/g, 'sekitar ').replace(/&/g, ' dan ').replace(/%/g, ' persen').replace(/(\d)\s?x\s?(\d)/gi, '$1 kali $2')
+    .replace(/\bke-(\d)/gi, 'ke $1').replace(/\s*\/\s*/g, ' atau ').replace(/°C/g, ' derajat').replace(/[[\]{}"“”]/g, ' ');
+  t = t.replace(/\n+/g, '. ').replace(/,\s*([.!?])/g, '$1').replace(/\s*([.,!?])(\s*[.,!?])+/g, '$1').replace(/\s+([.,!?])/g, '$1').replace(/\s{2,}/g, ' ').trim().replace(/,$/, '.');
+  return t;
+}
+const SP_NUM = {nol:0,kosong:0,satu:1,dua:2,tiga:3,empat:4,lima:5,enam:6,tujuh:7,delapan:8,sembilan:9,sepuluh:10};
+/** Rapikan hasil dengar (speech-to-text): "parkir di be dua" → "parkir di B2". */
+function heardText(s){
+  let t = String(s).replace(/\s+/g, ' ').trim();
+  if(/parkir|lantai|basement|lt\b/i.test(t)){
+    t = t.replace(/\b(lantai|basement|lt\.?)\s+(nol|kosong|satu|dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|sepuluh)\b/gi, (m, a, n) => `${a} ${SP_NUM[n.toLowerCase()]}`);
+    t = t.replace(/\b(be|bi|b|pe|p|el|l|g|ji|ge)\s*[- ]?\s*(nol|kosong|satu|dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|\d{1,2})\b/gi, (m, l, n) => {
+      const L = {be:'B',bi:'B',b:'B',pe:'P',p:'P',el:'L',l:'L',g:'G',ji:'G',ge:'G'}[l.toLowerCase()];
+      return L + (n.toLowerCase() in SP_NUM ? SP_NUM[n.toLowerCase()] : n);
+    });
+    t = t.replace(/\b(el ji|elji|lower ground)\b/gi, 'LG').replace(/\b(upper ground|ap ji)\b/gi, 'UG');
+  }
+  t = t.replace(/(\d{1,2}):(\d{2})/g, '$1.$2');
+  return t ? t[0].toUpperCase() + t.slice(1) : t;
+}
+
 let idVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
@@ -3045,31 +3093,35 @@ function speak(text, force = false){
   if(!state.settings.voice && !force) return;
   try{
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(String(text).replace(/[*_#`]/g,'').replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu,''));
+    if(!idVoice) pickVoice();
+    if(!idVoice && speechSynthesis.getVoices().length && !window._warnedVoice){ window._warnedVoice = true; toast('Browser ini belum punya suara Bahasa Indonesia — coba pakai Chrome'); }
+    const clean = spokenText(text); if(!clean) return;
+    const u = new SpeechSynthesisUtterance(clean.length > 400 ? clean.slice(0, clean.lastIndexOf('.', 400) > 60 ? clean.lastIndexOf('.', 400) + 1 : 400) : clean);
     u.lang = 'id-ID'; if(idVoice) u.voice = idVoice;
-    u.rate = 1; u.pitch = 1.05;
+    u.rate = .98; u.pitch = 1;
     speechSynthesis.speak(u);
   }catch(e){}
 }
 
 /* ---------------- VOICE: STT ---------------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec = null, recording = false, recFinal = '';
+let rec = null, recording = false, recFinal = '', recHeard = false;
 function startRec(){
   if(!SR){ toast('Input suara belum didukung di browser ini. Coba pakai Chrome.'); return; }
   if(recording){ rec.stop(); return; }
   if('speechSynthesis' in window) speechSynthesis.cancel();
   rec = new SR();
   rec.lang = 'id-ID'; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
-  recFinal = '';
+  recFinal = ''; recHeard = false;
   rec.onstart = () => { recording = true; $('#micBtn').classList.add('rec'); $('#listening').classList.add('show'); };
   rec.onresult = e => {
+    recHeard = true;
     let interim = '';
     for(let i=e.resultIndex;i<e.results.length;i++){
       const t = e.results[i][0].transcript;
-      if(e.results[i].isFinal) recFinal += t; else interim += t;
+      if(e.results[i].isFinal) recFinal += t + ' '; else interim += t;
     }
-    $('#aiInput').value = (recFinal + interim).trim();
+    $('#aiInput').value = heardText(recFinal + interim);
     autoGrow();
   };
   rec.onerror = e => {
@@ -3080,7 +3132,8 @@ function startRec(){
   rec.onend = () => {
     recording = false; $('#micBtn').classList.remove('rec'); $('#listening').classList.remove('show');
     const txt = $('#aiInput').value.trim();
-    if(recFinal.trim() && txt) send();
+    // sebagian HP tidak mengirim hasil "final" → kirim yang terakhir terdengar
+    if(txt && (recFinal.trim() || recHeard)) send();
   };
   try{ rec.start(); }catch(e){ toast('Mikrofon sedang dipakai, coba lagi'); }
 }
