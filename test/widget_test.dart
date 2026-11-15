@@ -2,6 +2,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ingetzeon/core/utils/date_utils.dart';
 import 'package:ingetzeon/data/models/reminder.dart';
+import 'package:ingetzeon/services/memory_parser.dart';
 import 'package:ingetzeon/services/natural_parser.dart';
 
 void main() {
@@ -90,6 +91,37 @@ void main() {
       expect(r.alarm, true);
       expect(toLocalIso(r.scheduledAt), '2026-11-15T17:00');
       expect(r.title.contains('P3'), true);
+    });
+  });
+
+  group('Ingat barang', () {
+    test('kalimat penyimpanan', () {
+      final cases = {
+        'saya simpan kunci motor di laci meja': ['kunci motor', 'di laci meja'],
+        'aku taruh tas kerja di atas lemari kamar ya': ['tas kerja', 'di atas lemari kamar'],
+        'kacamata aku taro di samping tv': ['kacamata', 'di samping tv'],
+        'paspor ada di dalam koper biru': ['paspor', 'di dalam koper biru'],
+        'barusan nyimpen dompet di jok motor biar ga lupa': ['dompet', 'di jok motor'],
+      };
+      cases.forEach((input, want) {
+        final r = MemoryParser.parseStore(input);
+        expect(r, isNotNull, reason: input);
+        expect(r!.item, want[0], reason: input);
+        expect(r.place, want[1], reason: input);
+      });
+      expect(MemoryParser.parseStore('ingatkan besok jam 7 simpan baju di lemari'), isNull);
+      expect(MemoryParser.parseStore('rapat ada di kantor'), isNull);
+    });
+
+    test('pertanyaan di mana', () {
+      final items = [
+        Reminder.create(title: 'Kunci motor di laci', scheduledAt: now, category: ReminderCategory.barang, alarm: false, item: 'kunci motor', place: 'di laci'),
+        Reminder.create(title: 'Tas di lemari', scheduledAt: now, category: ReminderCategory.barang, alarm: false, item: 'tas kerja', place: 'di lemari'),
+      ];
+      expect(MemoryParser.isWhereQuestion('di mana kunci motor saya?'), true);
+      expect(MemoryParser.findItems(items, 'di mana kunci motor saya?').first.item, 'kunci motor');
+      expect(MemoryParser.findItems(items, 'tas kerjaku taruh di mana ya').first.item, 'tas kerja');
+      expect(MemoryParser.findItems(items, 'di mana payung saya'), isEmpty);
     });
   });
 

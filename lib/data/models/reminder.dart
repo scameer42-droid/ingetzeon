@@ -23,6 +23,7 @@ enum ReminderCategory {
   kesehatan('Kesehatan', Color(0xFF12A150), Icons.monitor_heart_outlined),
   edukasi('Edukasi', Color(0xFFD97706), Icons.menu_book_rounded),
   parkir('Parkir', Color(0xFF0891B2), Icons.local_parking_rounded),
+  barang('Barang', Color(0xFFB45309), Icons.inventory_2_outlined),
   lainnya('Lainnya', Color(0xFF64748B), Icons.star_border_rounded);
 
   const ReminderCategory(this.label, this.color, this.icon);
@@ -52,6 +53,10 @@ class Reminder {
     required this.createdAt,
     this.photoPath,
     this.alarm = true,
+    this.ticketText,
+    this.ticketFormat,
+    this.item,
+    this.place,
   });
 
   /// Membuat pengingat baru dengan id unik.
@@ -63,6 +68,10 @@ class Reminder {
     ReminderCategory category = ReminderCategory.lainnya,
     String? photoPath,
     bool alarm = true,
+    String? ticketText,
+    String? ticketFormat,
+    String? item,
+    String? place,
   }) {
     final now = DateTime.now();
     return Reminder(
@@ -76,6 +85,10 @@ class Reminder {
       createdAt: now,
       photoPath: photoPath,
       alarm: alarm,
+      ticketText: ticketText,
+      ticketFormat: ticketFormat,
+      item: item,
+      place: place,
     );
   }
 
@@ -95,6 +108,16 @@ class Reminder {
 
   /// false = hanya catatan (tanpa bunyi alarm), mis. catatan parkir tanpa jam.
   final bool alarm;
+
+  /// Isi QR/barcode tiket parkir yang di-scan, dan formatnya (qr_code, code_128, ...).
+  final String? ticketText;
+  final String? ticketFormat;
+
+  /// Catatan barang: nama barang & tempatnya (mis. 'kunci motor', 'di laci meja').
+  final String? item;
+  final String? place;
+
+  bool get hasTicket => ticketText != null && ticketText!.isNotEmpty;
 
   /// Id notifikasi tunda (selalu berbeda dari id utama).
   int get snoozeNotifId => notifId + 0x40000000;
@@ -123,6 +146,10 @@ class Reminder {
       createdAt: createdAt,
       photoPath: identical(photoPath, _unset) ? this.photoPath : photoPath as String?,
       alarm: alarm ?? this.alarm,
+      ticketText: ticketText,
+      ticketFormat: ticketFormat,
+      item: item,
+      place: place,
     );
   }
 
@@ -185,6 +212,10 @@ class Reminder {
         'createdAt': createdAt.toIso8601String(),
         'photoPath': photoPath,
         'alarm': alarm,
+        'ticketText': ticketText,
+        'ticketFormat': ticketFormat,
+        'item': item,
+        'place': place,
       };
 
   factory Reminder.fromMap(Map<dynamic, dynamic> m) => Reminder(
@@ -200,6 +231,10 @@ class Reminder {
         createdAt: DateTime.tryParse(m['createdAt']?.toString() ?? '') ?? DateTime.now(),
         photoPath: m['photoPath']?.toString(),
         alarm: m['alarm'] != false,
+        ticketText: m['ticketText']?.toString(),
+        ticketFormat: m['ticketFormat']?.toString(),
+        item: m['item']?.toString(),
+        place: m['place']?.toString(),
       );
 }
 
@@ -241,3 +276,8 @@ Reminder? activeParking(List<Reminder> list, [DateTime? now]) {
   }
   return best;
 }
+
+/// Catatan barang yang belum diambil, terbaru dulu.
+List<Reminder> activeItems(List<Reminder> list) =>
+    list.where((r) => r.category == ReminderCategory.barang && r.item != null && !r.done).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

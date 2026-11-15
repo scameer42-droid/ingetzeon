@@ -8,16 +8,11 @@ import '../../providers/reminder_provider.dart';
 import '../../services/photo_service.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
+import 'ticket_screens.dart';
 
-/// Alur cepat "Catat parkir": foto → isi lokasi → (opsional) alarm.
+/// Alur cepat "Catat parkir": scan tiket / foto lokasi → isi lokasi → (opsional) alarm.
 Future<void> startParkingFlow(BuildContext context, WidgetRef ref) async {
-  String? photo;
-  try {
-    photo = await PhotoService.instance.pick(camera: true);
-  } catch (e) {
-    if (context.mounted) showToast(context, 'Kamera tidak bisa dibuka');
-  }
-  if (!context.mounted) return;
+  const String? photo = null;
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -39,6 +34,7 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
   bool _remind = false;
   TimeOfDay _time = TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 2)));
   bool _saved = false;
+  ScannedTicket? _ticket;
 
   static const _quick = ['B1', 'B2', 'B3', 'P1', 'P2', 'P3', 'Lantai dasar', 'Rooftop'];
 
@@ -51,8 +47,8 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
 
   Future<void> _save() async {
     final loc = _loc.text.trim();
-    if (loc.isEmpty && _photo == null) {
-      showToast(context, 'Isi lokasi atau ambil foto dulu');
+    if (loc.isEmpty && _photo == null && _ticket == null) {
+      showToast(context, 'Isi lokasi, scan tiket, atau ambil foto dulu');
       return;
     }
     final now = DateTime.now();
@@ -68,12 +64,14 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
       category: ReminderCategory.parkir,
       photoPath: _photo,
       alarm: _remind,
+      ticketText: _ticket?.text,
+      ticketFormat: _ticket?.format,
     );
     _saved = true;
     await ref.read(remindersProvider.notifier).upsert(r);
     if (!mounted) return;
     Navigator.pop(context);
-    showToast(context, _remind ? 'Parkir dicatat. Alarm jam ${fmtTime(at)} 🔔' : 'Lokasi parkir dicatat 📸');
+    showToast(context, _remind ? 'Parkir dicatat. Alarm jam ${fmtTime(at)} 🔔' : (_ticket != null ? 'Parkir & tiket tersimpan ✓' : 'Lokasi parkir dicatat 📸'));
   }
 
   @override
@@ -91,6 +89,28 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
               const Expanded(child: Text('Catat lokasi parkir', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))),
             ]),
             const SizedBox(height: 16),
+            if (_ticket != null) ...[
+              TicketBox(
+                text: _ticket!.text,
+                format: _ticket!.format,
+                onShow: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => TicketViewScreen(title: 'Tiket (belum disimpan)', text: _ticket!.text, format: _ticket!.format))),
+              ),
+              const SizedBox(height: 12),
+            ] else ...[
+              SoftButton(
+                label: 'Scan tiket (QR / barcode)',
+                icon: Icons.qr_code_scanner_rounded,
+                onPressed: () async {
+                  final t = await scanTicket(context);
+                  if (t != null) {
+                    setState(() => _ticket = t);
+                    if (mounted) showToast(context, 'Tiket tersimpan ✓');
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
             if (_photo != null)
               Stack(children: [
                 PhotoThumb(_photo!, height: 190),
@@ -112,11 +132,15 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
               ])
             else
               SoftButton(
-                label: 'Ambil foto lokasi',
+                label: 'Foto lokasi',
                 icon: Icons.photo_camera_rounded,
                 onPressed: () async {
-                  final p = await PhotoService.instance.pick(camera: true);
-                  if (p != null) setState(() => _photo = p);
+                  try {
+                    final p = await PhotoService.instance.pick(camera: true);
+                    if (p != null) setState(() => _photo = p);
+                  } catch (_) {
+                    if (mounted) showToast(context, 'Kamera tidak bisa dibuka (izin ditolak)');
+                  }
                 },
               ),
             const SizedBox(height: 16),

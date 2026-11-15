@@ -9,7 +9,9 @@ import '../../providers/settings_provider.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
+import 'item_sheet.dart';
 import 'parking_sheet.dart';
+import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -24,7 +26,9 @@ class HomeScreen extends ConsumerWidget {
     final name = ref.watch(settingsProvider.select((s) => s.name));
 
     // catatan parkir tanpa alarm sudah tampil di kartu parkir
-    final all = occurrencesOn(list, now).where((x) => !(x.reminder.category == ReminderCategory.parkir && !x.reminder.alarm)).toList();
+    // catatan (parkir/barang) tampil di bagiannya sendiri
+    final all = occurrencesOn(list, now).where((x) => x.reminder.alarm).toList();
+    final items = activeItems(list);
     final today = all.where((x) => !x.done).toList(); // yang selesai otomatis disembunyikan
     final logToday = ref.read(remindersProvider.notifier).doneLogOn(now);
     final totalCount = all.length + logToday;
@@ -70,17 +74,26 @@ class HomeScreen extends ConsumerWidget {
           Row(children: [
             Expanded(
               child: _QuickAction(
-                icon: Icons.photo_camera_rounded,
+                icon: Icons.local_parking_rounded,
                 label: 'Catat parkir',
                 color: ReminderCategory.parkir.color,
                 onTap: () => startParkingFlow(context, ref),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _QuickAction(
+                icon: ReminderCategory.barang.icon,
+                label: 'Ingat barang',
+                color: ReminderCategory.barang.color,
+                onTap: () => startItemFlow(context),
+              ),
+            ),
+            const SizedBox(width: 10),
             Expanded(
               child: _QuickAction(
                 icon: Icons.add_alarm_rounded,
-                label: 'Pengingat baru',
+                label: 'Pengingat',
                 color: AppColors.primary,
                 onTap: () => _openForm(context),
               ),
@@ -89,6 +102,18 @@ class HomeScreen extends ConsumerWidget {
           if (parking != null) ...[
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
+          ],
+          if (items.isNotEmpty) ...[
+            const SectionHeader('Barang yang kamu simpan'),
+            SoftCard(
+              padding: EdgeInsets.zero,
+              child: Column(children: [
+                for (var i = 0; i < items.length && i < 6; i++) ...[
+                  if (i > 0) Divider(height: 1, color: context.line),
+                  _ItemRow(item: items[i]),
+                ],
+              ]),
+            ),
           ],
           SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
           if (totalCount > 0) ...[
@@ -241,18 +266,18 @@ class _QuickAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SoftCard(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      radius: 18,
+      padding: const EdgeInsets.all(12),
+      radius: 14,
       onTap: onTap,
-      child: Row(children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(color: color.withValues(alpha: .13), borderRadius: BorderRadius.circular(12)),
-          child: Icon(icon, color: color, size: 20),
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(10)),
+          child: Icon(icon, color: color, size: 19),
         ),
-        const SizedBox(width: 10),
-        Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5))),
+        const SizedBox(height: 8),
+        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
       ]),
     );
   }
@@ -285,6 +310,23 @@ class _ParkingCard extends ConsumerWidget {
             const SizedBox(height: 2),
             Text(parking.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
             Text('${dayLabel(parking.createdAt)} · ${fmtTime(parking.createdAt)}', style: TextStyle(fontSize: 12, color: context.muted)),
+            if (parking.hasTicket)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(9),
+                  onTap: () => openTicket(context, parking),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: .1), borderRadius: BorderRadius.circular(9)),
+                    child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(Icons.qr_code_2_rounded, size: 15, color: AppColors.primary),
+                      SizedBox(width: 5),
+                      Text('Tampilkan tiket', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                    ]),
+                  ),
+                ),
+              ),
           ]),
         ),
         const SizedBox(width: 6),
@@ -294,6 +336,42 @@ class _ParkingCard extends ConsumerWidget {
           child: const Text('Sudah\ndiambil', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
         ),
       ]),
+    );
+  }
+}
+
+class _ItemRow extends ConsumerWidget {
+  const _ItemRow({required this.item});
+  final Reminder item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = ReminderCategory.barang;
+    return InkWell(
+      onTap: () => showReminderDetail(context, ref, item, item.scheduledAt),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(children: [
+          if (item.photoPath != null)
+            PhotoThumb(item.photoPath!, height: 38, width: 38, radius: 11)
+          else
+            CategoryIcon(c, size: 38),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(item.item == null ? item.title : item.item![0].toUpperCase() + item.item!.substring(1),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+              Text('${item.place ?? ''} · ${dayLabel(item.createdAt)} ${fmtTime(item.createdAt)}',
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: context.muted)),
+            ]),
+          ),
+          TextButton(
+            onPressed: () => completeWithUndo(ScaffoldMessenger.of(context), ref, item, item.scheduledAt),
+            style: TextButton.styleFrom(foregroundColor: c.color, backgroundColor: c.soft, visualDensity: VisualDensity.compact),
+            child: const Text('Diambil', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          ),
+        ]),
+      ),
     );
   }
 }

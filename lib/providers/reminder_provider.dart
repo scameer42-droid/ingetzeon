@@ -87,7 +87,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     await _notif.cancel(cur);
     await _repo.delete(cur.id);
     state = state.where((x) => x.id != cur.id).toList();
-    await _saveLog([...doneLog, {'d': dayKey(DateTime.now()), 'c': cur.category.name}]);
+    if (cur.alarm) await _saveLog([...doneLog, {'d': dayKey(DateTime.now()), 'c': cur.category.name}]); // catatan tidak dihitung tugas
     // foto dihapus setelah waktu urungkan habis
     if (cur.photoPath != null) {
       Timer(const Duration(seconds: 7), () {

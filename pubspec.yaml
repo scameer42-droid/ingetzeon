@@ -25,6 +25,9 @@ dependencies:
   flutter_tts: ^4.2.0
   # Kamera & penyimpanan foto
   image_picker: ^1.1.2
+  mobile_scanner: ^7.0.0
+  barcode_widget: ^2.0.4
+  permission_handler: ^11.4.0
   path_provider: ^2.1.4
   # AI (Gemini lewat REST API)
   http: ^1.2.0

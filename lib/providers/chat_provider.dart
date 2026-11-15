@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
 import '../services/ai_service.dart';
+import '../services/memory_parser.dart';
 import '../services/natural_parser.dart';
 import '../services/voice_service.dart';
 import 'reminder_provider.dart';
@@ -35,11 +36,17 @@ class ChatMessage {
 }
 
 class ChatState {
-  const ChatState({this.messages = const [], this.thinking = false});
+  const ChatState({this.messages = const [], this.thinking = false, this.showTicketId});
   final List<ChatMessage> messages;
   final bool thinking;
-  ChatState copyWith({List<ChatMessage>? messages, bool? thinking}) =>
-      ChatState(messages: messages ?? this.messages, thinking: thinking ?? this.thinking);
+
+  /// Bila diisi, layar asisten membuka tiket parkir pengingat ini.
+  final String? showTicketId;
+  ChatState copyWith({List<ChatMessage>? messages, bool? thinking, String? showTicketId, bool clearTicket = false}) => ChatState(
+        messages: messages ?? this.messages,
+        thinking: thinking ?? this.thinking,
+        showTicketId: clearTicket ? null : (showTicketId ?? this.showTicketId),
+      );
 }
 
 final aiServiceProvider = Provider<AiService>((ref) => AiService());
@@ -83,7 +90,7 @@ class ChatNotifier extends Notifier<ChatState> {
     _push(ChatMessage(
       fromUser: false,
       text: 'Halo$n! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. '
-          'Kamu juga bisa tanya apa saja — jadwal hari ini, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.',
+          'Aku juga bisa mengingat letak barangmu ("saya simpan kunci di laci") dan menjawab pertanyaan apa saja — jadwal, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.',
     ));
   }
 
@@ -102,8 +109,16 @@ class ChatNotifier extends Notifier<ChatState> {
       final lower = text.toLowerCase();
       final aboutParking = lower.contains('parkir');
       final asksWhere = RegExp(r'di ?mana|\bmana\b').hasMatch(lower);
-      if (aboutParking && asksWhere && photoPath == null) {
-        _answerParking();
+      final asksTicket = RegExp(r'tiket|karcis|qr|barcode').hasMatch(lower) && RegExp(r'tampil|lihat|buka|mana|tunjuk|show').hasMatch(lower);
+      final store = aboutParking ? null : MemoryParser.parseStore(text);
+      if (((aboutParking && asksWhere) || asksTicket) && photoPath == null) {
+        _answerParking(showTicket: asksTicket);
+      } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && photoPath == null && _answerItem(text)) {
+        // dijawab dari catatan barang
+      } else if (store != null) {
+        await _saveItem(store, photoPath);
+      } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && !_settings.hasAi) {
+        _bot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
       } else if (_remindRe.hasMatch(text) || aboutParking || photoPath != null) {
         await _handleReminder(text, photoPath: photoPath);
       } else {
@@ -114,15 +129,44 @@ class ChatNotifier extends Notifier<ChatState> {
     }
   }
 
-  void _answerParking() {
+  void ticketShown() => state = state.copyWith(clearTicket: true);
+
+  bool _answerItem(String text) {
+    final found = MemoryParser.findItems(ref.read(remindersProvider), text);
+    if (found.isEmpty) return false;
+    final r = found.first;
+    final more = found.length > 1 ? '\nAku juga punya catatan lain yang mirip: ${found.skip(1).take(2).map((x) => '${x.item} ${x.place}').join('; ')}.' : '';
+    _bot('**${MemoryParser.cap(r.item!)}** kamu ada ${r.place} 📍 (dicatat ${dayLabel(r.createdAt).toLowerCase()} jam ${fmtTime(r.createdAt)}).$more',
+        reminderId: r.id, speech: '${r.item} kamu ada ${r.place}.');
+    return true;
+  }
+
+  Future<void> _saveItem(StoredItem s, String? photoPath) async {
+    final now = DateTime.now();
+    final r = Reminder.create(
+      title: '${MemoryParser.cap(s.item)} ${s.place}',
+      scheduledAt: now,
+      category: ReminderCategory.barang,
+      alarm: false,
+      photoPath: photoPath,
+      item: s.item,
+      place: s.place,
+    );
+    await ref.read(remindersProvider.notifier).upsert(r);
+    _bot('Oke, aku ingat: **${MemoryParser.cap(s.item)}** ${s.place}${photoPath != null ? ' (beserta fotonya 📸)' : ''}. Tanya saja nanti, "di mana ${s.item} saya?"',
+        reminderId: r.id, speech: 'Oke, aku ingat. ${s.item} ${s.place}.');
+  }
+
+  void _answerParking({bool showTicket = false}) {
     final p = activeParking(ref.read(remindersProvider));
     if (p == null) {
       _bot('Aku belum punya catatan parkir terbaru. Foto lokasi parkirmu lalu bilang, misalnya, "saya parkir di B2".');
       return;
     }
     final lokasi = p.title.replaceFirst(RegExp(r'^parkir di ', caseSensitive: false), '');
-    _bot('Kamu parkir di **$lokasi** 📍 (dicatat ${dayLabel(p.createdAt).toLowerCase()} jam ${fmtTime(p.createdAt)}).',
+    _bot('Kamu parkir di **$lokasi** 📍 (dicatat ${dayLabel(p.createdAt).toLowerCase()} jam ${fmtTime(p.createdAt)}).${p.hasTicket ? ' Tiketnya juga tersimpan.' : ''}',
         reminderId: p.id, speech: 'Kamu parkir di $lokasi.');
+    if (showTicket && p.hasTicket) state = state.copyWith(showTicketId: p.id);
   }
 
   Future<void> _handleReminder(String text, {String? photoPath}) async {
@@ -229,6 +273,8 @@ class ChatNotifier extends Notifier<ChatState> {
         'Sekarang: ${fmtDateLong(now)} jam ${fmtTime(now)}. Nama pengguna: ${_settings.name.isEmpty ? 'tidak diketahui' : _settings.name}.\n'
         'Jadwal hari ini:\n${fmt(occurrencesOn(list, now))}\n'
         'Jadwal besok:\n${fmt(occurrencesOn(list, addDays(dateOnly(now), 1)))}\n'
+        'Catatan barang/lokasi yang pernah user simpan (jawab dari sini kalau ditanya):\n'
+        '${list.where((r) => !r.alarm).take(30).map((r) => '- ${r.title}${r.hasTicket ? ' (ada tiket tersimpan)' : ''} — dicatat ${fmtDateShort(r.createdAt)} ${fmtTime(r.createdAt)}').join('\n').ifEmpty('(kosong)')}\n'
         'Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", '
         'contoh: "ingatkan besok jam 7 olahraga".';
   }
@@ -264,3 +310,7 @@ class ChatNotifier extends Notifier<ChatState> {
 }
 
 final chatProvider = NotifierProvider<ChatNotifier, ChatState>(ChatNotifier.new);
+
+extension _IfEmpty on String {
+  String ifEmpty(String other) => isEmpty ? other : this;
+}

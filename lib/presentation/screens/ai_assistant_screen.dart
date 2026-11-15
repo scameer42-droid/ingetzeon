@@ -12,6 +12,7 @@ import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
+import 'ticket_screens.dart';
 import '../widgets/reminder_tile.dart';
 
 class AiAssistantScreen extends ConsumerStatefulWidget {
@@ -31,6 +32,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   static const _suggestions = [
     'Saya parkir di B2, ingatkan saya',
     'Di mana aku parkir?',
+    'Tampilkan tiket parkir',
+    'Saya simpan kunci motor di laci meja',
+    'Di mana kunci motor saya?',
     'Ingatkan besok jam 7 pagi olahraga',
     'Ingatkan minum obat setiap hari jam 8 malam',
     'Jadwal hari ini apa?',
@@ -138,7 +142,15 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     final chat = ref.watch(chatProvider);
     final hasAi = ref.watch(settingsProvider.select((s) => s.hasAi));
     final reminders = ref.watch(remindersProvider);
-    ref.listen(chatProvider, (_, __) => _toBottom());
+    ref.listen(chatProvider, (prev, next) {
+      _toBottom();
+      final id = next.showTicketId;
+      if (id != null && id != prev?.showTicketId) {
+        ref.read(chatProvider.notifier).ticketShown();
+        final r = ref.read(remindersProvider.notifier).byId(id);
+        if (r != null) Future.delayed(const Duration(milliseconds: 500), () { if (mounted) openTicket(context, r); });
+      }
+    });
     final userSent = chat.messages.any((m) => m.fromUser);
 
     return Scaffold(
@@ -389,13 +401,19 @@ class _Bubble extends ConsumerWidget {
                               style: TextStyle(fontSize: 12, color: context.muted)),
                         ]),
                       ),
+                      if (reminder.hasTicket)
+                        IconButton(
+                          tooltip: 'Tampilkan tiket',
+                          icon: const Icon(Icons.qr_code_2_rounded, color: AppColors.primary),
+                          onPressed: () => openTicket(context, reminder),
+                        ),
                       TextButton(
                         onPressed: () async {
                           await ref.read(remindersProvider.notifier).remove(reminder.id);
-                          if (context.mounted) showToast(context, 'Pengingat dibatalkan');
+                          if (context.mounted) showToast(context, reminder.alarm ? 'Pengingat dibatalkan' : 'Catatan dihapus');
                         },
                         style: TextButton.styleFrom(foregroundColor: AppColors.pink, visualDensity: VisualDensity.compact),
-                        child: const Text('Batalkan', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                        child: Text(reminder.alarm ? 'Batalkan' : 'Hapus', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                       ),
                     ]),
                   ),

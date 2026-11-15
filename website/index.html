@@ -396,6 +396,7 @@ textarea.input{height:84px;padding:14px 16px;resize:none}
   --c-kesehatan:#12A150; --c-kesehatan-soft:#E5F6EC;
   --c-edukasi:#D97706; --c-edukasi-soft:#FDF1E1;
   --c-parkir:#0891B2; --c-parkir-soft:#E2F4F8;
+  --c-barang:#B45309; --c-barang-soft:#FBF0E2;
   --c-lainnya:#64748B; --c-lainnya-soft:#EEF1F5;
   --shadow:0 1px 2px rgba(16,16,24,.04);
   --shadow-lg:0 6px 18px -8px rgba(16,16,24,.18);
@@ -406,7 +407,7 @@ textarea.input{height:84px;padding:14px 16px;resize:none}
   --ink:#EDEDF0; --muted:#9A9AA6; --faint:#62626E;
   --primary-soft:#24224A; --pink-soft:#3A1D20;
   --c-kerja-soft:#24224A; --c-pribadi-soft:#3A1A27; --c-kesehatan-soft:#12301F;
-  --c-edukasi-soft:#33260F; --c-parkir-soft:#0F2D35; --c-lainnya-soft:#22262E;
+  --c-edukasi-soft:#33260F; --c-parkir-soft:#0F2D35; --c-barang-soft:#33230F; --c-lainnya-soft:#22262E;
   --shadow:none; --shadow-lg:0 8px 24px -10px rgba(0,0,0,.6);
 }
 html,body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:-.01em;background:var(--bg)}
@@ -516,6 +517,53 @@ textarea.input{height:84px}
 
 .toast-act{margin-left:10px;color:#A5A1FF;font-weight:700;padding:2px 4px}
 [data-theme="dark"] .toast-act{color:var(--primary)}
+/* scanner tiket */
+.scanner{position:fixed;inset:0;z-index:110;background:#000;display:none;flex-direction:column}
+.scanner.show{display:flex}
+.scanner video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scan-top{position:relative;z-index:2;display:flex;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;color:#fff;background:linear-gradient(rgba(0,0,0,.55),transparent)}
+.scan-top b{font-weight:600;font-size:16px}
+.scan-top button,.tv-head button{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center}
+.scan-frame{position:absolute;left:50%;top:44%;width:min(72vw,300px);height:min(72vw,300px);transform:translate(-50%,-50%);border-radius:22px;box-shadow:0 0 0 9999px rgba(0,0,0,.45);z-index:1}
+.scan-frame::before,.scan-frame::after{content:"";position:absolute;inset:0;border-radius:22px;border:3px solid rgba(255,255,255,.9);clip-path:polygon(0 0,28% 0,28% 6px,6px 6px,6px 28%,0 28%,0 72%,6px 72%,6px calc(100% - 6px),28% calc(100% - 6px),28% 100%,72% 100%,72% calc(100% - 6px),calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) 72%,100% 72%,100% 28%,calc(100% - 6px) 28%,calc(100% - 6px) 6px,72% 6px,72% 0,100% 0,100% 100%,0 100%)}
+.scan-frame i{position:absolute;left:8%;right:8%;height:2px;background:var(--primary);box-shadow:0 0 12px var(--primary);animation:scanline 2s ease-in-out infinite}
+@keyframes scanline{0%,100%{top:10%}50%{top:88%}}
+.scan-bottom{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:20px 20px calc(24px + var(--safe-b));text-align:center;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.scan-bottom p{font-size:14px;margin-bottom:14px;opacity:.9}
+.scan-bottom button{color:#fff;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.1);height:44px;padding:0 18px;border-radius:12px;font-weight:600}
+/* tampilan tiket */
+.ticket-view{position:fixed;inset:0;z-index:105;background:#fff;color:#111118;display:none;flex-direction:column}
+.ticket-view.show{display:flex}
+.tv-head{display:flex;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px}
+.tv-head button{background:#F2F2F5;color:#111118}
+.tv-head span{font-weight:600;font-size:16px}
+.tv-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 24px 40px;text-align:center}
+.tv-code{width:100%;max-width:340px;display:flex;justify-content:center}
+.tv-code svg{width:100%;height:auto;max-height:52vh}
+.tv-code.linear svg{max-height:180px}
+.tv-text{font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:.06em;margin-top:14px;word-break:break-all;color:#111118}
+.ticket-view h3{font-size:19px;font-weight:600;margin-top:22px}
+.ticket-view p{color:#6B6B76;font-size:13.5px;margin-top:4px}
+.tv-tip{margin-top:18px!important;background:#F2F2F5;padding:10px 14px;border-radius:12px}
+.tk-box{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:16px;background:var(--card)}
+.tk-box .mini{width:48px;height:48px;flex:none;background:#fff;border-radius:8px;padding:4px;display:grid;place-items:center}
+.tk-box .mini svg{width:100%;height:100%}
+.tk-box .tx{flex:1;min-width:0}
+.tk-box b{display:block;font-size:14px;font-weight:600}
+.tk-box small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:ui-monospace,Menlo,monospace}
+.tk-btn{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12.5px;font-weight:600;color:var(--primary);background:var(--primary-soft);padding:5px 10px;border-radius:9px}
+.tk-btn svg{width:14px;height:14px}
+.quick.three{grid-template-columns:repeat(3,1fr);gap:10px}
+.quick.three button{flex-direction:column;align-items:flex-start;gap:8px;padding:12px;font-size:13px}
+.items{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.irow{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+.irow + .irow{border-top:1px solid var(--line)}
+.irow .ic{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;object-fit:cover}
+.irow .ic svg{width:18px;height:18px}
+.irow .tx{flex:1;min-width:0}
+.irow b{display:block;font-weight:600;font-size:14.5px}
+.irow small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow .got{font-size:12px;font-weight:600;color:var(--c-barang);padding:6px 8px;border-radius:9px;background:var(--c-barang-soft)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -539,11 +587,13 @@ textarea.input{height:84px}
       <span>Ketik atau ucapkan pengingat…</span>
       <div class="mic"><svg class="i"><use href="#i-mic"/></svg></div>
     </button>
-    <div class="quick">
-      <button id="qPark"><span class="qi" style="background:var(--c-parkir-soft);color:var(--c-parkir)"><svg class="i"><use href="#i-camera"/></svg></span>Catat parkir</button>
-      <button id="qNew"><span class="qi" style="background:var(--primary-soft);color:var(--primary)"><svg class="i"><use href="#i-alarm"/></svg></span>Pengingat baru</button>
+    <div class="quick three">
+      <button id="qPark"><span class="qi" style="background:var(--c-parkir-soft);color:var(--c-parkir)"><svg class="i"><use href="#c-parkir"/></svg></span>Catat parkir</button>
+      <button id="qItem"><span class="qi" style="background:var(--c-barang-soft);color:var(--c-barang)"><svg class="i"><use href="#c-barang"/></svg></span>Ingat barang</button>
+      <button id="qNew"><span class="qi" style="background:var(--primary-soft);color:var(--primary)"><svg class="i"><use href="#i-alarm"/></svg></span>Pengingat</button>
     </div>
     <div id="parkWrap"></div>
+    <div id="itemsWrap"></div>
 
     <div class="section-h">
       <h2>Jadwal hari ini</h2>
@@ -722,6 +772,9 @@ textarea.input{height:84px}
   <div class="suggest" id="suggest">
     <button>Saya parkir di B2, ingatkan saya</button>
     <button>Di mana aku parkir?</button>
+    <button>Tampilkan tiket parkir</button>
+    <button>Saya simpan kunci motor di laci meja</button>
+    <button>Di mana kunci motor saya?</button>
     <button>Ingatkan besok jam 7 pagi olahraga</button>
     <button>Ingatkan minum obat setiap hari jam 8 malam</button>
     <button>Jadwal hari ini apa?</button>
@@ -814,6 +867,22 @@ textarea.input{height:84px}
 </div>
 
 <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""><button id="lightboxClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></div>
+<div class="scanner" id="scanner">
+  <video id="scanVideo" playsinline muted></video>
+  <div class="scan-frame"><i></i></div>
+  <div class="scan-top"><button id="scanClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><b>Scan tiket parkir</b></div>
+  <div class="scan-bottom"><p id="scanHint">Arahkan kamera ke QR / barcode di tiket</p><button id="scanFromPhoto">Pilih dari foto</button></div>
+</div>
+<div class="ticket-view" id="ticketView">
+  <div class="tv-head"><button id="tvClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><span>Tiket parkir</span></div>
+  <div class="tv-body">
+    <div class="tv-code" id="tvCode"></div>
+    <div class="tv-text" id="tvText"></div>
+    <h3 id="tvTitle"></h3>
+    <p id="tvMeta"></p>
+    <p class="tv-tip">Naikkan kecerahan layar, lalu tunjukkan ke mesin atau petugas parkir.</p>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- ================= ICONS ================= -->
@@ -858,9 +927,13 @@ textarea.input{height:84px}
   <symbol id="i-alarm" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M22 6l-3-3"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/></symbol>
   <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M13.7 21a2 2 0 0 1-3.4 0M18.6 13A17.9 17.9 0 0 1 18 8M6.3 6.3A5.9 5.9 0 0 0 6 8c0 7-3 9-3 9h14M18 8a6 6 0 0 0-9.3-5M2 2l20 20"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 17h4v4h-4"/></symbol>
+  <symbol id="c-barang" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
   <symbol id="c-lainnya" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/></symbol>
 </svg>
 
+<script src="lib/qrcode.js"></script>
+<script src="lib/JsBarcode.all.min.js"></script>
 <script>
 'use strict';
 /* =========================================================
@@ -879,6 +952,7 @@ const CATS = {
   kesehatan: {label:'Kesehatan'},
   edukasi:   {label:'Edukasi'},
   parkir:    {label:'Parkir'},
+  barang:    {label:'Barang'},
   lainnya:   {label:'Lainnya'},
 };
 const REPEATS = {once:'Sekali', daily:'Setiap hari', weekly:'Setiap minggu', monthly:'Setiap bulan'};
@@ -1108,6 +1182,9 @@ function normalizeReminder(o){
     done: !!o.done,
     doneDates: Array.isArray(o.doneDates) ? o.doneDates : [],
     photo: o.photo || null,
+    item: o.item ? String(o.item).slice(0,80) : null,
+    place: o.place ? String(o.place).slice(0,120) : null,
+    ticket: o.ticket && o.ticket.text ? {text: String(o.ticket.text).slice(0, 2000), format: String(o.ticket.format || 'qr_code')} : null,
     alarm: o.alarm !== false,
     createdAt: o.createdAt || new Date().toISOString(),
   };
@@ -1168,7 +1245,7 @@ function completeReminder(r, date){
   const copy = JSON.parse(JSON.stringify(r));
   const logEntry = {d: dayKey(new Date()), c: r.category};
   state.reminders = state.reminders.filter(x => x.id !== r.id);
-  state.doneLog.push(logEntry); state.doneLog = state.doneLog.slice(-3000);
+  if(r.alarm !== false){ state.doneLog.push(logEntry); state.doneLog = state.doneLog.slice(-3000); } // catatan tidak dihitung sebagai tugas
   save(); renderAll(); if($('#ai').classList.contains('show')) renderChat();
   // foto baru dihapus setelah waktu urungkan habis
   if(pendingPhotoDelete) pendingPhotoDelete();
@@ -1214,6 +1291,7 @@ function itemHTML({r, at, done}, opts = {}){
       <div class="m">${icon('i-clock')}<span class="time">${showDay ? dayLabel(at)+' · ' : ''}${fmtTime(at)}${late?' · terlewat':''}</span>
         ${r.repeat!=='once' ? `<span class="pill">${icon('i-repeat')}${esc(repeatLabel(r))}</span>` : ''}
         ${r.photo ? `<span class="pill">${icon('i-camera')}Foto</span>` : ''}
+        ${r.ticket ? `<span class="pill">${icon('i-qr')}Tiket</span>` : ''}
         ${r.alarm===false ? `<span class="pill">${icon('i-bell-off')}Catatan</span>` : ''}
       </div>
     </div>
@@ -1293,7 +1371,8 @@ function renderHome(){
     </div>`;
   }
 
-  const all = itemsOn(now).filter(x => !(x.r.category==='parkir' && x.r.alarm===false));
+  const all = itemsOn(now).filter(x => x.r.alarm !== false); // catatan (parkir/barang) tampil di bagiannya sendiri
+  renderItems();
   const items = all.filter(x => !x.done);
   const doneN = all.length - items.length + logCount(now);
   const totalN = all.length + logCount(now);
@@ -1316,11 +1395,13 @@ function renderHome(){
   const pk = activeParking();
   $('#parkWrap').innerHTML = pk ? `<div class="park" id="parkCard">
       ${photoSrc(pk.photo) ? `<img class="ph" src="${photoSrc(pk.photo)}" alt="">` : `<div class="ph">${icon('c-parkir')}</div>`}
-      <div class="tx"><div class="lb">${icon('c-parkir')}Lokasi parkir kamu</div><b>${esc(pk.title)}</b><small>${dayLabel(new Date(pk.createdAt))} · ${fmtTime(new Date(pk.createdAt))}</small></div>
+      <div class="tx"><div class="lb">${icon('c-parkir')}Lokasi parkir kamu</div><b>${esc(pk.title)}</b><small>${dayLabel(new Date(pk.createdAt))} · ${fmtTime(new Date(pk.createdAt))}</small>
+        ${pk.ticket ? `<br><button class="tk-btn" id="parkTicket">${icon('i-qr')}Tampilkan tiket</button>` : ''}</div>
       <button class="got" id="parkGot">Sudah<br>diambil</button>
     </div>` : '';
   if(pk){
-    $('#parkCard').onclick = e => { if(e.target.closest('#parkGot')) return; openDetail(pk, parseLocalISO(pk.scheduledAt)); };
+    if($('#parkTicket')) $('#parkTicket').onclick = e => { e.stopPropagation(); openTicket(pk); };
+    $('#parkCard').onclick = e => { if(e.target.closest('#parkGot') || e.target.closest('#parkTicket')) return; openDetail(pk, parseLocalISO(pk.scheduledAt)); };
     $('#parkGot').onclick = () => completeReminder(pk, parseLocalISO(pk.scheduledAt));
   }
   $('#upcomingWrap').innerHTML = up.length ? `<div class="section-h"><h2>Akan datang</h2><button class="link" data-go="calendar">Kalender</button></div><div class="list" id="upList">${up.slice(0,6).map(x=>itemHTML(x,{showDay:true})).join('')}</div>` : '';
@@ -1650,6 +1731,7 @@ function openDetail(r, date){
       <div style="flex:1;min-width:0"><span class="pill" style="${catStyle(r.category)}">${CATS[r.category].label}</span><h3 style="margin-top:6px">${esc(r.title)}</h3></div>
     </div>
     ${r.note ? `<p class="detail-note">${esc(r.note)}</p>` : ''}
+    ${r.ticket ? ticketBoxHTML(r.ticket, 'dTicket') : ''}
     ${photoSrc(r.photo) ? `<img class="photo" style="max-height:240px;margin-bottom:16px" src="${photoSrc(r.photo)}" data-zoom alt="">` : ''}
     <div class="detail-meta">
       <div>${icon('i-calendar')}${fmtDateLong(at)}</div>
@@ -1665,6 +1747,7 @@ function openDetail(r, date){
     </div>`;
   $('#dDone').onclick = () => { closeSheet(); if(done){ setDone(r, date, false); save(); renderAll(); } else completeReminder(r, date); };
   $('#dEdit').onclick = () => openForm(r);
+  if($('#dTicket')) $('#dTicket').onclick = () => openTicket(r);
   $('#dDel').onclick = async () => {
     const ok = await confirmDlg({title:'Hapus pengingat?', text:`"${r.title}" akan dihapus${r.repeat!=='once'?' beserta semua jadwal ulangnya':''}.`, ok:'Hapus', danger:true});
     if(ok){ deleteReminder(r.id); closeSheet(); toast('Pengingat dihapus'); }
@@ -1683,6 +1766,215 @@ function gcalLink(r){
   return 'https://calendar.google.com/calendar/render?' + p.toString();
 }
 
+/* ---------------- TIKET PARKIR (QR / barcode) ---------------- */
+const LINEAR = {code_128:'CODE128', code_39:'CODE39', ean_13:'EAN13', ean_8:'EAN8', upc_a:'UPC', itf:'ITF', codabar:'codabar', code_93:'CODE128'};
+const FORMAT_LABEL = {qr_code:'QR', code_128:'Barcode', code_39:'Barcode', code_93:'Barcode', ean_13:'Barcode EAN', ean_8:'Barcode EAN', upc_a:'Barcode UPC', itf:'Barcode', codabar:'Barcode', pdf417:'PDF417', data_matrix:'Data Matrix', aztec:'Aztec'};
+/** Gambar ulang kode tiket sebagai SVG. */
+function codeSVG(ticket, small = false){
+  const fmt = LINEAR[ticket.format];
+  if(fmt){
+    try{
+      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      JsBarcode(svg, ticket.text, {format: fmt, displayValue:false, margin: small ? 2 : 10, height: small ? 60 : 120, width: small ? 1 : 2.4, background:'#ffffff', lineColor:'#000000'});
+      return {svg: svg.outerHTML, linear:true};
+    }catch(e){ /* data tidak cocok dengan format → pakai QR */ }
+  }
+  const qr = qrcode(0, 'M'); qr.addData(ticket.text); qr.make();
+  return {svg: qr.createSvgTag({cellSize: small ? 2 : 8, margin: small ? 1 : 2, scalable:true}), linear:false};
+}
+let wakeLock = null;
+function openTicket(r){
+  if(!r || !r.ticket) return;
+  const c = codeSVG(r.ticket);
+  $('#tvCode').innerHTML = c.svg; $('#tvCode').classList.toggle('linear', c.linear);
+  $('#tvText').textContent = r.ticket.text.length > 80 ? r.ticket.text.slice(0,80) + '…' : r.ticket.text;
+  $('#tvTitle').textContent = r.title;
+  $('#tvMeta').textContent = `${FORMAT_LABEL[r.ticket.format] || 'Kode'} · disimpan ${dayLabel(new Date(r.createdAt)).toLowerCase()} jam ${fmtTime(new Date(r.createdAt))}`;
+  $('#ticketView').classList.add('show');
+  try{ navigator.wakeLock?.request('screen').then(w => wakeLock = w).catch(()=>{}); }catch(e){}
+}
+$('#tvClose').onclick = () => { $('#ticketView').classList.remove('show'); try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock = null; };
+
+let scanStream = null, scanResolve = null, scanTimer = null, detector = null;
+async function getDetector(){
+  if(detector !== null) return detector;
+  try{
+    if('BarcodeDetector' in window){
+      const fm = await BarcodeDetector.getSupportedFormats();
+      if(fm && fm.length){ detector = new BarcodeDetector({formats: fm}); return detector; }
+    }
+  }catch(e){}
+  detector = false;
+  await new Promise(res => { if(window.jsQR) return res(); const sc = document.createElement('script'); sc.src = 'lib/jsQR.js'; sc.onload = res; sc.onerror = res; document.head.appendChild(sc); });
+  return detector;
+}
+async function detectIn(source, w, h){
+  const d = await getDetector();
+  if(d){
+    const found = await d.detect(source).catch(() => []);
+    if(found.length) return {text: found[0].rawValue, format: found[0].format};
+    return null;
+  }
+  if(!window.jsQR) return null;
+  const cv = detectIn.cv || (detectIn.cv = document.createElement('canvas'));
+  const k = Math.min(1, 900 / Math.max(w, h));
+  cv.width = Math.round(w*k); cv.height = Math.round(h*k);
+  const ctx = cv.getContext('2d', {willReadFrequently:true});
+  ctx.drawImage(source, 0, 0, cv.width, cv.height);
+  const img = ctx.getImageData(0, 0, cv.width, cv.height);
+  const code = jsQR(img.data, img.width, img.height, {inversionAttempts:'attemptBoth'});
+  return code && code.data ? {text: code.data, format:'qr_code'} : null;
+}
+function stopScan(result = null){
+  clearTimeout(scanTimer); scanTimer = null;
+  if(scanStream){ scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+  $('#scanVideo').srcObject = null;
+  $('#scanner').classList.remove('show');
+  if(scanResolve){ const r = scanResolve; scanResolve = null; r(result); }
+}
+/** Buka scanner. Mengembalikan {text, format} atau null bila batal. */
+function scanTicket(){
+  return new Promise(async resolve => {
+    scanResolve = resolve;
+    $('#scanHint').textContent = 'Arahkan kamera ke QR / barcode di tiket';
+    $('#scanner').classList.add('show');
+    const video = $('#scanVideo');
+    try{
+      scanStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720}}, audio:false});
+    }catch(e){
+      $('#scanHint').textContent = 'Kamera tidak bisa dibuka. Izinkan akses kamera, atau pilih foto tiket.';
+      return;
+    }
+    video.srcObject = scanStream;
+    await video.play().catch(()=>{});
+    await getDetector();
+    const tick = async () => {
+      if(!scanStream) return;
+      if(video.readyState >= 2){
+        const r = await detectIn(video, video.videoWidth, video.videoHeight);
+        if(r && r.text){ if(navigator.vibrate) navigator.vibrate(120); return stopScan(r); }
+      }
+      scanTimer = setTimeout(tick, 180);
+    };
+    tick();
+  });
+}
+$('#scanClose').onclick = () => stopScan(null);
+$('#scanFromPhoto').onclick = () => {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if(!f) return;
+    try{
+      const bmp = await createImageBitmap(f);
+      const r = await detectIn(bmp, bmp.width, bmp.height);
+      if(r && r.text) stopScan(r); else $('#scanHint').textContent = 'Kode tidak terbaca di foto itu. Coba foto yang lebih dekat & terang.';
+    }catch(e){ $('#scanHint').textContent = 'Foto tidak bisa dibaca.'; }
+  };
+  inp.click();
+};
+function ticketBoxHTML(t, id){
+  const c = codeSVG(t, true);
+  return `<div class="tk-box"><div class="mini">${c.svg}</div><div class="tx"><b>Tiket ${FORMAT_LABEL[t.format] || 'kode'} tersimpan</b><small>${esc(t.text)}</small></div>${id ? `<button class="btn btn-soft btn-sm" id="${id}">${icon('i-qr')}Tampilkan</button>` : ''}</div>`;
+}
+
+/* ---------------- INGAT BARANG ---------------- */
+const STORE_VERB = '(?:simpan|simpen|nyimpen|nyimpan|menyimpan|taruh|taro|tarok|naruh|naro|menaruh|letakkan|letakin|letakan|meletakkan|tinggalin|ninggalin|titip|titipin|titipkan|masukin|masukkan|gantung|gantungin|selipin|selipkan)';
+const PREP = '(di dalam|di atas|di bawah|di belakang|di samping|di sebelah|di depan|di laci|ke dalam|di|ke|dalam)';
+const cap1 = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+function cleanItem(s){
+  return s.replace(/^(barang |si |sebuah |satu |punya(ku)? )+/,'').replace(/( (saya|aku|ku|gue|gw|punyaku|punya saya|ya|nya))+$/,'').replace(/^(saya|aku|gue|gw) /,'').trim();
+}
+function cleanPlace(prep, place){
+  place = place.replace(/( (ya|yaa|dong|deh|nih|tolong ingat(kan)?( saya| aku)?|ingat(kan)?( saya| aku)?( ya)?|biar (ga|gak|nggak|tidak) lupa|supaya (ga|gak|nggak|tidak) lupa))+$/,'').trim();
+  if(prep === 'di laci'){ return 'di laci' + (place ? ' ' + place : ''); }
+  const p = prep === 'ke' ? 'di' : prep === 'ke dalam' || prep === 'dalam' ? 'di dalam' : prep;
+  return `${p} ${place}`.trim();
+}
+/** "saya simpan kunci motor di laci meja" → {item:'kunci motor', place:'di laci meja'} */
+function parseStore(text){
+  let t = ' ' + text.toLowerCase().replace(/[!?.,;:"]+/g,' ').replace(/\s+/g,' ') + ' ';
+  if(/ (jam|pukul|besok|lusa|menit lagi|jam lagi|setiap|tiap|nanti sore|nanti malam) /.test(t)) return null; // itu pengingat berjadwal
+  t = t.replace(/ (tolong|tlg|catat|ingat|inget|ingatkan|ingetin|ok|oke|ya|eh|nih|bahwa|kalau|kalo) /g,' ').replace(/\s+/g,' ');
+  let m = t.match(new RegExp(` (?:aku |saya |gue |gw |ku )?(?:sudah |udah |barusan |tadi |baru |lagi )?${STORE_VERB} (.+?) ${PREP} (.+?) $`));
+  if(m) return {item: cleanItem(m[1]), place: cleanPlace(m[2], m[3])};
+  m = t.match(new RegExp(` (.+?) (?:aku |saya |gue |gw |ku )?(?:sudah |udah |tadi |barusan )?(?:di)?${STORE_VERB}(?:in|kan)? ${PREP} (.+?) $`));
+  if(m) return {item: cleanItem(m[1]), place: cleanPlace(m[2], m[3])};
+  m = t.match(/ (.+?) (?:sekarang |lagi )?ada (di dalam|di atas|di bawah|di) (.+?) $/);
+  if(m && !/ (rapat|meeting|acara) /.test(t)) return {item: cleanItem(m[1]), place: cleanPlace(m[2], m[3])};
+  return null;
+}
+const isWhereQ = l => /\b(di ?mana|dimana|ada di mana|taruh di ?mana|taro di ?mana|simpan di ?mana|letak(nya)?)\b/.test(l) || /\bmana\b.*\?$/.test(l);
+const ITEM_STOP = new Set(['di','mana','dimana','ada','saya','aku','ku','gue','gw','yang','tadi','kemarin','kemaren','barusan','taruh','taro','simpan','nyimpen','naruh','letak','letaknya','ya','sih','dong','deh','kok','nya','aja','itu','ini','lagi','sekarang','udah','sudah','tolong','cari','lupa','inget','ingat','barang','punyaku','punya','apa','gimana','kemana','ke']);
+const keywords = s => s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).map(w => w.replace(/(nya|ku|mu)$/,'')).filter(w => w.length > 1 && !ITEM_STOP.has(w));
+function findItems(text){
+  const kws = keywords(text);
+  if(!kws.length) return [];
+  return state.reminders
+    .filter(r => r.item && !r.done)
+    .map(r => { const iw = keywords(r.item); const score = kws.filter(k => iw.some(w => w === k || (k.length > 3 && (w.startsWith(k) || k.startsWith(w))))).length; return {r, score}; })
+    .filter(x => x.score > 0)
+    .sort((a,b) => b.score - a.score || new Date(b.r.createdAt) - new Date(a.r.createdAt))
+    .map(x => x.r);
+}
+function saveItem({item, place, photo = null}){
+  const now = new Date();
+  return addReminder({title: `${cap1(item)} ${place}`, note: null, scheduledAt: toLocalISO(now), repeat:'once', category:'barang', alarm:false, photo, item, place});
+}
+const activeItems = () => state.reminders.filter(r => r.category==='barang' && r.item && !r.done).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+function renderItems(){
+  const its = activeItems();
+  $('#itemsWrap').innerHTML = its.length ? `<div class="section-h"><h2>Barang yang kamu simpan</h2></div><div class="items">${its.slice(0,6).map(r => {
+      const c = new Date(r.createdAt), ps = photoSrc(r.photo);
+      return `<div class="irow" data-iid="${r.id}">${ps ? `<img class="ic" src="${ps}" alt="">` : `<div class="ic" style="${catStyle('barang')}">${icon('c-barang')}</div>`}
+        <div class="tx"><b>${esc(cap1(r.item))}</b><small>${esc(r.place)} · ${dayLabel(c)} ${fmtTime(c)}</small></div>
+        <button class="got" data-got="${r.id}">Diambil</button></div>`;
+    }).join('')}</div>` : '';
+  const box = $('#itemsWrap .items');
+  if(box) box.onclick = e => {
+    const g = e.target.closest('[data-got]');
+    const row = e.target.closest('[data-iid]'); if(!row) return;
+    const r = findR(row.dataset.iid); if(!r) return;
+    if(g) completeReminder(r, parseLocalISO(r.scheduledAt)); else openDetail(r, parseLocalISO(r.scheduledAt));
+  };
+}
+function startItem(){
+  let photo = null;
+  const draw = () => {
+    const src = photoSrc(photo);
+    $('#sheetBody').innerHTML = `
+      <div class="detail-top"><div class="cat" style="${catStyle('barang')}">${icon('c-barang')}</div><div style="flex:1"><h3 style="margin-top:12px">Ingat barang</h3></div></div>
+      <div class="field"><label>Barang apa?</label><input class="input" id="itName" placeholder="Mis. kunci motor, tas kerja, paspor" autocomplete="off" value="${esc($('#itName') ? $('#itName').value : '')}"></div>
+      <div class="field"><label>Disimpan di mana?</label><input class="input" id="itPlace" placeholder="Mis. laci meja kamar" autocomplete="off" value="${esc($('#itPlace') ? $('#itPlace').value : '')}"></div>
+      ${src ? `<div class="photo-wrap"><img class="photo" style="max-height:180px" src="${src}" data-zoom alt=""><button class="rm" id="itRetake" aria-label="Foto ulang">${icon('i-camera')}</button></div>`
+            : `<button class="btn btn-soft btn-block" id="itCam" style="margin-bottom:16px">${icon('i-camera')}Foto tempatnya (opsional)</button>`}
+      <button class="btn btn-primary btn-block" id="itSave">${icon('i-check')}Simpan</button>
+      <p class="foot-note" style="margin-top:12px">Nanti tanya asisten: "di mana kunci motor saya?"</p>`;
+    const cam = async () => { const k = await pickPhoto(true); if(k){ photoDel(photo); photo = k; draw(); } };
+    if($('#itCam')) $('#itCam').onclick = cam;
+    if($('#itRetake')) $('#itRetake').onclick = cam;
+    $('#itSave').onclick = () => {
+      const item = $('#itName').value.trim(), placeRaw = $('#itPlace').value.trim();
+      if(!item || !placeRaw) return toast('Isi nama barang dan tempatnya');
+      const place = /^(di|ke|dalam)\b/i.test(placeRaw) ? placeRaw.replace(/^ke\b/i,'di') : 'di ' + placeRaw;
+      saveItem({item: item.toLowerCase(), place: place.toLowerCase(), photo});
+      photo = null; closeSheet(); toast(`Dicatat: ${cap1(item)} ${place} 📦`);
+    };
+  };
+  draw();
+  $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
+  setTimeout(() => $('#itName') && $('#itName').focus(), 350);
+  $('#overlay').onclick = () => { if(photo && !state.reminders.some(r=>r.photo===photo)) photoDel(photo); photo = null; closeSheet(); $('#overlay').onclick = closeSheet; };
+}
+$('#qItem').onclick = startItem;
+function answerItem(text){
+  const found = findItems(text);
+  if(!found.length) return false;
+  const r = found[0], c = new Date(r.createdAt);
+  state.chat.push({role:'bot', text:`**${cap1(r.item)}** kamu ada ${r.place} 📍 (dicatat ${dayLabel(c).toLowerCase()} jam ${fmtTime(c)}).${found.length > 1 ? `\nAku juga punya catatan lain yang mirip: ${found.slice(1,3).map(x => `${x.item} ${x.place}`).join('; ')}.` : ''}`, rid:r.id, ts:Date.now()});
+  save(); renderChat(); speak(`${r.item} kamu ada ${r.place}.`);
+  return true;
+}
+
 /* ---------------- PARKIR ---------------- */
 function activeParking(){
   const now = Date.now();
@@ -1694,9 +1986,8 @@ function activeParking(){
   }
   return best;
 }
-async function startParking(){
-  const key = await pickPhoto(true);
-  let photo = key, remind = false;
+async function startParking(autoScan = false){
+  let photo = null, remind = false, ticket = null;
   const t = new Date(Date.now() + 2*3600e3);
   let time = `${pad(t.getHours())}:${pad(t.getMinutes())}`;
   const quick = ['B1','B2','B3','P1','P2','P3','Lantai dasar','Rooftop'];
@@ -1704,8 +1995,12 @@ async function startParking(){
     const src = photoSrc(photo);
     $('#sheetBody').innerHTML = `
       <div class="detail-top"><div class="cat" style="${catStyle('parkir')}">${icon('c-parkir')}</div><div style="flex:1"><h3 style="margin-top:12px">Catat lokasi parkir</h3></div></div>
-      ${src ? `<div class="photo-wrap"><img class="photo" style="max-height:200px" src="${src}" data-zoom alt=""><button class="rm" id="pkRetake" aria-label="Foto ulang">${icon('i-camera')}</button></div>`
-            : `<button class="btn btn-soft btn-block" id="pkCam" style="margin-bottom:16px">${icon('i-camera')}Ambil foto lokasi</button>`}
+      ${ticket ? ticketBoxHTML(ticket, 'pkRescan') : ''}
+      ${src ? `<div class="photo-wrap"><img class="photo" style="max-height:200px" src="${src}" data-zoom alt=""><button class="rm" id="pkRetake" aria-label="Foto ulang">${icon('i-camera')}</button></div>` : ''}
+      ${!ticket || !src ? `<div class="two" style="margin-bottom:16px">
+          ${!ticket ? `<button class="btn btn-soft" id="pkScan">${icon('i-qr')}Scan tiket</button>` : ''}
+          ${!src ? `<button class="btn btn-soft" id="pkCam">${icon('i-camera')}Foto lokasi</button>` : ''}
+        </div>` : ''}
       <div class="field"><input class="input" id="pkLoc" placeholder="Mis. B2, pilar C5 dekat lift" autocomplete="off" value="${esc($('#pkLoc') ? $('#pkLoc').value : '')}"></div>
       <div class="chips small" id="pkQuick" style="margin:-6px 0 8px">${quick.map(q=>`<button class="chip" data-q="${q}">${q}</button>`).join('')}</div>
       <div class="switch-row" id="pkRemRow"><div class="tx"><b>Bunyikan alarm</b><small>${remind ? 'Ingatkan pada jam di bawah' : 'Mis. saat jam pulang'}</small></div><div class="switch ${remind?'on':''}"></div></div>
@@ -1719,9 +2014,12 @@ async function startParking(){
     const retake = async () => { const k = await pickPhoto(true); if(k){ photoDel(photo); photo = k; draw(); } };
     if($('#pkCam')) $('#pkCam').onclick = retake;
     if($('#pkRetake')) $('#pkRetake').onclick = retake;
+    const doScan = async () => { const r = await scanTicket(); if(r){ ticket = r; draw(); toast('Tiket tersimpan ✓'); } };
+    if($('#pkScan')) $('#pkScan').onclick = doScan;
+    if($('#pkRescan')) $('#pkRescan').onclick = () => openTicket({title:'Tiket (belum disimpan)', ticket, createdAt:new Date().toISOString()});
     $('#pkSave').onclick = () => {
       const l = loc.value.trim();
-      if(!l && !photo) return toast('Isi lokasi atau ambil foto dulu');
+      if(!l && !photo && !ticket) return toast('Isi lokasi, scan tiket, atau ambil foto dulu');
       const now = new Date();
       let at = new Date(now); at.setSeconds(0,0);
       if(remind){
@@ -1729,18 +2027,19 @@ async function startParking(){
         at = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
         if(at <= now) at = addDays(at, 1);
       }
-      addReminder({title: l ? `Parkir di ${l}` : 'Lokasi parkir', note:`Dicatat ${fmtTime(now)}`, scheduledAt: toLocalISO(at), repeat:'once', category:'parkir', photo, alarm: remind});
+      addReminder({title: l ? `Parkir di ${l}` : 'Lokasi parkir', note:`Dicatat ${fmtTime(now)}`, scheduledAt: toLocalISO(at), repeat:'once', category:'parkir', photo, ticket, alarm: remind});
       photo = null; // sudah dipakai
       if(remind) askNotifPermission();
       closeSheet();
-      toast(remind ? `Parkir dicatat. Alarm jam ${fmtTime(at)} 🔔` : 'Lokasi parkir dicatat 📸');
+      toast(remind ? `Parkir dicatat. Alarm jam ${fmtTime(at)} 🔔` : (ticket ? 'Parkir & tiket tersimpan ✓' : 'Lokasi parkir dicatat 📸'));
     };
   };
   draw();
   $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
+  if(autoScan){ const r = await scanTicket(); if(r){ ticket = r; draw(); } }
   $('#overlay').onclick = () => { if(photo && !state.reminders.some(r=>r.photo===photo)) photoDel(photo); photo = null; closeSheet(); $('#overlay').onclick = closeSheet; };
 }
-$('#qPark').onclick = startParking;
+$('#qPark').onclick = () => startParking(false);
 $('#qNew').onclick = () => openForm();
 
 /* ---------------- NOTIFICATIONS & ALARM ---------------- */
@@ -2144,6 +2443,10 @@ Contoh Input: "ingatkan besok jam 7 pagi olahraga"
 Contoh Output:
 {"title": "Olahraga", "note": null, "scheduledAt": "${dayKey(addDays(now,1))}T07:00:00", "repeat": "once", "category": "kesehatan", "alarm": true}`;
 }
+function notesForAI(){
+  const ns = state.reminders.filter(r => r.alarm === false).slice(-30).map(r => `- ${r.title}${r.ticket ? ' (ada tiket tersimpan)' : ''} — dicatat ${fmtDateShort(new Date(r.createdAt))} ${fmtTime(new Date(r.createdAt))}`);
+  return ns.join('\n') || '(kosong)';
+}
 function chatPrompt(){
   const now = new Date();
   const today = itemsOn(now).map(x => `- ${fmtTime(x.at)} ${x.r.title}${x.done?' (selesai)':''}`).join('\n') || '(kosong)';
@@ -2152,7 +2455,7 @@ function chatPrompt(){
 Kamu boleh menjawab pertanyaan APA SAJA: pengetahuan umum, berita & info terbaru (pakai Google Search bila perlu), resep, tips usaha & jualan online, hitung-hitungan, terjemahan, ide konten, kesehatan umum, dan lain-lain.
 Jawab langsung ke intinya. Untuk pertanyaan sederhana cukup 1–3 kalimat; untuk penjelasan/langkah boleh lebih panjang dengan poin-poin singkat. Jangan pakai tabel.
 Sekarang: ${fmtDateLong(now)} jam ${fmtTime(now)}. Nama pengguna: ${state.settings.name || 'tidak diketahui'}.
-Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}
+Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}\nCatatan barang/lokasi yang pernah user simpan (jawab dari sini kalau user menanyakannya):\n${notesForAI()}
 Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", contoh: "ingatkan besok jam 7 olahraga".`;
 }
 let lastSources = [];
@@ -2278,7 +2581,7 @@ $('#sendBtn').onclick = () => send();
 
 function greetBot(){
   const n = state.settings.name ? ' ' + state.settings.name : '';
-  pushBot(`Halo${n}! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. Kamu juga bisa tanya apa saja — jadwal hari ini, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.`, null, false);
+  pushBot(`Halo${n}! 👋 Aku asisten IngetZeon.\nBilang saja "ingatkan…" lewat ketikan atau suara, nanti aku buatkan pengingatnya. Aku juga bisa mengingat letak barangmu ("saya simpan kunci di laci") dan menjawab pertanyaan apa saja — jadwal, "di mana aku parkir?", resep, tips jualan, info terbaru, dan lainnya.`, null, false);
 }
 function pushMe(text, photo){ state.chat.push({role:'me', text, photo: photo || null, ts:Date.now()}); save(); renderChat(); }
 function pushBot(text, reminderId = null, voice = true){
@@ -2311,7 +2614,7 @@ function renderChat(){
         const ps = photoSrc(r.photo);
         card = `<div class="rcard" data-rid="${r.id}">${ps ? `<img src="${ps}" alt="">` : `<div class="cat" style="${catStyle(r.category)}">${icon('c-'+r.category)}</div>`}
           <div class="tx"><b>${esc(r.title)}</b><small>${r.alarm===false ? 'Catatan · ' + fmtTime(new Date(r.createdAt)) : `${dayLabel(at)} · ${fmtTime(at)} · ${esc(repeatLabel(r))}`}</small></div>
-          <button data-undo="${r.id}">Batalkan</button></div>`;
+          <button data-undo="${r.id}">${r.alarm===false ? 'Hapus' : 'Batalkan'}</button></div>`;
       } else card = `<div class="rcard undone"><div class="tx"><small>Pengingat ini sudah dihapus</small></div></div>`;
     }
     const srcs = (m.src||[]).length ? `<div class="srcs">${m.src.map(w=>`<a href="${esc(w.uri)}" target="_blank" rel="noopener">${esc(w.title||'sumber')}</a>`).join('')}</div>` : '';
@@ -2327,7 +2630,7 @@ $('#msgs').onclick = e => {
   if(c){ const r = findR(c.dataset.rid); if(r) openDetail(r, parseLocalISO(r.scheduledAt)); }
 };
 let thinking = false;
-let pendingPhoto = null;
+let pendingPhoto = null, lastUserText = '';
 function renderPending(){
   const src = photoSrc(pendingPhoto);
   $('#pending').classList.toggle('show', !!src);
@@ -2354,7 +2657,19 @@ async function send(){
   try{
     const lower = text.toLowerCase();
     const aboutParking = lower.includes('parkir');
-    if(aboutParking && /di ?mana|\bmana\b/.test(lower) && !photo) answerParking();
+    lastUserText = text;
+    const asksTicket = /(tiket|karcis|qr|barcode)/.test(lower) && /(tampil|lihat|buka|mana|tunjuk|show)/.test(lower);
+    const store = !aboutParking ? parseStore(text) : null;
+    if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();
+    else if(!aboutParking && isWhereQ(lower) && !photo && answerItem(text)) { /* dijawab dari catatan barang */ }
+    else if(store && store.item && store.place){
+      const r = saveItem({...store, photo});
+      state.chat.push({role:'bot', text:`Oke, aku ingat: **${cap1(store.item)}** ${store.place}${photo ? ' (beserta fotonya 📸)' : ''}. Tanya saja nanti, "di mana ${store.item} saya?"`, rid:r.id, ts:Date.now()});
+      save(); renderChat(); speak(`Oke, aku ingat. ${store.item} ${store.place}.`);
+    }
+    else if(!aboutParking && isWhereQ(lower) && !state.settings.apiKey){
+      pushBot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
+    }
     else if(REMIND_RE.test(text) || aboutParking || photo) await handleReminder(text, photo);
     else await handleChat(text);
   } finally {
@@ -2376,6 +2691,7 @@ function answerParking(){
   const c = new Date(p.createdAt);
   state.chat.push({role:'bot', text:`Kamu parkir di **${lokasi}** 📍 (dicatat ${dayLabel(c).toLowerCase()} jam ${fmtTime(c)}).`, rid:p.id, ts:Date.now()});
   save(); renderChat(); speak(`Kamu parkir di ${lokasi}.`);
+  if(p.ticket && /tiket|qr|barcode|karcis/i.test(lastUserText)) setTimeout(() => openTicket(p), 600);
 }
 async function handleReminder(text, photo = null){
   let data = null, note = '';
@@ -2484,6 +2800,8 @@ if(new URLSearchParams(location.search).get('ai')) openAI(false);
 // tombol kembali Android menutup layar penuh dulu
 history.pushState({app:1}, '');
 addEventListener('popstate', () => {
+  if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
+  if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
   const open = ['#alarm','#dialog','#sheet','#form','#ai'].find(s => $(s).classList.contains('show'));
   if(open){

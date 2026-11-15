@@ -8,6 +8,7 @@ import '../../providers/reminder_provider.dart';
 import '../screens/reminder_form_screen.dart';
 import 'common.dart';
 import 'photo_view.dart';
+import '../screens/ticket_screens.dart';
 
 /// Satu baris pengingat dengan tombol centang selesai.
 class ReminderTile extends ConsumerWidget {
@@ -57,6 +58,7 @@ class ReminderTile extends ConsumerWidget {
                           style: TextStyle(fontSize: 12.5, color: late ? AppColors.pink : context.muted, fontWeight: late ? FontWeight.w600 : null)),
                       if (r.repeat != RepeatType.once) _Pill(icon: Icons.repeat_rounded, text: r.repeatLabel),
                       if (r.photoPath != null) const _Pill(icon: Icons.photo_camera_outlined, text: 'Foto'),
+                      if (r.hasTicket) const _Pill(icon: Icons.qr_code_2_rounded, text: 'Tiket'),
                       if (!r.alarm) const _Pill(icon: Icons.notifications_off_outlined, text: 'Catatan'),
                     ],
                   ),
@@ -160,6 +162,10 @@ Future<void> showReminderDetail(BuildContext context, WidgetRef ref, Reminder r,
             if (r.note != null) ...[
               const SizedBox(height: 12),
               Text(r.note!, style: TextStyle(color: c.muted, fontSize: 14)),
+            ],
+            if (r.hasTicket) ...[
+              const SizedBox(height: 14),
+              TicketBox(text: r.ticketText!, format: r.ticketFormat, onShow: () => openTicket(context, r)),
             ],
             if (r.photoPath != null) ...[
               const SizedBox(height: 14),
