@@ -143,7 +143,7 @@ class NoteParser {
       label = content.substring(0, i).trim();
       value = content.substring(i + 1).trim();
     }
-    value = value.replaceAll(RegExp(r'^["'“]|["'”]$'), '');
+    value = value.replaceAll(RegExp('^["\'\u201C]|["\'\u201D]\$'), '');
     if (value.isEmpty || tokens(label).isEmpty) return null;
     return NoteDraft(text: content, label: label, value: value, secret: true);
   }
