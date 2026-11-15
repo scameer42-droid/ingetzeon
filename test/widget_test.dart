@@ -7,6 +7,7 @@ import 'package:ingetzeon/services/natural_parser.dart';
 import 'package:ingetzeon/services/cycle_parser.dart';
 import 'package:ingetzeon/services/note_parser.dart';
 import 'package:ingetzeon/services/speech_text.dart';
+import 'package:ingetzeon/services/wellbeing_logic.dart';
 import 'package:ingetzeon/providers/cycle_provider.dart';
 import 'package:ingetzeon/services/vocab.dart';
 
@@ -271,6 +272,33 @@ void main() {
       expect(SpeechText.fromStt('parkir di B 2 dekat lift'), 'Parkir di B2 dekat lift');
       expect(SpeechText.fromStt('parkir di lantai tiga'), 'Parkir di lantai 3');
       expect(SpeechText.fromStt('ingatkan jam 7:30 olahraga'), 'Ingatkan jam 7.30 olahraga');
+    });
+  });
+
+  group('Ruang Tenang', () {
+    test('deteksi perasaan & krisis', () {
+      expect(Feelings.detect('aku lagi sedih banget')!.main, Emotion.sedih);
+      expect(Feelings.detect('capek banget')!.main, Emotion.lelah);
+      expect(Feelings.detect('aku cemas soal kerjaan besok')!.main, Emotion.cemas);
+      expect(Feelings.detect('rasanya sendirian dan kesepian')!.main, Emotion.kesepian);
+      expect(Feelings.detect('aku pengen mati aja')!.crisis, true);
+      expect(Feelings.isCrisis('kadang kepikiran bunuh diri'), true);
+      expect(Feelings.detect('lagu sedih yang bagus apa ya'), null);
+      expect(Feelings.detect('ingatkan besok jam 7 olahraga'), null);
+      expect(Feelings.detect('berapa harga emas hari ini'), null);
+      expect(Feelings.detect('kenapa kucing saya takut air?'), null);
+      expect(Feelings.testRequest('mau tes depresi'), 'phq9');
+      expect(Feelings.testRequest('tes kecemasan dong'), 'gad7');
+      expect(Feelings.testRequest('tes psikologi'), 'menu');
+      expect(SupportReply.crisis().text.contains('119'), true);
+    });
+    test('skor tes', () {
+      expect(TestResult.evaluate(PsyTest.phq9, [1, 1, 1, 1, 1, 1, 1, 1, 0]).level, 'Ringan');
+      expect(TestResult.evaluate(PsyTest.phq9, [0, 0, 0, 0, 0, 0, 0, 0, 1]).crisis, true);
+      expect(TestResult.evaluate(PsyTest.gad7, [2, 2, 2, 2, 2, 2, 2]).level, 'Sedang');
+      expect(TestResult.evaluate(PsyTest.who5, [5, 5, 5, 5, 5]).score, 100);
+      expect(TestResult.evaluate(PsyTest.who5, [1, 1, 1, 1, 1]).level, 'Sangat rendah');
+      expect(MoodAdvice.forDay(5, 5).tools.contains(Tool.fokus), true);
     });
   });
 

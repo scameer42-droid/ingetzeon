@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/cycle_provider.dart';
 import '../../providers/notes_provider.dart';
+import '../../providers/wellbeing_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
@@ -13,6 +14,8 @@ import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 import 'cycle_screen.dart';
+import 'calm/calm_screen.dart';
+import 'calm/calm_tools.dart';
 import 'notes_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -295,6 +298,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ]),
           _groupTitle('Kesehatan'),
           _Group(children: [
+            _Row(
+              icon: Icons.spa_rounded,
+              color: kCalm,
+              title: 'Ruang Tenang',
+              subtitle: 'Mood, kebiasaan, fokus, jurnal, tes psikologi, teman cerita',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CalmScreen())),
+            ),
             Builder(builder: (context) {
               final c = ref.watch(cycleProvider);
               final info = c.enabled ? CycleInfo.from(c) : null;
@@ -323,6 +333,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 await ref.read(remindersProvider.notifier).clearLog();
                 await ref.read(chatProvider.notifier).clear();
                 await ref.read(notesProvider.notifier).clearAll();
+                await ref.read(moodProvider.notifier).clear();
+                await ref.read(habitsProvider.notifier).clear();
+                await ref.read(journalProvider.notifier).clear();
+                await ref.read(testsProvider.notifier).clear();
                 if (context.mounted) showToast(context, 'Semua data dihapus');
               },
             ),

@@ -289,6 +289,68 @@ class NotificationService {
     }
   }
 
+  // ---------- Ruang Tenang ----------
+  static const _calmBase = 860000; // +1 cek mood, +2 jurnal, +10.. kebiasaan, +900 fokus
+
+  NotificationDetails _simple(String body, Color color) => NotificationDetails(
+        android: AndroidNotificationDetails(
+          AlarmSound.notif.channelId,
+          'Alarm · ${AlarmSound.notif.label}',
+          channelDescription: AlarmSound.notif.description,
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: 'ic_notification',
+          color: color,
+          styleInformation: BigTextStyleInformation(body),
+        ),
+      );
+
+  Future<void> _daily(int id, int hour, int minute, String title, String body, String payload, Color color) async {
+    final now = DateTime.now();
+    var at = DateTime(now.year, now.month, now.day, hour, minute);
+    if (!at.isAfter(now)) at = at.add(const Duration(days: 1));
+    try {
+      await _plugin.zonedSchedule(id, title, body, tz.TZDateTime.from(at, tz.local), _simple(body, color),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle, matchDateTimeComponents: DateTimeComponents.time, payload: payload);
+    } catch (e) {
+      debugPrint('Gagal jadwal harian: $e');
+    }
+  }
+
+  /// Pengingat harian cek mood (pagi) & jurnal (malam). null = matikan.
+  Future<void> scheduleCalm({int? checkinHour, int? journalHour}) async {
+    await _plugin.cancel(_calmBase + 1);
+    await _plugin.cancel(_calmBase + 2);
+    if (checkinHour != null) {
+      await _daily(_calmBase + 1, checkinHour, 0, '🙂 Gimana perasaanmu pagi ini?', 'Catat mood & energimu, nanti aku sarankan jadwal yang pas untuk hari ini.', 'calm:mood', const Color(0xFF4F46E5));
+    }
+    if (journalHour != null) {
+      await _daily(_calmBase + 2, journalHour, 0, '📓 Waktunya refleksi malam', 'Luangkan 3 menit untuk menulis jurnal — apa yang kamu syukuri hari ini?', 'calm:jurnal', const Color(0xFF7C3AED));
+    }
+  }
+
+  /// Pengingat kebiasaan harian.
+  Future<void> scheduleHabits(List<({int index, String title, int hour, int minute})> items) async {
+    for (var i = 0; i < 60; i++) {
+      await _plugin.cancel(_calmBase + 10 + i);
+    }
+    for (final it in items.take(60)) {
+      await _daily(_calmBase + 10 + it.index, it.hour, it.minute, it.title, 'Yuk, centang kebiasaan baikmu hari ini ✨', 'calm:kebiasaan', const Color(0xFF12A150));
+    }
+  }
+
+  /// Notifikasi saat sesi fokus/istirahat selesai. [at] null = batalkan.
+  Future<void> scheduleFocusEnd(DateTime? at, {String title = '', String body = ''}) async {
+    await _plugin.cancel(_calmBase + 900);
+    if (at == null || !at.isAfter(DateTime.now())) return;
+    try {
+      await _plugin.zonedSchedule(_calmBase + 900, title, body, tz.TZDateTime.from(at, tz.local), _details(title, body, override: AlarmSound.notif),
+          androidScheduleMode: await _mode(), payload: 'calm:fokus');
+    } catch (e) {
+      debugPrint('Gagal jadwal fokus: $e');
+    }
+  }
+
   Future<void> cancelParkingHourly() async {
     for (var h = 1; h <= 12; h++) {
       await _plugin.cancel(_hourlyBase + h);

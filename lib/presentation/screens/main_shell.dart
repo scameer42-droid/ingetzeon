@@ -5,12 +5,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/chat_provider.dart';
 import '../../providers/cycle_provider.dart';
+import '../../providers/wellbeing_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../services/notification_service.dart';
 import 'ai_assistant_screen.dart';
 import 'alarm_screen.dart';
 import 'calendar_screen.dart';
+import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
@@ -38,6 +41,8 @@ class _MainShellState extends ConsumerState<MainShell> {
       final notifier = ref.read(remindersProvider.notifier);
       await notifier.rescheduleAll();
       await ref.read(cycleProvider.notifier).reschedule();
+      await ref.read(calmSettingsProvider.notifier).reschedule();
+      await ref.read(habitsProvider.notifier).reschedule();
       final launch = notif.takeLaunchResponse();
       if (launch != null) await _onNotification(launch);
     });
@@ -50,6 +55,16 @@ class _MainShellState extends ConsumerState<MainShell> {
     if (id == 'cycle') {
       if (!mounted) return;
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen()));
+      return;
+    }
+    if (id.startsWith('calm:')) {
+      if (!mounted) return;
+      final tool = id.substring(5);
+      if (tool == 'fokus') {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const FocusScreen()));
+      } else {
+        await openTool(context, ref, tool);
+      }
       return;
     }
     if (r.actionId == null || r.actionId!.isEmpty) {
@@ -72,6 +87,7 @@ class _MainShellState extends ConsumerState<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<int>(openChatRequestProvider, (_, __) => _openAi());
     final screens = [
       HomeScreen(onOpenAi: _openAi, onGoTo: (i) => setState(() => _index = i)),
       const CalendarScreen(),

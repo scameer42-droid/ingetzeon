@@ -6,6 +6,7 @@ import '../services/ai_service.dart';
 import '../services/cycle_parser.dart';
 import '../services/memory_parser.dart';
 import '../services/vocab.dart';
+import '../services/wellbeing_logic.dart';
 import '../services/natural_parser.dart';
 import '../services/note_parser.dart';
 import '../services/voice_service.dart';
@@ -15,7 +16,7 @@ import 'reminder_provider.dart';
 import 'settings_provider.dart';
 
 class ChatMessage {
-  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath, this.sources = const [], this.noteIds = const []});
+  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath, this.sources = const [], this.noteIds = const [], this.tools = const []});
   final bool fromUser;
   final String text;
   final String? reminderId;
@@ -25,7 +26,10 @@ class ChatMessage {
   /// Catatan yang ditampilkan sebagai kartu di bawah balasan.
   final List<String> noteIds;
 
-  ChatMessage withText(String t) => ChatMessage(fromUser: fromUser, text: t, reminderId: reminderId, photoPath: photoPath, sources: sources, noteIds: noteIds);
+  /// Tombol alat bantu (latihan napas, jurnal, Healing119, …) di bawah balasan.
+  final List<String> tools;
+
+  ChatMessage withText(String t) => ChatMessage(fromUser: fromUser, text: t, reminderId: reminderId, photoPath: photoPath, sources: sources, noteIds: noteIds, tools: tools);
 
   Map<String, dynamic> toMap() => {
         'u': fromUser,
@@ -34,6 +38,7 @@ class ChatMessage {
         'p': photoPath,
         's': [for (final x in sources) {'t': x.title, 'u': x.uri}],
         'n': noteIds,
+        'k': tools,
       };
   factory ChatMessage.fromMap(Map m) => ChatMessage(
         fromUser: m['u'] == true,
@@ -44,24 +49,32 @@ class ChatMessage {
           for (final x in (m['s'] as List? ?? const []).whereType<Map>()) AiSource((x['t'] ?? '').toString(), (x['u'] ?? '').toString()),
         ],
         noteIds: [for (final x in (m['n'] as List? ?? const [])) x.toString()],
+        tools: [for (final x in (m['k'] as List? ?? const [])) x.toString()],
       );
 }
 
 class ChatState {
-  const ChatState({this.messages = const [], this.thinking = false, this.showTicketId});
+  const ChatState({this.messages = const [], this.thinking = false, this.showTicketId, this.support = false});
   final List<ChatMessage> messages;
   final bool thinking;
 
+  /// Sedang dalam mode "teman cerita" (pengguna curhat).
+  final bool support;
+
   /// Bila diisi, layar asisten membuka tiket parkir pengingat ini.
   final String? showTicketId;
-  ChatState copyWith({List<ChatMessage>? messages, bool? thinking, String? showTicketId, bool clearTicket = false}) => ChatState(
+  ChatState copyWith({List<ChatMessage>? messages, bool? thinking, String? showTicketId, bool clearTicket = false, bool? support}) => ChatState(
         messages: messages ?? this.messages,
         thinking: thinking ?? this.thinking,
         showTicketId: clearTicket ? null : (showTicketId ?? this.showTicketId),
+        support: support ?? this.support,
       );
 }
 
 final aiServiceProvider = Provider<AiService>((ref) => AiService());
+
+/// Dinaikkan untuk meminta layar utama membuka asisten (mis. dari Ruang Tenang).
+final openChatRequestProvider = StateProvider<int>((ref) => 0);
 
 class ChatNotifier extends Notifier<ChatState> {
   @override
@@ -78,8 +91,8 @@ class ChatNotifier extends Notifier<ChatState> {
     ref.read(settingsRepositoryProvider).set('chat', state.messages.map((e) => e.toMap()).toList());
   }
 
-  void _bot(String text, {String? reminderId, String? speech, List<AiSource> sources = const [], List<String> noteIds = const []}) {
-    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId, sources: sources, noteIds: noteIds));
+  void _bot(String text, {String? reminderId, String? speech, List<AiSource> sources = const [], List<String> noteIds = const [], List<String> tools = const []}) {
+    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId, sources: sources, noteIds: noteIds, tools: tools));
     if (_settings.voice) {
       // bacakan bagian awal saja agar tidak terlalu panjang
       var plain = (speech ?? text).replaceAll(RegExp(r'[#*_`>]'), '').replaceAll(RegExp(r'\n+'), '. ');
@@ -111,9 +124,27 @@ class ChatNotifier extends Notifier<ChatState> {
     final text = input.trim();
     if (text.isEmpty || state.thinking) return;
     _push(ChatMessage(fromUser: true, text: text, photoPath: photoPath));
-    state = state.copyWith(thinking: true);
+    final wasSupport = state.support;
+    state = state.copyWith(thinking: true, support: false);
     try {
       final lower = text.toLowerCase();
+      // keselamatan dulu: tanda krisis selalu dijawab dengan bantuan, apa pun isinya
+      if (photoPath == null && Feelings.isCrisis(text)) {
+        final r = SupportReply.crisis();
+        _bot(r.text, tools: r.tools, speech: 'Terima kasih sudah mau cerita. Kamu tidak sendirian. Tolong hubungi Healing119, telepon 119 lalu tekan 8.');
+        state = state.copyWith(support: true);
+        return;
+      }
+      final testReq = photoPath == null ? Feelings.testRequest(text) : null;
+      if (testReq != null) {
+        final t = PsyTest.byId(testReq);
+        _bot(
+            t == null
+                ? 'Ada 3 tes singkat yang bisa kamu coba: **Suasana Hati (PHQ-9)**, **Kecemasan (GAD-7)**, dan **Kesejahteraan (WHO-5)**. Masing-masing 2–3 menit. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*'
+                : '**${t.title}** — ${t.items.length} pertanyaan tentang kondisimu 2 minggu terakhir. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*',
+            tools: t == null ? const ['tes:phq9', 'tes:gad7', 'tes:who5'] : ['tes:${t.id}']);
+        return;
+      }
       final aboutParking = lower.contains('parkir');
       final asksWhere = RegExp(r'di ?mana|\bmana\b').hasMatch(lower);
       final asksTicket = RegExp(r'tiket|karcis|qr|barcode').hasMatch(lower) && RegExp(r'tampil|lihat|buka|mana|tunjuk|show').hasMatch(lower);
@@ -137,8 +168,13 @@ class ChatNotifier extends Notifier<ChatState> {
         _bot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
       } else {
         final intent = Vocab.classify(text);
+        final feel = photoPath == null ? Feelings.detect(text) : null;
         if (intent == 'reminder' || aboutParking || photoPath != null) {
           await _handleReminder(text, photoPath: photoPath);
+        } else if (feel != null && intent != 'schedule') {
+          await _support(text, feel);
+        } else if (wasSupport && intent == 'other' && Vocab.smallTalk(text, name: _settings.name, greeting: greeting()) == null && Vocab.calc(text) == null) {
+          await _support(text, null);
         } else {
           await _handleChat(text, scheduleQuestion: intent == 'schedule');
         }
@@ -343,6 +379,60 @@ class ChatNotifier extends Notifier<ChatState> {
         }
         return true;
     }
+  }
+
+  /// Mulai sesi "teman cerita" (dari Ruang Tenang).
+  void startSupport() {
+    final n = _settings.name.isEmpty ? '' : ', ${_settings.name}';
+    _push(ChatMessage(
+      fromUser: false,
+      text: 'Hai$n 💛 Aku di sini buat dengerin. Ceritakan apa saja yang sedang kamu rasakan — tidak ada yang salah, dan aku tidak akan menghakimi.\n\n'
+          'Kamu bisa mulai dengan, misalnya: "aku lagi cemas soal kerjaan" atau "hari ini rasanya capek banget".',
+      tools: const [Tool.napas, Tool.grounding, 'tes:menu'],
+    ));
+    state = state.copyWith(support: true);
+  }
+
+  static const _supportPrompt =
+      'Kamu sedang berperan sebagai "Teman Cerita" di aplikasi IngetZeon: pendengar yang hangat, tenang, dan tidak menghakimi, '
+      'dalam bahasa Indonesia sehari-hari yang lembut. Pedoman:\n'
+      '1. Validasi perasaan pengguna dulu dengan tulus dan spesifik pada ceritanya, jangan langsung menceramahi.\n'
+      '2. Ajukan SATU pertanyaan terbuka untuk memahami lebih dalam. Jawaban singkat (maksimal ±120 kata).\n'
+      '3. Bila cocok, tawarkan satu langkah kecil berbasis bukti: napas lambat/napas kotak, grounding 5-4-3-2-1, menulis jurnal, '
+      'aktivitas kecil yang menyenangkan, tidur teratur, atau menghubungi orang terdekat. Aplikasi punya tombol untuk latihan napas, grounding, jurnal, dan tes psikologi.\n'
+      '4. JANGAN mendiagnosis, jangan menyarankan obat atau dosis, dan jangan mengaku sebagai psikolog atau manusia.\n'
+      '5. Bila keluhan sudah lama (lebih dari 2 minggu), berat, atau mengganggu aktivitas, sarankan dengan lembut untuk bicara dengan psikolog/psikiater/puskesmas, '
+      'atau layanan gratis Healing119 (telepon 119 lalu tekan 8, atau healing119.id).\n'
+      '6. Bila ada tanda ingin menyakiti diri atau bunuh diri: tanggapi dengan peduli, minta dia segera menghubungi Healing119 (119 tekan 8) atau 112 bila dalam bahaya, '
+      'dan orang yang dipercaya. Jangan pernah memberi informasi cara menyakiti diri.\n'
+      '7. Jangan mengulang kalimat yang sama dengan balasan sebelumnya.';
+
+  Future<void> _support(String text, FeelingResult? feel) async {
+    final local = feel == null ? SupportReply.listening() : SupportReply.forFeeling(feel, name: _settings.name);
+    final s = _settings;
+    if (s.hasAi) {
+      try {
+        final msgs = state.messages;
+        final hist = msgs.length > 1 ? msgs.sublist(0, msgs.length - 1) : <ChatMessage>[];
+        final recent = hist.length > 12 ? hist.sublist(hist.length - 12) : hist;
+        final out = await ref.read(aiServiceProvider).chat(
+              text: text,
+              history: recent.map((m) => AiTurn(fromUser: m.fromUser, text: m.text)).toList(),
+              system: '$_supportPrompt\nNama pengguna: ${s.name.isEmpty ? '(belum diisi)' : s.name}. Waktu sekarang: ${fmtDateLong(DateTime.now())} ${fmtTime(DateTime.now())}.',
+              apiKey: s.apiKey,
+              model: s.model,
+            );
+        if (out.text.trim().isNotEmpty) {
+          _bot(out.text, tools: local.tools);
+          state = state.copyWith(support: true);
+          return;
+        }
+      } on AiException {
+        // pakai jawaban lokal di bawah
+      }
+    }
+    _bot(local.text, tools: local.tools);
+    state = state.copyWith(support: true);
   }
 
   void ticketShown() => state = state.copyWith(clearTicket: true);

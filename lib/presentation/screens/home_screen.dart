@@ -5,11 +5,15 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_utils.dart';
 import '../../data/models/reminder.dart';
 import '../../providers/notes_provider.dart';
+import '../../providers/wellbeing_provider.dart';
+import '../../services/wellbeing_logic.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
+import 'calm/calm_screen.dart';
+import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'item_sheet.dart';
 import 'notes_screen.dart';
@@ -103,6 +107,7 @@ class HomeScreen extends ConsumerWidget {
             _ParkingCard(parking: parking),
           ],
           const CycleHomeCard(),
+          _CalmCard(onOpenAi: onOpenAi),
           if (items.isNotEmpty) ...[
             const SectionHeader('Barang yang kamu simpan'),
             SoftCard(
@@ -399,6 +404,86 @@ class _ItemRow extends ConsumerWidget {
             child: const Text('Diambil', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+
+/// Kartu Ruang Tenang di beranda: cek mood harian + pintu ke fitur psikologi.
+class _CalmCard extends ConsumerWidget {
+  const _CalmCard({required this.onOpenAi});
+  final VoidCallback onOpenAi;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(moodProvider);
+    final today = ref.read(moodProvider.notifier).today;
+    final habits = ref.watch(habitsProvider);
+    final done = habits.where((h) => h.doneOn(DateTime.now())).length;
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: kCalmGradient,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: kCalm.withValues(alpha: .3), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -14)],
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CalmScreen(onOpenChat: onOpenAi))),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(13)),
+                    alignment: Alignment.center,
+                    child: Text(today == null ? '🌿' : MoodAdvice.moodEmoji[today.mood - 1], style: const TextStyle(fontSize: 22)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(today == null ? 'Gimana perasaanmu hari ini?' : 'Ruang Tenang', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16)),
+                      Text(
+                        today == null
+                            ? 'Catat mood, dapatkan saran jadwal hari ini'
+                            : '${MoodAdvice.forDay(today.mood, today.energy).title}${habits.isEmpty ? '' : ' · kebiasaan $done/${habits.length}'}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white.withValues(alpha: .88), fontSize: 12.5),
+                      ),
+                    ]),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: .9)),
+                ]),
+                if (today == null) ...[
+                  const SizedBox(height: 12),
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    for (var i = 1; i <= 5; i++)
+                      GestureDetector(
+                        onTap: () async {
+                          await ref.read(moodProvider.notifier).log(i, 3);
+                          if (context.mounted) await showMoodCheckin(context, ref);
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 44,
+                          decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(12)),
+                          alignment: Alignment.center,
+                          child: Text(MoodAdvice.moodEmoji[i - 1], style: const TextStyle(fontSize: 22)),
+                        ),
+                      ),
+                  ]),
+                ],
+              ]),
+            ),
+          ),
+        ),
       ),
     );
   }

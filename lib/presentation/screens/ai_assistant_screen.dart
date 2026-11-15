@@ -13,6 +13,7 @@ import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
+import 'calm/calm_tools.dart';
 import 'notes_screen.dart';
 import 'ticket_screens.dart';
 import '../widgets/reminder_tile.dart';
@@ -40,6 +41,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     'Ingatkan besok jam 7 pagi olahraga',
     'Ingatkan minum obat setiap hari jam 8 malam',
     'Jadwal hari ini apa?',
+    'Aku lagi capek & banyak pikiran',
+    'Tes psikologi',
     'Catat saya punya emas 10 gr',
     'Lihat semua catatan',
     'Kapan haid berikutnya?',
@@ -390,6 +393,21 @@ class _Bubble extends ConsumerWidget {
                 ? Text(message.text, style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.5))
                 : _RichText(message.text),
             if (!me && message.sources.isNotEmpty) _Sources(message.sources),
+            if (!me && message.tools.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Wrap(spacing: 6, runSpacing: 6, children: [
+                  for (final t in message.tools)
+                    Consumer(
+                      builder: (context, ref, _) => ActionChip(
+                        visualDensity: VisualDensity.compact,
+                        label: Text(toolLabel(t), style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
+                        backgroundColor: (t == 'telepon119' || t == 'healing119') ? const Color(0xFFFFE4E6) : null,
+                        onPressed: () => openTool(context, ref, t),
+                      ),
+                    ),
+                ]),
+              ),
             if (!me && message.noteIds.isNotEmpty)
               Consumer(builder: (context, ref, _) {
                 final notes = ref.watch(notesProvider);
