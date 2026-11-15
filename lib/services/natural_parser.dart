@@ -83,7 +83,7 @@ class NaturalParser {
   static const _stopWords = {
     'tolong', 'tlg', 'please', 'plis', 'hai', 'halo', 'hei', 'hey', 'bro', 'sis', 'kak', 'min',
     'ingatkan', 'ingetin', 'ingatin', 'ingetkan', 'ingat', 'inget', 'remind', 'reminder', 'jadwalkan',
-    'catat', 'pengingat', 'bikin', 'alarm', 'jadwalkan', 'setel',
+    'catat', 'pengingat', 'bikin', 'alarm', 'setel',
     'aku', 'saya', 'gue', 'gua', 'gw', 'daku', 'kami', 'kita', 'ku',
     'ya', 'yah', 'yaa', 'dong', 'deh', 'nih', 'ok', 'oke', 'okey', 'yuk', 'ntar', 'lagi', 'pada',
     'hari', 'jam', 'pukul', 'setiap', 'tiap', 'nya',
