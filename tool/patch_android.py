@@ -24,6 +24,7 @@ PERMISSIONS = [
     '<uses-permission android:name="android.permission.USE_EXACT_ALARM"/>',
     '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>',
     '<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>',
+    '<uses-permission android:name="android.permission.USE_BIOMETRIC"/>',
 ]
 
 RECEIVERS = """
@@ -82,7 +83,7 @@ def patch_gradle():
         s = f.read_text()
         if "isCoreLibraryDesugaringEnabled" not in s:
             s = s.replace("compileOptions {", "compileOptions {\n        isCoreLibraryDesugaringEnabled = true", 1)
-            s = s.rstrip() + '\n\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+            s = s.rstrip() + '\n\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n    implementation("androidx.appcompat:appcompat:1.7.0")\n}\n'
         if "proguard-rules.pro" not in s:
             s = re.sub(r"(release\s*\{)", r'\1\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")', s, count=1)
         if "checkReleaseBuilds" not in s:
@@ -94,7 +95,7 @@ def patch_gradle():
         s = f.read_text()
         if "coreLibraryDesugaringEnabled" not in s:
             s = s.replace("compileOptions {", "compileOptions {\n        coreLibraryDesugaringEnabled true", 1)
-            s = s.rstrip() + "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n}\n"
+            s = s.rstrip() + "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n    implementation 'androidx.appcompat:appcompat:1.7.0'\n}\n"
         if "proguard-rules.pro" not in s:
             s = re.sub(r"(release\s*\{)", r"\1\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'", s, count=1)
         if "checkReleaseBuilds" not in s:
@@ -115,6 +116,25 @@ def patch_gradle():
     print(f"{f.name} dipatch")
 
 
+def patch_activity():
+    """local_auth (sidik jari/PIN) butuh FlutterFragmentActivity + tema AppCompat."""
+    for f in (APP / "src" / "main").rglob("MainActivity.*"):
+        s = f.read_text()
+        if "FlutterFragmentActivity" in s:
+            continue
+        s = s.replace("io.flutter.embedding.android.FlutterActivity", "io.flutter.embedding.android.FlutterFragmentActivity")
+        s = re.sub(r"\bFlutterActivity\b", "FlutterFragmentActivity", s)
+        f.write_text(s)
+        print(f"{f.name} -> FlutterFragmentActivity")
+    res = APP / "src" / "main" / "res"
+    for name, parent in (("values", "Theme.AppCompat.Light.NoActionBar"), ("values-night", "Theme.AppCompat.NoActionBar")):
+        f = res / name / "styles.xml"
+        if f.exists():
+            s = re.sub(r'parent="@android:style/Theme\.[A-Za-z.]+"', f'parent="{parent}"', f.read_text())
+            f.write_text(s)
+    print("Tema AppCompat dipasang")
+
+
 def copy_resources():
     src = ROOT / "tool" / "android_res"
     dst = APP / "src" / "main" / "res"
@@ -129,4 +149,5 @@ def copy_resources():
 if __name__ == "__main__":
     patch_manifest()
     patch_gradle()
+    patch_activity()
     copy_resources()

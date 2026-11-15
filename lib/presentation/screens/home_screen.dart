@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_utils.dart';
 import '../../data/models/reminder.dart';
+import '../../providers/notes_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../widgets/common.dart';
@@ -11,6 +12,7 @@ import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
 import 'cycle_screen.dart';
 import 'item_sheet.dart';
+import 'notes_screen.dart';
 import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
@@ -113,6 +115,14 @@ class HomeScreen extends ConsumerWidget {
               ]),
             ),
           ],
+          Builder(builder: (context) {
+            final notes = ref.watch(notesProvider);
+            if (notes.isEmpty) return const SizedBox.shrink();
+            return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              SectionHeader('Catatan', action: 'Lihat semua', onAction: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotesScreen()))),
+              for (final n in notes.take(3)) NoteTile(n, key: ValueKey(n.id)),
+            ]);
+          }),
           SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
           if (totalCount > 0) ...[
             SoftCard(

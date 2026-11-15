@@ -674,6 +674,26 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .avatar.has-photo{border-color:#fff}
 .av-cam{position:absolute;right:-5px;bottom:-5px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--primary);display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .av-cam .i{width:14px;height:14px}
+
+/* ---- catatan ---- */
+.nlist{display:flex;flex-direction:column;gap:8px}
+.nlist.inchat{margin-top:10px;white-space:normal}
+.ncard{display:flex;align-items:center;gap:10px;padding:10px 6px 10px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.nlist.inchat .ncard{background:var(--card2,rgba(0,0,0,.03));box-shadow:none;border-color:transparent}
+.ncard .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:rgba(13,148,136,.12);color:#0D9488}
+.ncard.sec .ic{background:rgba(219,39,119,.12);color:#DB2777}
+.ncard .ic svg{width:18px;height:18px}
+.ncard .tx{flex:1;min-width:0}
+.ncard .tx b{display:block;font-weight:600;font-size:14px;line-height:1.35;word-break:break-word}
+.ncard .tx small{display:block;font-size:12px;color:var(--muted)}
+.ncard .pw{display:block;font-weight:700;letter-spacing:2px;color:var(--faint);font-size:14px}
+.ncard .pw.on{letter-spacing:.2px;color:#DB2777;font-size:15px;word-break:break-all}
+.ncard .nb{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--muted);flex:none;background:none;border:0;cursor:pointer}
+.ncard .nb svg{width:17px;height:17px}
+.ncard.sec .nb[data-reveal]{color:#DB2777}
+.ncard .nb.del:hover{color:#E5484D}
+.section-h .link{background:none;border:0;color:var(--primary);font-weight:600;font-size:13px;cursor:pointer}
+.nempty{text-align:center;padding:30px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px}.nempty b{display:block;font-size:15px;margin-bottom:6px}.nempty p{font-size:13px;color:var(--muted);line-height:1.5}
 </style>
 </head>
 <body>
@@ -704,6 +724,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <div id="parkWrap"></div>
     <div id="cycWrap"></div>
     <div id="itemsWrap"></div>
+    <div id="notesWrap"></div>
 
     <div class="section-h">
       <h2>Jadwal hari ini</h2>
@@ -824,6 +845,15 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
       </button>
     </div>
 
+    <div class="group-t">Catatan</div>
+    <div class="group">
+      <button class="row-s" id="rowNotes">
+        <div class="ic" style="background:rgba(13,148,136,.12);color:#0D9488"><svg class="i"><use href="#i-note"/></svg></div>
+        <div class="tx"><b>Catatan & rahasia</b><small id="notesState">Catat apa saja lewat asisten</small></div>
+        <svg class="i chev"><use href="#i-right"/></svg>
+      </button>
+    </div>
+
     <div class="group-t">Kesehatan</div>
     <div class="group">
       <button class="row-s" id="rowCycle">
@@ -894,6 +924,8 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <button>Tampilkan tiket parkir</button>
     <button>Saya simpan kunci motor di laci meja</button>
     <button>Di mana kunci motor saya?</button>
+    <button>Catat saya punya emas 10 gr</button>
+    <button>Lihat semua catatan</button>
     <button>Kapan haid berikutnya?</button>
     <button>Kapan haid saya selesai?</button>
     <button>Haid aku mulai hari ini</button>
@@ -916,6 +948,18 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 </div>
 
 <!-- ================= SIKLUS HAID ================= -->
+<div class="full" id="notes">
+  <div class="full-head">
+    <button class="icon-btn" id="notesClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button>
+    <h2>Catatan</h2>
+    <button class="icon-btn" id="notesAdd" aria-label="Tambah" style="margin-left:auto"><svg class="i"><use href="#i-plus"/></svg></button>
+  </div>
+  <div class="full-body">
+    <input class="input" id="notesSearch" placeholder="Cari catatan…" autocomplete="off" style="margin-bottom:14px">
+    <div class="nlist" id="notesList"></div>
+    <p class="foot-note" style="margin-top:14px">🔒 Catatan rahasia (password/PIN) disensor dan tidak pernah dikirim ke AI. Untuk keamanan lebih, pakai aplikasi Android — di sana rahasia dienkripsi & dibuka dengan sidik jari/PIN HP.</p>
+  </div>
+</div>
 <div class="full" id="cycle">
   <div class="full-head">
     <button class="icon-btn" id="cycClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button>
@@ -1027,6 +1071,10 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
   <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
@@ -1100,6 +1148,7 @@ let state = {
   doneLog: [], // riwayat pengingat yang sudah selesai & dihapus: {d:'YYYY-MM-DD', c:kategori}
   chat: [],
   cycle: {enabled:false, periods:[], cycleLen:28, periodLen:5, remind:true, notified:{}},
+  notes: [],
   settings: {name:'', theme:'system', apiKey:'', model:'gemini-flash-latest', voice:true, alarmSound:'melodi'},
 };
 function load(){
@@ -1111,6 +1160,7 @@ function load(){
       state.chat = Array.isArray(d.chat) ? d.chat : [];
       state.doneLog = Array.isArray(d.doneLog) ? d.doneLog : [];
       if(d.cycle) state.cycle = Object.assign(state.cycle, d.cycle);
+      state.notes = Array.isArray(d.notes) ? d.notes : [];
       state.settings = Object.assign(state.settings, d.settings || {});
     }
   }catch(e){ console.warn('load', e); }
@@ -1555,6 +1605,7 @@ function renderHome(){
   const all = itemsOn(now).filter(x => x.r.alarm !== false); // catatan (parkir/barang) tampil di bagiannya sendiri
   renderItems();
   renderCycleCard();
+  renderNotesHome();
   const items = all.filter(x => !x.done);
   const doneN = all.length - items.length + logCount(now);
   const totalN = all.length + logCount(now);
@@ -1755,6 +1806,7 @@ function renderProfile(){
   { const ci = state.cycle.enabled ? cycleInfo() : null; $('#cycState').textContent = ci ? cycleStatus(ci).title + ' · ' + cycleStatus(ci).sub : 'Atur pengingat & perkiraan haid'; }
   const s = state.settings;
   const name = s.name.trim();
+  $('#notesState').textContent = state.notes.length ? `${state.notes.length} catatan · ${state.notes.filter(n=>n.secret).length} rahasia` : 'Catat apa saja lewat asisten';
   paintAvatar($('#pfAv'));
   $('#pfName').textContent = name || 'Pengguna IngetZeon';
   $('#pfSub').textContent = `${state.reminders.length} pengingat tersimpan`;
@@ -1826,7 +1878,7 @@ $('#importFile').onchange = async e => {
 $('#rowWipe').onclick = async () => {
   const ok = await confirmDlg({title:'Hapus semua data?', text:'Semua pengingat dan riwayat chat akan dihapus dan tidak bisa dikembalikan.', ok:'Hapus', danger:true});
   if(!ok) return;
-  state.reminders = []; state.chat = []; state.doneLog = []; save(); renderAll(); renderChat(); toast('Semua data dihapus');
+  state.reminders = []; state.chat = []; state.doneLog = []; state.notes = []; try{ localStorage.removeItem(SECRET_KEY); }catch(e){} save(); renderAll(); renderChat(); toast('Semua data dihapus');
 };
 
 /* ---------------- FORM ---------------- */
@@ -2235,6 +2287,12 @@ function renderCycleCard(){
 function openCycle(){ renderCycleScreen(); $('#cycle').classList.add('show'); }
 $('#cycClose').onclick = () => $('#cycle').classList.remove('show');
 $('#rowCycle').onclick = openCycle;
+$('#rowNotes').onclick = openNotes;
+$('#notesClose').onclick = () => $('#notes').classList.remove('show');
+$('#notesAdd').onclick = noteEditor;
+$('#notesSearch').oninput = e => { notesQ = e.target.value; renderNotesScreen(); };
+$('#notesList').onclick = e => noteAction(e);
+$('#notesWrap').onclick = e => noteAction(e);
 function renderCycleScreen(){
   const c = state.cycle, ci = cycleInfo();
   const body = $('#cycBody');
@@ -2502,6 +2560,258 @@ function answerCycle(text){
   }
   state.chat.push({role:'bot', text: reply, ts: Date.now()}); save(); renderChat(); speak(speech || reply.replace(/[*_]/g,''));
   return true;
+}
+
+/* ---- Catatan bebas (sinkron dengan lib/services/note_parser.dart) ---- */
+const NOTE_SYN = {
+  password:['password','pasword','passwrd','paswd','passwd','paswod','pasword','pass','pw','pwd','sandi','katasandi','paswordnya','passwordnya','sandinya'],
+  pin:['pin','pinnya'], facebook:['fb','facebook','fesbuk','facebok','fbnya'], instagram:['ig','insta','instagram','instgram','ignya'],
+  whatsapp:['wa','whatsapp','watsap','whatsap','wanya'], email:['email','gmail','imel','surel','emailnya','gmailnya','mail'],
+  tiktok:['tiktok','tt'], youtube:['youtube','yt'], tokopedia:['tokopedia','tokped'], shopee:['shopee','shopeenya','sopi'],
+  twitter:['twitter'], rekening:['rekening','rek','norek','rekeningnya'], wifi:['wifi','wifinya','wf'],
+  gram:['gr','gram','g','grm'], emas:['emas','gold','emasnya','logam'], uang:['uang','duit','duitnya','uangnya'],
+  utang:['utang','hutang','utangnya','hutangnya'], nomor:['no','nomor','nmr','nomer','nomornya'], hp:['hp','handphone','telepon','telp','tlp','hape'],
+  plat:['plat','nopol','platnya'], ukuran:['ukuran','size','ukurannya'], alamat:['alamat','alamatnya'],
+};
+const NOTE_SYN_MAP = {}; for(const [k, list] of Object.entries(NOTE_SYN)) for(const w of list) NOTE_SYN_MAP[w] = k;
+const NOTE_STOP = new Set(('saya aku ku gue gw gua punya punyaku milik milikku apa apakah berapa ya dong deh sih nih tolong tlg minta coba catat catet cttn ctt catatin catetin catatkan dicatat '+
+  'tulis tulisin tuliskan note noted save simpan simpen ingat inget yang yg di ke dari dan itu ini adalah yaitu ialah nya mu kamu ada lihat liat tampilkan tunjukkan tunjukin kasih '+
+  'tau tahu cek buka sekarang berapakah mana dimana gimana bagaimana lagi udah sudah udh semua catatan catatanku info data kan aja saja tadi kemarin lupa jadi sebutkan cari '+
+  'siapa kapan sama the my is a ok oke makasih thanks dulu sebanyak sejumlah total jumlah segini seberapa tak tidak gak ga apaan aj').split(' '));
+const NOTE_GENERIC = new Set(['password','pin','nomor','gram','kode','akun']);
+function noteTokens(text){
+  const t = String(text).toLowerCase().replace(/kata sandi|kata kunci/g,' password ').replace(/plat nomor/g,' plat ')
+    .replace(/(\d)([a-z])/g,'$1 $2').replace(/([a-z])(\d)/g,'$1 $2').replace(/[^a-z0-9 ]/g,' ');
+  const out = [];
+  for(let w of t.split(/\s+/)){
+    if(!w) continue;
+    w = NOTE_SYN_MAP[w] || w;
+    if(NOTE_STOP.has(w)) continue;
+    if(!NOTE_SYN[w] && w.length > 4 && /nya$/.test(w)) w = w.slice(0,-3);
+    if(!out.includes(w)) out.push(w);
+  }
+  return out;
+}
+const NOTE_SECRET_RE = /\b(password|pasword|passwrd|paswd|passwd|pass|pw|pwd|sandi|kata sandi|kata kunci|pin|passcode|kode rahasia|kode akses|pola kunci|cvv)\w*\b/i;
+const NOTE_TRIGGER_RE = /^\s*(?:(?:tolong|tlg|minta|coba|bisa)\s+)?(?:(?:kamu|km)\s+)?(?:catat|catet|cttn|ctt|catatin|catetin|catatkan|dicatat|tulis|tulisin|tuliskan|note|noted|save|simpan catatan|simpen catatan|buat catatan|bikin catatan|tambah catatan|tambahkan catatan|masukkan catatan|catatan baru|ingat|inget|simpan|simpen|simpankan|rekam)\b\s*(?:(?:ya|yah|dong|deh|nih|ini|baik baik|baik2)\b\s*)*(?:(?:bahwa|kalau|kalo|klo|kl)\b\s*)?[:\-–]?\s*/i;
+function noteClean(s){
+  return s.replace(/^(?:(?:ya|dong|deh|nih|bahwa|kalau|kalo|ini)\b\s*)+/i,'').replace(/\s*(?:\b(?:ya|yah|dong|deh|ok|oke|makasih|thanks|thx|tq)\b\s*|[.!,]\s*)+$/i,'').trim();
+}
+/** "tolong catat saya punya emas 10 gr" → {text, label, value, secret}; null bila bukan perintah mencatat. */
+function parseNoteStore(input){
+  const raw = String(input).trim();
+  const m = NOTE_TRIGGER_RE.exec(raw);
+  let content;
+  if(m){
+    content = noteClean(raw.slice(m[0].length));
+    // "simpan kunci di laci" urusan Ingat barang; "ingat" tanpa isi bukan catatan
+    if(/^(simpan|simpen|simpankan|ingat|inget)/i.test(m[0].trim().replace(/^(tolong|tlg|minta|coba|bisa)\s+/i,'')) && !NOTE_SECRET_RE.test(content) && !/\d/.test(content) && !/\b(punya|nomor|no|alamat|ukuran|nama|utang|hutang|tanggal|ultah|ulang tahun)\b/i.test(content)) return null;
+  } else {
+    // tanpa kata "catat": hanya untuk pernyataan rahasia, mis. "password fb saya abc123"
+    if(!NOTE_SECRET_RE.test(raw) || /\?|\b(apa|berapa|brp|lupa|mana|lihat|liat|tampilkan|kasih tau|kasih tahu|ganti|cara|gimana|bagaimana|lupa)\b/i.test(raw)) return null;
+    const words = raw.split(/\s+/);
+    if(words.length < 2 || !/^(password|pasword|passwrd|paswd|passwd|pass|pw|pwd|sandi|kata sandi|pin|kode)/i.test(raw.replace(/^(saya|aku|gue|gw)\s+/i,''))) return null;
+    content = noteClean(raw);
+  }
+  if(content.replace(/\W/g,'').length < 2) return null;
+  const secret0 = NOTE_SECRET_RE.test(content);
+  // ada waktu ("besok jam 9") → itu pengingat, bukan catatan
+  if(!secret0 && /\b(jam \d|pukul|besok|lusa|nanti (pagi|siang|sore|malam)|\d+ (menit|jam) lagi|setiap|tiap (hari|minggu|bulan|senin|selasa|rabu|kamis|jumat|sabtu|minggu))\b/i.test(content) && !/\b(punya|nomor|alamat|ukuran)\b/i.test(content)) return null;
+  const secret = NOTE_SECRET_RE.test(content);
+  if(!secret) return {text: content, label: content, value: content, secret:false};
+  let label, value;
+  const sep = /\s*(?:[:=]|\s(?:adalah|yaitu|ialah|itu|nya|sama dengan|=)\s)\s*/i;
+  const ms = content.match(new RegExp('^(.*?)' + sep.source + '(.+)$', 'i'));
+  if(ms && ms[1].trim() && ms[2].trim()){ label = ms[1].trim(); value = ms[2].trim(); }
+  else {
+    const i = content.lastIndexOf(' ');
+    if(i < 0) return null;
+    label = content.slice(0, i).trim(); value = content.slice(i + 1).trim();
+  }
+  value = value.replace(/^["'“]|["'”]$/g,'');
+  if(!value || noteTokens(label).length === 0) return null;
+  return {text: content, label, value, secret:true};
+}
+const NOTE_Q_RE = /\?|\b(apa|apakah|apaan|berapa|brp|berapakah|siapa|kapan|mana|dimana|gimana|lihat|liat|tampilkan|tunjukkan|tunjukin|kasih tau|kasih tahu|kasi tau|cek|buka|cari|sebutkan|lupa|inget gak|ingat gak|ingat tidak|inget ga)\b/i;
+/** Pertanyaan tentang catatan → {kind:'find'|'list'|'delete', tokens}; null bila bukan. */
+function parseNoteQuery(input){
+  const t = String(input).toLowerCase().trim();
+  const del = /^(?:tolong\s+)?(?:hapus|buang|lupakan|delete|hilangkan)\s+(?:catatan\s+)?(?:tentang\s+|soal\s+)?(.+)$/.exec(t);
+  if(del && (/catatan|lupakan/.test(t) || NOTE_SECRET_RE.test(t))) return {kind:'delete', tokens: noteTokens(del[1])};
+  if(/\b(semua|daftar|list|lihat|liat|tampilkan|buka|cek)\s+(?:semua\s+)?catatan/.test(t) || /^catatan\s*(saya|aku|ku)?\s*(apa\s*(aja|saja)?)?\s*\??$/.test(t) || /catatan\s*(saya|aku|ku)\s*(apa|ada apa)/.test(t)) return {kind:'list', tokens:[]};
+  if(!NOTE_Q_RE.test(t)) return null;
+  const tokens = noteTokens(t);
+  const personal = /\b(saya|aku|gue|gw|gua|ku|punyaku|milikku)\b|ku\b/.test(t) || NOTE_SECRET_RE.test(t);
+  return tokens.length ? {kind:'find', tokens, personal} : null;
+}
+/** Cocokkan token pertanyaan dengan catatan; hasil terurut (paling cocok & terbaru dulu). */
+function matchNotes(notes, tokens, personal = true){
+  const specific = tokens.filter(x => !NOTE_GENERIC.has(x) && !/^\d+$/.test(x));
+  const need = personal ? Math.ceil(specific.length / 2) : specific.length;
+  const out = [];
+  for(const n of notes){
+    const nt = noteTokens(n.label + (n.secret ? '' : ' ' + n.value));
+    const hit = tokens.filter(x => nt.includes(x));
+    if(!hit.length) continue;
+    if(specific.length && specific.filter(x => nt.includes(x)).length < need) continue;
+    if(!specific.length && !hit.some(x => NOTE_GENERIC.has(x))) continue;
+    out.push({n, score: hit.length / tokens.length});
+  }
+  out.sort((a,b) => b.score - a.score || (b.n.createdAt||0) - (a.n.createdAt||0));
+  return out.map(x => x.n);
+}
+/** "saya punya emas 10 gr" → "kamu punya emas 10 gr" */
+function noteYou(s){ return String(s).replace(/^(saya|aku|gue|gw|gua)\b/i,'kamu').replace(/\b(saya|aku|gue|gw|gua)\b/gi,'kamu'); }
+function noteFullMatch(n, tokens){
+  const nt = noteTokens(n.label + (n.secret ? '' : ' ' + n.value));
+  return tokens.filter(x => !NOTE_GENERIC.has(x) && !/^\d+$/.test(x)).every(x => nt.includes(x));
+}
+
+/* ---------------- CATATAN ---------------- */
+const SECRET_KEY = 'ingetzeon.secret';
+function secretsGet(){ try{ return JSON.parse(localStorage.getItem(SECRET_KEY) || '{}'); }catch(e){ return {}; } }
+function secretsSet(o){ try{ localStorage.setItem(SECRET_KEY, JSON.stringify(o)); }catch(e){ toast('Penyimpanan penuh'); } }
+const noteById = id => state.notes.find(n => n.id === id);
+/** Simpan catatan; catatan rahasia dengan judul sama diperbarui. Isi rahasia disimpan terpisah. */
+function noteAdd(d){
+  const now = Date.now();
+  let id = 'n' + now.toString(36) + Math.random().toString(36).slice(2,5);
+  if(d.secret){
+    const key = noteTokens(d.label).sort().join(' ');
+    const old = state.notes.find(n => n.secret && noteTokens(n.label).sort().join(' ') === key);
+    if(old){ id = old.id; state.notes = state.notes.filter(n => n.id !== id); }
+    const s = secretsGet(); s[id] = d.value; secretsSet(s);
+  }
+  const n = {id, label: d.secret ? d.label : d.text, value: d.secret ? '' : d.text, secret: !!d.secret, createdAt: now};
+  state.notes.unshift(n); save(); renderAll();
+  return n;
+}
+function noteRemove(id){
+  state.notes = state.notes.filter(n => n.id !== id);
+  const s = secretsGet(); if(s[id] !== undefined){ delete s[id]; secretsSet(s); }
+  save(); renderAll();
+}
+const revealed = {}; // id -> waktu dibuka
+async function noteReveal(id){
+  if(revealed[id]){ delete revealed[id]; refreshNotes(); return; }
+  const ok = await confirmDlg({title:'Tampilkan isi rahasia?', text:'Pastikan tidak ada orang lain yang melihat layarmu.', ok:'Tampilkan'});
+  if(!ok) return;
+  revealed[id] = Date.now(); refreshNotes();
+  setTimeout(() => { if(revealed[id]){ delete revealed[id]; refreshNotes(); } }, 30000);
+}
+function refreshNotes(){ renderChat(); renderNotesHome(); if($('#notes').classList.contains('show')) renderNotesScreen(); }
+function noteCard(n){
+  const sec = n.secret, shown = sec && revealed[n.id] ? secretsGet()[n.id] : null;
+  const c = new Date(n.createdAt);
+  return `<div class="ncard${sec ? ' sec' : ''}" data-nid="${n.id}">
+    <div class="ic">${icon(sec ? 'i-lock' : 'i-note')}</div>
+    <div class="tx"><b>${esc(cap1(sec ? n.label : noteYou(n.value)))}</b>
+      ${sec ? `<span class="pw${shown != null ? ' on' : ''}">${shown != null ? esc(shown) : '••••••••'}</span>` : `<small>Dicatat ${dayLabel(c).toLowerCase()} · ${fmtTime(c)}</small>`}</div>
+    ${sec ? `<button class="nb" data-reveal="${n.id}" aria-label="Tampilkan">${icon('i-eye')}</button>` : ''}
+    <button class="nb" data-ncopy="${n.id}" aria-label="Salin">${icon('i-copy')}</button>
+    <button class="nb del" data-ndel="${n.id}" aria-label="Hapus">${icon('i-trash')}</button>
+  </div>`;
+}
+async function noteAction(e){
+  const r = e.target.closest('[data-reveal]'); if(r){ await noteReveal(r.dataset.reveal); return true; }
+  const c = e.target.closest('[data-ncopy]');
+  if(c){
+    const n = noteById(c.dataset.ncopy); if(!n) return true;
+    let v = n.secret ? (revealed[n.id] ? secretsGet()[n.id] : null) : noteYou(n.value);
+    if(n.secret && v == null){ const ok = await confirmDlg({title:'Salin isi rahasia?', text:'Isinya akan disalin ke clipboard.', ok:'Salin'}); if(!ok) return true; v = secretsGet()[n.id]; }
+    try{ await navigator.clipboard.writeText(v || ''); toast('Disalin'); }catch(err){ toast('Tidak bisa menyalin'); }
+    return true;
+  }
+  const d = e.target.closest('[data-ndel]');
+  if(d){
+    const n = noteById(d.dataset.ndel); if(!n) return true;
+    const ok = await confirmDlg({title:'Hapus catatan?', text: n.secret ? 'Catatan rahasia ini akan dihapus permanen.' : n.value, ok:'Hapus', danger:true});
+    if(ok){ noteRemove(n.id); toast('Catatan dihapus'); refreshNotes(); }
+    return true;
+  }
+  return false;
+}
+function renderNotesHome(){
+  const box = $('#notesWrap'); if(!box) return;
+  box.innerHTML = state.notes.length ? `<div class="section-h"><h2>Catatan</h2><button class="link" id="notesAll">Lihat semua</button></div><div class="nlist">${state.notes.slice(0,3).map(noteCard).join('')}</div>` : '';
+  if($('#notesAll')) $('#notesAll').onclick = openNotes;
+}
+let notesQ = '';
+function renderNotesScreen(){
+  const q = notesQ.trim().toLowerCase();
+  let list = state.notes;
+  if(q){ const tk = noteTokens(q); const m = tk.length ? matchNotes(state.notes, tk) : []; list = [...m, ...state.notes.filter(n => !m.includes(n) && (n.secret ? n.label : n.value).toLowerCase().includes(q))]; }
+  $('#notesList').innerHTML = !state.notes.length
+    ? `<div class="nempty"><b>Belum ada catatan</b><p>Bilang ke asisten: "catat saya punya emas 10 gr" atau "catat password fb saya …"</p></div>`
+    : (list.length ? list.map(noteCard).join('') : `<p class="foot-note" style="text-align:center;padding:20px">Tidak ketemu</p>`);
+}
+function openNotes(){ notesQ = ''; $('#notesSearch').value = ''; renderNotesScreen(); $('#notes').classList.add('show'); }
+function noteEditor(){
+  let secret = false;
+  const draw = () => {
+    $('#sheetBody').innerHTML = `
+      <h3 style="margin:4px 0 14px">Catatan baru</h3>
+      <div class="field"><label>${secret ? 'Untuk apa? (mis. password FB)' : 'Isi catatan'}</label>${secret ? `<input class="input" id="neLabel" placeholder="password facebook" value="${esc($('#neLabel') ? $('#neLabel').value : '')}">` : `<textarea class="input" id="neLabel" rows="3" placeholder="mis. saya punya emas 10 gr">${esc($('#neLabel') ? $('#neLabel').value : '')}</textarea>`}</div>
+      <label class="row-s" style="padding:6px 0;cursor:pointer"><div class="tx"><b>Rahasia (password / PIN)</b><small>Disensor & tidak dikirim ke AI</small></div><span class="switch${secret ? ' on' : ''}" id="neSec"></span></label>
+      ${secret ? `<div class="field"><label>Isi rahasia</label><input class="input" id="neVal" type="password" autocomplete="off"></div>` : ''}
+      <button class="btn btn-primary btn-block" id="neSave" style="margin-top:8px">${icon('i-check')}Simpan</button>`;
+    $('#neSec').parentElement.onclick = e => { e.preventDefault(); secret = !secret; draw(); };
+    $('#neSave').onclick = () => {
+      const l = $('#neLabel').value.trim(), v = secret ? $('#neVal').value.trim() : l;
+      if(!l || !v) return toast(secret ? 'Isi judul dan isi rahasianya' : 'Catatan masih kosong');
+      noteAdd({text:l, label:l, value:v, secret}); closeSheet(); refreshNotes(); toast('Catatan disimpan 📝');
+    };
+  };
+  draw();
+  $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
+}
+function saveNoteChat(d){
+  const n = noteAdd(d);
+  if(d.secret){
+    for(let i = state.chat.length - 1; i >= 0; i--){ if(state.chat[i].role === 'me'){ state.chat[i].text = state.chat[i].text.split(d.value).join('••••••'); break; } }
+    const ask = d.label.replace(/\b(saya|aku|gue|gw)\b/gi, 'saya').trim();
+    state.chat.push({role:'bot', text:`🔒 Tersimpan: **${noteYou(d.label)}**.\nIsinya disensor, tidak dikirim ke AI, dan hanya tampil kalau kamu ketuk ikon 👁. Tanya kapan saja, misalnya **"apa ${ask}?"**\n(Di aplikasi Android, rahasia dikunci sidik jari/PIN HP.)`, nids:[n.id], ts:Date.now()});
+    save(); renderChat(); speak('Tersimpan aman.');
+  } else {
+    const q = noteTokens(d.text).filter(t => !/^\d+$/.test(t) && !NOTE_GENERIC.has(t)).slice(0,2).join(' ');
+    state.chat.push({role:'bot', text:`📝 Oke, aku catat: **${noteYou(d.text)}**.\nTanya kapan saja, misalnya **"${q ? `berapa ${q} saya?` : 'lihat catatan saya'}"**`, nids:[n.id], ts:Date.now()});
+    save(); renderChat(); speak(`Oke, aku catat. ${noteYou(d.text)}.`);
+  }
+}
+/** Jawab pertanyaan dari catatan. false = bukan pertanyaan catatan / tidak ketemu. */
+function answerNote(text){
+  const q = parseNoteQuery(text); if(!q) return false;
+  const bot = (t, nids = [], sp) => { state.chat.push({role:'bot', text:t, nids, ts:Date.now()}); save(); renderChat(); speak(sp || t.replace(/[*_]/g,'')); };
+  if(q.kind === 'list'){
+    if(!state.notes.length) bot('Belum ada catatan. Coba bilang **"catat saya punya emas 10 gr"** atau **"catat password fb saya …"** 📝');
+    else bot(`Ini catatanmu (${state.notes.length}) 📝`, state.notes.slice(0,10).map(n => n.id), 'Ini catatanmu.');
+    return true;
+  }
+  if(q.kind === 'delete'){
+    const m = q.tokens.length ? matchNotes(state.notes, q.tokens) : [];
+    if(!m.length){ if(!/catatan/.test(text.toLowerCase())) return false; bot('Aku tidak menemukan catatan itu. Ketik **"lihat semua catatan"** untuk melihat daftarnya.'); return true; }
+    const n = m[0]; noteRemove(n.id); bot(`🗑️ Catatan **${n.secret ? n.label : noteYou(n.value)}** sudah dihapus.`); return true;
+  }
+  const m = matchNotes(state.notes, q.tokens, q.personal);
+  if(!m.length){
+    if(NOTE_SECRET_RE.test(text) && q.personal){
+      const others = state.notes.filter(n => n.secret).slice(0,5).map(n => n.label).join(', ');
+      bot(`Aku belum punya catatan untuk itu 🔒${others ? `\nYang tersimpan: ${others}.` : ''}\nUntuk menyimpan, bilang misalnya **"catat password ig saya …"**.`);
+      return true;
+    }
+    return false;
+  }
+  if(!noteFullMatch(m[0], q.tokens) && state.settings.apiKey && !m[0].secret) return false; // biar Gemini yang menghitung
+  const top = m.slice(0,3), n = top[0];
+  if(n.secret) bot(`🔒 Ini **${noteYou(n.label)}**. Ketuk ikon 👁 untuk melihat isinya.`, top.filter(x => x.secret).map(x => x.id), `Ini ${noteYou(n.label)}. Ketuk ikon mata untuk melihat isinya.`);
+  else {
+    const more = top.length > 1 ? `\nCatatan lain yang mirip:\n${top.slice(1).map(x => `• ${x.secret ? x.label : noteYou(x.value)}`).join('\n')}` : '';
+    bot(`📝 Menurut catatanmu: **${noteYou(n.value)}** (dicatat ${dayLabel(new Date(n.createdAt)).toLowerCase()}).${more}`, [n.id], `Menurut catatanmu, ${noteYou(n.value)}.`);
+  }
+  return true;
+}
+function notesTextForAI(){
+  return state.notes.filter(n => !n.secret).slice(0,40).map(n => `- ${n.value} (dicatat ${fmtDateShort(new Date(n.createdAt))})`).join('\n') || '(kosong)';
 }
 
 /* ---------------- PARKIR ---------------- */
@@ -3114,7 +3424,7 @@ function chatPrompt(){
 Kamu boleh menjawab pertanyaan APA SAJA: pengetahuan umum, berita & info terbaru (pakai Google Search bila perlu), resep, tips usaha & jualan online, hitung-hitungan, terjemahan, ide konten, kesehatan umum, dan lain-lain.
 Jawab langsung ke intinya. Untuk pertanyaan sederhana cukup 1–3 kalimat; untuk penjelasan/langkah boleh lebih panjang dengan poin-poin singkat. Jangan pakai tabel.
 Sekarang: ${fmtDateLong(now)} jam ${fmtTime(now)}. Nama pengguna: ${state.settings.name || 'tidak diketahui'}.
-Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}\nCatatan barang/lokasi yang pernah user simpan (jawab dari sini kalau user menanyakannya):\n${notesForAI()}
+Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}\nCatatan barang/lokasi yang pernah user simpan (jawab dari sini kalau user menanyakannya):\n${notesForAI()}\nCatatan pribadi user (pakai untuk menjawab & menghitung; password/PIN TIDAK ada di sini dan jangan ditebak):\n${notesTextForAI()}
 Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", contoh: "ingatkan besok jam 7 olahraga".`;
 }
 let lastSources = [];
@@ -3277,12 +3587,14 @@ function renderChat(){
       } else card = `<div class="rcard undone"><div class="tx"><small>Pengingat ini sudah dihapus</small></div></div>`;
     }
     const srcs = (m.src||[]).length ? `<div class="srcs">${m.src.map(w=>`<a href="${esc(w.uri)}" target="_blank" rel="noopener">${esc(w.title||'sumber')}</a>`).join('')}</div>` : '';
-    return `<div class="msg bot">${mdLite(m.text)}${srcs}${card}</div>`;
+    const ncards = (m.nids||[]).length ? (() => { const ns = m.nids.map(noteById).filter(Boolean); return ns.length ? `<div class="nlist inchat">${ns.map(noteCard).join('')}</div>` : `<div class="rcard undone"><div class="tx"><small>Catatan ini sudah dihapus</small></div></div>`; })() : '';
+    return `<div class="msg bot">${mdLite(m.text)}${srcs}${card}${ncards}</div>`;
   }).join('') + (thinking ? `<div class="msg bot typing"><i></i><i></i><i></i></div>` : '');
   $('#suggest').style.display = state.chat.filter(m=>m.role==='me').length ? 'none' : 'flex';
   requestAnimationFrame(() => box.scrollTop = box.scrollHeight);
 }
-$('#msgs').onclick = e => {
+$('#msgs').onclick = async e => {
+  if(e.target.closest('.ncard') && await noteAction(e)) return;
   const u = e.target.closest('[data-undo]');
   if(u){ deleteReminder(u.dataset.undo); renderChat(); toast('Pengingat dibatalkan'); return; }
   const c = e.target.closest('.rcard[data-rid]');
@@ -3319,14 +3631,17 @@ async function send(){
     lastUserText = text;
     const asksTicket = /(tiket|karcis|qr|barcode)/.test(lower) && /(tampil|lihat|buka|mana|tunjuk|show)/.test(lower);
     const store = !aboutParking ? parseStore(text) : null;
+    const noteDraft = (!aboutParking && !photo) ? parseNoteStore(text) : null;
     if(!photo && answerCycle(text)) { /* siklus haid */ }
     else if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();
+    else if(noteDraft && (noteDraft.secret || !(store && store.item && store.place))) saveNoteChat(noteDraft);
     else if(!aboutParking && isWhereQ(lower) && !photo && answerItem(text)) { /* dijawab dari catatan barang */ }
     else if(store && store.item && store.place){
       const r = saveItem({...store, photo});
       state.chat.push({role:'bot', text:`Oke, aku ingat: **${cap1(store.item)}** ${store.place}${photo ? ' (beserta fotonya 📸)' : ''}. Tanya saja nanti, "di mana ${store.item} saya?"`, rid:r.id, ts:Date.now()});
       save(); renderChat(); speak(`Oke, aku ingat. ${store.item} ${store.place}.`);
     }
+    else if(!aboutParking && !photo && answerNote(text)) { /* dijawab dari catatan */ }
     else if(!aboutParking && isWhereQ(lower) && !state.settings.apiKey){
       pushBot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
     }
@@ -3472,7 +3787,7 @@ addEventListener('popstate', () => {
   if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
   if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
-  const open = ['#alarm','#dialog','#sheet','#form','#cycle','#ai'].find(s => $(s).classList.contains('show'));
+  const open = ['#alarm','#dialog','#sheet','#form','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
   if(open){
     if(open==='#sheet') closeSheet(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
     history.pushState({app:1}, '');

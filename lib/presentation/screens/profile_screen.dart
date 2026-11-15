@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/cycle_provider.dart';
+import '../../providers/notes_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
@@ -11,6 +12,7 @@ import '../../services/notification_service.dart';
 import '../../services/photo_service.dart';
 import '../widgets/common.dart';
 import 'cycle_screen.dart';
+import 'notes_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -257,6 +259,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ),
           ]),
+          _groupTitle('Catatan'),
+          _Group(children: [
+            _Row(
+              icon: Icons.sticky_note_2_rounded,
+              color: kNoteColor,
+              title: 'Catatan & rahasia',
+              subtitle: '${ref.watch(notesProvider).length} catatan · password dikunci sidik jari/PIN',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotesScreen())),
+            ),
+          ]),
           _groupTitle('Kesehatan'),
           _Group(children: [
             Builder(builder: (context) {
@@ -277,15 +289,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               icon: Icons.delete_outline_rounded,
               color: AppColors.pink,
               title: 'Hapus semua data',
-              subtitle: 'Pengingat dan riwayat chat',
+              subtitle: 'Pengingat, catatan, dan riwayat chat',
               danger: true,
               onTap: () async {
                 final ok = await confirmDialog(context,
-                    title: 'Hapus semua data?', message: 'Semua pengingat dan riwayat chat akan dihapus dan tidak bisa dikembalikan.', ok: 'Hapus', danger: true);
+                    title: 'Hapus semua data?', message: 'Semua pengingat, catatan, dan riwayat chat akan dihapus dan tidak bisa dikembalikan.', ok: 'Hapus', danger: true);
                 if (!ok) return;
                 await ref.read(remindersProvider.notifier).clearAll();
                 await ref.read(remindersProvider.notifier).clearLog();
                 await ref.read(chatProvider.notifier).clear();
+                await ref.read(notesProvider.notifier).clearAll();
                 if (context.mounted) showToast(context, 'Semua data dihapus');
               },
             ),

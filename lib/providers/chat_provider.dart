@@ -7,18 +7,25 @@ import '../services/cycle_parser.dart';
 import '../services/memory_parser.dart';
 import '../services/vocab.dart';
 import '../services/natural_parser.dart';
+import '../services/note_parser.dart';
 import '../services/voice_service.dart';
 import 'cycle_provider.dart';
+import 'notes_provider.dart';
 import 'reminder_provider.dart';
 import 'settings_provider.dart';
 
 class ChatMessage {
-  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath, this.sources = const []});
+  const ChatMessage({required this.fromUser, required this.text, this.reminderId, this.photoPath, this.sources = const [], this.noteIds = const []});
   final bool fromUser;
   final String text;
   final String? reminderId;
   final String? photoPath;
   final List<AiSource> sources;
+
+  /// Catatan yang ditampilkan sebagai kartu di bawah balasan.
+  final List<String> noteIds;
+
+  ChatMessage withText(String t) => ChatMessage(fromUser: fromUser, text: t, reminderId: reminderId, photoPath: photoPath, sources: sources, noteIds: noteIds);
 
   Map<String, dynamic> toMap() => {
         'u': fromUser,
@@ -26,6 +33,7 @@ class ChatMessage {
         'r': reminderId,
         'p': photoPath,
         's': [for (final x in sources) {'t': x.title, 'u': x.uri}],
+        'n': noteIds,
       };
   factory ChatMessage.fromMap(Map m) => ChatMessage(
         fromUser: m['u'] == true,
@@ -35,6 +43,7 @@ class ChatMessage {
         sources: [
           for (final x in (m['s'] as List? ?? const []).whereType<Map>()) AiSource((x['t'] ?? '').toString(), (x['u'] ?? '').toString()),
         ],
+        noteIds: [for (final x in (m['n'] as List? ?? const [])) x.toString()],
       );
 }
 
@@ -69,8 +78,8 @@ class ChatNotifier extends Notifier<ChatState> {
     ref.read(settingsRepositoryProvider).set('chat', state.messages.map((e) => e.toMap()).toList());
   }
 
-  void _bot(String text, {String? reminderId, String? speech, List<AiSource> sources = const []}) {
-    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId, sources: sources));
+  void _bot(String text, {String? reminderId, String? speech, List<AiSource> sources = const [], List<String> noteIds = const []}) {
+    _push(ChatMessage(fromUser: false, text: text, reminderId: reminderId, sources: sources, noteIds: noteIds));
     if (_settings.voice) {
       // bacakan bagian awal saja agar tidak terlalu panjang
       var plain = (speech ?? text).replaceAll(RegExp(r'[#*_`>]'), '').replaceAll(RegExp(r'\n+'), '. ');
@@ -109,16 +118,21 @@ class ChatNotifier extends Notifier<ChatState> {
       final asksWhere = RegExp(r'di ?mana|\bmana\b').hasMatch(lower);
       final asksTicket = RegExp(r'tiket|karcis|qr|barcode').hasMatch(lower) && RegExp(r'tampil|lihat|buka|mana|tunjuk|show').hasMatch(lower);
       final store = aboutParking ? null : MemoryParser.parseStore(text);
+      final noteDraft = (aboutParking || photoPath != null) ? null : NoteParser.parseStore(text);
       final cycNow = ref.read(cycleProvider).enabled ? ref.read(cycleProvider.notifier).info : null;
       final cyc = (aboutParking || photoPath != null) ? null : CycleParser.parse(text, ongoing: cycNow?.ongoing ?? false);
       if (cyc != null) {
         await _answerCycle(cyc);
       } else if (((aboutParking && asksWhere) || asksTicket) && photoPath == null) {
         _answerParking(showTicket: asksTicket);
+      } else if (noteDraft != null && (noteDraft.secret || store == null)) {
+        await _saveNote(noteDraft);
       } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && photoPath == null && _answerItem(text)) {
         // dijawab dari catatan barang
       } else if (store != null) {
         await _saveItem(store, photoPath);
+      } else if (!aboutParking && photoPath == null && await _answerNote(text)) {
+        // dijawab dari catatan
       } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && !_settings.hasAi) {
         _bot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
       } else {
@@ -253,6 +267,81 @@ class ChatNotifier extends Notifier<ChatState> {
             'Masa subur: ${fmtDateShort(info.fertileStart)} – ${fmtDateShort(info.fertileEnd)} · siklus rata-rata ${info.cycleLen} hari.\n'
             '(Perkiraan saja, bukan alat kontrasepsi.)',
             speech: st.title);
+    }
+  }
+
+  Future<void> _saveNote(NoteDraft d) async {
+    final n = await ref.read(notesProvider.notifier).add(d);
+    if (d.secret) {
+      // jangan biarkan isi rahasia tersimpan di riwayat chat (riwayat juga dikirim ke Gemini)
+      final msgs = [...state.messages];
+      for (var i = msgs.length - 1; i >= 0; i--) {
+        if (msgs[i].fromUser) {
+          msgs[i] = msgs[i].withText(msgs[i].text.replaceAll(d.value, '••••••'));
+          break;
+        }
+      }
+      state = state.copyWith(messages: msgs);
+      ref.read(settingsRepositoryProvider).set('chat', msgs.map((e) => e.toMap()).toList());
+      _bot('🔒 Tersimpan aman: **${NoteParser.you(d.label)}**.\nIsinya dienkripsi di HP ini, tidak dikirim ke AI, dan hanya bisa dibuka dengan sidik jari/PIN HP. '
+          'Tanya kapan saja, misalnya **"apa ${d.label.replaceAll(RegExp(r'\b(saya|aku|gue|gw)\b', caseSensitive: false), 'saya').trim()}?"**',
+          noteIds: [n.id], speech: 'Tersimpan aman.');
+    } else {
+      final q = NoteParser.tokens(d.text).where((t) => !RegExp(r'^\d+$').hasMatch(t) && !NoteParser.isGeneric(t)).take(2).join(' ');
+      _bot('📝 Oke, aku catat: **${NoteParser.you(d.text)}**.\nTanya kapan saja, misalnya **"${q.isEmpty ? 'lihat catatan saya' : 'berapa $q saya?'}"**',
+          noteIds: [n.id], speech: 'Oke, aku catat. ${NoteParser.you(d.text)}.');
+    }
+  }
+
+  /// Menjawab pertanyaan dari catatan. false = bukan pertanyaan catatan / tidak ketemu.
+  Future<bool> _answerNote(String text) async {
+    final q = NoteParser.parseQuery(text);
+    if (q == null) return false;
+    final notes = ref.read(notesProvider);
+    switch (q.kind) {
+      case NoteQueryKind.list:
+        if (notes.isEmpty) {
+          _bot('Belum ada catatan. Coba bilang **"catat saya punya emas 10 gr"** atau **"catat password fb saya …"** 📝');
+        } else {
+          _bot('Ini catatanmu (${notes.length}) 📝', noteIds: notes.take(10).map((n) => n.id).toList());
+        }
+        return true;
+      case NoteQueryKind.delete:
+        final m = q.tokens.isEmpty ? <Note>[] : NoteParser.match(notes, q.tokens);
+        if (m.isEmpty) {
+          if (!RegExp(r'catatan').hasMatch(text.toLowerCase())) return false;
+          _bot('Aku tidak menemukan catatan itu. Ketik **"lihat semua catatan"** untuk melihat daftarnya.');
+          return true;
+        }
+        final n = m.first;
+        await ref.read(notesProvider.notifier).remove(n.id);
+        _bot('🗑️ Catatan **${n.secret ? n.label : NoteParser.you(n.value)}** sudah dihapus.');
+        return true;
+      case NoteQueryKind.find:
+        final m = NoteParser.match(notes, q.tokens, personal: q.personal);
+        if (m.isEmpty) {
+          // tanya rahasia yang tidak ada → jangan lempar ke AI
+          if (NoteParser.secretRe.hasMatch(text) && q.personal) {
+            final others = notes.where((n) => n.secret).take(5).map((n) => n.label).join(', ');
+            _bot('Aku belum punya catatan untuk itu 🔒${others.isEmpty ? '' : '\nYang tersimpan: $others.'}\n'
+                'Untuk menyimpan, bilang misalnya **"catat password ig saya …"**.');
+            return true;
+          }
+          return false;
+        }
+        // pertanyaan lebih luas dari catatan (mis. "berapa harga emas saya") → biar Gemini yang hitung
+        if (!NoteParser.fullMatch(m.first, q.tokens) && _settings.hasAi && !m.first.secret) return false;
+        final top = m.take(3).toList();
+        final n = top.first;
+        if (n.secret) {
+          _bot('🔒 Ini **${NoteParser.you(n.label)}**. Ketuk ikon 👁 untuk melihat isinya (perlu sidik jari/PIN HP).',
+              noteIds: top.where((x) => x.secret).map((x) => x.id).toList(), speech: 'Ini ${NoteParser.you(n.label)}. Ketuk ikon mata untuk melihat isinya.');
+        } else {
+          final more = top.length > 1 ? '\nCatatan lain yang mirip:\n${top.skip(1).map((x) => '• ${x.secret ? x.label : NoteParser.you(x.value)}').join('\n')}' : '';
+          _bot('📝 Menurut catatanmu: **${NoteParser.you(n.value)}** (dicatat ${dayLabel(n.createdAt).toLowerCase()}).$more',
+              noteIds: [n.id], speech: 'Menurut catatanmu, ${NoteParser.you(n.value)}.');
+        }
+        return true;
     }
   }
 
@@ -412,6 +501,8 @@ class ChatNotifier extends Notifier<ChatState> {
         'Jadwal besok:\n${fmt(occurrencesOn(list, addDays(dateOnly(now), 1)))}\n'
         'Catatan barang/lokasi yang pernah user simpan (jawab dari sini kalau ditanya):\n'
         '${list.where((r) => !r.alarm).take(30).map((r) => '- ${r.title}${r.hasTicket ? ' (ada tiket tersimpan)' : ''} — dicatat ${fmtDateShort(r.createdAt)} ${fmtTime(r.createdAt)}').join('\n').ifEmpty('(kosong)')}\n'
+        'Catatan pribadi pengguna (pakai untuk menjawab & menghitung; catatan rahasia seperti password TIDAK ada di sini dan jangan ditebak):\n'
+        '${ref.read(notesProvider).where((n) => !n.secret).take(40).map((n) => '- ${n.value} (dicatat ${fmtDateShort(n.createdAt)})').join('\n').ifEmpty('(kosong)')}\n'
         'Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", '
         'contoh: "ingatkan besok jam 7 olahraga".';
   }

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_utils.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/notes_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
@@ -12,6 +13,7 @@ import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
+import 'notes_screen.dart';
 import 'ticket_screens.dart';
 import '../widgets/reminder_tile.dart';
 
@@ -38,6 +40,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     'Ingatkan besok jam 7 pagi olahraga',
     'Ingatkan minum obat setiap hari jam 8 malam',
     'Jadwal hari ini apa?',
+    'Catat saya punya emas 10 gr',
+    'Lihat semua catatan',
     'Kapan haid berikutnya?',
     'Kapan haid saya selesai?',
     'Haid aku mulai hari ini',
@@ -376,6 +380,19 @@ class _Bubble extends ConsumerWidget {
                 ? Text(message.text, style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.5))
                 : _RichText(message.text),
             if (!me && message.sources.isNotEmpty) _Sources(message.sources),
+            if (!me && message.noteIds.isNotEmpty)
+              Consumer(builder: (context, ref, _) {
+                final notes = ref.watch(notesProvider);
+                final shown = [for (final id in message.noteIds) ...notes.where((n) => n.id == id)];
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: shown.isEmpty
+                      ? Text('Catatan ini sudah dihapus', style: TextStyle(fontSize: 12, color: context.faint))
+                      : Column(children: [
+                          for (final n in shown) Padding(padding: const EdgeInsets.only(bottom: 6), child: NoteTile(n, key: ValueKey(n.id), inChat: true)),
+                        ]),
+                );
+              }),
             if (message.reminderId != null) ...[
               const SizedBox(height: 10),
               if (reminder != null && reminderExists)

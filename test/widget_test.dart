@@ -5,6 +5,7 @@ import 'package:ingetzeon/data/models/reminder.dart';
 import 'package:ingetzeon/services/memory_parser.dart';
 import 'package:ingetzeon/services/natural_parser.dart';
 import 'package:ingetzeon/services/cycle_parser.dart';
+import 'package:ingetzeon/services/note_parser.dart';
 import 'package:ingetzeon/providers/cycle_provider.dart';
 import 'package:ingetzeon/services/vocab.dart';
 
@@ -256,4 +257,61 @@ void main() {
       expect(CycleParser.parse('saya parkir di b2'), null);
     });
   });
+
+  group('Catatan', () {
+    test('simpan catatan', () {
+      final a = NoteParser.parseStore('tolong catat saya punya emas 10 gr')!;
+      expect(a.secret, false);
+      expect(a.text, 'saya punya emas 10 gr');
+      expect(NoteParser.parseStore('catet ya: utang budi 50rb')!.text, 'utang budi 50rb');
+      final p = NoteParser.parseStore('catat password fb saya Abc#123')!;
+      expect(p.secret, true);
+      expect(p.label, 'password fb saya');
+      expect(p.value, 'Abc#123');
+      expect(NoteParser.parseStore('simpan password ig aku adalah Rahasia 99')!.value, 'Rahasia 99');
+      expect(NoteParser.parseStore('password fb saya abc123')!.value, 'abc123');
+      expect(NoteParser.parseStore('note: wifi kantor pass = kantor2026')!.value, 'kantor2026');
+      expect(NoteParser.parseStore('tolong catet kalau pin hp aku 1234 ya')!.value, '1234');
+      expect(NoteParser.parseStore('simpan kunci motor di laci'), null);
+      expect(NoteParser.parseStore('ingatkan besok jam 7 olahraga'), null);
+      expect(NoteParser.parseStore('catat rapat besok jam 9'), null);
+      expect(NoteParser.parseStore('apa password fb saya?'), null);
+    });
+
+    test('tanya catatan', () {
+      final notes = [
+        _N('saya punya emas 10 gr', 'saya punya emas 10 gr', false, 1),
+        _N('password fb saya', '', true, 2),
+        _N('pin atm bca saya', '', true, 3),
+        _N('nomor plat motor saya B 1234 XYZ', 'nomor plat motor saya B 1234 XYZ', false, 4),
+      ];
+      List<String> ask(String q) {
+        final p = NoteParser.parseQuery(q)!;
+        return NoteParser.match(notes, p.tokens, personal: p.personal).map((n) => n.label).toList();
+      }
+      expect(ask('apa password fb saya'), ['password fb saya']);
+      expect(ask('pasword fesbuk aku apa?'), ['password fb saya']);
+      expect(ask('berapa emas saya'), ['saya punya emas 10 gr']);
+      expect(ask('emas saya berapa gram'), ['saya punya emas 10 gr']);
+      expect(ask('aku lupa password ig'), isEmpty);
+      expect(ask('apa pin atm saya'), ['pin atm bca saya']);
+      expect(ask('plat motor saya apa'), ['nomor plat motor saya B 1234 XYZ']);
+      expect(ask('berapa harga emas hari ini'), isEmpty);
+      expect(NoteParser.parseQuery('lihat semua catatan')!.kind, NoteQueryKind.list);
+      expect(NoteParser.parseQuery('hapus catatan emas')!.kind, NoteQueryKind.delete);
+      expect(NoteParser.you('saya punya emas 10 gr'), 'kamu punya emas 10 gr');
+    });
+  });
+}
+
+class _N implements NoteLike {
+  _N(this.label, this.value, this.secret, int t) : createdAt = DateTime(2026, 1, t);
+  @override
+  final String label;
+  @override
+  final String value;
+  @override
+  final bool secret;
+  @override
+  final DateTime createdAt;
 }
