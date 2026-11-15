@@ -5,11 +5,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../providers/cycle_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../services/notification_service.dart';
 import 'ai_assistant_screen.dart';
 import 'alarm_screen.dart';
 import 'calendar_screen.dart';
+import 'cycle_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
@@ -35,6 +37,7 @@ class _MainShellState extends ConsumerState<MainShell> {
       await notif.requestPermissions();
       final notifier = ref.read(remindersProvider.notifier);
       await notifier.rescheduleAll();
+      await ref.read(cycleProvider.notifier).reschedule();
       final launch = notif.takeLaunchResponse();
       if (launch != null) await _onNotification(launch);
     });
@@ -44,6 +47,11 @@ class _MainShellState extends ConsumerState<MainShell> {
   Future<void> _onNotification(NotificationResponse r) async {
     final id = r.payload;
     if (id == null) return;
+    if (id == 'cycle') {
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen()));
+      return;
+    }
     if (r.actionId == null || r.actionId!.isEmpty) {
       if (!mounted) return;
       Navigator.of(context).push(MaterialPageRoute(fullscreenDialog: true, builder: (_) => AlarmScreen(reminderId: id)));

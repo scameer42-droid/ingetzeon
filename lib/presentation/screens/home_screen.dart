@@ -9,6 +9,7 @@ import '../../providers/settings_provider.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
+import 'cycle_screen.dart';
 import 'item_sheet.dart';
 import 'parking_sheet.dart';
 import 'ticket_screens.dart';
@@ -106,6 +107,7 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
           ],
+          const CycleHomeCard(),
           if (items.isNotEmpty) ...[
             const SectionHeader('Barang yang kamu simpan'),
             SoftCard(

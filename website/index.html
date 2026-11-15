@@ -632,6 +632,39 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 
 .park .ptimer{color:var(--c-parkir);font-weight:700;font-size:12.5px}
 .tv-dur{display:inline-block;margin-top:10px;background:#EEF0FF;color:#4F46E5;font-weight:700;padding:7px 14px;border-radius:99px;font-size:14px}
+/* siklus haid */
+:root{--c-haid:#E11D74;--c-haid-soft:#FDE7F1;--c-subur:#0EA5A4}
+[data-theme="dark"]{--c-haid-soft:#3A1528}
+.cyc-card{margin-top:12px;border-radius:20px;padding:16px;color:#fff;background:linear-gradient(135deg,#EC4899,#BE185D);box-shadow:0 16px 30px -16px rgba(225,29,116,.6);display:flex;align-items:center;gap:14px;cursor:pointer;position:relative;overflow:hidden}
+.cyc-card::after{content:"";position:absolute;right:-40px;top:-50px;width:150px;height:150px;border-radius:50%;border:26px solid rgba(255,255,255,.1)}
+.cyc-ring{width:62px;height:62px;flex:none;position:relative}
+.cyc-ring svg{width:62px;height:62px;transform:rotate(-90deg)}
+.cyc-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:800;line-height:1.05;text-align:center}
+.cyc-card .tx{flex:1;min-width:0;position:relative;z-index:1}
+.cyc-card small{font-size:12px;opacity:.9;font-weight:600}
+.cyc-card h4{font-size:18px;font-weight:800;margin:2px 0;letter-spacing:-.02em}
+.cyc-card p{font-size:12.5px;opacity:.9}
+.cyc-card button{position:relative;z-index:1;background:#fff;color:#BE185D;font-weight:700;font-size:12.5px;padding:8px 12px;border-radius:12px;white-space:nowrap}
+.cyc-big{border-radius:24px;padding:22px;color:#fff;background:linear-gradient(135deg,#EC4899,#BE185D);text-align:center;box-shadow:0 16px 30px -16px rgba(225,29,116,.6)}
+.cyc-big .ring{width:150px;height:150px;margin:0 auto 10px;position:relative}
+.cyc-big .ring svg{width:150px;height:150px;transform:rotate(-90deg)}
+.cyc-big .ring div{position:absolute;inset:0;display:grid;place-items:center}
+.cyc-big .ring b{font-size:34px;font-weight:800;display:block;line-height:1}
+.cyc-big .ring small{font-size:12px;opacity:.9}
+.cyc-big h3{font-size:20px;font-weight:800}
+.cyc-big p{opacity:.9;font-size:13.5px;margin-top:2px}
+.cyc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cyc-grid div{background:var(--card);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.cyc-grid small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.cyc-grid b{display:block;font-size:15px;font-weight:700;margin-top:2px}
+.cyc-hist{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.cyc-hist div{display:flex;justify-content:space-between;padding:12px 14px;font-size:14px}
+.cyc-hist div + div{border-top:1px solid var(--line)}
+.cyc-hist span{color:var(--muted)}
+.day.haid{background:var(--c-haid-soft);color:var(--c-haid);font-weight:700}
+.day.haid-pred{box-shadow:inset 0 0 0 1.5px var(--c-haid);color:var(--c-haid)}
+.day.subur .dots::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--c-subur)}
+.cyc-note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -661,6 +694,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
       <button id="qNew"><span class="qi" style="background:var(--primary-soft);color:var(--primary)"><svg class="i"><use href="#i-alarm"/></svg></span>Pengingat</button>
     </div>
     <div id="parkWrap"></div>
+    <div id="cycWrap"></div>
     <div id="itemsWrap"></div>
 
     <div class="section-h">
@@ -782,6 +816,15 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
       </button>
     </div>
 
+    <div class="group-t">Kesehatan</div>
+    <div class="group">
+      <button class="row-s" id="rowCycle">
+        <div class="ic" style="background:var(--c-haid-soft);color:var(--c-haid)"><svg class="i"><use href="#i-drop"/></svg></div>
+        <div class="tx"><b>Siklus haid</b><small id="cycState">Atur pengingat & perkiraan haid</small></div>
+        <svg class="i chev"><use href="#i-right"/></svg>
+      </button>
+    </div>
+
     <div class="group-t">Bunyi alarm</div>
     <div class="group" id="soundGroup"></div>
 
@@ -843,6 +886,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <button>Tampilkan tiket parkir</button>
     <button>Saya simpan kunci motor di laci meja</button>
     <button>Di mana kunci motor saya?</button>
+    <button>Kapan haid berikutnya?</button>
     <button>Ingatkan besok jam 7 pagi olahraga</button>
     <button>Ingatkan minum obat setiap hari jam 8 malam</button>
     <button>Jadwal hari ini apa?</button>
@@ -859,6 +903,15 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <button class="mic-b" id="micBtn" aria-label="Rekam suara"><svg class="i"><use href="#i-mic"/></svg></button>
     <button class="send-b" id="sendBtn" aria-label="Kirim"><svg class="i"><use href="#i-send"/></svg></button>
   </div>
+</div>
+
+<!-- ================= SIKLUS HAID ================= -->
+<div class="full" id="cycle">
+  <div class="full-head">
+    <button class="icon-btn" id="cycClose" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button>
+    <h2>Siklus haid</h2>
+  </div>
+  <div class="full-body" id="cycBody"></div>
 </div>
 
 <!-- ================= FORM ================= -->
@@ -998,6 +1051,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
   <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M13.7 21a2 2 0 0 1-3.4 0M18.6 13A17.9 17.9 0 0 1 18 8M6.3 6.3A5.9 5.9 0 0 0 6 8c0 7-3 9-3 9h14M18 8a6 6 0 0 0-9.3-5M2 2l20 20"/></symbol>
   <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 17h4v4h-4"/></symbol>
   <symbol id="c-barang" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2.7s6.5 7 6.5 11.8a6.5 6.5 0 0 1-13 0C5.5 9.7 12 2.7 12 2.7z"/></symbol>
   <symbol id="c-lainnya" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/></symbol>
 </svg>
 
@@ -1035,6 +1089,7 @@ let state = {
   reminders: [],
   doneLog: [], // riwayat pengingat yang sudah selesai & dihapus: {d:'YYYY-MM-DD', c:kategori}
   chat: [],
+  cycle: {enabled:false, periods:[], cycleLen:28, periodLen:5, remind:true, notified:{}},
   settings: {name:'', theme:'system', apiKey:'', model:'gemini-flash-latest', voice:true, alarmSound:'melodi'},
 };
 function load(){
@@ -1045,6 +1100,7 @@ function load(){
       state.reminders = Array.isArray(d.reminders) ? d.reminders : [];
       state.chat = Array.isArray(d.chat) ? d.chat : [];
       state.doneLog = Array.isArray(d.doneLog) ? d.doneLog : [];
+      if(d.cycle) state.cycle = Object.assign(state.cycle, d.cycle);
       state.settings = Object.assign(state.settings, d.settings || {});
     }
   }catch(e){ console.warn('load', e); }
@@ -1449,6 +1505,7 @@ function renderHome(){
 
   const all = itemsOn(now).filter(x => x.r.alarm !== false); // catatan (parkir/barang) tampil di bagiannya sendiri
   renderItems();
+  renderCycleCard();
   const items = all.filter(x => !x.done);
   const doneN = all.length - items.length + logCount(now);
   const totalN = all.length + logCount(now);
@@ -1503,13 +1560,15 @@ function renderCalendar(){
     const its = itemsOn(d);
     const cats = [...new Set(its.map(x=>x.r.category))].slice(0,3);
     const cls = ['day'];
+    const cm = state.cycle.enabled ? cycleDayMark(d) : ''; if(cm) cls.push(cm);
     if(d.getMonth()!==calMonth.getMonth()) cls.push('out');
     if(sameDay(d,today)) cls.push('today');
     if(sameDay(d,calSel)) cls.push('sel');
     html += `<button class="${cls.join(' ')}" data-d="${dayKey(d)}">${d.getDate()}<span class="dots">${cats.map(c=>`<i style="background:var(--c-${c})"></i>`).join('')}</span></button>`;
   }
   $('#calGrid').innerHTML = html;
-  $('#calLegend').innerHTML = Object.keys(CATS).map(c=>`<span><i style="background:var(--c-${c})"></i>${CATS[c].label}</span>`).join('');
+  $('#calLegend').innerHTML = Object.keys(CATS).map(c=>`<span><i style="background:var(--c-${c})"></i>${CATS[c].label}</span>`).join('')
+    + (state.cycle.enabled ? `<span><i style="background:var(--c-haid)"></i>Haid</span><span><i style="background:transparent;box-shadow:inset 0 0 0 1.5px var(--c-haid)"></i>Perkiraan haid</span><span><i style="background:var(--c-subur)"></i>Masa subur</span>` : '');
 
   $('#calSelTitle').textContent = sameDay(calSel, today) ? 'Hari ini' : fmtDateShort(calSel);
   const items = itemsOn(calSel).filter(x => !x.done);
@@ -1644,6 +1703,7 @@ $('#soundGroup').onclick = e => {
 };
 function renderProfile(){
   renderSounds();
+  { const ci = state.cycle.enabled ? cycleInfo() : null; $('#cycState').textContent = ci ? cycleStatus(ci).title + ' · ' + cycleStatus(ci).sub : 'Atur pengingat & perkiraan haid'; }
   const s = state.settings;
   const name = s.name.trim();
   $('#pfAv').textContent = (name || 'I')[0].toUpperCase();
@@ -2053,6 +2113,190 @@ function answerItem(text){
   return true;
 }
 
+/* ---------------- SIKLUS HAID ---------------- */
+const dk2d = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d); };
+const daysBetween = (a, b) => Math.round((startOfDay(b) - startOfDay(a)) / 864e5);
+function cycleInfo(now = new Date()){
+  const c = state.cycle;
+  const ps = [...c.periods].sort((a,b) => a.start.localeCompare(b.start));
+  if(!ps.length) return null;
+  const starts = ps.map(p => dk2d(p.start));
+  const gaps = [];
+  for(let i=1;i<starts.length;i++){ const g = daysBetween(starts[i-1], starts[i]); if(g >= 18 && g <= 60) gaps.push(g); }
+  const recent = gaps.slice(-6);
+  const cycleLen = recent.length ? Math.round(recent.reduce((a,b)=>a+b,0) / recent.length) : c.cycleLen;
+  const lens = ps.filter(p => p.end).map(p => daysBetween(dk2d(p.start), dk2d(p.end)) + 1).filter(l => l >= 1 && l <= 12).slice(-6);
+  const periodLen = lens.length ? Math.round(lens.reduce((a,b)=>a+b,0) / lens.length) : c.periodLen;
+  const last = ps[ps.length-1], lastStart = dk2d(last.start), today = startOfDay(now);
+  const day = daysBetween(lastStart, today) + 1;
+  const lastEnd = last.end ? dk2d(last.end) : addDays(lastStart, periodLen - 1);
+  const onPeriod = today >= lastStart && today <= lastEnd && (last.end || day <= periodLen + 3);
+  let next = addDays(lastStart, cycleLen);
+  const late = daysBetween(next, today);
+  const ovul = addDays(next, -14);
+  const fertileStart = addDays(ovul, -5), fertileEnd = addDays(ovul, 1);
+  const inFertile = today >= fertileStart && today <= fertileEnd;
+  return {ps, last, lastStart, lastEnd, day, onPeriod, next, late, cycleLen, periodLen, ovul, fertileStart, fertileEnd, inFertile, ongoing: !last.end && onPeriod};
+}
+function cycleStatus(ci){
+  if(!ci) return {title:'Belum ada data', sub:'Catat hari pertama haid terakhir'};
+  if(ci.onPeriod) return {title:`Hari ke-${ci.day} haid`, sub: ci.last.end ? `Selesai ${fmtDateShort(ci.lastEnd)}` : `Perkiraan selesai ${fmtDateShort(ci.lastEnd)}`};
+  if(ci.late > 0) return {title:`Terlambat ${ci.late} hari`, sub:`Perkiraan haid ${fmtDateShort(ci.next)}`};
+  const d = daysBetween(new Date(), ci.next);
+  return {title: d === 0 ? 'Haid diperkirakan hari ini' : `Haid ${d} hari lagi`, sub: `${fmtDateLong(ci.next)}${ci.inFertile ? ' · sedang masa subur' : ''}`};
+}
+function ringSVG(frac, size, stroke){
+  const r = (size - stroke) / 2, c = 2*Math.PI*r;
+  return `<svg viewBox="0 0 ${size} ${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#fff" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.max(0,Math.min(1,frac)))}"/></svg>`;
+}
+function logPeriodStart(date = new Date()){
+  const k = dayKey(date), c = state.cycle;
+  c.enabled = true;
+  const ci = cycleInfo();
+  if(ci && ci.ongoing && daysBetween(ci.lastStart, date) < 10) return 'already';
+  if(!c.periods.some(p => p.start === k)) c.periods.push({start:k, end:null});
+  c.periods.sort((a,b) => a.start.localeCompare(b.start));
+  c.periods = c.periods.slice(-24); c.notified = {};
+  save(); renderAll(); return 'ok';
+}
+function logPeriodEnd(date = new Date()){
+  const c = state.cycle;
+  const last = [...c.periods].sort((a,b) => a.start.localeCompare(b.start)).pop();
+  if(!last || last.end) return 'none';
+  if(daysBetween(dk2d(last.start), date) < 0) return 'none';
+  last.end = dayKey(date); save(); renderAll(); return 'ok';
+}
+function renderCycleCard(){
+  const box = $('#cycWrap');
+  if(!state.cycle.enabled){ box.innerHTML = ''; return; }
+  const ci = cycleInfo(), st = cycleStatus(ci);
+  const frac = ci ? (ci.onPeriod ? ci.day / ci.periodLen : Math.min(1, ci.day / ci.cycleLen)) : 0;
+  const ringTxt = ci ? (ci.onPeriod ? `Hari<br>${ci.day}` : (ci.late > 0 ? `+${ci.late}` : `${Math.max(0, daysBetween(new Date(), ci.next))}<br>hari`)) : '—';
+  const btn = !ci || (!ci.onPeriod) ? 'Haid mulai' : (ci.ongoing ? 'Haid selesai' : '');
+  box.innerHTML = `<div class="cyc-card" id="cycCard"><div class="cyc-ring">${ringSVG(frac, 62, 6)}<b>${ringTxt}</b></div>
+    <div class="tx"><small>Siklus haid</small><h4>${esc(st.title)}</h4><p>${esc(st.sub)}</p></div>
+    ${btn ? `<button id="cycQuick">${btn}</button>` : ''}</div>`;
+  $('#cycCard').onclick = e => { if(e.target.closest('#cycQuick')) return; openCycle(); };
+  if($('#cycQuick')) $('#cycQuick').onclick = () => {
+    if(btn === 'Haid mulai'){ logPeriodStart(); toast('Hari pertama haid dicatat 🌸'); }
+    else { logPeriodEnd(); toast('Haid selesai dicatat ✓'); }
+  };
+}
+function openCycle(){ renderCycleScreen(); $('#cycle').classList.add('show'); }
+$('#cycClose').onclick = () => $('#cycle').classList.remove('show');
+$('#rowCycle').onclick = openCycle;
+function renderCycleScreen(){
+  const c = state.cycle, ci = cycleInfo();
+  const body = $('#cycBody');
+  if(!ci){
+    body.innerHTML = `
+      <div class="cyc-big"><h3>Atur siklus haid 🌸</h3><p>Isi data di bawah, nanti IngetZeon memperkirakan haid berikutnya & mengingatkanmu.</p></div>
+      <div class="field" style="margin-top:16px"><label>Hari pertama haid terakhir</label><input class="input" type="date" id="cySetStart" value="${dayKey(new Date())}"></div>
+      <div class="two">
+        <div class="field"><label>Panjang siklus (hari)</label><input class="input" type="number" min="18" max="60" id="cySetCycle" value="${c.cycleLen}"></div>
+        <div class="field"><label>Lama haid (hari)</label><input class="input" type="number" min="1" max="12" id="cySetLen" value="${c.periodLen}"></div>
+      </div>
+      <button class="btn btn-primary btn-block" id="cySave">${icon('i-check')}Mulai</button>
+      <p class="cyc-note">Tidak tahu? Biarkan 28 & 5 hari — perkiraan akan makin akurat setelah beberapa siklus dicatat.</p>`;
+    $('#cySave').onclick = () => {
+      const v = $('#cySetStart').value; if(!v) return toast('Pilih tanggalnya dulu');
+      c.cycleLen = Math.min(60, Math.max(18, +$('#cySetCycle').value || 28));
+      c.periodLen = Math.min(12, Math.max(1, +$('#cySetLen').value || 5));
+      c.enabled = true; c.periods = [{start:v, end:null}];
+      const ci2 = cycleInfo(); if(ci2 && daysBetween(ci2.lastStart, new Date()) >= c.periodLen) c.periods[0].end = dayKey(addDays(dk2d(v), c.periodLen-1));
+      save(); renderAll(); renderCycleScreen(); toast('Siklus haid tersimpan 🌸'); askNotifPermission();
+    };
+    return;
+  }
+  const st = cycleStatus(ci);
+  const frac = ci.onPeriod ? ci.day / ci.periodLen : Math.min(1, ci.day / ci.cycleLen);
+  const hist = [...ci.ps].reverse().slice(0, 8).map((p, i, arr) => {
+    const s0 = dk2d(p.start), len = p.end ? daysBetween(s0, dk2d(p.end)) + 1 : null;
+    const prev = arr[i+1] ? daysBetween(dk2d(arr[i+1].start), s0) : null;
+    return `<div><b>${fmtDateShort(s0)}</b><span>${len ? `${len} hari haid` : 'berlangsung'}${prev ? ` · siklus ${prev} hari` : ''}</span></div>`;
+  }).join('');
+  body.innerHTML = `
+    <div class="cyc-big">
+      <div class="ring">${ringSVG(frac, 150, 12)}<div><span><b>${ci.onPeriod ? ci.day : (ci.late > 0 ? '+' + ci.late : Math.max(0, daysBetween(new Date(), ci.next)))}</b><small>${ci.onPeriod ? 'hari haid' : (ci.late > 0 ? 'hari terlambat' : 'hari lagi')}</small></span></div></div>
+      <h3>${esc(st.title)}</h3><p>${esc(st.sub)}</p>
+    </div>
+    <div class="two" style="margin-top:12px">
+      <button class="btn btn-primary" id="cyStart">${icon('i-drop')}Haid mulai</button>
+      <button class="btn btn-soft" id="cyEnd" ${ci.ongoing ? '' : 'disabled style="opacity:.5"'}>${icon('i-check')}Haid selesai</button>
+    </div>
+    <div class="cyc-grid">
+      <div><small>Haid berikutnya</small><b>${fmtDateShort(ci.next)}</b></div>
+      <div><small>Masa subur</small><b>${fmtDateShort(ci.fertileStart)} – ${fmtDateShort(ci.fertileEnd)}</b></div>
+      <div><small>Perkiraan ovulasi</small><b>${fmtDateShort(ci.ovul)}</b></div>
+      <div><small>Rata-rata siklus</small><b>${ci.cycleLen} hari · haid ${ci.periodLen} hari</b></div>
+    </div>
+    <div class="section-h"><h2>Pengaturan</h2></div>
+    <div class="group">
+      <div class="switch-row" id="cyRemRow" style="padding:14px 16px"><div class="tx"><b>Pengingat haid</b><small>2 hari sebelum & pada hari perkiraan</small></div><div class="switch ${c.remind?'on':''}"></div></div>
+      <div class="row-s"><div class="tx"><b>Panjang siklus awal</b><small>Dipakai sampai ada 2 siklus tercatat</small></div><input class="input" type="number" min="18" max="60" id="cyCycle" value="${c.cycleLen}" style="width:80px;height:40px"></div>
+      <div class="row-s"><div class="tx"><b>Lama haid awal</b><small>Hari</small></div><input class="input" type="number" min="1" max="12" id="cyLen" value="${c.periodLen}" style="width:80px;height:40px"></div>
+    </div>
+    <div class="section-h"><h2>Riwayat</h2></div>
+    <div class="cyc-hist">${hist}</div>
+    <button class="btn btn-ghost btn-block btn-sm" id="cyAddPast" style="margin-top:10px">${icon('i-plus')}Tambah tanggal haid sebelumnya</button>
+    <button class="btn btn-danger btn-block btn-sm" id="cyReset" style="margin-top:10px">${icon('i-trash')}Hapus data siklus</button>
+    <p class="cyc-note">Perkiraan hanya estimasi dan tidak bisa dipakai sebagai alat kontrasepsi. Data tersimpan di perangkat ini saja.</p>`;
+  $('#cyStart').onclick = () => { const r = logPeriodStart(); renderCycleScreen(); toast(r === 'already' ? 'Haid sedang berlangsung' : 'Hari pertama haid dicatat 🌸'); };
+  $('#cyEnd').onclick = () => { if(logPeriodEnd() === 'ok'){ renderCycleScreen(); toast('Haid selesai dicatat ✓'); } };
+  $('#cyRemRow').onclick = () => { c.remind = !c.remind; save(); renderCycleScreen(); };
+  $('#cyCycle').onchange = e => { c.cycleLen = Math.min(60, Math.max(18, +e.target.value || 28)); save(); renderAll(); renderCycleScreen(); };
+  $('#cyLen').onchange = e => { c.periodLen = Math.min(12, Math.max(1, +e.target.value || 5)); save(); renderAll(); renderCycleScreen(); };
+  $('#cyAddPast').onclick = async () => {
+    const v = await confirmDlg({title:'Tanggal haid sebelumnya', text:'Pilih hari pertama haid yang ingin ditambahkan.', ok:'Tambah', extra:`<input class="input" type="date" id="dlgInput" style="margin-bottom:16px" max="${dayKey(new Date())}">`});
+    if(v){ if(!c.periods.some(p => p.start === v)) c.periods.push({start:v, end: dayKey(addDays(dk2d(v), c.periodLen-1))}); c.periods.sort((a,b)=>a.start.localeCompare(b.start)); save(); renderAll(); renderCycleScreen(); }
+  };
+  $('#cyReset').onclick = async () => {
+    const ok = await confirmDlg({title:'Hapus data siklus?', text:'Semua riwayat haid akan dihapus.', ok:'Hapus', danger:true});
+    if(ok){ state.cycle = {enabled:false, periods:[], cycleLen:28, periodLen:5, remind:true, notified:{}}; save(); renderAll(); renderCycleScreen(); }
+  };
+}
+function cycleDayMark(d){
+  const ci = cycleInfo(); if(!ci) return '';
+  for(const p of ci.ps){
+    const s0 = dk2d(p.start), e0 = p.end ? dk2d(p.end) : addDays(s0, ci.periodLen - 1);
+    if(d >= s0 && d <= e0) return 'haid';
+  }
+  for(let k=0;k<3;k++){
+    const ns = addDays(ci.next, ci.cycleLen * k);
+    if(d >= ns && d <= addDays(ns, ci.periodLen - 1)) return 'haid-pred';
+    const ov = addDays(ns, -14);
+    if(d >= addDays(ov, -5) && d <= addDays(ov, 1)) return 'subur';
+  }
+  return '';
+}
+function checkCycle(){
+  const c = state.cycle; if(!c.enabled || !c.remind) return;
+  const ci = cycleInfo(); if(!ci || ci.ongoing) return;
+  const d = daysBetween(new Date(), ci.next), key = dayKey(ci.next);
+  c.notified = c.notified || {};
+  if(d === 2 && !c.notified[key+'-2'] && new Date().getHours() >= 8){ c.notified[key+'-2'] = 1; save(); notify('🌸 Haid 2 hari lagi', `Perkiraan haid ${fmtDateLong(ci.next)}. Siapkan pembalut ya.`); toast('🌸 Perkiraan haid 2 hari lagi'); }
+  if(d === 0 && !c.notified[key+'-0'] && new Date().getHours() >= 8){ c.notified[key+'-0'] = 1; save(); notify('🌸 Haid diperkirakan hari ini', 'Kalau sudah mulai, tekan "Haid mulai" di IngetZeon.'); toast('🌸 Haid diperkirakan hari ini'); }
+}
+function answerCycle(text){
+  const t = normalizeID(text);
+  if(!/ (haid\w*|menstruasi\w*|mens|menses|datang bulan|masa subur|ovulasi) /.test(t)) return false;
+  let reply;
+  if(/ (selesai|berhenti|beres|sudah bersih|udah bersih|kelar) /.test(t)){
+    reply = logPeriodEnd() === 'ok' ? 'Oke, haid selesai dicatat ✓ Perkiraan siklus berikutnya sudah diperbarui.' : 'Belum ada haid yang sedang berlangsung untuk ditandai selesai.';
+  } else if(/ (mulai|datang|hari pertama|lagi haid|sedang haid|dapat|kena|baru mens) /.test(t) && !/ (kapan|berapa|apa) /.test(t)){
+    const kemarin = / kemarin /.test(t), date = kemarin ? addDays(new Date(), -1) : new Date();
+    const r = logPeriodStart(date);
+    const ci = cycleInfo();
+    reply = r === 'already' ? 'Haidmu sedang berlangsung, sudah tercatat kok 🌸' : `Dicatat: hari pertama haid ${kemarin ? 'kemarin' : 'hari ini'} 🌸\nPerkiraan haid berikutnya **${fmtDateLong(ci.next)}** (siklus ${ci.cycleLen} hari).`;
+  } else {
+    const ci = cycleInfo();
+    if(!ci) reply = 'Aku belum punya data siklus haidmu. Bilang "haid aku mulai hari ini" atau atur di Profil → Siklus haid 🌸';
+    else { const st = cycleStatus(ci); reply = `**${st.title}** — ${st.sub}.\nMasa subur: ${fmtDateShort(ci.fertileStart)} – ${fmtDateShort(ci.fertileEnd)} · ovulasi sekitar ${fmtDateShort(ci.ovul)}.`; }
+  }
+  state.chat.push({role:'bot', text: reply, ts: Date.now()}); save(); renderChat(); speak(reply.replace(/\*\*/g,''));
+  return true;
+}
+
 /* ---------------- PARKIR ---------------- */
 function activeParking(){
   const now = Date.now();
@@ -2245,6 +2489,7 @@ function checkParkingHourly(){
 }
 function checkDue(){
   checkParkingHourly();
+  checkCycle();
   const now = new Date();
   const notified = getNotified();
   let changed = false;
@@ -2867,7 +3112,8 @@ async function send(){
     lastUserText = text;
     const asksTicket = /(tiket|karcis|qr|barcode)/.test(lower) && /(tampil|lihat|buka|mana|tunjuk|show)/.test(lower);
     const store = !aboutParking ? parseStore(text) : null;
-    if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();
+    if(!photo && answerCycle(text)) { /* siklus haid */ }
+    else if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();
     else if(!aboutParking && isWhereQ(lower) && !photo && answerItem(text)) { /* dijawab dari catatan barang */ }
     else if(store && store.item && store.place){
       const r = saveItem({...store, photo});
@@ -3019,7 +3265,7 @@ addEventListener('popstate', () => {
   if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
   if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
-  const open = ['#alarm','#dialog','#sheet','#form','#ai'].find(s => $(s).classList.contains('show'));
+  const open = ['#alarm','#dialog','#sheet','#form','#cycle','#ai'].find(s => $(s).classList.contains('show'));
   if(open){
     if(open==='#sheet') closeSheet(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
     history.pushState({app:1}, '');

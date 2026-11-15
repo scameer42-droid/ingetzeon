@@ -5,9 +5,11 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_utils.dart';
 import '../../data/models/reminder.dart';
+import '../../providers/cycle_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../widgets/common.dart';
 import '../widgets/reminder_tile.dart';
+import 'cycle_screen.dart';
 import 'reminder_form_screen.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -24,6 +26,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final list = ref.watch(remindersProvider);
+    final cyc = ref.watch(cycleProvider);
+    final cycInfo = cyc.enabled ? CycleInfo.from(cyc) : null;
     final items = occurrencesOn(list, _selected).where((x) => !x.done).toList();
     final today = DateTime.now();
     final rect = BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10));
@@ -96,6 +100,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 outsideTextStyle: TextStyle(color: context.faint.withValues(alpha: .6)),
               ),
               calendarBuilders: CalendarBuilders<Occurrence>(
+                defaultBuilder: (ctx, day, _) => _cycleCell(ctx, day, cycInfo?.markOn(day)),
                 markerBuilder: (ctx, day, events) {
                   if (events.isEmpty) return null;
                   final cats = events.map((e) => e.reminder.category).toSet().take(3).toList();
@@ -130,6 +135,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   const SizedBox(width: 5),
                   Text(c.label, style: TextStyle(fontSize: 11.5, color: context.muted)),
                 ]),
+              if (cycInfo != null)
+                for (final l in const [('Haid', kHaid, .9), ('Perkiraan haid', kHaid, .3), ('Masa subur', kSubur, .3)])
+                  Row(mainAxisSize: MainAxisSize.min, children: [
+                    Container(width: 10, height: 10, decoration: BoxDecoration(color: l.$2.withValues(alpha: l.$3), borderRadius: BorderRadius.circular(3))),
+                    const SizedBox(width: 5),
+                    Text(l.$1, style: TextStyle(fontSize: 11.5, color: context.muted)),
+                  ]),
             ],
           ),
           SectionHeader(
@@ -154,4 +166,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(12)),
         child: Icon(icon, size: 22, color: context.ink),
       );
+}
+
+/// Sel kalender berwarna untuk hari haid / perkiraan haid / masa subur.
+Widget? _cycleCell(BuildContext context, DateTime day, String? mark) {
+  if (mark == null) return null;
+  final color = mark == 'subur' ? kSubur : kHaid;
+  final solid = mark == 'haid';
+  return Container(
+    margin: const EdgeInsets.all(4),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: solid ? .9 : .16),
+      borderRadius: BorderRadius.circular(10),
+      border: mark == 'haid-pred' ? Border.all(color: color.withValues(alpha: .6), width: 1.2) : null,
+    ),
+    child: Text('${day.day}', style: TextStyle(fontWeight: FontWeight.w600, color: solid ? Colors.white : color)),
+  );
 }

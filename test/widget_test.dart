@@ -4,6 +4,8 @@ import 'package:ingetzeon/core/utils/date_utils.dart';
 import 'package:ingetzeon/data/models/reminder.dart';
 import 'package:ingetzeon/services/memory_parser.dart';
 import 'package:ingetzeon/services/natural_parser.dart';
+import 'package:ingetzeon/services/cycle_parser.dart';
+import 'package:ingetzeon/providers/cycle_provider.dart';
 import 'package:ingetzeon/services/vocab.dart';
 
 void main() {
@@ -178,6 +180,39 @@ void main() {
       expect(back.notifId, r.notifId);
       expect(back.alarm, true);
       expect(back.photoPath, null);
+    });
+  });
+
+  group('Pengingat haid', () {
+    test('perkiraan dari riwayat', () {
+      final c = CycleData(enabled: true, periods: [
+        Period(DateTime(2026, 9, 22), DateTime(2026, 9, 26)),
+        Period(DateTime(2026, 10, 20), DateTime(2026, 10, 24)),
+      ]);
+      final i = CycleInfo.from(c, DateTime(2026, 11, 15))!;
+      expect(i.cycleLen, 28);
+      expect(i.periodLen, 5);
+      expect(i.next, DateTime(2026, 11, 17));
+      expect(i.ovulation, DateTime(2026, 11, 3));
+      expect(i.day, 27);
+      expect(i.onPeriod, false);
+      expect(i.markOn(DateTime(2026, 10, 22)), 'haid');
+      expect(i.markOn(DateTime(2026, 11, 18)), 'haid-pred');
+      expect(i.markOn(DateTime(2026, 12, 1)), 'subur');
+      expect(i.status(DateTime(2026, 11, 15)).title, 'Haid 2 hari lagi');
+      final back = CycleData.fromMap(c.toMap());
+      expect(back.periods.length, 2);
+      expect(back.periods.last.end, DateTime(2026, 10, 24));
+    });
+
+    test('perintah chat', () {
+      expect(CycleParser.parse('haid aku mulai hari ini')!.cmd, CycleCmd.start);
+      expect(CycleParser.parse('aku dapet mens kemarin')!.daysAgo, 1);
+      expect(CycleParser.parse('udah selesai haidnya')!.cmd, CycleCmd.end);
+      expect(CycleParser.parse('kapan haid berikutnya?')!.cmd, CycleCmd.ask);
+      expect(CycleParser.parse('kapan masa subur aku')!.cmd, CycleCmd.ask);
+      expect(CycleParser.parse('datang bulan 3 hari lalu')!.daysAgo, 3);
+      expect(CycleParser.parse('ingatkan rapat besok jam 9'), null);
     });
   });
 }

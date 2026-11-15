@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
 import '../services/ai_service.dart';
+import '../services/cycle_parser.dart';
 import '../services/memory_parser.dart';
 import '../services/vocab.dart';
 import '../services/natural_parser.dart';
 import '../services/voice_service.dart';
+import 'cycle_provider.dart';
 import 'reminder_provider.dart';
 import 'settings_provider.dart';
 
@@ -107,7 +109,10 @@ class ChatNotifier extends Notifier<ChatState> {
       final asksWhere = RegExp(r'di ?mana|\bmana\b').hasMatch(lower);
       final asksTicket = RegExp(r'tiket|karcis|qr|barcode').hasMatch(lower) && RegExp(r'tampil|lihat|buka|mana|tunjuk|show').hasMatch(lower);
       final store = aboutParking ? null : MemoryParser.parseStore(text);
-      if (((aboutParking && asksWhere) || asksTicket) && photoPath == null) {
+      final cyc = (aboutParking || photoPath != null) ? null : CycleParser.parse(text);
+      if (cyc != null) {
+        await _answerCycle(cyc);
+      } else if (((aboutParking && asksWhere) || asksTicket) && photoPath == null) {
         _answerParking(showTicket: asksTicket);
       } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && photoPath == null && _answerItem(text)) {
         // dijawab dari catatan barang
@@ -125,6 +130,39 @@ class ChatNotifier extends Notifier<ChatState> {
       }
     } finally {
       state = state.copyWith(thinking: false);
+    }
+  }
+
+  Future<void> _answerCycle(CycleIntent c) async {
+    final n = ref.read(cycleProvider.notifier);
+    final date = dateOnly(DateTime.now()).subtract(Duration(days: c.daysAgo));
+    final when = c.daysAgo == 0 ? 'hari ini' : (c.daysAgo == 1 ? 'kemarin' : '${c.daysAgo} hari lalu');
+    switch (c.cmd) {
+      case CycleCmd.start:
+        final ok = await n.logStart(date);
+        if (!ok) {
+          _bot('Haidmu masih tercatat sedang berlangsung. Kalau sudah selesai, bilang "haid selesai" ya 🌸');
+          return;
+        }
+        final i = n.info!;
+        _bot('Oke, hari pertama haid dicatat **$when** 🌸\nPerkiraan haid berikutnya **${fmtDateLong(i.next)}**. Aku ingatkan 2 hari sebelumnya.',
+            speech: 'Oke, hari pertama haid dicatat $when.');
+      case CycleCmd.end:
+        final ok = await n.logEnd(date);
+        _bot(ok
+            ? 'Sip, haid selesai dicatat **$when** 🌿 Semoga sehat selalu!'
+            : 'Aku belum punya catatan haid yang sedang berlangsung. Bilang "haid aku mulai hari ini" saat haid datang.');
+      case CycleCmd.ask:
+        final i = ref.read(cycleProvider).enabled ? n.info : null;
+        if (i == null) {
+          _bot('Aku belum punya data siklusmu. Bilang "haid aku mulai hari ini" (atau "haid mulai 3 hari lalu"), atau buka **Profil → Pengingat haid** untuk mengisi.');
+          return;
+        }
+        final st = i.status();
+        final now = DateTime.now();
+        final fert = i.inFertile(now) ? 'Saat ini **masa subur**.' : 'Masa subur: ${fmtDateShort(i.fertileStart)} – ${fmtDateShort(i.fertileEnd)}.';
+        _bot('**${st.title}** — ${st.sub}.\n$fert\nOvulasi sekitar ${fmtDateShort(i.ovulation)} · siklus rata-rata ${i.cycleLen} hari.\n(Perkiraan saja, bukan alat kontrasepsi.)',
+            speech: st.title);
     }
   }
 

@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/cycle_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/ai_service.dart';
 import '../../services/notification_service.dart';
 import '../widgets/common.dart';
+import 'cycle_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -245,6 +247,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ),
+          ]),
+          _groupTitle('Kesehatan'),
+          _Group(children: [
+            Builder(builder: (context) {
+              final c = ref.watch(cycleProvider);
+              final info = c.enabled ? CycleInfo.from(c) : null;
+              return _Row(
+                icon: Icons.water_drop_rounded,
+                color: kHaid,
+                title: 'Pengingat haid',
+                subtitle: info == null ? 'Belum aktif — ketuk untuk mulai' : info.status().title,
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen())),
+              );
+            }),
           ]),
           _groupTitle('Data'),
           _Group(children: [

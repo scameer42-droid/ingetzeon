@@ -241,6 +241,51 @@ class NotificationService {
     }
   }
 
+  static const _cycleBase = 870000;
+
+  /// Pengingat haid: 2 hari sebelum & pada hari perkiraan (jam 08.00).
+  /// [next] null → batalkan semua.
+  Future<void> scheduleCycle(DateTime? next) async {
+    for (var i = 1; i <= 2; i++) {
+      await _plugin.cancel(_cycleBase + i);
+    }
+    if (next == null) return;
+    final mode = await _mode();
+    final items = [
+      (id: _cycleBase + 1, at: DateTime(next.year, next.month, next.day - 2, 8), title: '🌸 Haid 2 hari lagi',
+        body: 'Perkiraan haid ${fmtDateShort(next)}. Siapkan pembalut & jaga kondisi ya.'),
+      (id: _cycleBase + 2, at: DateTime(next.year, next.month, next.day, 8), title: '🌸 Haid diperkirakan hari ini',
+        body: 'Kalau sudah mulai, buka IngetZeon lalu ketuk "Haid mulai" agar perkiraan makin akurat.'),
+    ];
+    for (final it in items) {
+      if (!it.at.isAfter(DateTime.now())) continue;
+      try {
+        await _plugin.zonedSchedule(
+          it.id,
+          it.title,
+          it.body,
+          tz.TZDateTime.from(it.at, tz.local),
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              AlarmSound.notif.channelId,
+              'Alarm · ${AlarmSound.notif.label}',
+              channelDescription: AlarmSound.notif.description,
+              importance: Importance.high,
+              priority: Priority.high,
+              icon: 'ic_notification',
+              color: const Color(0xFFE11D74),
+              styleInformation: BigTextStyleInformation(it.body),
+            ),
+          ),
+          androidScheduleMode: mode,
+          payload: 'cycle',
+        );
+      } catch (e) {
+        debugPrint('Gagal jadwal pengingat haid: $e');
+      }
+    }
+  }
+
   Future<void> cancelParkingHourly() async {
     for (var h = 1; h <= 12; h++) {
       await _plugin.cancel(_hourlyBase + h);
