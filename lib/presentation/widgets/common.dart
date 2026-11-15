@@ -70,8 +70,7 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(title.toUpperCase(),
-                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, letterSpacing: .8, color: context.muted)),
+            child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -.2, color: context.ink)),
           ),
           if (action != null)
             GestureDetector(
@@ -96,11 +95,11 @@ class GradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height,
-      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .4), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: -12)]),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           onTap: onPressed,
           child: Center(
             child: Row(
@@ -227,9 +226,9 @@ Future<String?> inputDialog(BuildContext context, {required String title, String
   );
 }
 
-/// Gaya judul tegas (dulu serif miring, kini Inter tebal agar profesional).
-TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWeight.w600}) =>
-    GoogleFonts.inter(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.4);
+/// Gaya judul tegas.
+TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWeight.w800}) =>
+    GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5);
 
 /// Latar polos netral.
 class AestheticBackground extends StatelessWidget {
@@ -240,9 +239,9 @@ class AestheticBackground extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(color: context.bg, child: child);
 }
 
-/// Kartu utama: putih bergaris tipis.
+/// Kartu utama bergradasi nila → ungu dengan ornamen lingkaran halus.
 class MeshCard extends StatelessWidget {
-  const MeshCard({super.key, required this.child, this.radius = 18, this.padding = const EdgeInsets.all(18)});
+  const MeshCard({super.key, required this.child, this.radius = 24, this.padding = const EdgeInsets.all(20)});
   final Widget child;
   final double radius;
   final EdgeInsetsGeometry padding;
@@ -251,14 +250,29 @@ class MeshCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: padding,
       decoration: BoxDecoration(
-        color: context.card,
+        gradient: AppColors.gradient,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: context.line),
-        boxShadow: context.softShadow,
+        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 30, offset: const Offset(0, 16), spreadRadius: -14)],
       ),
-      child: child,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(children: [
+        Positioned(
+          right: -70,
+          top: -90,
+          child: Container(
+            width: 220,
+            height: 220,
+            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white.withValues(alpha: .08), width: 34)),
+          ),
+        ),
+        Positioned(
+          right: 30,
+          bottom: -60,
+          child: Container(width: 120, height: 120, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .07))),
+        ),
+        Padding(padding: padding, child: child),
+      ]),
     );
   }
 }

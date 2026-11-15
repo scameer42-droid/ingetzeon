@@ -78,7 +78,11 @@ class _MainShellState extends ConsumerState<MainShell> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(padding: const EdgeInsets.only(top: 24), child: _GradientFab(onTap: _openAi)),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: context.card, border: Border(top: BorderSide(color: context.line))),
+        decoration: BoxDecoration(
+          color: context.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [BoxShadow(color: const Color(0xFF28286E).withValues(alpha: .14), blurRadius: 24, offset: const Offset(0, -8), spreadRadius: -12)],
+        ),
         child: SafeArea(
           top: false,
           child: SizedBox(
@@ -126,7 +130,12 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 24),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              decoration: BoxDecoration(color: active ? AppColors.primary.withValues(alpha: .12) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: color, size: 23),
+            ),
             const SizedBox(height: 2),
             Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: active ? FontWeight.w600 : FontWeight.w500)),
           ],
@@ -143,17 +152,17 @@ class _GradientFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 56,
-      height: 56,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         gradient: AppColors.gradient,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -6)],
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           onTap: onTap,
           child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 24),
         ),

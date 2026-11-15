@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>IngetZeon</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -564,6 +564,72 @@ textarea.input{height:84px}
 .irow b{display:block;font-weight:600;font-size:14.5px}
 .irow small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .irow .got{font-size:12px;font-weight:600;color:var(--c-barang);padding:6px 8px;border-radius:9px;background:var(--c-barang-soft)}
+/* =========== TAMPILAN SEGAR (profesional + berwarna) =========== */
+:root{
+  --primary:#4F46E5; --primary-deep:#4338CA; --primary-soft:#EEF0FF;
+  --grad:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);
+  --bg:#F4F5FA; --card:#FFFFFF; --card-2:#F1F2F8; --line:#E8E9F2;
+  --ink:#14142B; --muted:#6E6F86; --faint:#A3A4B8;
+  --shadow:0 1px 2px rgba(20,20,60,.04),0 6px 18px -10px rgba(40,40,110,.18);
+  --shadow-lg:0 18px 36px -16px rgba(79,70,229,.55);
+}
+[data-theme="dark"]{
+  --bg:#0E0F1C; --card:#181A2E; --card-2:#22243A; --line:#2B2D45;
+  --ink:#F1F1FA; --muted:#A4A6C0; --faint:#686A86; --primary-soft:#262659;
+  --shadow:none;
+}
+html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;letter-spacing:-.005em}
+.item,.ask,.progress-mini,.empty-state,.cal,.stat,.card,.group,.park,.items,.icon-btn,.msg.bot,.suggest button{border-color:transparent;box-shadow:var(--shadow)}
+[data-theme="dark"] .item,[data-theme="dark"] .ask,[data-theme="dark"] .cal,[data-theme="dark"] .card,[data-theme="dark"] .group,[data-theme="dark"] .items,[data-theme="dark"] .park{border-color:var(--line)}
+.item{border-radius:16px;position:relative;overflow:hidden;padding-left:16px}
+.item::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--item-c,var(--primary))}
+.item .cat{border-radius:12px}
+
+/* tipografi */
+.top h1{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.greet .eyebrow{font-weight:500}
+.greet h1{font-size:25px;font-weight:800;letter-spacing:-.03em}
+.greet h1 span{color:var(--primary)}
+.section-h h2{font-size:17px;font-weight:700;text-transform:none;letter-spacing:-.01em;color:var(--ink)}
+.avatar{background:var(--grad);border-radius:16px;width:44px;height:44px;font-weight:800;box-shadow:var(--shadow-lg)}
+
+/* kartu jadwal terdekat: gradasi tegas */
+.hero{background:var(--grad);color:#fff;border:0;border-radius:24px;padding:20px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden}
+.hero::before{display:block;content:"";position:absolute;width:220px;height:220px;right:-70px;top:-90px;border-radius:50%;border:34px solid rgba(255,255,255,.08);background:none}
+.hero::after{display:block;content:"";position:absolute;width:120px;height:120px;right:30px;bottom:-60px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-label{background:rgba(255,255,255,.18);color:#fff}
+.hero h3{font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff}
+.hero .when{color:rgba(255,255,255,.85)}
+.hero .count b{background:#fff;color:var(--primary);font-weight:700}
+.hero .done-btn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.hero.empty p{color:rgba(255,255,255,.85)}
+
+/* ubin aksi cepat berwarna */
+.quick.three button{border:0;box-shadow:none;font-weight:700;color:var(--ink)}
+#qPark{background:#E3F6FA}#qItem{background:#FDF1E3}#qNew{background:#EEF0FF}
+[data-theme="dark"] #qPark{background:#10303A}[data-theme="dark"] #qItem{background:#33240F}[data-theme="dark"] #qNew{background:#24245A}
+.quick .qi{background:#fff!important;border-radius:12px;box-shadow:0 4px 10px -6px rgba(20,20,60,.25)}
+[data-theme="dark"] .quick .qi{background:rgba(255,255,255,.08)!important}
+
+.ask .mic,.composer .send-b,.fab,.btn-primary,.chip.on,.day.sel,.day.today.sel,.msg.me,.ai-ava,.bell,.profile-card .av{background:var(--grad)}
+.btn-primary{box-shadow:0 10px 22px -12px rgba(79,70,229,.8)}
+.progress-mini .bar i{background:var(--grad)}
+.item.done .check{background:var(--primary)}
+
+/* navigasi */
+.nav-in{border-top:0;border-radius:24px 24px 0 0;box-shadow:0 -8px 24px -14px rgba(40,40,110,.25)}
+.nav-b.active span{color:var(--primary)}
+.nav-b.active svg{background:var(--primary-soft);border-radius:12px;padding:5px;width:34px;height:30px}
+.fab{width:60px;height:60px;border-radius:20px;box-shadow:0 14px 26px -10px rgba(79,70,229,.8)}
+
+/* profil & lain-lain */
+.profile-card{background:var(--grad);color:#fff;border:0}
+.profile-card p{color:rgba(255,255,255,.85)}
+.profile-card .av{background:rgba(255,255,255,.2)}
+#pfEdit{background:rgba(255,255,255,.18)!important;color:#fff!important}
+.stat .ic,.row-s .ic{border-radius:12px}
+.irow .got,.park .got{border-radius:10px}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -641,7 +707,7 @@ textarea.input{height:84px}
       <div class="ring-wrap">
         <div class="ring">
           <svg viewBox="0 0 120 120">
-            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B54E8"/><stop offset="1" stop-color="#5B54E8"/></linearGradient></defs>
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4F46E5"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs>
             <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-2)" stroke-width="14"/>
             <circle id="ringArc" cx="60" cy="60" r="50" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset 1s var(--ease)"/>
           </svg>
@@ -1284,7 +1350,7 @@ function confirmDlg({title, text, ok='OK', danger=false, extra=''}){
 function itemHTML({r, at, done}, opts = {}){
   const late = r.alarm!==false && !done && at < new Date() && sameDay(at, new Date());
   const showDay = opts.showDay;
-  return `<div class="item ${done?'done':''} ${late?'late':''}" data-id="${r.id}" data-date="${dayKey(at)}">
+  return `<div class="item ${done?'done':''} ${late?'late':''}" style="--item-c:var(--c-${r.category})" data-id="${r.id}" data-date="${dayKey(at)}">
     <div class="cat" style="${catStyle(r.category)}">${icon('c-'+r.category)}</div>
     <div class="body" data-open>
       <div class="t">${esc(r.title)}</div>
@@ -1351,7 +1417,7 @@ function renderHome(){
   const now = new Date();
   const name = state.settings.name.trim();
   $('#todayLabel').textContent = fmtDateLong(now);
-  $('#greetText').innerHTML = `${greeting()}, <span>${esc(name || 'Kamu')}</span>`;
+  $('#greetText').innerHTML = `${greeting()},<br><span>${esc(name || 'Kamu')}</span> 👋`;
   $('#homeAvatar').textContent = (name || 'I')[0].toUpperCase();
 
   const nx = nextUpcoming();
@@ -1391,7 +1457,8 @@ function renderHome(){
 
   // 3 hari ke depan
   const up = [];
-  for(let i=1;i<=3;i++){ itemsOn(addDays(startOfDay(now), i)).forEach(x => up.push(x)); }
+  const seen = new Set();
+  for(let i=1;i<=3;i++){ itemsOn(addDays(startOfDay(now), i)).forEach(x => { if(x.r.alarm !== false && !seen.has(x.r.id)){ seen.add(x.r.id); up.push(x); } }); }
   const pk = activeParking();
   $('#parkWrap').innerHTML = pk ? `<div class="park" id="parkCard">
       ${photoSrc(pk.photo) ? `<img class="ph" src="${photoSrc(pk.photo)}" alt="">` : `<div class="ph">${icon('c-parkir')}</div>`}
@@ -1505,7 +1572,7 @@ function renderStats(){
   const bw = 26, gap = (W - padL*2 - bw*7) / 6;
   const ch = H - padB - top;
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik jumlah pengingat 7 hari terakhir">
-    <defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B54E8"/><stop offset="1" stop-color="#5B54E8"/></linearGradient></defs>`;
+    <defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F46E5"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs>`;
   for(let g=0; g<=2; g++){
     const y = top + ch * g/2;
     svg += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-dasharray="3 5"/>`;
@@ -2039,7 +2106,7 @@ async function startParking(autoScan = false){
   if(autoScan){ const r = await scanTicket(); if(r){ ticket = r; draw(); } }
   $('#overlay').onclick = () => { if(photo && !state.reminders.some(r=>r.photo===photo)) photoDel(photo); photo = null; closeSheet(); $('#overlay').onclick = closeSheet; };
 }
-$('#qPark').onclick = () => startParking(false);
+$('#qPark').onclick = () => startParking(true); // langsung scan tiket
 $('#qNew').onclick = () => openForm();
 
 /* ---------------- NOTIFICATIONS & ALARM ---------------- */

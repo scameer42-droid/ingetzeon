@@ -139,7 +139,7 @@ class _TicketScannerScreenState extends State<TicketScannerScreen> {
     final box = MediaQuery.of(context).size.width * .72;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(children: [
+      body: Stack(fit: StackFit.expand, children: [
         Positioned.fill(
           child: ms.MobileScanner(
             controller: _controller,
@@ -168,7 +168,11 @@ class _TicketScannerScreenState extends State<TicketScannerScreen> {
             ),
           ),
         ),
-        SafeArea(
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(children: [
@@ -186,6 +190,7 @@ class _TicketScannerScreenState extends State<TicketScannerScreen> {
                 onPressed: () => _controller.toggleTorch(),
               ),
             ]),
+          ),
           ),
         ),
         Positioned(

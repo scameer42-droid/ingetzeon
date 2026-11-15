@@ -12,17 +12,20 @@ import 'ticket_screens.dart';
 
 /// Alur cepat "Catat parkir": scan tiket / foto lokasi → isi lokasi → (opsional) alarm.
 Future<void> startParkingFlow(BuildContext context, WidgetRef ref) async {
-  const String? photo = null;
+  // langsung buka kamera & scan tiket otomatis; bila dibatalkan, tetap bisa catat manual
+  final ticket = await scanTicket(context);
+  if (!context.mounted) return;
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    builder: (c) => _ParkingForm(photo: photo),
+    builder: (c) => _ParkingForm(ticket: ticket),
   );
 }
 
 class _ParkingForm extends ConsumerStatefulWidget {
-  const _ParkingForm({this.photo});
+  const _ParkingForm({this.photo, this.ticket});
   final String? photo;
+  final ScannedTicket? ticket;
 
   @override
   ConsumerState<_ParkingForm> createState() => _ParkingFormState();
@@ -34,7 +37,7 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
   bool _remind = false;
   TimeOfDay _time = TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 2)));
   bool _saved = false;
-  ScannedTicket? _ticket;
+  late ScannedTicket? _ticket = widget.ticket;
 
   static const _quick = ['B1', 'B2', 'B3', 'P1', 'P2', 'P3', 'Lantai dasar', 'Rooftop'];
 

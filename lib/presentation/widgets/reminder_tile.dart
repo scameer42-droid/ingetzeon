@@ -26,11 +26,12 @@ class ReminderTile extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: SoftCard(
-        padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-        radius: 14,
+        padding: const EdgeInsets.fromLTRB(8, 12, 12, 12),
+        radius: 16,
         onTap: () => showReminderDetail(context, ref, r, item.at),
         child: Row(
           children: [
+            Container(width: 4, height: 34, margin: const EdgeInsets.only(right: 10), decoration: BoxDecoration(color: r.category.color, borderRadius: BorderRadius.circular(4))),
             CategoryIcon(r.category, faded: item.done, size: 38),
             const SizedBox(width: 12),
             Expanded(

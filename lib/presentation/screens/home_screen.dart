@@ -35,8 +35,10 @@ class HomeScreen extends ConsumerWidget {
     final doneCount = all.length - today.length + logToday;
     final next = nextUpcoming(list, now);
     final parking = activeParking(list, now);
+    final seen = <String>{};
     final upcoming = <Occurrence>[
-      for (var i = 1; i <= 3; i++) ...occurrencesOn(list, addDays(dateOnly(now), i)),
+      for (var i = 1; i <= 3; i++)
+        ...occurrencesOn(list, addDays(dateOnly(now), i)).where((x) => x.reminder.alarm && seen.add(x.reminder.id)),
     ];
 
     return SafeArea(
@@ -50,7 +52,8 @@ class HomeScreen extends ConsumerWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 2),
-                  Text('${greeting(now)}, ${name.isEmpty ? 'Kamu' : name}', style: accentFont(size: 24, color: context.ink)),
+                  Text('${greeting(now)},', style: accentFont(size: 25, color: context.ink)),
+                  Text('${name.isEmpty ? 'Kamu' : name} 👋', style: accentFont(size: 25, color: AppColors.primary)),
                 ]),
               ),
               GestureDetector(
@@ -58,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
                 child: Container(
                   width: 42,
                   height: 42,
-                  decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                  decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(16), boxShadow: context.glowShadow),
                   alignment: Alignment.center,
                   child: Text((name.isEmpty ? 'I' : name[0]).toUpperCase(),
                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18)),
@@ -179,40 +182,41 @@ class _HeroCard extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: .1), borderRadius: BorderRadius.circular(99)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(99)),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(n == null ? Icons.check_circle_outline_rounded : Icons.notifications_none_rounded, size: 14, color: AppColors.primary),
+                    Icon(n == null ? Icons.check_circle_outline_rounded : Icons.notifications_none_rounded, size: 14, color: Colors.white),
                     const SizedBox(width: 6),
                     Text(n == null ? 'Semua beres' : 'Jadwal terdekat',
-                        style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
                   ]),
                 ),
                 const SizedBox(height: 12),
                 Text(n == null ? 'Belum ada jadwal berikutnya' : n.reminder.title,
-                    maxLines: 2, overflow: TextOverflow.ellipsis, style: accentFont(size: 20, color: context.ink)),
+                    maxLines: 2, overflow: TextOverflow.ellipsis, style: accentFont(size: 22, color: Colors.white)),
                 const SizedBox(height: 4),
                 Text(
                   n == null
                       ? 'Tekan tombol ✦ di bawah lalu bilang "ingatkan…" untuk mulai.'
                       : '${dayLabel(n.at, now)} · ${fmtTime(n.at)}${n.reminder.repeat != RepeatType.once ? ' · ${n.reminder.repeatLabel}' : ''}',
-                  style: TextStyle(color: context.muted, fontSize: 14),
+                  style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 14),
                 ),
                 if (n != null) ...[
                   const SizedBox(height: 14),
                   Row(children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
                       child: Text(countdown(n.at, now),
-                          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w700)),
                     ),
                     const Spacer(),
                     OutlinedButton(
                       onPressed: onOpen,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: context.ink,
-                        side: BorderSide(color: context.line),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.white.withValues(alpha: .14),
+                        side: BorderSide(color: Colors.white.withValues(alpha: .35)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         visualDensity: VisualDensity.compact,
                       ),
                       child: const Text('Lihat', style: TextStyle(fontWeight: FontWeight.w600)),
@@ -248,7 +252,7 @@ class _AskBar extends StatelessWidget {
         Container(
           width: 38,
           height: 38,
-          decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(12)),
           child: const Icon(Icons.mic_rounded, color: Colors.white, size: 20),
         ),
       ]),
@@ -265,20 +269,30 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SoftCard(
-      padding: const EdgeInsets.all(12),
-      radius: 14,
-      onTap: onTap,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(10)),
-          child: Icon(icon, color: color, size: 19),
+    return Material(
+      color: color.withValues(alpha: context.isDark ? .2 : .11),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: context.isDark ? Colors.white.withValues(alpha: .08) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: context.isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: .08), blurRadius: 10, offset: const Offset(0, 4), spreadRadius: -6)],
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(height: 10),
+            Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+          ]),
         ),
-        const SizedBox(height: 8),
-        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
-      ]),
+      ),
     );
   }
 }
