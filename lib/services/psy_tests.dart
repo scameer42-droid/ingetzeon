@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 /// Tes psikologi (skrining) — sinkron dengan versi website (index.html).
 /// Kuesioner yang dipakai bebas digunakan (domain publik / bebas tanpa izin):
@@ -33,7 +33,7 @@ class PsyTest {
   final bool clinical;
   final Set<int> reverse; // butir yang skornya dibalik
 
-  int get minutes => max(1, (items.length / 4).ceil());
+  int get minutes => math.max(1, (items.length / 4).ceil());
 
   static const _freq = [('Tidak pernah', 0), ('Beberapa hari', 1), ('Lebih dari separuh waktu', 2), ('Hampir setiap hari', 3)];
   static const _freqE = ['😊', '🙂', '😕', '😣'];
@@ -254,8 +254,8 @@ class PsyTest {
   /// Nilai butir setelah pembalikan skor.
   int valueOf(int index, int raw) {
     if (!reverse.contains(index)) return raw;
-    final mx = options.map((o) => o.$2).reduce(max);
-    final mn = options.map((o) => o.$2).reduce(min);
+    final mx = options.map((o) => o.$2).reduce(math.max);
+    final mn = options.map((o) => o.$2).reduce(math.min);
     return mx + mn - raw;
   }
 
@@ -376,7 +376,7 @@ class TestResult {
         final (dl, ds) = _band(d, [(9, 'Normal', 0), (13, 'Ringan', 1), (20, 'Sedang', 2), (27, 'Berat', 3), (42, 'Sangat berat', 3)]);
         final (al, as_) = _band(an, [(7, 'Normal', 0), (9, 'Ringan', 1), (14, 'Sedang', 2), (19, 'Berat', 3), (42, 'Sangat berat', 3)]);
         final (sl, ss) = _band(st, [(14, 'Normal', 0), (18, 'Ringan', 1), (25, 'Sedang', 2), (33, 'Berat', 3), (42, 'Sangat berat', 3)]);
-        final sev = [ds, as_, ss].reduce(max);
+        final sev = [ds, as_, ss].reduce(math.max);
         final worst = [('stres', ss), ('kecemasan', as_), ('depresi', ds)].reduce((x, y) => y.$2 > x.$2 ? y : x).$1;
         return TestResult(
           score: d + an + st,
