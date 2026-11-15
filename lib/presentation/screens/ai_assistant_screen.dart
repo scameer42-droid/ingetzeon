@@ -39,6 +39,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     'Ingatkan minum obat setiap hari jam 8 malam',
     'Jadwal hari ini apa?',
     'Kapan haid berikutnya?',
+    'Kapan haid saya selesai?',
+    'Haid aku mulai hari ini',
     'Ingatkan rapat tiap senin jam 9',
     'Ingatkan 10 menit lagi angkat jemuran',
   ];

@@ -109,7 +109,8 @@ class ChatNotifier extends Notifier<ChatState> {
       final asksWhere = RegExp(r'di ?mana|\bmana\b').hasMatch(lower);
       final asksTicket = RegExp(r'tiket|karcis|qr|barcode').hasMatch(lower) && RegExp(r'tampil|lihat|buka|mana|tunjuk|show').hasMatch(lower);
       final store = aboutParking ? null : MemoryParser.parseStore(text);
-      final cyc = (aboutParking || photoPath != null) ? null : CycleParser.parse(text);
+      final cycNow = ref.read(cycleProvider).enabled ? ref.read(cycleProvider.notifier).info : null;
+      final cyc = (aboutParking || photoPath != null) ? null : CycleParser.parse(text, ongoing: cycNow?.ongoing ?? false);
       if (cyc != null) {
         await _answerCycle(cyc);
       } else if (((aboutParking && asksWhere) || asksTicket) && photoPath == null) {
@@ -135,33 +136,122 @@ class ChatNotifier extends Notifier<ChatState> {
 
   Future<void> _answerCycle(CycleIntent c) async {
     final n = ref.read(cycleProvider.notifier);
-    final date = dateOnly(DateTime.now()).subtract(Duration(days: c.daysAgo));
-    final when = c.daysAgo == 0 ? 'hari ini' : (c.daysAgo == 1 ? 'kemarin' : '${c.daysAgo} hari lalu');
+    final now = DateTime.now();
+    final today = dateOnly(now);
+    final date = DateTime(today.year, today.month, today.day - c.daysAgo);
+    final when = c.daysAgo == 0 ? 'hari ini' : (c.daysAgo == 1 ? 'kemarin' : '${c.daysAgo} hari lalu (${fmtDateShort(date)})');
+    String inDays(DateTime d) {
+      final k = daysBetween(today, d);
+      return k == 0 ? 'hari ini' : (k == 1 ? 'besok' : (k > 0 ? '$k hari lagi' : '${-k} hari lalu'));
+    }
+
+    const noData = 'Aku belum punya data siklus haidmu 🌸\nBilang saja saat haid datang, misalnya **"haid aku mulai hari ini"**, '
+        '**"mens kemarin"**, atau **"datang bulan 3 hari lalu"** — atau isi di **Profil → Pengingat haid**.';
+    final info = ref.read(cycleProvider).enabled ? n.info : null;
+
     switch (c.cmd) {
       case CycleCmd.start:
-        final ok = await n.logStart(date);
+        if (info != null && info.ongoing && daysBetween(info.lastStart, date) < 10) {
+          _bot('Haidmu sudah tercatat mulai ${fmtDateShort(info.lastStart)} (hari ke-${info.day}) 🌸\n'
+              'Perkiraan selesai **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}). Kalau sudah selesai, bilang **"haid selesai"**.');
+          return;
+        }
+        await n.logStart(date);
+        final i = n.info!;
+        _bot('Oke, hari pertama haid dicatat **$when** 🌸\n'
+            '• Perkiraan selesai: **${fmtDateLong(i.lastEnd)}** (${inDays(i.lastEnd)})\n'
+            '• Haid berikutnya: **${fmtDateLong(i.next)}**\n'
+            '${ref.read(cycleProvider).remind ? 'Aku ingatkan saat perkiraan selesai & 2 hari sebelum haid berikutnya. ' : ''}'
+            'Jaga kondisi & minum air putih yang cukup ya 💧',
+            speech: 'Oke, hari pertama haid dicatat $when. Perkiraan selesai ${inDays(i.lastEnd)}.');
+      case CycleCmd.end:
+        final ok = await n.logEnd(date);
         if (!ok) {
-          _bot('Haidmu masih tercatat sedang berlangsung. Kalau sudah selesai, bilang "haid selesai" ya 🌸');
+          _bot(info == null
+              ? noData
+              : 'Haid terakhirmu (${fmtDateShort(info.lastStart)}) sudah tercatat selesai ${fmtDateShort(info.lastEnd)}. '
+                  'Kalau haid baru datang, bilang **"haid aku mulai hari ini"**.');
           return;
         }
         final i = n.info!;
-        _bot('Oke, hari pertama haid dicatat **$when** 🌸\nPerkiraan haid berikutnya **${fmtDateLong(i.next)}**. Aku ingatkan 2 hari sebelumnya.',
-            speech: 'Oke, hari pertama haid dicatat $when.');
-      case CycleCmd.end:
-        final ok = await n.logEnd(date);
-        _bot(ok
-            ? 'Sip, haid selesai dicatat **$when** 🌿 Semoga sehat selalu!'
-            : 'Aku belum punya catatan haid yang sedang berlangsung. Bilang "haid aku mulai hari ini" saat haid datang.');
-      case CycleCmd.ask:
-        final i = ref.read(cycleProvider).enabled ? n.info : null;
-        if (i == null) {
-          _bot('Aku belum punya data siklusmu. Bilang "haid aku mulai hari ini" (atau "haid mulai 3 hari lalu"), atau buka **Profil → Pengingat haid** untuk mengisi.');
+        _bot('Sip, haid selesai dicatat **$when** 🌿 Lamanya ${daysBetween(i.lastStart, i.lastEnd) + 1} hari.\n'
+            'Haid berikutnya diperkirakan **${fmtDateLong(i.next)}** (${inDays(i.next)}).',
+            speech: 'Sip, haid selesai dicatat $when.');
+      case CycleCmd.remindOff:
+        await n.setRemind(false);
+        _bot('Oke, pengingat haid dimatikan. Nyalakan lagi kapan saja dengan bilang **"ingatkan aku kalau mau haid"** 🙂');
+      case CycleCmd.remindOn:
+        if (info == null) {
+          _bot('Siap, nanti aku ingatkan! Tapi aku perlu tahu dulu kapan haid terakhirmu.\n$noData');
           return;
         }
-        final st = i.status();
-        final now = DateTime.now();
-        final fert = i.inFertile(now) ? 'Saat ini **masa subur**.' : 'Masa subur: ${fmtDateShort(i.fertileStart)} – ${fmtDateShort(i.fertileEnd)}.';
-        _bot('**${st.title}** — ${st.sub}.\n$fert\nOvulasi sekitar ${fmtDateShort(i.ovulation)} · siklus rata-rata ${i.cycleLen} hari.\n(Perkiraan saja, bukan alat kontrasepsi.)',
+        await n.setRemind(true);
+        _bot('Siap, pengingat haid aktif 🔔\n'
+            '${info.ongoing ? '• Perkiraan haid selesai: **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}) — aku tanyakan apakah sudah selesai\n' : ''}'
+            '• 2 hari sebelum haid: **${fmtDateShort(DateTime(info.next.year, info.next.month, info.next.day - 2))}**\n'
+            '• Hari perkiraan haid: **${fmtDateLong(info.next)}** (${inDays(info.next)})',
+            speech: 'Siap, pengingat haid aktif.');
+      case CycleCmd.askEnd:
+        if (info == null) {
+          _bot(noData);
+          return;
+        }
+        if (info.onPeriod && !info.lastEnded) {
+          _bot('Haidmu sekarang hari ke-**${info.day}**. Perkiraan selesai **${fmtDateLong(info.lastEnd)}** (${inDays(info.lastEnd)}) '
+              '— rata-rata haidmu ±${info.periodLen} hari.\nKalau sudah selesai, bilang **"haid selesai"** ya.',
+              speech: 'Perkiraan haid selesai ${inDays(info.lastEnd)}.');
+        } else {
+          final nextEnd = DateTime(info.next.year, info.next.month, info.next.day + info.periodLen - 1);
+          _bot('Haid terakhirmu selesai **${fmtDateShort(info.lastEnd)}**.\n'
+              'Haid berikutnya diperkirakan **${fmtDateShort(info.next)} – ${fmtDateShort(nextEnd)}** (mulai ${inDays(info.next)}).',
+              speech: 'Haid berikutnya diperkirakan ${inDays(info.next)}.');
+        }
+      case CycleCmd.askDay:
+        if (info == null) {
+          _bot(noData);
+          return;
+        }
+        _bot(info.onPeriod
+            ? 'Hari ini haid hari ke-**${info.day}** 🌸 Perkiraan selesai ${fmtDateShort(info.lastEnd)} (${inDays(info.lastEnd)}).'
+            : 'Kamu sedang tidak haid — sekarang hari ke-**${info.day}** siklusmu. Haid berikutnya **${fmtDateShort(info.next)}** (${inDays(info.next)}).');
+      case CycleCmd.askLate:
+        if (info == null) {
+          _bot(noData);
+          return;
+        }
+        if (info.onPeriod) {
+          _bot('Haidmu sedang berlangsung (hari ke-${info.day}), jadi tidak terlambat 🌸');
+        } else if (info.lateDays > 0) {
+          _bot('Haidmu terlambat **${info.lateDays} hari** dari perkiraan (${fmtDateShort(info.next)}).\n'
+              'Siklus bisa bergeser karena stres, kurang tidur, kelelahan, atau perubahan berat badan. '
+              'Kalau terlambat lebih dari seminggu atau ada kemungkinan hamil, coba tes kehamilan atau periksa ke dokter.\n'
+              'Kalau haid sudah datang, bilang **"haid aku mulai hari ini"**.');
+        } else {
+          _bot('Belum terlambat kok 🙂 Haid berikutnya diperkirakan **${fmtDateLong(info.next)}** (${inDays(info.next)}).');
+        }
+      case CycleCmd.askFertile:
+        if (info == null) {
+          _bot(noData);
+          return;
+        }
+        final fert = info.inFertile(now)
+            ? 'Saat ini kamu **sedang masa subur** (sampai ${fmtDateShort(info.fertileEnd)}).'
+            : 'Masa subur berikutnya: **${fmtDateShort(info.fertileStart)} – ${fmtDateShort(info.fertileEnd)}**.';
+        _bot('$fert\nOvulasi sekitar **${fmtDateShort(info.ovulation)}**.\n(Perkiraan saja, bukan alat kontrasepsi.)', speech: fert);
+      case CycleCmd.askNext:
+        if (info == null) {
+          _bot(noData);
+          return;
+        }
+        if (info.onPeriod && !info.lastEnded) {
+          _bot('Kamu sedang haid hari ke-**${info.day}** 🌸 Perkiraan selesai **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}).\n'
+              'Haid berikutnya sekitar **${fmtDateLong(info.next)}**.');
+          return;
+        }
+        final st = info.status();
+        _bot('**${st.title}** — ${st.sub}.\n'
+            'Masa subur: ${fmtDateShort(info.fertileStart)} – ${fmtDateShort(info.fertileEnd)} · siklus rata-rata ${info.cycleLen} hari.\n'
+            '(Perkiraan saja, bukan alat kontrasepsi.)',
             speech: st.title);
     }
   }

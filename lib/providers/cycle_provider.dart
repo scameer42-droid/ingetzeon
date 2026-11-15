@@ -162,7 +162,10 @@ class CycleNotifier extends Notifier<CycleData> {
     await reschedule();
   }
 
-  Future<void> reschedule() => NotificationService.instance.scheduleCycle(state.enabled && state.remind ? info?.next : null);
+  Future<void> reschedule() {
+    final i = state.enabled && state.remind ? info : null;
+    return NotificationService.instance.scheduleCycle(i?.next, endDay: (i != null && i.ongoing) ? i.lastEnd : null);
+  }
 
   Future<void> setup(DateTime lastStart, int cycleLen, int periodLen) async {
     final today = dateOnly(DateTime.now());

@@ -245,8 +245,8 @@ class NotificationService {
 
   /// Pengingat haid: 2 hari sebelum & pada hari perkiraan (jam 08.00).
   /// [next] null → batalkan semua.
-  Future<void> scheduleCycle(DateTime? next) async {
-    for (var i = 1; i <= 2; i++) {
+  Future<void> scheduleCycle(DateTime? next, {DateTime? endDay}) async {
+    for (var i = 1; i <= 3; i++) {
       await _plugin.cancel(_cycleBase + i);
     }
     if (next == null) return;
@@ -256,6 +256,9 @@ class NotificationService {
         body: 'Perkiraan haid ${fmtDateShort(next)}. Siapkan pembalut & jaga kondisi ya.'),
       (id: _cycleBase + 2, at: DateTime(next.year, next.month, next.day, 8), title: '🌸 Haid diperkirakan hari ini',
         body: 'Kalau sudah mulai, buka IngetZeon lalu ketuk "Haid mulai" agar perkiraan makin akurat.'),
+      if (endDay != null)
+        (id: _cycleBase + 3, at: DateTime(endDay.year, endDay.month, endDay.day, 19), title: '🌿 Haid sudah selesai?',
+          body: 'Perkiraan haidmu selesai hari ini. Kalau sudah, ketuk "Haid selesai" atau bilang ke asisten "haid selesai".'),
     ];
     for (final it in items) {
       if (!it.at.isAfter(DateTime.now())) continue;

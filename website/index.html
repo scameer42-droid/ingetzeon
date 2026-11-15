@@ -887,6 +887,8 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <button>Saya simpan kunci motor di laci meja</button>
     <button>Di mana kunci motor saya?</button>
     <button>Kapan haid berikutnya?</button>
+    <button>Kapan haid saya selesai?</button>
+    <button>Haid aku mulai hari ini</button>
     <button>Ingatkan besok jam 7 pagi olahraga</button>
     <button>Ingatkan minum obat setiap hari jam 8 malam</button>
     <button>Jadwal hari ini apa?</button>
@@ -2271,29 +2273,186 @@ function cycleDayMark(d){
 }
 function checkCycle(){
   const c = state.cycle; if(!c.enabled || !c.remind) return;
-  const ci = cycleInfo(); if(!ci || ci.ongoing) return;
+  const ci = cycleInfo(); if(!ci) return;
+  c.notified = c.notified || {};
+  if(ci.ongoing){
+    const ek = 'end-' + dayKey(ci.lastEnd);
+    if(daysBetween(new Date(), ci.lastEnd) <= 0 && !c.notified[ek] && new Date().getHours() >= 17){ c.notified[ek] = 1; save(); notify('🌿 Haid sudah selesai?', 'Perkiraan haidmu selesai hari ini. Kalau sudah, tekan "Haid selesai" atau bilang ke asisten.'); toast('🌿 Perkiraan haid selesai hari ini'); }
+    return;
+  }
   const d = daysBetween(new Date(), ci.next), key = dayKey(ci.next);
   c.notified = c.notified || {};
   if(d === 2 && !c.notified[key+'-2'] && new Date().getHours() >= 8){ c.notified[key+'-2'] = 1; save(); notify('🌸 Haid 2 hari lagi', `Perkiraan haid ${fmtDateLong(ci.next)}. Siapkan pembalut ya.`); toast('🌸 Perkiraan haid 2 hari lagi'); }
   if(d === 0 && !c.notified[key+'-0'] && new Date().getHours() >= 8){ c.notified[key+'-0'] = 1; save(); notify('🌸 Haid diperkirakan hari ini', 'Kalau sudah mulai, tekan "Haid mulai" di IngetZeon.'); toast('🌸 Haid diperkirakan hari ini'); }
 }
-function answerCycle(text){
-  const t = normalizeID(text);
-  if(!/ (haid\w*|menstruasi\w*|mens|menses|datang bulan|masa subur|ovulasi) /.test(t)) return false;
-  let reply;
-  if(/ (selesai|berhenti|beres|sudah bersih|udah bersih|kelar) /.test(t)){
-    reply = logPeriodEnd() === 'ok' ? 'Oke, haid selesai dicatat ✓ Perkiraan siklus berikutnya sudah diperbarui.' : 'Belum ada haid yang sedang berlangsung untuk ditandai selesai.';
-  } else if(/ (mulai|datang|hari pertama|lagi haid|sedang haid|dapat|kena|baru mens) /.test(t) && !/ (kapan|berapa|apa) /.test(t)){
-    const kemarin = / kemarin /.test(t), date = kemarin ? addDays(new Date(), -1) : new Date();
-    const r = logPeriodStart(date);
-    const ci = cycleInfo();
-    reply = r === 'already' ? 'Haidmu sedang berlangsung, sudah tercatat kok 🌸' : `Dicatat: hari pertama haid ${kemarin ? 'kemarin' : 'hari ini'} 🌸\nPerkiraan haid berikutnya **${fmtDateLong(ci.next)}** (siklus ${ci.cycleLen} hari).`;
-  } else {
-    const ci = cycleInfo();
-    if(!ci) reply = 'Aku belum punya data siklus haidmu. Bilang "haid aku mulai hari ini" atau atur di Profil → Siklus haid 🌸';
-    else { const st = cycleStatus(ci); reply = `**${st.title}** — ${st.sub}.\nMasa subur: ${fmtDateShort(ci.fertileStart)} – ${fmtDateShort(ci.fertileEnd)} · ovulasi sekitar ${fmtDateShort(ci.ovul)}.`; }
+/* ---- Pemahaman obrolan haid (sinkron dengan lib/services/cycle_parser.dart) ---- */
+const CYC_HAID_WORDS = new Set(['haid','haidh','hait','haed','haidd','hayd','haaid','menstruasi','mensturasi','menstrusi','mentruasi','menstruas','menstruation','menstruasii','mens','menses','mensnya','mentsruasi','halangan','berhalangan']);
+const CYC_NUM = {satu:1,se:1,dua:2,tiga:3,empat:4,lima:5,enam:6,tujuh:7,delapan:8,sembilan:9,sepuluh:10};
+const CYC_MAP = [
+  [['kemaren','kmrn','kmarin','kemrin','kmren','semalam','kemarin'],'kemarin'],
+  [['kpn','kapn','kpan'],'kapan'], [['brp','brapa','berpa'],'berapa'],
+  [['udh','udah','dah','sdh','sudah','uda'],'sudah'], [['blm','belom','belum','blom'],'belum'],
+  [['gak','ga','nggak','ngga','enggak','engga','tdk','tidak','gk','g'],'tidak'],
+  [['ingetin','ingatin','ingatkan','ingetkan','ingtkan','ingatkn'],'ingatkan'], [['lg','lgi'],'lagi'],
+];
+function cycNormalize(input){
+  let t = (' ' + String(input).toLowerCase().replace(/[^a-z0-9?\- ]/g,' ').replace(/-/g,' ').replace(/\?/g,' ? ') + ' ').replace(/\s+/g,' ');
+  const phrases = {'kedatangan tamu bulanan':'haid datang','datang bulan':'haid datang','dtg bulan':'haid','dateng bulan':'haid','tamu bulanan':'haid','kedatangan tamu':'haid datang',
+    'dapet tamu':'haid datang','dapat tamu':'haid datang','lagi merah':'lagi haid','red day':'haid','my period':'haid',
+    'tadi malam':'hari ini','tadi pagi':'hari ini','tadi siang':'hari ini','barusan':'hari ini','td pagi':'hari ini',
+    'kemarin lusa':'2 hari lalu','lusa kemarin':'2 hari lalu','kemarin dulu':'2 hari lalu','seminggu':'7 hari','sepekan':'7 hari'};
+  t = t.split(' ').map(w => {
+    if(!w) return w;
+    const base = w.replace(/(nya|ku|mu|an)$/,'');
+    if(CYC_HAID_WORDS.has(w) || CYC_HAID_WORDS.has(base)) return 'haid';
+    if(w==='period' || w==='periodku') return 'haid';
+    if(w in CYC_NUM) return String(CYC_NUM[w]);
+    for(const [list,to] of CYC_MAP) if(list.includes(w)) return to;
+    return w;
+  }).join(' ');
+  for(const [k,v] of Object.entries(phrases)) t = t.split(' '+k+' ').join(' '+v+' ');
+  t = t.replace(/ (lagi|sedang|baru) (dapet|dapat|dpt)( nih| ni| ya| hari ini| kemarin| \d| ?$| )/g, (s,a,b,c) => ` ${a} haid${c||''}`);
+  return t.replace(/\s+/g,' ');
+}
+function cycleParse(input, ongoing = false){
+  const t = cycNormalize(input), has = re => re.test(t);
+  const topic = has(/ haid /) || has(/masa subur|ovulasi/) || (has(/ subur /) && has(/ (kapan|aku|saya|ku|gue|gw) /));
+  // saat haid sedang berlangsung, "udah bersih" cukup dipahami sebagai haid selesai
+  if(!topic && ongoing && /^ (aku |saya |alhamdulillah )?(sudah )?(bersih|bersih total)( hari ini| kemarin| \d+ hari lalu)?( ya| nih| kok)? $/.test(t)) return {cmd:'end', daysAgo: cycDaysAgo(t, false)};
+  if(!topic) return null;
+  const q = t.includes('?') || has(/ (kapan|berapa|perkiraan|prediksi|perkiraannya|kira|kira kira|apakah|gimana|bagaimana|tanggal berapa|jadwal|kapankah) /) || has(/^ (apa|masih) /);
+  const cond = has(/ (kalau|kalo|klo|jika|nanti|saat|ketika|pas|sebelum|menjelang|mau) /);
+  const remind = has(/ (ingatkan|pengingat|notif|notifikasi|kabari|kasih tau|kasih tahu|kasi tau|alarm) /);
+  const remindOff = has(/ (jangan|tidak usah|tak usah|matikan|stop|hentikan|nonaktifkan) (lagi )?(ingatkan|pengingat|notif|notifikasi|kabari|alarm)/);
+  const fertile = has(/subur|ovulasi/);
+  const late = has(/ (telat|terlambat|ketinggalan|mundur) /) || has(/ (belum|tidak) (haid|datang|dateng|dapet|dapat|keluar)/) || has(/ haid (belum|tidak (datang|dateng|keluar|muncul|dapet))/);
+  const end = has(/ (selesai|slesai|seles|selsai|udahan|sudahan|berhenti|brenti|beres|kelar|habis|abis|bersih|tuntas|berakhir|hari terakhir|stop) /) ||
+    (has(/ (sudah|tidak) (keluar )?lagi /) && !has(/ haid lagi /));
+  const start = has(/ (mulai|datang|dateng|dtg|dapet|dapat|dpt|keluar|kluar|hari pertama|kena|kedatangan|muncul|nongol|baru haid|lagi haid|sedang haid|lagi menstruasi) /) ||
+    has(/ hari ke ?\d/) || has(/ sudah \d+ hari /);
+  const dayQ = has(/ (hari ke ?berapa|hari keberapa|sudah berapa hari|berapa hari|berapa lama|sudah hari|masih) /);
+  const I = (cmd, daysAgo=0) => ({cmd, daysAgo});
+  if(remindOff) return I('remindOff');
+  if(q){
+    if(remind) return I('remindOn');
+    if(fertile) return I('askFertile');
+    if(late) return I('askLate');
+    if(end) return I('askEnd');
+    if(dayQ) return I('askDay');
+    return I('askNext');
   }
-  state.chat.push({role:'bot', text: reply, ts: Date.now()}); save(); renderChat(); speak(reply.replace(/\*\*/g,''));
+  if(remind && (cond || !(start || end))) return I('remindOn');
+  if(cond && !remind && (start || end)) return I(end ? 'askEnd' : 'askNext');
+  if(end) return I('end', cycDaysAgo(t, false));
+  if(late) return I('askLate');
+  if(start) return I('start', cycDaysAgo(t, true));
+  if(fertile) return I('askFertile');
+  return I('askNext');
+}
+function cycDaysAgo(t, start){
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  if(start){
+    const k = / hari ke ?(\d{1,2})/.exec(t);
+    if(k) return clamp(+k[1]-1, 0, 15);
+    const u = / sudah (\d{1,2}) hari /.exec(t);
+    if(u && !t.includes(' lalu')) return clamp(+u[1]-1, 0, 15);
+  }
+  const n = / (\d{1,2}) hari (yang |yg )?(lalu|lalu|sebelumnya|kebelakang|kemarin)/.exec(t);
+  if(n) return clamp(+n[1], 0, 45);
+  const tg = / (tanggal|tgl|tg) (\d{1,2})\b/.exec(t);
+  if(tg){
+    const now = new Date(), d = +tg[2];
+    let date = new Date(now.getFullYear(), now.getMonth(), d);
+    if(date > now) date = new Date(now.getFullYear(), now.getMonth()-1, d);
+    return clamp(Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - date)/864e5), 0, 45);
+  }
+  if(t.includes(' kemarin ')) return 1;
+  return 0;
+}
+function answerCycle(text){
+  const ci0 = state.cycle.enabled ? cycleInfo() : null;
+  const c = cycleParse(text, !!(ci0 && ci0.ongoing));
+  if(!c) return false;
+  const today = startOfDay(new Date()), date = addDays(today, -c.daysAgo);
+  const when = c.daysAgo === 0 ? 'hari ini' : (c.daysAgo === 1 ? 'kemarin' : `${c.daysAgo} hari lalu (${fmtDateShort(date)})`);
+  const inDays = d => { const k = daysBetween(today, d); return k === 0 ? 'hari ini' : (k === 1 ? 'besok' : (k > 0 ? `${k} hari lagi` : `${-k} hari lalu`)); };
+  const noData = 'Aku belum punya data siklus haidmu 🌸\nBilang saja saat haid datang, misalnya **"haid aku mulai hari ini"**, **"mens kemarin"**, atau **"datang bulan 3 hari lalu"** — atau isi di **Profil → Pengingat haid**.';
+  const info = state.cycle.enabled ? cycleInfo() : null;
+  let reply, speech;
+  switch(c.cmd){
+    case 'start': {
+      if(info && info.ongoing && daysBetween(info.lastStart, date) < 10){
+        reply = `Haidmu sudah tercatat mulai ${fmtDateShort(info.lastStart)} (hari ke-${info.day}) 🌸\nPerkiraan selesai **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}). Kalau sudah selesai, bilang **"haid selesai"**.`;
+        break;
+      }
+      logPeriodStart(date);
+      const i = cycleInfo();
+      reply = `Oke, hari pertama haid dicatat **${when}** 🌸\n• Perkiraan selesai: **${fmtDateLong(i.lastEnd)}** (${inDays(i.lastEnd)})\n• Haid berikutnya: **${fmtDateLong(i.next)}**\n${state.cycle.remind ? 'Aku ingatkan saat perkiraan selesai & 2 hari sebelum haid berikutnya. ' : ''}Jaga kondisi & minum air putih yang cukup ya 💧`;
+      speech = `Oke, hari pertama haid dicatat ${when}. Perkiraan selesai ${inDays(i.lastEnd)}.`;
+      break;
+    }
+    case 'end': {
+      if(logPeriodEnd(date) !== 'ok'){
+        reply = !info ? noData : `Haid terakhirmu (${fmtDateShort(info.lastStart)}) sudah tercatat selesai ${fmtDateShort(info.lastEnd)}. Kalau haid baru datang, bilang **"haid aku mulai hari ini"**.`;
+        break;
+      }
+      const i = cycleInfo();
+      reply = `Sip, haid selesai dicatat **${when}** 🌿 Lamanya ${daysBetween(i.lastStart, i.lastEnd) + 1} hari.\nHaid berikutnya diperkirakan **${fmtDateLong(i.next)}** (${inDays(i.next)}).`;
+      speech = `Sip, haid selesai dicatat ${when}.`;
+      break;
+    }
+    case 'remindOff':
+      state.cycle.remind = false; save(); renderAll();
+      reply = 'Oke, pengingat haid dimatikan. Nyalakan lagi kapan saja dengan bilang **"ingatkan aku kalau mau haid"** 🙂';
+      break;
+    case 'remindOn':
+      if(!info){ reply = 'Siap, nanti aku ingatkan! Tapi aku perlu tahu dulu kapan haid terakhirmu.\n' + noData; break; }
+      state.cycle.remind = true; save(); renderAll();
+      if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+      reply = `Siap, pengingat haid aktif 🔔\n${info.ongoing ? `• Perkiraan haid selesai: **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}) — aku tanyakan apakah sudah selesai\n` : ''}• 2 hari sebelum haid: **${fmtDateShort(addDays(info.next, -2))}**\n• Hari perkiraan haid: **${fmtDateLong(info.next)}** (${inDays(info.next)})\n(Di website, pengingat muncul saat halaman IngetZeon dibuka.)`;
+      speech = 'Siap, pengingat haid aktif.';
+      break;
+    case 'askEnd':
+      if(!info){ reply = noData; break; }
+      if(info.ongoing){
+        reply = `Haidmu sekarang hari ke-**${info.day}**. Perkiraan selesai **${fmtDateLong(info.lastEnd)}** (${inDays(info.lastEnd)}) — rata-rata haidmu ±${info.periodLen} hari.\nKalau sudah selesai, bilang **"haid selesai"** ya.`;
+        speech = `Perkiraan haid selesai ${inDays(info.lastEnd)}.`;
+      } else {
+        const nextEnd = addDays(info.next, info.periodLen - 1);
+        reply = `Haid terakhirmu selesai **${fmtDateShort(info.lastEnd)}**.\nHaid berikutnya diperkirakan **${fmtDateShort(info.next)} – ${fmtDateShort(nextEnd)}** (mulai ${inDays(info.next)}).`;
+        speech = `Haid berikutnya diperkirakan ${inDays(info.next)}.`;
+      }
+      break;
+    case 'askDay':
+      if(!info){ reply = noData; break; }
+      reply = info.onPeriod
+        ? `Hari ini haid hari ke-**${info.day}** 🌸 Perkiraan selesai ${fmtDateShort(info.lastEnd)} (${inDays(info.lastEnd)}).`
+        : `Kamu sedang tidak haid — sekarang hari ke-**${info.day}** siklusmu. Haid berikutnya **${fmtDateShort(info.next)}** (${inDays(info.next)}).`;
+      break;
+    case 'askLate':
+      if(!info){ reply = noData; break; }
+      if(info.onPeriod) reply = `Haidmu sedang berlangsung (hari ke-${info.day}), jadi tidak terlambat 🌸`;
+      else if(info.late > 0) reply = `Haidmu terlambat **${info.late} hari** dari perkiraan (${fmtDateShort(info.next)}).\nSiklus bisa bergeser karena stres, kurang tidur, kelelahan, atau perubahan berat badan. Kalau terlambat lebih dari seminggu atau ada kemungkinan hamil, coba tes kehamilan atau periksa ke dokter.\nKalau haid sudah datang, bilang **"haid aku mulai hari ini"**.`;
+      else reply = `Belum terlambat kok 🙂 Haid berikutnya diperkirakan **${fmtDateLong(info.next)}** (${inDays(info.next)}).`;
+      break;
+    case 'askFertile': {
+      if(!info){ reply = noData; break; }
+      const fert = info.inFertile ? `Saat ini kamu **sedang masa subur** (sampai ${fmtDateShort(info.fertileEnd)}).` : `Masa subur berikutnya: **${fmtDateShort(info.fertileStart)} – ${fmtDateShort(info.fertileEnd)}**.`;
+      reply = `${fert}\nOvulasi sekitar **${fmtDateShort(info.ovul)}**.\n(Perkiraan saja, bukan alat kontrasepsi.)`;
+      break;
+    }
+    default: {
+      if(!info){ reply = noData; break; }
+      if(info.ongoing){
+        reply = `Kamu sedang haid hari ke-**${info.day}** 🌸 Perkiraan selesai **${fmtDateShort(info.lastEnd)}** (${inDays(info.lastEnd)}).\nHaid berikutnya sekitar **${fmtDateLong(info.next)}**.`;
+        break;
+      }
+      const st = cycleStatus(info);
+      reply = `**${st.title}** — ${st.sub}.\nMasa subur: ${fmtDateShort(info.fertileStart)} – ${fmtDateShort(info.fertileEnd)} · siklus rata-rata ${info.cycleLen} hari.\n(Perkiraan saja, bukan alat kontrasepsi.)`;
+      speech = st.title;
+    }
+  }
+  state.chat.push({role:'bot', text: reply, ts: Date.now()}); save(); renderChat(); speak(speech || reply.replace(/[*_]/g,''));
   return true;
 }
 
