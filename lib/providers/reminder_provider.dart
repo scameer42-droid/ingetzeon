@@ -39,6 +39,8 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     await _repo.put(r);
     state = _sorted([...state.where((x) => x.id != r.id), r]);
     await _notif.schedule(r);
+    if (r.category == ReminderCategory.parkir && r.hourly && !r.done) await _notif.scheduleParkingHourly(r);
+    if (r.category == ReminderCategory.parkir && r.done) await _notif.cancelParkingHourly();
   }
 
   /// Perbarui isi pengingat; status selesai direset bila waktu/pengulangan berubah.
@@ -52,6 +54,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     final r = byId(id);
     if (r == null) return;
     await _notif.cancel(r);
+    if (r.category == ReminderCategory.parkir) await _notif.cancelParkingHourly();
     await _repo.delete(id);
     await PhotoService.instance.delete(r.photoPath);
     state = state.where((x) => x.id != id).toList();
@@ -85,6 +88,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
       return null;
     }
     await _notif.cancel(cur);
+    if (cur.category == ReminderCategory.parkir) await _notif.cancelParkingHourly();
     await _repo.delete(cur.id);
     state = state.where((x) => x.id != cur.id).toList();
     if (cur.alarm) await _saveLog([...doneLog, {'d': dayKey(DateTime.now()), 'c': cur.category.name}]); // catatan tidak dihitung tugas

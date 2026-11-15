@@ -38,6 +38,7 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
   TimeOfDay _time = TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 2)));
   bool _saved = false;
   late ScannedTicket? _ticket = widget.ticket;
+  bool _hourly = true;
 
   static const _quick = ['B1', 'B2', 'B3', 'P1', 'P2', 'P3', 'Lantai dasar', 'Rooftop'];
 
@@ -69,6 +70,7 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
       alarm: _remind,
       ticketText: _ticket?.text,
       ticketFormat: _ticket?.format,
+      hourly: _hourly,
     );
     _saved = true;
     await ref.read(remindersProvider.notifier).upsert(r);
@@ -172,6 +174,13 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
               ],
             ),
             const SizedBox(height: 12),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _hourly,
+              onChanged: (v) => setState(() => _hourly = v),
+              title: const Text('Ingatkan tiap jam', style: TextStyle(fontWeight: FontWeight.w500)),
+              subtitle: Text('Notifikasi "sudah 1 jam, 2 jam…" parkir', style: TextStyle(fontSize: 12.5, color: context.muted)),
+            ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               value: _remind,

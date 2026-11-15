@@ -57,6 +57,7 @@ class Reminder {
     this.ticketFormat,
     this.item,
     this.place,
+    this.hourly = false,
   });
 
   /// Membuat pengingat baru dengan id unik.
@@ -72,6 +73,7 @@ class Reminder {
     String? ticketFormat,
     String? item,
     String? place,
+    bool hourly = false,
   }) {
     final now = DateTime.now();
     return Reminder(
@@ -89,6 +91,7 @@ class Reminder {
       ticketFormat: ticketFormat,
       item: item,
       place: place,
+      hourly: hourly,
     );
   }
 
@@ -116,6 +119,9 @@ class Reminder {
   /// Catatan barang: nama barang & tempatnya (mis. 'kunci motor', 'di laci meja').
   final String? item;
   final String? place;
+
+  /// Parkir: kirim pengingat tiap jam.
+  final bool hourly;
 
   bool get hasTicket => ticketText != null && ticketText!.isNotEmpty;
 
@@ -150,6 +156,7 @@ class Reminder {
       ticketFormat: ticketFormat,
       item: item,
       place: place,
+      hourly: hourly,
     );
   }
 
@@ -216,6 +223,7 @@ class Reminder {
         'ticketFormat': ticketFormat,
         'item': item,
         'place': place,
+        'hourly': hourly,
       };
 
   factory Reminder.fromMap(Map<dynamic, dynamic> m) => Reminder(
@@ -235,6 +243,7 @@ class Reminder {
         ticketFormat: m['ticketFormat']?.toString(),
         item: m['item']?.toString(),
         place: m['place']?.toString(),
+        hourly: m['hourly'] == true,
       );
 }
 

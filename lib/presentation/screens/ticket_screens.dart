@@ -263,6 +263,16 @@ class TicketViewScreen extends StatelessWidget {
                     child: Text('${ticketLabel(format)} · disimpan ${dayLabel(savedAt!).toLowerCase()} jam ${fmtTime(savedAt!)}',
                         style: const TextStyle(color: AppColors.mutedLight, fontSize: 13.5)),
                   ),
+                if (savedAt != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: .1), borderRadius: BorderRadius.circular(99)),
+                      child: Text('⏱ Durasi parkir: ${elapsed(savedAt!)}',
+                          style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 14)),
+                    ),
+                  ),
                 const SizedBox(height: 18),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

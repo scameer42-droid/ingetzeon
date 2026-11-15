@@ -76,3 +76,12 @@ String greeting([DateTime? now]) {
 
 /// "07.30" → "7 lewat 30" agar enak dibacakan suara.
 String speakTime(DateTime d) => d.minute == 0 ? '${d.hour}' : '${d.hour} lewat ${d.minute}';
+
+/// Durasi sejak [from], mis. "1 jam 23 menit".
+String elapsed(DateTime from, [DateTime? now]) {
+  final m = (now ?? DateTime.now()).difference(from).inMinutes;
+  if (m < 1) return 'baru saja';
+  final h = m ~/ 60, mm = m % 60;
+  if (h == 0) return '$mm menit';
+  return mm == 0 ? '$h jam' : '$h jam $mm menit';
+}

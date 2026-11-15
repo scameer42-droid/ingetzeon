@@ -213,6 +213,40 @@ class NotificationService {
     );
   }
 
+  static const _hourlyBase = 880000;
+
+  /// Pengingat parkir tiap jam (sampai 12 jam) sejak [r.createdAt].
+  Future<void> scheduleParkingHourly(Reminder r) async {
+    await cancelParkingHourly();
+    final mode = await _mode();
+    final start = r.createdAt;
+    final lokasi = r.title.replaceFirst(RegExp(r'^Parkir di ', caseSensitive: false), '');
+    for (var h = 1; h <= 12; h++) {
+      final at = start.add(Duration(hours: h));
+      if (!at.isAfter(DateTime.now())) continue;
+      final body = 'Kamu sudah parkir $h jam di $lokasi (sejak ${fmtTime(start)}).';
+      try {
+        await _plugin.zonedSchedule(
+          _hourlyBase + h,
+          '⏱ Sudah $h jam parkir',
+          body,
+          tz.TZDateTime.from(at, tz.local),
+          _details('⏱ Sudah $h jam parkir', body, override: AlarmSound.notif),
+          androidScheduleMode: mode,
+          payload: r.id,
+        );
+      } catch (e) {
+        debugPrint('Gagal jadwal parkir per jam: $e');
+      }
+    }
+  }
+
+  Future<void> cancelParkingHourly() async {
+    for (var h = 1; h <= 12; h++) {
+      await _plugin.cancel(_hourlyBase + h);
+    }
+  }
+
   /// Hentikan bunyi alarm tunda yang sedang tampil.
   Future<void> stopSnooze(Reminder r) => _plugin.cancel(r.snoozeNotifId);
 

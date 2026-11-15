@@ -630,6 +630,8 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .stat .ic,.row-s .ic{border-radius:12px}
 .irow .got,.park .got{border-radius:10px}
 
+.park .ptimer{color:var(--c-parkir);font-weight:700;font-size:12.5px}
+.tv-dur{display:inline-block;margin-top:10px;background:#EEF0FF;color:#4F46E5;font-weight:700;padding:7px 14px;border-radius:99px;font-size:14px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -946,6 +948,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
     <div class="tv-text" id="tvText"></div>
     <h3 id="tvTitle"></h3>
     <p id="tvMeta"></p>
+    <span class="tv-dur" id="tvDur"></span>
     <p class="tv-tip">Naikkan kecerahan layar, lalu tunjukkan ke mesin atau petugas parkir.</p>
   </div>
 </div>
@@ -1162,6 +1165,12 @@ function dayLabel(d){
   if(diff===-1) return 'Kemarin';
   return fmtDateShort(d);
 }
+function elapsed(from){
+  const m = Math.floor((Date.now() - new Date(from).getTime())/6e4);
+  if(m < 1) return 'baru saja';
+  const h = Math.floor(m/60), mm = m%60;
+  return h ? (mm ? `${h} jam ${mm} menit` : `${h} jam`) : `${mm} menit`;
+}
 function countdown(d){
   const ms = d - new Date();
   if(ms <= 0) return 'sekarang';
@@ -1249,6 +1258,7 @@ function normalizeReminder(o){
     doneDates: Array.isArray(o.doneDates) ? o.doneDates : [],
     photo: o.photo || null,
     item: o.item ? String(o.item).slice(0,80) : null,
+    hourly: !!o.hourly, lastHour: o.lastHour || 0,
     place: o.place ? String(o.place).slice(0,120) : null,
     ticket: o.ticket && o.ticket.text ? {text: String(o.ticket.text).slice(0, 2000), format: String(o.ticket.format || 'qr_code')} : null,
     alarm: o.alarm !== false,
@@ -1462,7 +1472,7 @@ function renderHome(){
   const pk = activeParking();
   $('#parkWrap').innerHTML = pk ? `<div class="park" id="parkCard">
       ${photoSrc(pk.photo) ? `<img class="ph" src="${photoSrc(pk.photo)}" alt="">` : `<div class="ph">${icon('c-parkir')}</div>`}
-      <div class="tx"><div class="lb">${icon('c-parkir')}Lokasi parkir kamu</div><b>${esc(pk.title)}</b><small>${dayLabel(new Date(pk.createdAt))} · ${fmtTime(new Date(pk.createdAt))}</small>
+      <div class="tx"><div class="lb">${icon('c-parkir')}Lokasi parkir kamu</div><b>${esc(pk.title)}</b><small class="ptimer">⏱ ${elapsed(pk.createdAt)} · sejak ${fmtTime(new Date(pk.createdAt))}</small>
         ${pk.ticket ? `<br><button class="tk-btn" id="parkTicket">${icon('i-qr')}Tampilkan tiket</button>` : ''}</div>
       <button class="got" id="parkGot">Sudah<br>diambil</button>
     </div>` : '';
@@ -1856,6 +1866,7 @@ function openTicket(r){
   $('#tvCode').innerHTML = c.svg; $('#tvCode').classList.toggle('linear', c.linear);
   $('#tvText').textContent = r.ticket.text.length > 80 ? r.ticket.text.slice(0,80) + '…' : r.ticket.text;
   $('#tvTitle').textContent = r.title;
+  $('#tvDur').textContent = `⏱ Durasi parkir: ${elapsed(r.createdAt)}`;
   $('#tvMeta').textContent = `${FORMAT_LABEL[r.ticket.format] || 'Kode'} · disimpan ${dayLabel(new Date(r.createdAt)).toLowerCase()} jam ${fmtTime(new Date(r.createdAt))}`;
   $('#ticketView').classList.add('show');
   try{ navigator.wakeLock?.request('screen').then(w => wakeLock = w).catch(()=>{}); }catch(e){}
@@ -2054,7 +2065,7 @@ function activeParking(){
   return best;
 }
 async function startParking(autoScan = false){
-  let photo = null, remind = false, ticket = null;
+  let photo = null, remind = false, ticket = null, hourly = true;
   const t = new Date(Date.now() + 2*3600e3);
   let time = `${pad(t.getHours())}:${pad(t.getMinutes())}`;
   const quick = ['B1','B2','B3','P1','P2','P3','Lantai dasar','Rooftop'];
@@ -2070,6 +2081,7 @@ async function startParking(autoScan = false){
         </div>` : ''}
       <div class="field"><input class="input" id="pkLoc" placeholder="Mis. B2, pilar C5 dekat lift" autocomplete="off" value="${esc($('#pkLoc') ? $('#pkLoc').value : '')}"></div>
       <div class="chips small" id="pkQuick" style="margin:-6px 0 8px">${quick.map(q=>`<button class="chip" data-q="${q}">${q}</button>`).join('')}</div>
+      <div class="switch-row" id="pkHourRow"><div class="tx"><b>Ingatkan tiap jam</b><small>Notifikasi "sudah 1 jam, 2 jam…" parkir</small></div><div class="switch ${hourly?'on':''}"></div></div>
       <div class="switch-row" id="pkRemRow"><div class="tx"><b>Bunyikan alarm</b><small>${remind ? 'Ingatkan pada jam di bawah' : 'Mis. saat jam pulang'}</small></div><div class="switch ${remind?'on':''}"></div></div>
       ${remind ? `<div class="field"><input class="input" type="time" id="pkTime" value="${time}"></div>` : ''}
       <button class="btn btn-primary btn-block" id="pkSave">${icon('i-check')}Simpan</button>
@@ -2077,6 +2089,7 @@ async function startParking(autoScan = false){
     const loc = $('#pkLoc');
     $('#pkQuick').onclick = e => { const b = e.target.closest('[data-q]'); if(!b) return; const v = loc.value.trim(); loc.value = v ? `${v}, ${b.dataset.q}` : b.dataset.q; loc.focus(); };
     $('#pkRemRow').onclick = () => { remind = !remind; draw(); };
+    $('#pkHourRow').onclick = () => { hourly = !hourly; draw(); };
     if($('#pkTime')) $('#pkTime').onchange = e => time = e.target.value;
     const retake = async () => { const k = await pickPhoto(true); if(k){ photoDel(photo); photo = k; draw(); } };
     if($('#pkCam')) $('#pkCam').onclick = retake;
@@ -2094,7 +2107,8 @@ async function startParking(autoScan = false){
         at = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
         if(at <= now) at = addDays(at, 1);
       }
-      addReminder({title: l ? `Parkir di ${l}` : 'Lokasi parkir', note:`Dicatat ${fmtTime(now)}`, scheduledAt: toLocalISO(at), repeat:'once', category:'parkir', photo, ticket, alarm: remind});
+      addReminder({title: l ? `Parkir di ${l}` : 'Lokasi parkir', note:`Dicatat ${fmtTime(now)}`, scheduledAt: toLocalISO(at), repeat:'once', category:'parkir', photo, ticket, alarm: remind, hourly});
+      if(hourly) askNotifPermission();
       photo = null; // sudah dipakai
       if(remind) askNotifPermission();
       closeSheet();
@@ -2217,7 +2231,20 @@ $('#alarmSnooze').onclick = () => {
 };
 $('#alarmClose').onclick = showNextAlarm;
 
+function checkParkingHourly(){
+  const pk = activeParking();
+  if(!pk || !pk.hourly) return;
+  const h = Math.floor((Date.now() - new Date(pk.createdAt).getTime()) / 3600e3);
+  if(h >= 1 && h <= 12 && h > (pk.lastHour || 0)){
+    pk.lastHour = h; save();
+    const lokasi = pk.title.replace(/^parkir di /i, '');
+    notify(`⏱ Sudah ${h} jam parkir`, `Kamu sudah parkir ${h} jam di ${lokasi} (sejak ${fmtTime(new Date(pk.createdAt))}).`);
+    chime(); toast(`⏱ Sudah ${h} jam parkir di ${lokasi}`);
+    if(state.settings.voice) speak(`Kamu sudah parkir ${h} jam.`);
+  }
+}
 function checkDue(){
+  checkParkingHourly();
   const now = new Date();
   const notified = getNotified();
   let changed = false;

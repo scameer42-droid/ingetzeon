@@ -303,6 +303,7 @@ class _ParkingCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(tickerProvider); // perbarui durasi tiap 30 detik
     final c = ReminderCategory.parkir.color;
     return SoftCard(
       padding: const EdgeInsets.all(14),
@@ -323,7 +324,15 @@ class _ParkingCard extends ConsumerWidget {
             ]),
             const SizedBox(height: 2),
             Text(parking.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
-            Text('${dayLabel(parking.createdAt)} · ${fmtTime(parking.createdAt)}', style: TextStyle(fontSize: 12, color: context.muted)),
+            const SizedBox(height: 2),
+            Row(children: [
+              Icon(Icons.timer_outlined, size: 14, color: c),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text('${elapsed(parking.createdAt)} · sejak ${fmtTime(parking.createdAt)}',
+                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: c)),
+              ),
+            ]),
             if (parking.hasTicket)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
