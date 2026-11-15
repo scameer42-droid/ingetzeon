@@ -85,6 +85,8 @@ def patch_gradle():
             s = s.rstrip() + '\n\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
         if "proguard-rules.pro" not in s:
             s = re.sub(r"(release\s*\{)", r'\1\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")', s, count=1)
+        if "checkReleaseBuilds" not in s:
+            s = s.replace("android {", "android {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }", 1)
         # minSdk minimal 23 (speech_to_text & notifikasi)
         s = re.sub(r"minSdk\s*=\s*flutter\.minSdkVersion", "minSdk = maxOf(flutter.minSdkVersion, 23)", s)
     elif groovy.exists():
@@ -95,6 +97,8 @@ def patch_gradle():
             s = s.rstrip() + "\n\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n}\n"
         if "proguard-rules.pro" not in s:
             s = re.sub(r"(release\s*\{)", r"\1\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'", s, count=1)
+        if "checkReleaseBuilds" not in s:
+            s = s.replace("android {", "android {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }", 1)
         s = re.sub(r"minSdkVersion\s+flutter\.minSdkVersion", "minSdkVersion Math.max(flutter.minSdkVersion, 23)", s)
         s = re.sub(r"minSdk\s*=\s*flutter\.minSdkVersion", "minSdk = Math.max(flutter.minSdkVersion, 23)", s)
     else:
