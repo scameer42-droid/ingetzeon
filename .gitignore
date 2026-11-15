@@ -1,0 +1,24 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Folder android/ dibuat otomatis oleh `flutter create` + tool/patch_android.py
+android/
+ios/
+web/
+linux/
+macos/
+windows/
+*.apk

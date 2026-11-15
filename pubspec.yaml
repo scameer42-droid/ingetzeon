@@ -1,0 +1,43 @@
+name: ingetzeon
+description: "IngetZeon — pengingat harian dengan asisten AI dan suara."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  # Database lokal (offline-first)
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  # Notifikasi & alarm
+  flutter_local_notifications: ^19.0.0
+  timezone: ^0.10.0
+  # Suara
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.2.0
+  # Kamera & penyimpanan foto
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
+  # AI (Gemini lewat REST API)
+  http: ^1.2.0
+  # Tampilan
+  google_fonts: ^6.2.1
+  table_calendar: ^3.1.3
+  fl_chart: ^1.0.0
+  intl: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

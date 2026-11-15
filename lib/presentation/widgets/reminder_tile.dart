@@ -1,0 +1,236 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/theme/app_colors.dart';
+import '../../core/utils/date_utils.dart';
+import '../../data/models/reminder.dart';
+import '../../providers/reminder_provider.dart';
+import '../screens/reminder_form_screen.dart';
+import 'common.dart';
+import 'photo_view.dart';
+
+/// Satu baris pengingat dengan tombol centang selesai.
+class ReminderTile extends ConsumerWidget {
+  const ReminderTile(this.item, {super.key, this.showDay = false});
+  final Occurrence item;
+  final bool showDay;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final r = item.reminder;
+    final now = DateTime.now();
+    final late = !item.done && item.at.isBefore(now) && sameDay(item.at, now);
+    final timeText = '${showDay ? '${dayLabel(item.at)} · ' : ''}${fmtTime(item.at)}${late ? ' · terlewat' : ''}';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SoftCard(
+        padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+        radius: 18,
+        onTap: () => showReminderDetail(context, ref, r, item.at),
+        child: Row(
+          children: [
+            CategoryIcon(r.category, faded: item.done),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    r.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: item.done ? context.faint : null,
+                      decoration: item.done ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Wrap(
+                    spacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 13, color: late ? AppColors.pink : context.muted),
+                      Text(timeText,
+                          style: TextStyle(fontSize: 12.5, color: late ? AppColors.pink : context.muted, fontWeight: late ? FontWeight.w600 : null)),
+                      if (r.repeat != RepeatType.once) _Pill(icon: Icons.repeat_rounded, text: r.repeatLabel),
+                      if (r.photoPath != null) const _Pill(icon: Icons.photo_camera_outlined, text: 'Foto'),
+                      if (!r.alarm) const _Pill(icon: Icons.notifications_off_outlined, text: 'Catatan'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            _CheckButton(
+              done: item.done,
+              onTap: () async {
+                await ref.read(remindersProvider.notifier).setDone(r, item.at, !item.done);
+                if (!item.done && context.mounted) showToast(context, '"${r.title}" selesai 🎉');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({required this.icon, required this.text});
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(99)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 11, color: context.muted),
+        const SizedBox(width: 3),
+        Text(text, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: context.muted)),
+      ]),
+    );
+  }
+}
+
+class _CheckButton extends StatelessWidget {
+  const _CheckButton({required this.done, required this.onTap});
+  final bool done;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          gradient: done ? AppColors.gradient : null,
+          borderRadius: BorderRadius.circular(10),
+          border: done ? null : Border.all(color: context.line, width: 2),
+        ),
+        child: done ? const Icon(Icons.check_rounded, color: Colors.white, size: 18) : null,
+      ),
+    );
+  }
+}
+
+/// Lembar detail pengingat: tandai selesai, ubah, hapus.
+Future<void> showReminderDetail(BuildContext context, WidgetRef ref, Reminder r, DateTime day) {
+  final at = r.occurrenceOn(day);
+  final done = r.isDoneOn(day);
+  final now = DateTime.now();
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (c) => SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CategoryIcon(r.category, size: 52),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(color: r.category.soft, borderRadius: BorderRadius.circular(99)),
+                      child: Text(r.category.label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: r.category.color)),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(r.title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600, height: 1.3)),
+                  ]),
+                ),
+              ],
+            ),
+            if (r.note != null) ...[
+              const SizedBox(height: 12),
+              Text(r.note!, style: TextStyle(color: c.muted, fontSize: 14)),
+            ],
+            if (r.photoPath != null) ...[
+              const SizedBox(height: 14),
+              PhotoThumb(r.photoPath!, height: 200),
+            ],
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: c.card2, borderRadius: BorderRadius.circular(18)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _metaRow(Icons.calendar_today_rounded, fmtDateLong(at)),
+                const SizedBox(height: 10),
+                _metaRow(Icons.schedule_rounded,
+                    'Jam ${fmtTime(at)} · ${at.isAfter(now) ? countdown(at) : (done ? 'selesai' : 'sudah lewat')}'),
+                const SizedBox(height: 10),
+                _metaRow(Icons.repeat_rounded, r.repeatLabel),
+                if (!r.alarm) ...[
+                  const SizedBox(height: 10),
+                  _metaRow(Icons.notifications_off_outlined, 'Catatan saja (tanpa alarm)'),
+                ],
+              ]),
+            ),
+            const SizedBox(height: 16),
+            GradientButton(
+              label: done ? 'Batalkan selesai' : 'Tandai selesai',
+              icon: Icons.check_rounded,
+              onPressed: () async {
+                Navigator.pop(c);
+                await ref.read(remindersProvider.notifier).setDone(r, day, !done);
+                if (!done && context.mounted) showToast(context, '"${r.title}" selesai 🎉');
+              },
+            ),
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: SoftButton(
+                  label: 'Ubah',
+                  icon: Icons.edit_rounded,
+                  onPressed: () {
+                    Navigator.pop(c);
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ReminderFormScreen(existing: r)));
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: SoftButton(
+                  label: 'Hapus',
+                  icon: Icons.delete_outline_rounded,
+                  color: AppColors.pink,
+                  onPressed: () async {
+                    final ok = await confirmDialog(c,
+                        title: 'Hapus pengingat?',
+                        message: '"${r.title}" akan dihapus${r.repeat != RepeatType.once ? ' beserta semua jadwal ulangnya' : ''}.',
+                        ok: 'Hapus',
+                        danger: true);
+                    if (!ok) return;
+                    if (c.mounted) Navigator.pop(c);
+                    await ref.read(remindersProvider.notifier).remove(r.id);
+                    if (context.mounted) showToast(context, 'Pengingat dihapus');
+                  },
+                ),
+              ),
+            ]),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _metaRow(IconData icon, String text) => Row(children: [
+      Icon(icon, size: 18, color: AppColors.primary),
+      const SizedBox(width: 10),
+      Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
+    ]);
