@@ -126,7 +126,7 @@ class ChatNotifier extends Notifier<ChatState> {
   bool _answerIslam(String text) {
     final doa = IslamAsk.doa(text);
     if (doa != null) {
-      _bot('${doa.emoji} **Doa ${doa.judul.toLowerCase()}**\n\n${doa.arab}\n\n_${doa.latin}_\n\nArtinya: "${doa.arti}"\n(${doa.sumber})',
+      _bot('${doa.emoji} **Doa ${doa.judul.toLowerCase()}**\n\n${doa.arab}\n\n*${doa.latin}*\n\nArtinya: "${doa.arti}"\n(${doa.sumber})',
           tools: ['muslim:doa:${doa.judul}', 'muslim'], speech: 'Ini doa ${doa.judul.toLowerCase()}. Artinya: ${doa.arti}');
       return true;
     }
