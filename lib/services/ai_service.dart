@@ -89,6 +89,46 @@ class AiService {
       ? Uri.parse('https://aiplatform.googleapis.com/v1/publishers/google/models/${Uri.encodeComponent(model)}:generateContent')
       : Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/${Uri.encodeComponent(model)}:generateContent');
 
+  /// Prompt dari pengguna, dengan waktu sekarang diisi otomatis.
+  static String reminderPrompt(DateTime now) {
+    final off = now.timeZoneOffset;
+    final sign = off.isNegative ? '-' : '+';
+    final tz = '$sign${two(off.inHours.abs())}:${two(off.inMinutes.abs() % 60)}';
+    final besok = dayKey(addDays(now, 1));
+    return '''Kamu adalah asisten penjadwalan pintar. Tugasmu adalah mengubah input bahasa alami dari user (Bahasa Indonesia) menjadi format JSON reminder.
+
+Format JSON yang WAJIB kamu kembalikan:
+{
+  "title": string (judul singkat kegiatan),
+  "note": string | null (catatan tambahan jika ada),
+  "scheduledAt": "ISO8601 datetime" (waktu lengkap),
+  "repeat": "once" | "daily" | "weekly" | "monthly",
+  "category": "kerja" | "pribadi" | "kesehatan" | "edukasi" | "parkir" | "lainnya",
+  "alarm": boolean
+}
+
+Aturan Ketat:
+1. Jika user tidak menyebut tanggal, gunakan tanggal hari ini.
+2. Jika user tidak menyebut jam, gunakan jam 09:00 pagi.
+3. Jika user menyebut "setiap hari", "tiap minggu", ubah nilai "repeat" sesuai.
+4. Kembalikan HANYA kode JSON murni, tanpa teks pembuka, penutup, atau markdown (tanpa ```json).
+5. Waktu saat ini adalah: ${hariList[jsDay(now)]}, ${toLocalIso(now)} (zona waktu $tz). Tulis scheduledAt dalam waktu lokal tanpa zona, format YYYY-MM-DDTHH:mm:ss.
+6. Jika tentang lokasi parkir (mis. "saya parkir di B2") dan user TIDAK menyebut jam, isi scheduledAt dengan waktu saat ini dan "alarm": false. Judulnya "Parkir di <lokasi>". Selain itu "alarm": true.
+
+Contoh Input: "ingatkan besok jam 7 pagi olahraga"
+Contoh Output:
+{"title": "Olahraga", "note": null, "scheduledAt": "${besok}T07:00:00", "repeat": "once", "category": "kesehatan", "alarm": true}''';
+  }
+
+  Future<String> _generate({
+    required String apiKey,
+    required String model,
+    required String system,
+    required List<Map<String, dynamic>> contents,
+    bool json = false,
+  }) async =>
+      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json)).text;
+
   /// Mencoba beberapa model sampai ada yang tersedia untuk kunci ini.
   Future<AiReply> _generateFull({
     required String apiKey,
