@@ -109,19 +109,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               color: AppColors.primary,
               title: 'Kunci API Gemini',
               subtitle: s.hasAi
-                  ? 'Terpasang · ${AiService.isVertexKey(s.apiKey) ? 'Vertex AI' : 'Google AI Studio'}${AiService.workingModel != null ? ' · ${AiService.workingModel}' : ''}'
+                  ? 'Terpasang${AiService.workingModel != null ? ' · ${AiService.workingModel}${AiService.workingVertex ? ' (Vertex)' : ''}' : ''}'
                   : 'Belum diisi — asisten pakai mode offline',
               onTap: () async {
                 final v = await inputDialog(
                   context,
                   title: 'Kunci API Gemini',
-                  message: 'Bisa kunci Google AI Studio (AIza…) atau Vertex AI express (AQ.…). Kunci hanya disimpan di HP ini. Kosongkan untuk mode offline.',
+                  message: 'Buat di aistudio.google.com → API keys (format AQ.… atau AIza…). Kunci hanya disimpan di HP ini. Kosongkan untuk mode offline.',
                   initial: s.apiKey,
                   hint: 'AIza…',
                 );
                 if (v == null) return;
                 await notifier.setApiKey(v);
                 AiService.workingModel = null;
+                AiService.workingVertex = false;
                 if (v.trim().isEmpty) {
                   if (context.mounted) showToast(context, 'Mode offline aktif');
                   return;

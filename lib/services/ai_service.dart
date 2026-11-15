@@ -18,10 +18,13 @@ class AiException implements Exception {
     if (status == -2) return 'Tidak ada koneksi internet';
     final m = message.toLowerCase();
     final detail = message.isEmpty ? '' : ' (${message.length > 140 ? message.substring(0, 140) : message})';
+    if (message.contains('ACCESS_TOKEN_TYPE_UNSUPPORTED')) {
+      return 'Google menolak kunci AQ. ini (masalah di sisi Google, bukan aplikasinya). Coba hapus kunci lama, lalu buat kunci baru di aistudio.google.com';
+    }
     if ((status == 400 || status == 401) && (m.contains('api key') || m.contains('credential') || m.contains('auth'))) {
       return 'Kunci API Gemini tidak valid$detail';
     }
-    if (status == 401 || status == 403) return 'Kunci API ditolak — pastikan Vertex AI API / Gemini API aktif untuk kunci ini$detail';
+    if (status == 401 || status == 403) return 'Kunci API ditolak oleh Google$detail';
     if (status == 404) return 'Model Gemini tidak tersedia untuk kunci ini$detail';
     if (status == 429) return 'Kuota Gemini habis untuk sementara, coba lagi sebentar lagi';
     return 'Gemini tidak bisa dihubungi$detail';
@@ -56,64 +59,35 @@ class AiService {
   AiService({http.Client? client}) : _client = client ?? http.Client();
   final http.Client _client;
 
-  /// Kunci "AQ." = Vertex AI express mode; kunci "AIza" = Google AI Studio.
+  /// AI Studio kini mengeluarkan kunci "AQ." (Auth key) selain "AIza"; keduanya dipakai di server Gemini biasa.
+  /// Server Vertex AI express hanya dicoba sebagai cadangan untuk kunci "AQ.".
   static bool isVertexKey(String key) => key.trim().startsWith('AQ.');
 
-  /// Model yang terakhir berhasil dipakai.
+  /// Model & server yang terakhir berhasil dipakai.
   static String? workingModel;
+  static bool workingVertex = false;
 
-  static List<String> _candidates(String apiKey, String userModel) {
-    final vertex = isVertexKey(apiKey);
+  static List<bool> _endpointOrder(String apiKey) {
+    final eps = <bool>[false, if (isVertexKey(apiKey)) true]; // false = AI Studio, true = Vertex
+    if (workingVertex && eps.contains(true)) return [true, false];
+    return eps;
+  }
+
+  static List<String> _candidates(bool vertex, String userModel) {
     final auto = userModel.trim().isEmpty || userModel == 'gemini-flash-latest' || userModel == 'otomatis';
     final defaults = vertex
-        ? ['gemini-3.5-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-3.1-flash-lite-preview']
-        : ['gemini-flash-latest', 'gemini-3.5-flash', 'gemini-2.5-flash'];
-    return {if (workingModel != null) workingModel!, if (!auto) userModel.trim(), ...defaults}.toList();
+        ? ['gemini-3.5-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash']
+        : ['gemini-flash-latest', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-2.5-flash'];
+    return {
+      if (workingModel != null && workingVertex == vertex) workingModel!,
+      if (!auto) userModel.trim(),
+      ...defaults,
+    }.toList();
   }
 
-  static Uri _endpoint(String apiKey, String model) => isVertexKey(apiKey)
+  static Uri _endpoint(bool vertex, String model) => vertex
       ? Uri.parse('https://aiplatform.googleapis.com/v1/publishers/google/models/${Uri.encodeComponent(model)}:generateContent')
       : Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/${Uri.encodeComponent(model)}:generateContent');
-
-  /// Prompt dari pengguna, dengan waktu sekarang diisi otomatis.
-  static String reminderPrompt(DateTime now) {
-    final off = now.timeZoneOffset;
-    final sign = off.isNegative ? '-' : '+';
-    final tz = '$sign${two(off.inHours.abs())}:${two(off.inMinutes.abs() % 60)}';
-    final besok = dayKey(addDays(now, 1));
-    return '''Kamu adalah asisten penjadwalan pintar. Tugasmu adalah mengubah input bahasa alami dari user (Bahasa Indonesia) menjadi format JSON reminder.
-
-Format JSON yang WAJIB kamu kembalikan:
-{
-  "title": string (judul singkat kegiatan),
-  "note": string | null (catatan tambahan jika ada),
-  "scheduledAt": "ISO8601 datetime" (waktu lengkap),
-  "repeat": "once" | "daily" | "weekly" | "monthly",
-  "category": "kerja" | "pribadi" | "kesehatan" | "edukasi" | "parkir" | "lainnya",
-  "alarm": boolean
-}
-
-Aturan Ketat:
-1. Jika user tidak menyebut tanggal, gunakan tanggal hari ini.
-2. Jika user tidak menyebut jam, gunakan jam 09:00 pagi.
-3. Jika user menyebut "setiap hari", "tiap minggu", ubah nilai "repeat" sesuai.
-4. Kembalikan HANYA kode JSON murni, tanpa teks pembuka, penutup, atau markdown (tanpa ```json).
-5. Waktu saat ini adalah: ${hariList[jsDay(now)]}, ${toLocalIso(now)} (zona waktu $tz). Tulis scheduledAt dalam waktu lokal tanpa zona, format YYYY-MM-DDTHH:mm:ss.
-6. Jika tentang lokasi parkir (mis. "saya parkir di B2") dan user TIDAK menyebut jam, isi scheduledAt dengan waktu saat ini dan "alarm": false. Judulnya "Parkir di <lokasi>". Selain itu "alarm": true.
-
-Contoh Input: "ingatkan besok jam 7 pagi olahraga"
-Contoh Output:
-{"title": "Olahraga", "note": null, "scheduledAt": "${besok}T07:00:00", "repeat": "once", "category": "kesehatan", "alarm": true}''';
-  }
-
-  Future<String> _generate({
-    required String apiKey,
-    required String model,
-    required String system,
-    required List<Map<String, dynamic>> contents,
-    bool json = false,
-  }) async =>
-      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json)).text;
 
   /// Mencoba beberapa model sampai ada yang tersedia untuk kunci ini.
   Future<AiReply> _generateFull({
@@ -124,27 +98,36 @@ Contoh Output:
     bool json = false,
     bool search = false,
   }) async {
-    AiException? last;
-    for (final m in _candidates(apiKey, model)) {
-      try {
-        final r = await _generateOnce(apiKey: apiKey, model: m, system: system, contents: contents, json: json, search: search);
-        workingModel = m;
-        return r;
-      } on AiException catch (e) {
-        last = e;
-        final msg = e.message.toLowerCase();
-        if (e.status == 404 || (e.status == 400 && (msg.contains('model') || msg.contains('not found') || msg.contains('not supported')))) {
-          continue;
+    AiException? last, firstAuth;
+    for (final vertex in _endpointOrder(apiKey)) {
+      for (final m in _candidates(vertex, model)) {
+        try {
+          final r = await _generateOnce(
+              apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search);
+          workingModel = m;
+          workingVertex = vertex;
+          return r;
+        } on AiException catch (e) {
+          last = e;
+          final msg = e.message.toLowerCase();
+          if (e.status == 404 || (e.status == 400 && (msg.contains('model') || msg.contains('not found') || msg.contains('not supported')))) {
+            continue; // coba model lain
+          }
+          if (e.status == 401 || e.status == 403) {
+            firstAuth ??= e;
+            break; // coba server lain
+          }
+          rethrow;
         }
-        rethrow;
       }
     }
-    throw last ?? AiException(404, 'model tidak tersedia');
+    throw firstAuth ?? last ?? AiException(404, 'model tidak tersedia');
   }
 
   Future<AiReply> _generateOnce({
     required String apiKey,
     required String model,
+    required bool vertex,
     required String system,
     required List<Map<String, dynamic>> contents,
     bool json = false,
@@ -167,7 +150,7 @@ Contoh Output:
     try {
       res = await _client
           .post(
-            _endpoint(apiKey, model),
+            _endpoint(vertex, model),
             headers: {'Content-Type': 'application/json', 'x-goog-api-key': apiKey.trim()},
             body: jsonEncode(body),
           )

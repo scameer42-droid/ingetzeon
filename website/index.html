@@ -1491,7 +1491,7 @@ function renderProfile(){
   $('#pfAv').textContent = (name || 'I')[0].toUpperCase();
   $('#pfName').textContent = name || 'Pengguna IngetZeon';
   $('#pfSub').textContent = `${state.reminders.length} pengingat tersimpan`;
-  $('#keyState').textContent = s.apiKey ? `Terpasang · ${isVertexKey(s.apiKey) ? 'Vertex AI' : 'Google AI Studio'}${workingModel ? ' · ' + workingModel : ''}` : 'Belum diisi — asisten pakai mode offline';
+  $('#keyState').textContent = s.apiKey ? `Terpasang${workingModel ? ' · ' + workingModel + (workingEp==='vertex' ? ' (Vertex)' : '') : ''}` : 'Belum diisi — asisten pakai mode offline';
   $('#swVoice').classList.toggle('on', !!s.voice);
   $('#notifState').textContent = notifStatusText();
   applyTheme();
@@ -1511,12 +1511,12 @@ $('#pfEdit').onclick = async () => {
 };
 $('#rowKey').onclick = async () => {
   const v = await confirmDlg({title:'Kunci API Gemini',
-    text:'Bisa kunci Google AI Studio (AIza…) atau Vertex AI express (AQ.…). Kunci hanya disimpan di perangkat ini. Kosongkan untuk mode offline.',
+    text:'Buat di aistudio.google.com → API keys (format AQ.… atau AIza…). Kunci hanya disimpan di perangkat ini. Kosongkan untuk mode offline.',
     ok:'Simpan',
     extra:`<input class="input" id="dlgInput" style="margin-bottom:16px" value="${esc(state.settings.apiKey)}" placeholder="AIza…" autocomplete="off" spellcheck="false">`});
   if(v===false) return;
   state.settings.apiKey = String(v).trim(); save(); renderAll(); updateAiMode();
-  workingModel = null;
+  workingModel = null; workingEp = null;
   if(!state.settings.apiKey) return toast('Mode offline aktif');
   toast('Mengecek kunci…');
   try{
@@ -2156,46 +2156,55 @@ Jadwal hari ini:\n${today}\nJadwal besok:\n${tmr}
 Kalau pengguna ingin membuat pengingat, sarankan dia mengetik kalimat yang diawali kata "ingatkan", contoh: "ingatkan besok jam 7 olahraga".`;
 }
 let lastSources = [];
-/** Kunci "AQ." = Vertex AI express mode; kunci "AIza" = Google AI Studio. */
-const isVertexKey = k => /^AQ\./.test(String(k||'').trim());
-let workingModel = null; // model yang terakhir berhasil
-function modelCandidates(){
-  const vertex = isVertexKey(state.settings.apiKey);
+/** AI Studio kini mengeluarkan kunci "AQ." (Auth key) selain "AIza". Keduanya dipakai di server Gemini biasa;
+ *  server Vertex AI express hanya dicoba sebagai cadangan untuk kunci "AQ.". */
+const isAuthKey = k => /^AQ\./.test(String(k||'').trim());
+const isVertexKey = isAuthKey;
+let workingModel = null, workingEp = null;
+function endpointOrder(){
+  const eps = ['studio'];
+  if(isAuthKey(state.settings.apiKey)) eps.push('vertex');
+  return workingEp ? [workingEp, ...eps.filter(e => e !== workingEp)] : eps;
+}
+function modelCandidates(ep){
   const user = (state.settings.model || '').trim();
   const auto = !user || user === 'gemini-flash-latest' || user === 'otomatis';
-  const defaults = vertex ? ['gemini-3.5-flash','gemini-3-flash-preview','gemini-2.5-flash','gemini-3.1-flash-lite-preview']
-                          : ['gemini-flash-latest','gemini-3.5-flash','gemini-2.5-flash'];
-  return [...new Set([workingModel, auto ? null : user, ...defaults].filter(Boolean))];
+  const defaults = ep === 'vertex'
+    ? ['gemini-3.5-flash','gemini-3-flash-preview','gemini-2.5-flash']
+    : ['gemini-flash-latest','gemini-3.7-flash','gemini-3.6-flash','gemini-3.5-flash','gemini-2.5-flash'];
+  return [...new Set([ep === workingEp ? workingModel : null, auto ? null : user, ...defaults].filter(Boolean))];
 }
-function endpointFor(model){
-  return isVertexKey(state.settings.apiKey)
+function endpointFor(model, ep = 'studio'){
+  return ep === 'vertex'
     ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${encodeURIComponent(model)}:generateContent`
     : `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 }
 async function gemini(system, contents, json, search = false){
-  let lastErr;
-  for(const model of modelCandidates()){
-    try{
-      const out = await geminiOnce(model, system, contents, json, search);
-      workingModel = model;
-      return out;
-    }catch(e){
-      lastErr = e;
-      // model tidak ada / tidak tersedia untuk kunci ini → coba model berikutnya
-      if(e.status === 404 || (e.status === 400 && /model|not found|not supported/i.test(e.message))) continue;
-      throw e;
+  let firstAuthErr = null, lastErr = null;
+  for(const ep of endpointOrder()){
+    for(const model of modelCandidates(ep)){
+      try{
+        const out = await geminiOnce(model, system, contents, json, search, ep);
+        workingModel = model; workingEp = ep;
+        return out;
+      }catch(e){
+        lastErr = e;
+        if(e.status === 404 || (e.status === 400 && /model|not found|not supported/i.test(e.message))) continue; // coba model lain
+        if(e.status === 401 || e.status === 403){ firstAuthErr = firstAuthErr || e; break; } // coba server lain
+        throw e;
+      }
     }
   }
-  throw lastErr;
+  throw firstAuthErr || lastErr;
 }
-async function geminiOnce(model, system, contents, json, search){
+async function geminiOnce(model, system, contents, json, search, ep = 'studio'){
   const body = {systemInstruction:{parts:[{text:system}]}, contents};
   if(json) body.generationConfig = {responseMimeType:'application/json'};
   if(search) body.tools = [{googleSearch:{}}];
   lastSources = [];
   const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 30000);
   try{
-    const res = await fetch(endpointFor(model), {
+    const res = await fetch(endpointFor(model, ep), {
       method:'POST', signal: ctrl.signal,
       headers:{'Content-Type':'application/json','x-goog-api-key': state.settings.apiKey.trim()},
       body: JSON.stringify(body),
@@ -2215,8 +2224,9 @@ function geminiErrorText(e){
   if(e.name==='AbortError') return 'Gemini terlalu lama merespons';
   if(!navigator.onLine) return 'Sedang offline';
   const detail = e.message ? ` (${String(e.message).slice(0,140)})` : '';
+  if(/ACCESS_TOKEN_TYPE_UNSUPPORTED/i.test(e.message||'')) return 'Google menolak kunci AQ. ini (masalah di sisi Google, bukan aplikasinya). Coba hapus kunci lama, lalu buat kunci baru di aistudio.google.com';
   if((e.status===400 || e.status===401) && /api key|credential|auth/i.test(e.message||'')) return 'Kunci API Gemini tidak valid' + detail;
-  if(e.status===401 || e.status===403) return 'Kunci API ditolak — pastikan Vertex AI API / Gemini API aktif untuk kunci ini' + detail;
+  if(e.status===401 || e.status===403) return 'Kunci API ditolak oleh Google' + detail;
   if(e.status===404) return 'Model Gemini tidak tersedia untuk kunci ini' + detail;
   if(e.status===429) return 'Kuota Gemini habis untuk sementara, coba lagi sebentar lagi';
   return 'Gemini tidak bisa dihubungi' + detail;
