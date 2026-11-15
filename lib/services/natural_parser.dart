@@ -1,5 +1,6 @@
 import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
+import 'vocab.dart';
 
 /// Hasil pemahaman kalimat menjadi data pengingat.
 class ParsedReminder {
@@ -82,7 +83,7 @@ class NaturalParser {
   static const _stopWords = {
     'tolong', 'tlg', 'please', 'plis', 'hai', 'halo', 'hei', 'hey', 'bro', 'sis', 'kak', 'min',
     'ingatkan', 'ingetin', 'ingatin', 'ingetkan', 'ingat', 'inget', 'remind', 'reminder', 'jadwalkan',
-    'catat', 'pengingat', 'bikin',
+    'catat', 'pengingat', 'bikin', 'alarm', 'jadwalkan', 'setel',
     'aku', 'saya', 'gue', 'gua', 'gw', 'daku', 'kami', 'kita', 'ku',
     'ya', 'yah', 'yaa', 'dong', 'deh', 'nih', 'ok', 'oke', 'okey', 'yuk', 'ntar', 'lagi', 'pada',
     'hari', 'jam', 'pukul', 'setiap', 'tiap', 'nya',
@@ -106,6 +107,7 @@ class NaturalParser {
 
   static ParsedReminder parse(String input, {DateTime? now}) {
     final n = now ?? DateTime.now();
+    input = Vocab.normalize(input).trim();
     var t = input
         .toLowerCase()
         .replaceAll(RegExp(r'[,!?;"]'), ' ')
@@ -124,6 +126,7 @@ class NaturalParser {
     var minute = 0;
     String? period;
     Duration? rel;
+    int? hourOverride;
     RegExpMatch? m;
 
     // ---------- pengulangan ----------
@@ -173,6 +176,39 @@ class NaturalParser {
 
     // ---------- tanggal ----------
     final today = dateOnly(n);
+    if ((m = RegExp(r' (\d+) hari lagi ').firstMatch(t)) != null) {
+      date = addDays(today, int.parse(m!.group(1)!));
+      explicitDate = true;
+      t = t.replaceFirst(m.group(0)!, ' ');
+    }
+    if ((m = RegExp(r' (\d+) minggu lagi ').firstMatch(t)) != null) {
+      date = addDays(today, 7 * int.parse(m!.group(1)!));
+      explicitDate = true;
+      t = t.replaceFirst(m.group(0)!, ' ');
+    }
+    if (RegExp(r' (akhir pekan|weekend|wiken) ').hasMatch(t)) {
+      var d = today;
+      while (jsDay(d) != 6) {
+        d = addDays(d, 1);
+      }
+      date = d;
+      explicitDate = true;
+      cut(RegExp(r' (akhir pekan|weekend|wiken)( ini)?'));
+    }
+    if ((m = RegExp(r' (pagi|siang|sore|petang|malam) ini ').firstMatch(t)) != null) {
+      date = today;
+      explicitDate = true;
+      period = m!.group(1);
+      t = t.replaceFirst(m.group(0)!, ' ');
+    }
+    if (t.contains(' tengah malam ')) {
+      hourOverride = 0;
+      cut(RegExp(r' tengah malam'));
+    }
+    if (t.contains(' tengah hari ')) {
+      hourOverride = 12;
+      cut(RegExp(r' tengah hari'));
+    }
     if (RegExp(r' lusa ').hasMatch(t)) {
       date = addDays(today, 2);
       explicitDate = true;
@@ -237,7 +273,18 @@ class NaturalParser {
     }
 
     // ---------- jam ----------
-    if ((m = RegExp(r' (?:jam|pukul|pkl\.?) setengah (\d{1,2}) ').firstMatch(t) ??
+    final kurang = RegExp(r' (?:jam |pukul )?(\d{1,2}) kurang (seperempat|\d{1,2}) ?(?:menit)? ').firstMatch(t);
+    final lewatSeperempat = RegExp(r' (?:jam |pukul )(\d{1,2}) lewat seperempat ').firstMatch(t);
+    if (kurang != null) {
+      final k = kurang.group(2) == 'seperempat' ? 15 : int.parse(kurang.group(2)!);
+      hour = (int.parse(kurang.group(1)!) - 1 + 24) % 24;
+      minute = 60 - k;
+      t = t.replaceFirst(kurang.group(0)!, ' ');
+    } else if (lewatSeperempat != null) {
+      hour = int.parse(lewatSeperempat.group(1)!);
+      minute = 15;
+      t = t.replaceFirst(lewatSeperempat.group(0)!, ' ');
+    } else if ((m = RegExp(r' (?:jam|pukul|pkl\.?) setengah (\d{1,2}) ').firstMatch(t) ??
             RegExp(r' setengah (\d{1,2}) ').firstMatch(t)) !=
         null) {
       hour = (int.parse(m!.group(1)!) - 1 + 24) % 24;
@@ -262,7 +309,12 @@ class NaturalParser {
       period ??= m!.group(1);
       cut(RegExp(r' (pagi|siang|sore|petang|malam|subuh|dini hari)'));
     }
-    if (hour != null) {
+    if (hour == null && hourOverride != null) {
+      hour = hourOverride;
+      minute = 0;
+      period = null;
+    }
+    if (hour != null && hourOverride == null) {
       if (period == 'siang' && hour >= 1 && hour <= 5) {
         hour += 12;
       } else if ((period == 'sore' || period == 'petang') && hour < 12) {
@@ -280,7 +332,7 @@ class NaturalParser {
       }
       hour = hour.clamp(0, 23);
       minute = minute.clamp(0, 59);
-    } else if (period != null) {
+    } else if (hour == null && period != null) {
       hour = const {'pagi': 7, 'siang': 12, 'sore': 16, 'petang': 17, 'malam': 19, 'subuh': 5, 'dini hari': 3}[period];
     }
 
@@ -325,7 +377,9 @@ class NaturalParser {
 
     // ---------- judul ----------
     var words = t
-        .replaceAll(RegExp(r'\b(bikin|buat|tambah|pasang) pengingat\b'), ' ')
+        .replaceAll(RegExp(r'\b(ingatkan|ingat|inget|jadwalkan|catat|alarm|setel|pasang|set|bikin|buat|tambah|masukkan|masukin) (pengingat|jadwal|agenda|alarm|reminder|acara)\b'), ' ')
+        .replaceAll(RegExp(r'^ ?(jadwal|agenda|acara|kegiatan|rencana) '), ' ')
+        .replaceAll(RegExp(r'\bbangunkan\b'), 'bangun')
         .replaceAll(RegExp(r'\bdi hari\b'), ' ')
         .split(' ')
         .where((w) => w.isNotEmpty && !_stopWords.contains(w))
@@ -336,8 +390,14 @@ class NaturalParser {
     while (words.isNotEmpty && const {'ya', 'dong', 'deh'}.contains(words.last)) {
       words.removeLast();
     }
+    while (words.isNotEmpty && const {'ini', 'nanti', 'alarm', 'jadwal', 'agenda'}.contains(words.last)) {
+      words.removeLast();
+    }
+    while (words.isNotEmpty && const {'ini', 'nanti', 'jadwal', 'agenda', 'acara'}.contains(words.first)) {
+      words.removeAt(0);
+    }
     var title = words.join(' ').trim();
-    if (title.isEmpty) title = 'Pengingat';
+    if (title.isEmpty) title = input.contains('bangun') ? 'Bangun' : 'Pengingat';
     title = title[0].toUpperCase() + title.substring(1);
     // kode lantai/blok: b2 → B2, p3a → P3A
     title = title.replaceAllMapped(RegExp(r'\b([a-z]{1,2}\d{1,3}[a-z]?)\b'), (m) => m[1]!.toUpperCase());

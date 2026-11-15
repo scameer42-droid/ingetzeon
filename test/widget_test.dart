@@ -4,6 +4,7 @@ import 'package:ingetzeon/core/utils/date_utils.dart';
 import 'package:ingetzeon/data/models/reminder.dart';
 import 'package:ingetzeon/services/memory_parser.dart';
 import 'package:ingetzeon/services/natural_parser.dart';
+import 'package:ingetzeon/services/vocab.dart';
 
 void main() {
   // Minggu, 15 November 2026, 11.20
@@ -73,6 +74,30 @@ void main() {
       final r = p('ingatkan ulang tahun ibu 2 desember');
       expect(toLocalIso(r.scheduledAt), '2026-12-02T09:00');
       expect(r.category, ReminderCategory.pribadi);
+    });
+  });
+
+  group('Kosakata', () {
+    test('salah ketik & singkatan', () {
+      expect(Vocab.classify('ingkatkan hari ini jam 07'), 'reminder');
+      expect(Vocab.classify('jadwal hari ini shopefood jam 11'), 'reminder');
+      expect(Vocab.classify('jadwal hari ini'), 'schedule');
+      expect(Vocab.classify('jadwal besok apa?'), 'schedule');
+      expect(Vocab.classify('apa kabar'), 'other');
+      final a = p('tlg ingetin bsk jm 7 pgi olahraga');
+      expect(a.title, 'Olahraga');
+      expect(toLocalIso(a.scheduledAt), '2026-11-16T07:00');
+      final b = p('jadwal hari ini shopefood jam 16');
+      expect(b.title, 'Shopeefood');
+      expect(toLocalIso(b.scheduledAt), '2026-11-15T16:00');
+      expect(p('bangunin aku bsk jam 5').title, 'Bangun');
+      expect(toLocalIso(p('rapat jam 8 kurang seperempat besok').scheduledAt), '2026-11-16T07:45');
+      expect(toLocalIso(p('ingatkan jam tujuh malam makan obat').scheduledAt), '2026-11-15T19:00');
+      expect(toLocalIso(p('3 hari lagi bayar cicilan').scheduledAt), '2026-11-18T09:00');
+      expect(toLocalIso(p('akhir pekan cuci motor').scheduledAt), '2026-11-21T09:00');
+      expect(toLocalIso(p('ingtakan tengah malam matikan kompor').scheduledAt), '2026-11-16T00:00');
+      expect(Vocab.calc('250 x 12'), 3000);
+      expect(Vocab.smallTalk('bantuan', greeting: 'Halo'), isNotNull);
     });
   });
 

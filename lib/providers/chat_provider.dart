@@ -4,6 +4,7 @@ import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
 import '../services/ai_service.dart';
 import '../services/memory_parser.dart';
+import '../services/vocab.dart';
 import '../services/natural_parser.dart';
 import '../services/voice_service.dart';
 import 'reminder_provider.dart';
@@ -50,11 +51,6 @@ class ChatState {
 }
 
 final aiServiceProvider = Provider<AiService>((ref) => AiService());
-
-final _remindRe = RegExp(
-  r'\b(ingatkan|ingetin|ingatin|ingetkan|remind|reminder|jadwalkan|bikin pengingat|buat pengingat|tambah pengingat|pasang pengingat)\b',
-  caseSensitive: false,
-);
 
 class ChatNotifier extends Notifier<ChatState> {
   @override
@@ -119,10 +115,13 @@ class ChatNotifier extends Notifier<ChatState> {
         await _saveItem(store, photoPath);
       } else if (!aboutParking && MemoryParser.isWhereQuestion(lower) && !_settings.hasAi) {
         _bot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
-      } else if (_remindRe.hasMatch(text) || aboutParking || photoPath != null) {
-        await _handleReminder(text, photoPath: photoPath);
       } else {
-        await _handleChat(text);
+        final intent = Vocab.classify(text);
+        if (intent == 'reminder' || aboutParking || photoPath != null) {
+          await _handleReminder(text, photoPath: photoPath);
+        } else {
+          await _handleChat(text, scheduleQuestion: intent == 'schedule');
+        }
       }
     } finally {
       state = state.copyWith(thinking: false);
@@ -183,7 +182,11 @@ class ChatNotifier extends Notifier<ChatState> {
     data ??= NaturalParser.parse(text);
 
     var at = data.scheduledAt;
-    if (data.alarm && data.repeat == RepeatType.once && !at.isAfter(DateTime.now())) at = addDays(at, 1);
+    var bumped = false;
+    if (data.alarm && data.repeat == RepeatType.once && !at.isAfter(DateTime.now())) {
+      at = addDays(at, 1);
+      bumped = true;
+    }
 
     final r = Reminder.create(
       title: data.title,
@@ -213,15 +216,20 @@ class ChatNotifier extends Notifier<ChatState> {
         }(),
     };
     final speechWhen = when.replaceAll(fmtTime(at), speakTime(at));
-    _bot('Siap! Aku ingatkan **${r.title}** $when. ✅$note',
+    final lewat = bumped ? '\n(Jam itu hari ini sudah lewat, jadi aku pasang untuk besok. Ubah di detail pengingat kalau perlu.)' : '';
+    _bot('Siap! Aku ingatkan **${r.title}** $when. ✅$lewat$note',
         reminderId: r.id, speech: 'Siap! Aku ingatkan ${r.title} $speechWhen.');
   }
 
   String _localAnswer(String text) {
-    final t = ' ${text.toLowerCase()} ';
+    final t = Vocab.normalize(text);
     final list = ref.read(remindersProvider);
     final now = DateTime.now();
-    final asksSchedule = RegExp(r'jadwal|agenda|acara|kegiatan|pengingat|reminder|ada apa').hasMatch(t);
+    if (Vocab.classify(text) != 'schedule') {
+      final st = Vocab.smallTalk(text, name: _settings.name, greeting: greeting());
+      if (st != null) return st;
+    }
+    final asksSchedule = RegExp(r'jadwal|agenda|acara|kegiatan|pengingat|reminder|ada apa|rencana|tugas').hasMatch(t);
     DateTime? day;
     var label = '';
     if (t.contains(' lusa ')) {
@@ -253,8 +261,9 @@ class ChatNotifier extends Notifier<ChatState> {
     if (RegExp(r' (terima kasih|makasih|thanks|thx|mksh) ').hasMatch(t)) return 'Sama-sama! Semoga harimu lancar 😊';
     if (RegExp(r' (jam berapa|pukul berapa) ').hasMatch(t)) return 'Sekarang jam ${fmtTime(now)}.';
     if (RegExp(r' (tanggal berapa|hari apa) ').hasMatch(t)) return 'Hari ini ${fmtDateLong(now)}.';
-    return 'Aku bisa membuat pengingat, mencatat lokasi parkir, dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" '
-        'atau "jadwal hari ini apa?"${_settings.hasAi ? '' : '\n\nUntuk ngobrol lebih bebas, isi kunci API Gemini di menu Profil.'}';
+    const opener = ['Hmm, aku belum paham maksudnya 🤔', 'Maaf, aku belum mengerti kalimat itu.', 'Aku belum bisa menjawab itu tanpa Gemini.'];
+    return '${opener[DateTime.now().millisecond % 3]}\nCoba bilang: "ingatkan besok jam 7 pagi olahraga", "jadwal hari ini?", atau ketik "bantuan" untuk melihat semua yang bisa aku lakukan.'
+        '${_settings.hasAi ? '' : '\n\nUntuk tanya apa saja (pengetahuan umum, resep, dll.), isi kunci Gemini di menu Profil.'}';
   }
 
   String _speechOf(String s) =>
@@ -279,13 +288,9 @@ class ChatNotifier extends Notifier<ChatState> {
         'contoh: "ingatkan besok jam 7 olahraga".';
   }
 
-  Future<void> _handleChat(String text) async {
+  Future<void> _handleChat(String text, {bool scheduleQuestion = false}) async {
     final s = _settings;
-    final lower = text.toLowerCase();
-    final ownSchedule = RegExp(
-            r'\bjadwal(ku| saya| aku| hari ini| besok| lusa| terdekat| berikutnya)\b|^jadwal\??$|\bagenda(ku| saya| hari ini| besok)\b|pengingat(ku| saya)|jadwal apa')
-        .hasMatch(lower);
-    if (!s.hasAi || ownSchedule) {
+    if (!s.hasAi || scheduleQuestion) {
       final a = _localAnswer(text);
       _bot(a, speech: _speechOf(a));
       return;

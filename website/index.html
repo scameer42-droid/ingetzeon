@@ -2325,6 +2325,103 @@ function startRec(){
 $('#micBtn').onclick = startRec;
 
 /* =========================================================
+   KOSAKATA: normalisasi salah ketik, singkatan & angka kata
+   ========================================================= */
+const TYPO = {
+  // perintah mengingatkan (termasuk salah ketik)
+  ingkatkan:'ingatkan', ingtkan:'ingatkan', igatkan:'ingatkan', ingatkn:'ingatkan', ingatkann:'ingatkan', ingatakan:'ingatkan', inagtkan:'ingatkan',
+  ingetkn:'ingatkan', ingetkan:'ingatkan', ingetin:'ingatkan', ingatin:'ingatkan', ngingetin:'ingatkan', ngingatin:'ingatkan', ingetinn:'ingatkan',
+  ingtin:'ingatkan', igetin:'ingatkan', ingetn:'ingatkan', inget2:'ingatkan', remindin:'ingatkan', remind:'ingatkan', reminder:'ingatkan', remainder:'ingatkan',
+  jadwalin:'jadwalkan', jadwalkn:'jadwalkan', jdwlkan:'jadwalkan', jdwl:'jadwal', jadwl:'jadwal', jdwal:'jadwal', jawdal:'jadwal',
+  bangunin:'bangunkan', bangunkn:'bangunkan', banguni:'bangunkan', alarem:'alarm', alaram:'alarm', alrm:'alarm',
+  catet:'catat', catetin:'catat', catatin:'catat', tambahin:'tambah', bikinin:'buat', buatin:'buat', bkin:'bikin', bikinn:'bikin',
+  // waktu
+  jm:'jam', jem:'jam', pkl:'pukul', pk:'pukul', mnt:'menit', menitt:'menit', dtk:'detik',
+  bsk:'besok', besuk:'besok', bsok:'besok', besoq:'besok', bsuk:'besok', esok:'besok', lsa:'lusa',
+  skrg:'sekarang', skrng:'sekarang', skg:'sekarang', skr:'sekarang', ntar:'nanti', entar:'nanti', nnti:'nanti', nti:'nanti', ntr:'nanti', bentar:'nanti',
+  hr:'hari', hri:'hari', pgi:'pagi', pagii:'pagi', siank:'siang', sianng:'siang', soree:'sore', malem:'malam', mlem:'malam', mlm:'malam', mlam:'malam', sre:'sore', siag:'siang', pagii:'pagi', tgl:'tanggal', tggl:'tanggal', bln:'bulan', mgg:'minggu', mggu:'minggu', mingdep:'minggu depan',
+  dpn:'depan', dpan:'depan', lg:'lagi', lgi:'lagi', stiap:'setiap', tiap2:'tiap', setiap2:'setiap', sehari2:'sehari-hari',
+  sen:'senin', sel:'selasa', rab:'rabu', kam:'kamis', jum:'jumat', jumat:'jumat', "jum'at":'jumat', sab:'sabtu',
+  // kata umum
+  tlg:'tolong', tolongin:'tolong', yg:'yang', utk:'untuk', untk:'untuk', dgn:'dengan', sy:'saya', aq:'aku', ak:'aku', gw:'gue', gua:'gue', km:'kamu', kmu:'kamu',
+  gak:'tidak', ga:'tidak', nggak:'tidak', engga:'tidak', enggak:'tidak', gk:'tidak', tdk:'tidak', blm:'belum', udh:'sudah', udah:'sudah', sdh:'sudah', dah:'sudah',
+  dmn:'di mana', dimn:'di mana', dimanakah:'di mana', knp:'kenapa', gmn:'gimana', gimn:'gimana', bgmn:'bagaimana', brp:'berapa', apaan:'apa',
+  mksh:'makasih', makasi:'makasih', trims:'makasih', thx:'makasih', thanks:'makasih', tq:'makasih', ty:'makasih',
+  shopefood:'shopeefood', shoppefood:'shopeefood', shopee:'shopee', shoppe:'shopee', sopi:'shopee', gofud:'gofood', grabfud:'grabfood',
+};
+const NUM_HOUR = {satu:1, dua:2, tiga:3, empat:4, lima:5, enam:6, tujuh:7, delapan:8, sembilan:9, sepuluh:10, sebelas:11, 'dua belas':12};
+function lev(a, b){
+  const m = a.length, n = b.length; if(Math.abs(m-n) > 3) return 9;
+  const d = Array.from({length:m+1}, (_, i) => [i]);
+  for(let j=1;j<=n;j++) d[0][j] = j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+/** Rapikan kalimat: huruf kecil, salah ketik, singkatan, "jam tujuh" → "jam 7", "jam 7an" → "jam 7". */
+function normalizeID(text){
+  let t = ' ' + String(text).toLowerCase().replace(/[“”]/g,'"').replace(/\s+/g,' ') + ' ';
+  t = t.replace(/(\d)\s*(an)\b/g, '$1');                 // jam 7an
+  t = t.replace(/\b(\d{1,2})\s*(am|pm)\b/g, (s, h, ap) => ` jam ${ap==='pm' && +h<12 ? +h+12 : +h} `);
+  t = t.replace(/\bsejam\b/g,'1 jam').replace(/\bsemenit\b/g,'1 menit').replace(/\bsehari lagi\b/g,'besok').replace(/\bseminggu lagi\b/g,'7 hari lagi').replace(/\bsebulan lagi\b/g,'bulan depan');
+  t = t.split(' ').map(w => {
+    if(!w) return w;
+    const clean = w.replace(/[^\w'-]/g,'');
+    if(TYPO[clean]) return w.replace(clean, TYPO[clean]);
+    // ejaan "ingatkan" yang meleset jauh (ingtakan, inngatkan, ...)
+    if(/^n?g?i[nm]/.test(clean) && clean.length >= 6 && clean.length <= 11 && (lev(clean,'ingatkan') <= 2 || lev(clean,'ingetin') <= 2)) return 'ingatkan';
+    return w;
+  }).join(' ');
+  t = t.replace(/\b(jam|pukul|setengah) (dua belas|sebelas|sepuluh|sembilan|delapan|tujuh|enam|lima|empat|tiga|dua|satu)\b/g, (s, p, n) => `${p} ${NUM_HOUR[n]}`);
+  return t.replace(/\s+/g,' ');
+}
+/** Tebak maksud kalimat: 'reminder' (buat pengingat), 'schedule' (tanya jadwal), atau 'other'. */
+function classifyIntent(text){
+  const t = normalizeID(text);
+  const isQuestion = /\?\s*$/.test(text) || /^ (apa|apakah|kapan|berapa|gimana|bagaimana|siapa|kenapa|mengapa|di mana|dimana|ada (jadwal|agenda|acara)|cek|lihat|tampilkan|tunjukkan) /.test(t);
+  const hasTrigger = / (ingatkan|ingat ya|jadwalkan|alarm|bangunkan|pasang|setel|set) /.test(t) || / (buat|bikin|tambah|catat|masukkan|masukin) (jadwal|pengingat|agenda|alarm|reminder|acara) /.test(t);
+  const hasTime = / (jam|pukul) \d/.test(t) || / \d{1,2}[:.]\d{2} /.test(t) || / \d+ ?(menit|jam|hari) lagi /.test(t) || / setengah \d/.test(t) || / (tengah malam|tengah hari) /.test(t)
+               || (/ (besok|lusa|nanti|minggu depan|bulan depan|akhir pekan|weekend) /.test(t) && t.trim().split(' ').length >= 3);
+  const mentionsSchedule = / (jadwal|agenda|acara|kegiatan|rencana|pengingat|reminder|to ?do|tugas) /.test(t);
+  if(hasTrigger) return 'reminder';
+  if(mentionsSchedule && !hasTime) return 'schedule';
+  if(hasTime && !isQuestion) return 'reminder';
+  if(mentionsSchedule && isQuestion) return 'schedule';
+  return 'other';
+}
+
+/* ---------- obrolan ringan tanpa internet ---------- */
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function calc(text){
+  const m = text.toLowerCase().replace(/berapa|hasil|hitung(kan)?|sama dengan|=|\?/g,' ').replace(/kali|x|×/g,'*').replace(/bagi|:|÷/g,'/').replace(/tambah|plus/g,'+').replace(/kurang|minus/g,'-').replace(/persen/g,'/100').replace(/,/g,'.').trim();
+  if(!/^[\d\s.+\-*/()]+$/.test(m) || !/\d\s*[+\-*/]\s*\d/.test(m)) return null;
+  try{ const v = Function('"use strict";return (' + m + ')')(); return Number.isFinite(v) ? Math.round(v*1e6)/1e6 : null; }catch(e){ return null; }
+}
+function smallTalk(text){
+  const t = ' ' + normalizeID(text).replace(/[!?.,]/g,' ').replace(/\s+/g,' ') + ' ';
+  const n = state.settings.name ? ' ' + state.settings.name : '';
+  const v = calc(text); if(v !== null) return `Hasilnya **${v.toLocaleString('id-ID')}** 🧮`;
+  if(/ (assalamualaikum|assalamu'alaikum|asalamualaikum|salam) /.test(t)) return `Waalaikumsalam${n}! 😊 Ada yang bisa aku bantu atau ingatkan?`;
+  if(/ (halo|hai|hi|hello|hey|hei|helo|hallo|p|pagi|siang|sore|malam|selamat (pagi|siang|sore|malam)) /.test(t) && t.trim().split(' ').length <= 4) return pick([`${greeting()}${n}! 👋 Mau aku ingatkan sesuatu hari ini?`, `Hai${n}! Ada yang bisa aku bantu? Coba bilang "ingatkan jam 4 sore jemput anak".`, `${greeting()}! Semoga harimu lancar. Ada jadwal yang mau dicatat?`]);
+  if(/ (apa kabar|gimana kabar|kabarnya|how are you) /.test(t)) return pick(['Kabarku baik, siap membantu! 😄 Kamu sendiri gimana?', 'Baik dong! Ada yang mau aku ingatkan hari ini?']);
+  if(/ (siapa kamu|kamu siapa|nama kamu|namamu|kamu itu apa) /.test(t)) return 'Aku **Asisten IngetZeon** 🤖 — aku bisa membuat pengingat, mencatat lokasi parkir & tiketnya, mengingat letak barang, dan memberi tahu jadwalmu.';
+  if(/ (bisa apa|fitur|bantu apa|cara pakai|caranya|help|bantuan|tolong jelaskan) /.test(t)) return 'Ini yang bisa aku lakukan:\n• Buat pengingat: "ingatkan besok jam 7 olahraga", "tiap hari jam 8 malam minum obat", "10 menit lagi angkat jemuran"\n• Tanya jadwal: "jadwal hari ini?", "besok ada apa?"\n• Parkir: "saya parkir di B2", "di mana aku parkir?", "tampilkan tiket parkir"\n• Barang: "saya simpan kunci di laci", "di mana kunci saya?"\n• Lainnya: hitung "250 x 12", tanya jam/tanggal, atau minta motivasi 💪';
+  if(/ (makasih|terima kasih|terimakasih|thank) /.test(t)) return pick(['Sama-sama! 😊', 'Sama-sama, senang bisa bantu!', 'Siap, sama-sama! Kabari kalau ada yang perlu diingatkan lagi.']);
+  if(/ (oke|ok|okey|sip|siap|mantap|mantab|keren|bagus|good|nice|wkwk|haha|hehe) /.test(t) && t.trim().split(' ').length <= 3) return pick(['Siap! 👍', 'Sip! Aku standby kalau butuh pengingat.', 'Mantap! 😄']);
+  if(/ (jam berapa|pukul berapa|sekarang jam) /.test(t)) return `Sekarang jam **${fmtTime(new Date())}**.`;
+  if(/ besok hari apa /.test(t)) return `Besok hari **${fmtDateLong(addDays(new Date(),1))}**.`;
+  if(/ (tanggal berapa|hari apa|hari ini tanggal|tgl berapa) /.test(t)) return `Hari ini **${fmtDateLong(new Date())}**.`;
+  if(/ (capek|cape|lelah|letih|penat|stres|stress|pusing|sedih|galau|burnout) /.test(t)) return pick(['Kamu sudah berusaha keras hari ini 🤍 Coba istirahat sebentar, minum air, dan tarik napas dalam-dalam. Mau aku ingatkan istirahat 15 menit lagi?', 'Wajar kok merasa lelah. Ambil jeda sebentar ya. Kalau mau, bilang "ingatkan 20 menit lagi lanjut kerja" biar kamu bisa rehat tenang.']);
+  if(/ (semangat|motivasi|kata kata|quote|inspirasi) /.test(t)) return pick(['"Sedikit demi sedikit, lama-lama menjadi bukit." Satu tugas selesai hari ini sudah kemajuan! 💪', 'Fokus pada satu hal dulu, sisanya menyusul. Kamu pasti bisa! 🚀', '"Disiplin adalah jembatan antara tujuan dan pencapaian." Yuk, cek jadwal hari ini!', 'Mulai saja dulu — tidak harus sempurna, yang penting jalan. ✨']);
+  if(/ (bosan|bosen|gabut) /.test(t)) return pick(['Gabut? Coba rapikan meja 10 menit, baca beberapa halaman buku, atau jalan sebentar. Mau aku buatkan pengingatnya?', 'Waktu yang pas buat beres-beres jadwal minggu ini 😄 Bilang saja kegiatanmu, nanti aku catat.']);
+  if(/ (lapar|laper|makan apa) /.test(t)) return pick(['Waktunya makan! 🍛 Jangan sampai telat makan ya. Mau aku ingatkan makan siang tiap hari jam 12?', 'Isi tenaga dulu 🍜 — kalau sering lupa, bilang "ingatkan makan siang setiap hari jam 12".']);
+  if(/ (ngantuk|mengantuk|mau tidur|tidur dulu) /.test(t)) return 'Istirahat yang cukup itu penting 😴 Mau aku pasang alarm bangun? Contoh: "bangunkan besok jam 5 pagi".';
+  if(/ (lucu|lelucon|jokes|joke|candaan|ngelawak) /.test(t)) return pick(['Kenapa jam dinding selalu sabar? Karena dia tahu semua ada waktunya. ⏰😄', 'Aku asisten pengingat, tapi kadang aku juga lupa… lupa kalau aku tidak bisa lupa. 🤖', 'Kalender itu hidupnya pendek ya… hari-harinya sudah ditentukan. 📅😆']);
+  if(/ (aku cinta kamu|sayang kamu|love you|kangen) /.test(t)) return 'Hehe, makasih 😊 Aku senang bisa menemani dan membantu mengatur harimu!';
+  if(/ (cuaca|hujan|panas) /.test(t)) return 'Aku belum bisa cek cuaca tanpa internet/Gemini 🌦️ Tapi kalau mau, aku bisa ingatkan bawa payung: "ingatkan besok jam 7 bawa payung".';
+  return null;
+}
+
+/* =========================================================
    PARSER BAHASA ALAMI (offline) → JSON reminder
    ========================================================= */
 const DAY_MAP = {minggu:0, ahad:0, senin:1, selasa:2, rabu:3, kamis:4, jumat:5, "jum'at":5, sabtu:6};
@@ -2351,6 +2448,7 @@ function wordNum(s){
 const NUM_RE = '(\\d+|se|satu|dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|sepuluh|sebelas|dua belas|lima belas|dua puluh|tiga puluh|empat puluh lima)';
 
 function parseNatural(input, now = new Date()){
+  input = normalizeID(input).trim();
   let t = ' ' + String(input).toLowerCase()
     .replace(/[,!?;"]/g,' ')
     .replace(/(\d)\s*[:.]\s*(\d{2})(?!\d)/g, '$1:$2')
@@ -2358,7 +2456,7 @@ function parseNatural(input, now = new Date()){
   const cut = re => { t = t.replace(re, ' '); };
   let repeat = 'once', weekday = null, monthDay = null;
   let date = null, explicitDate = false;
-  let hour = null, minute = 0, period = null, relMs = null;
+  let hour = null, minute = 0, period = null, relMs = null, hourOverride = null;
   let m;
 
   /* --- pengulangan --- */
@@ -2393,6 +2491,12 @@ function parseNatural(input, now = new Date()){
 
   /* --- tanggal --- */
   const today = startOfDay(now);
+  if((m = t.match(/ (\d+) hari lagi /))){ date = addDays(today, +m[1]); explicitDate = true; t = t.replace(m[0], ' '); }
+  if((m = t.match(/ (\d+) minggu lagi /))){ date = addDays(today, 7 * +m[1]); explicitDate = true; t = t.replace(m[0], ' '); }
+  if(/ (akhir pekan|weekend|wiken|weekend ini) /.test(t)){ let d = addDays(today, 1); while(d.getDay()!==6) d = addDays(d,1); if(today.getDay()===6) d = today; date = d; explicitDate = true; cut(/ (akhir pekan|weekend|wiken)( ini)?/); }
+  if((m = t.match(/ (pagi|siang|sore|petang|malam) ini /))){ date = today; explicitDate = true; period = m[1]; t = t.replace(m[0], ' '); }
+  if(/ tengah malam /.test(t)){ hourOverride = 0; cut(/ tengah malam/); }
+  if(/ tengah hari /.test(t)){ hourOverride = 12; cut(/ tengah hari/); }
   if(/ lusa /.test(t)){ date = addDays(today, 2); explicitDate = true; cut(/ (?:besok )?lusa/); }
   else if(/ (besok|besuk|esok) /.test(t)){ date = addDays(today, 1); explicitDate = true; cut(/ (?:hari )?(besok|besuk|esok)/); }
   else if(/ (hari ini|nanti|sekarang) /.test(t)){ date = today; explicitDate = true; cut(/ (hari ini|nanti|sekarang)/); }
@@ -2427,7 +2531,12 @@ function parseNatural(input, now = new Date()){
   }
 
   /* --- jam --- */
-  if((m = t.match(/ (?:jam|pukul|pkl\.?) setengah (\d{1,2}) /)) || (m = t.match(/ setengah (\d{1,2}) /))){
+  if((m = t.match(/ (?:jam |pukul )?(\d{1,2}) kurang (seperempat|\d{1,2}) ?(?:menit)? /))){
+    const k = m[2]==='seperempat' ? 15 : +m[2];
+    hour = (+m[1] - 1 + 24) % 24; minute = 60 - k; t = t.replace(m[0], ' ');
+  } else if((m = t.match(/ (?:jam |pukul )(\d{1,2}) lewat seperempat /))){
+    hour = +m[1]; minute = 15; t = t.replace(m[0], ' ');
+  } else if((m = t.match(/ (?:jam|pukul|pkl\.?) setengah (\d{1,2}) /)) || (m = t.match(/ setengah (\d{1,2}) /))){
     hour = (+m[1] - 1 + 24) % 24; minute = 30; t = t.replace(m[0], ' ');
   } else if((m = t.match(/ (?:jam|pukul|pkl\.?) ?(\d{1,2})(?::(\d{2}))?(?: ?(?:lewat|lebih) (\d{1,2}) ?(?:menit)?)? /))){
     hour = +m[1]; minute = m[2] ? +m[2] : (m[3] ? +m[3] : 0); t = t.replace(m[0], ' ');
@@ -2440,7 +2549,8 @@ function parseNatural(input, now = new Date()){
   if((m = t.match(/ (pagi|siang|sore|petang|malam|subuh|dini hari) /))){
     period = period || m[1]; cut(/ (pagi|siang|sore|petang|malam|subuh|dini hari)/);
   }
-  if(hour!==null){
+  if(hour===null && hourOverride!==null){ hour = hourOverride; minute = 0; period = null; }
+  if(hour!==null && hourOverride===null){
     if(period==='siang' && hour>=1 && hour<=5) hour += 12;
     else if((period==='sore' || period==='petang') && hour < 12) hour += 12;
     else if(period==='malam'){ if(hour===12) hour = 0; else if(hour>=6 && hour<12) hour += 12; }
@@ -2487,13 +2597,16 @@ function parseNatural(input, now = new Date()){
   /* --- judul --- */
   let title = t
     .replace(/ (tolong|tlg|please|plis|hai|halo|hei|hey|bro|sis|kak|min) /g,' ')
-    .replace(/ (ingatkan|ingetin|ingatin|ingetkan|ingatkan|ingat|inget|remind|reminder|jadwalkan|catat|bikin pengingat|buat pengingat|pengingat) /g,' ')
+    .replace(/ (ingatkan|ingat|inget|jadwalkan|catat|alarm|setel|pasang|set|bikin|buat|tambah|masukkan|masukin) (pengingat|jadwal|agenda|alarm|reminder|acara) /g,' ')
+    .replace(/ (ingatkan|ingat|inget|jadwalkan|catat|pengingat|alarm|reminder) /g,' ')
+    .replace(/^ (jadwal|agenda|acara|kegiatan|rencana) /,' ')
     .replace(/ (aku|saya|gue|gua|gw|daku|kami|kita|ku) /g,' ')
     .replace(/ (ya|yah|yaa|dong|deh|nih|ok|oke|okey|yuk|ntar|lagi|pada|di hari|hari|jam|pukul|setiap|tiap|nya) /g,' ')
     .replace(/\s+/g,' ').trim();
   title = title.replace(/^(untuk|utk|tuk|buat|agar|supaya|biar|kalau|klo|kalo|bahwa|soal|tentang|mengenai|harus|mau|akan|ada) /,'').replace(/^(untuk|buat|harus) /,'').trim();
-  title = title.replace(/ (ya|dong|deh)$/,'').trim();
-  if(!title) title = 'Pengingat';
+  title = title.replace(/ (ya|dong|deh|ini|nanti|tidak lupa|biar tidak lupa)$/,'').replace(/^(ini|nanti) /,'').trim();
+  title = title.replace(/\bbangunkan\b/, 'bangun').trim();
+  if(!title || /^(jadwal|agenda|acara)$/.test(title)) title = /bangun/.test(input) ? 'Bangun' : 'Pengingat';
   title = title.charAt(0).toUpperCase() + title.slice(1);
 
   title = title.replace(/\b([a-z]{1,2}\d{1,3}[a-z]?)\b/g, s => s.toUpperCase()); // b2 → B2
@@ -2764,8 +2877,12 @@ async function send(){
     else if(!aboutParking && isWhereQ(lower) && !state.settings.apiKey){
       pushBot('Aku belum punya catatan soal itu. Bilang dulu, misalnya: "saya simpan kunci motor di laci meja", nanti aku ingatkan.');
     }
-    else if(REMIND_RE.test(text) || aboutParking || photo) await handleReminder(text, photo);
-    else await handleChat(text);
+    else {
+      const intent = classifyIntent(text);
+      if(intent === 'reminder' || aboutParking || photo) await handleReminder(text, photo);
+      else if(intent === 'schedule') await handleChat(text, true);
+      else await handleChat(text);
+    }
   } finally {
     thinking = false; renderChat();
   }
@@ -2802,7 +2919,9 @@ async function handleReminder(text, photo = null){
   if(!data) data = parseNatural(text);
   // jangan simpan waktu yang sudah lewat untuk pengingat sekali
   const at = parseLocalISO(data.scheduledAt);
+  let bumped = false;
   if(data.alarm !== false && data.repeat==='once' && at <= new Date()){
+    bumped = true;
     const b = new Date(at); b.setDate(b.getDate()+1); data.scheduledAt = toLocalISO(b);
   }
   data.photo = photo;
@@ -2815,15 +2934,18 @@ async function handleReminder(text, photo = null){
   }
   askNotifPermission();
   const c = confirmText(r);
-  state.chat.push({role:'bot', text: c.text + note.replace(/_/g,''), rid: r.id, ts: Date.now()}); save(); renderChat();
+  const lewat = bumped ? '\n(Jam itu hari ini sudah lewat, jadi aku pasang untuk besok. Ubah di detail pengingat kalau perlu.)' : '';
+  state.chat.push({role:'bot', text: c.text + lewat + note.replace(/_/g,''), rid: r.id, ts: Date.now()}); save(); renderChat();
   speak(c.speech);
 }
 function listForSpeech(items){
   return items.map(x => `${x.r.title} jam ${fmtTime(x.at)}${x.done?' (selesai)':''}`).join(', ');
 }
 function localAnswer(text){
-  const t = ' ' + text.toLowerCase() + ' ';
-  const asksSchedule = /jadwal|agenda|acara|kegiatan|pengingat|reminder|ada apa/.test(t);
+  const t = normalizeID(text);
+  const st = classifyIntent(text) === 'schedule' ? null : smallTalk(text);
+  if(st) return st;
+  const asksSchedule = /jadwal|agenda|acara|kegiatan|pengingat|reminder|ada apa|rencana|tugas/.test(t);
   let day = null, label = '';
   if(/ lusa /.test(t)){ day = addDays(startOfDay(new Date()),2); label = 'lusa'; }
   else if(/ (besok|besuk) /.test(t)){ day = addDays(startOfDay(new Date()),1); label = 'besok'; }
@@ -2842,12 +2964,12 @@ function localAnswer(text){
   if(/ (terima kasih|makasih|thanks|thx|mksh) /.test(t)) return 'Sama-sama! Semoga harimu lancar 😊';
   if(/ (jam berapa|pukul berapa) /.test(t)) return `Sekarang jam ${fmtTime(new Date())}.`;
   if(/ (tanggal berapa|hari apa) /.test(t)) return `Hari ini ${fmtDateLong(new Date())}.`;
-  return 'Aku bisa membuat pengingat, mencatat lokasi parkir, dan memberi tahu jadwalmu.\nCoba bilang: "ingatkan besok jam 7 pagi olahraga" atau "jadwal hari ini apa?"' + (state.settings.apiKey ? '' : '\n\nUntuk ngobrol lebih bebas, isi kunci API Gemini di menu Profil.');
+  return pick(['Hmm, aku belum paham maksudnya 🤔', 'Maaf, aku belum mengerti kalimat itu.', 'Aku belum bisa menjawab itu tanpa Gemini.']) + '\nCoba bilang: "ingatkan besok jam 7 pagi olahraga", "jadwal hari ini?", atau ketik "bantuan" untuk melihat semua yang bisa aku lakukan.' + (state.settings.apiKey ? '' : '\n\nUntuk tanya apa saja (pengetahuan umum, resep, dll.), isi kunci Gemini di menu Profil.');
 }
-async function handleChat(text){
+async function handleChat(text, scheduleQuestion = false){
   const t = text.toLowerCase();
-  // pertanyaan jadwal dijawab langsung dari data (lebih akurat)
-  if(/\bjadwal(ku| saya| aku| hari ini| besok| lusa| terdekat| berikutnya)\b|^jadwal\??$|\bagenda(ku| saya| hari ini| besok)\b|pengingat(ku| saya)|jadwal apa/.test(t) || !state.settings.apiKey){
+  // pertanyaan jadwal dijawab langsung dari data (lebih akurat); tanpa Gemini pakai obrolan offline
+  if(scheduleQuestion || !state.settings.apiKey){
     const a = localAnswer(text);
     state.chat.push({role:'bot', text:a, ts:Date.now()}); save(); renderChat();
     speak(a.replace(/•/g,'').replace(/\n/g,'. ').replace(/(\d{2})\.(\d{2})/g, (s,h,m)=> m==='00' ? `jam ${+h}` : `jam ${+h} lewat ${+m}`).replace(/jam jam/g,'jam').replace(/—/g,','));
