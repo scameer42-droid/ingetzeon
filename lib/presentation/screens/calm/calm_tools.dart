@@ -14,6 +14,7 @@ import '../../../services/notification_service.dart';
 import '../../../services/wellbeing_logic.dart';
 import '../../widgets/common.dart';
 import 'calm_screen.dart';
+import 'tests_screen.dart';
 
 const kCalm = Color(0xFF0EA5A4);
 const kCalmGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF14B8A6), Color(0xFF6366F1)]);
@@ -61,7 +62,7 @@ Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {
 String toolLabel(String tool) {
   if (tool.startsWith('tes:')) {
     final t = PsyTest.byId(tool.substring(4));
-    return t == null ? '📝 Pilih tes psikologi' : '📝 ${t.title}';
+    return t == null ? '🌈 Semua tes psikologi' : '${t.emoji} Tes ${t.title}';
   }
   return Tool.label[tool] ?? tool;
 }

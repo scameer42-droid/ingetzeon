@@ -750,6 +750,53 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .topt{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:10px;font-size:15.5px;font-weight:600;color:var(--ink)}
 .tres{border-radius:22px;padding:20px;text-align:center}.tres>b{display:block;font-size:56px;font-weight:800;line-height:1}.tres small{color:var(--muted)}.tres h3{font-size:22px;font-weight:800;margin:6px 0}.tres p{line-height:1.45}
 .msgtxt{line-height:1.5;white-space:pre-wrap}
+
+/* ---- tes psikologi ceria ---- */
+@keyframes psyGrad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes qswap{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.psy-hero{position:relative;overflow:hidden;border-radius:26px;padding:22px 20px;color:#fff;background:linear-gradient(120deg,#F97316,#EC4899,#8B5CF6,#06B6D4,#F97316);background-size:300% 300%;animation:psyGrad 8s ease infinite;box-shadow:0 18px 30px -14px rgba(236,72,153,.55)}
+.psy-hero h3{font-size:25px;font-weight:800;line-height:1.15;margin-right:70px}
+.psy-q{margin:10px 0 14px;font-weight:600;font-size:14.5px;min-height:20px}.psy-q.swap{animation:qswap .5s ease}
+.psy-pill{display:inline-block;background:rgba(255,255,255,.22);border-radius:99px;padding:7px 12px;font-weight:700;font-size:12.5px}
+.psy-hero .fl{position:absolute;animation:bob 1.6s ease-in-out infinite}.psy-hero .f1{right:16px;top:12px;font-size:34px}.psy-hero .f2{right:62px;top:56px;font-size:20px;animation-delay:.4s}.psy-hero .f3{right:20px;top:80px;font-size:24px;animation-delay:.8s}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pcard{position:relative;overflow:hidden;border-radius:24px;padding:16px;color:#fff;text-align:left;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 14px 24px -14px var(--sh);animation:rise .55s cubic-bezier(.2,.9,.3,1.3) both;transition:transform .15s}
+.pcard:active{transform:scale(.96)}
+.pcard.wide{grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;gap:14px}
+.pcard .bub{position:absolute;border-radius:50%;background:rgba(255,255,255,.13)}.pcard .b1{width:90px;height:90px;right:-18px;top:-18px}.pcard .b2{width:80px;height:80px;left:-24px;bottom:-30px;background:rgba(255,255,255,.08)}
+.pcard .pe{font-size:38px;display:inline-block;animation:bob 1.6s ease-in-out infinite;position:relative}.pcard.wide .pe{font-size:44px}
+.pcard .ptx{position:relative;flex:1}.pcard b{display:block;font-size:17px;font-weight:800;line-height:1.15}.pcard small{display:block;font-size:12px;opacity:.92;margin-top:3px;line-height:1.3}
+.pcard u{display:block;text-decoration:none;font-size:11.5px;font-weight:800;margin-top:6px}
+.pcard em{display:inline-block;font-style:normal;background:rgba(255,255,255,.25);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:800;margin-bottom:6px}
+.pcard .pplay{width:40px;height:40px;border-radius:50%;background:#fff;color:#EC4899;display:grid;place-items:center;font-size:16px;position:relative;flex:none}
+.ptrack{position:relative;height:40px;margin-top:4px}.ptrack::before{content:"";position:absolute;left:0;right:0;top:22px;height:10px;border-radius:8px;background:var(--line)}
+.pfill{position:absolute;left:0;top:22px;height:10px;border-radius:8px;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.rocket{position:absolute;top:0;font-size:24px;transition:left .45s cubic-bezier(.3,1.4,.4,1)}.flag{position:absolute;right:0;top:0;font-size:20px}
+.pmeta{display:flex;justify-content:space-between;margin-top:8px;font-weight:700}.pmeta span{color:var(--muted)}
+.pcheer{color:var(--muted);font-weight:600;margin:6px 0 14px;animation:qswap .4s ease}
+.qwrap{animation:slideIn .38s cubic-bezier(.2,.8,.2,1)}
+.qcard{background:var(--card);border:1.5px solid;border-radius:24px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.qcard h3{font-size:20px;font-weight:800;line-height:1.35}.qintro{color:var(--muted);line-height:1.4;margin-bottom:10px}
+.popt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid;border-radius:18px;padding:15px 16px;margin-bottom:10px;color:var(--ink);font-size:15.5px;font-weight:700;animation:rise .4s ease both;transition:transform .16s cubic-bezier(.3,1.6,.5,1)}
+.popt .oe{font-size:24px}.popt .ot{flex:1}.popt .oa{font-weight:800}
+.popt:active{transform:scale(.97)}.popt.picked{background:var(--g)!important;color:#fff;transform:scale(1.04)}.popt.picked .oa{color:#fff!important}
+.rise{animation:rise .55s cubic-bezier(.2,.9,.3,1.2) both}
+.rhero{border-radius:28px;padding:22px 20px;color:#fff;text-align:center;box-shadow:0 18px 30px -14px var(--sh)}
+.rhero .medal{display:inline-block;font-size:54px;animation:bob 1.6s ease-in-out infinite}
+.rhero small{display:block;font-weight:700;opacity:.9}.rhero>b{display:block;font-size:60px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+.rlevel{display:inline-block;background:#fff;border-radius:99px;padding:7px 16px;font-weight:800;font-size:16px;margin-top:10px}
+.rhero p{margin-top:12px;line-height:1.45;font-weight:600}
+.rpart{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:12px 16px 14px;margin-top:10px}
+.rpart>div:first-child{display:flex;justify-content:space-between;font-weight:800;margin-bottom:8px}
+.rpart .pbar i{transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.rcheer{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:16px;border-radius:20px;background:linear-gradient(90deg,#FFF7ED,#FDF2F8);border:1px solid #FED7AA;color:#7C2D12;font-weight:700;line-height:1.45}
+.rcheer .pe{font-size:28px;animation:bob 1.6s ease-in-out infinite}
+.rstep{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}.rstep i{width:26px;height:26px;border-radius:50%;color:#fff;font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}.rstep p{line-height:1.45}
+.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:200}
+@media (prefers-reduced-motion: reduce){.psy-hero,.pcard,.pcard .pe,.psy-hero .fl,.rhero .medal,.rcheer .pe,.popt,.rise,.qwrap{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1141,6 +1188,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.2A8 8 0 1 1 21 12z"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9.2-8.6C1.2 8.2 3 4.5 6.6 4.5c2 0 3.4 1.1 5.4 3 2-1.9 3.4-3 5.4-3 3.6 0 5.4 3.7 3.8 6.9C19 15.6 12 20 12 20z"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
@@ -2932,7 +2980,13 @@ function testRequest(text){
   if(/depresi|phq|suasana hati|mood/.test(t)) return 'phq9';
   if(/cemas|kecemasan|anxiety|gad|khawatir|panik/.test(t)) return 'gad7';
   if(/kesejahteraan|well[- ]?being|who[- ]?5|bahagia/.test(t)) return 'who5';
-  if(/psikolog|kesehatan mental|mental|jiwa|stres|stress|kepribadian|emosi/.test(t)) return 'menu';
+  if(/burnout|burn out|kelelahan|capek kerja/.test(t)) return 'burnout';
+  if(/stres|stress|dass/.test(t)) return 'dass21';
+  if(/kesepian|sepi|ucla/.test(t)) return 'ucla3';
+  if(/percaya diri|harga diri|insecure|minder|self[- ]?esteem/.test(t)) return 'rses';
+  if(/tidur|insomnia/.test(t)) return 'tidur';
+  if(/trauma|ptsd/.test(t)) return 'ptsd5';
+  if(/psikolog|kesehatan mental|mental|jiwa|kepribadian|emosi/.test(t)) return 'menu';
   return null;
 }
 const CRISIS_TEXT = 'Terima kasih sudah mau cerita — aku tahu itu tidak mudah. Yang kamu rasakan sekarang penting, dan kamu tidak harus menanggungnya sendirian. 💛\n\n' +
@@ -2994,38 +3048,112 @@ function adviceForDay(mood, energy, count = 0){
   if(count > 5) tips.push(`Ada ${count} pengingat hari ini — cek mana yang bisa digabung atau ditunda.`);
   return {title, tips, tools};
 }
-const FREQ = [['Tidak pernah',0],['Beberapa hari',1],['Lebih dari separuh waktu',2],['Hampir setiap hari',3]];
+const FREQ = [['Tidak pernah',0],['Beberapa hari',1],['Lebih dari separuh waktu',2],['Hampir setiap hari',3]], FREQ_E = ['😊','🙂','😕','😣'];
 const PSY = {
-  phq9: {id:'phq9', title:'Tes Suasana Hati (PHQ-9)', short:'Skrining gejala depresi', intro:'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?', options: FREQ, source:'Patient Health Questionnaire-9 (Kroenke, Spitzer & Williams)', items:[
+  dass21: {id:'dass21', title:'Stres, Cemas & Depresi', short:'Cek lengkap 3 sisi (DASS-21)', emoji:'🧭', colors:['#F97316','#EC4899'], intro:'Selama 1 minggu terakhir, seberapa sesuai pernyataan berikut dengan dirimu?',
+    options:[['Tidak sesuai sama sekali',0],['Kadang-kadang sesuai',1],['Lumayan sering sesuai',2],['Sangat sesuai / sering sekali',3]], optE:['😊','🙂','😕','😣'], source:'Depression Anxiety Stress Scales-21 (Lovibond & Lovibond), domain publik', items:[
+    'Saya sulit untuk menenangkan diri','Mulut saya terasa kering','Saya sama sekali tidak bisa merasakan perasaan positif','Saya mengalami kesulitan bernapas (misalnya napas cepat atau sesak padahal tidak sedang beraktivitas berat)','Saya sulit memulai inisiatif untuk melakukan sesuatu',
+    'Saya cenderung bereaksi berlebihan terhadap suatu situasi','Saya merasa gemetar (misalnya pada tangan)','Saya merasa menghabiskan banyak energi karena gelisah','Saya khawatir akan situasi di mana saya bisa panik dan mempermalukan diri sendiri','Saya merasa tidak ada hal yang bisa saya harapkan',
+    'Saya merasa mudah gelisah','Saya sulit untuk bersantai','Saya merasa sedih dan murung','Saya tidak bisa menoleransi hal apa pun yang menghalangi saya menyelesaikan pekerjaan','Saya merasa hampir panik',
+    'Saya tidak bisa merasa antusias terhadap hal apa pun','Saya merasa tidak berharga sebagai manusia','Saya merasa mudah tersinggung','Saya merasakan detak jantung saya padahal tidak sedang beraktivitas fisik (misalnya berdebar)','Saya merasa takut tanpa alasan yang jelas','Saya merasa hidup ini tidak berarti']},
+  phq9: {id:'phq9', title:'Suasana Hati', short:'Skrining depresi (PHQ-9)', emoji:'🌤️', colors:['#6366F1','#8B5CF6'], intro:'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?', options: FREQ, optE: FREQ_E, source:'Patient Health Questionnaire-9 (Kroenke, Spitzer & Williams)', items:[
     'Kurang tertarik atau kurang senang dalam melakukan apa pun', 'Merasa murung, sedih, atau putus asa', 'Sulit tidur atau mudah terbangun, atau malah terlalu banyak tidur', 'Merasa lelah atau kurang bertenaga', 'Kurang nafsu makan atau makan berlebihan',
     'Merasa buruk tentang diri sendiri — merasa gagal atau telah mengecewakan diri sendiri maupun keluarga', 'Sulit berkonsentrasi, misalnya saat membaca atau menonton televisi',
     'Bergerak atau bicara sangat lambat sampai orang lain memperhatikannya — atau sebaliknya, sangat gelisah sehingga lebih banyak bergerak dari biasanya', 'Berpikir bahwa lebih baik mati, atau ingin menyakiti diri sendiri dengan cara apa pun']},
-  gad7: {id:'gad7', title:'Tes Kecemasan (GAD-7)', short:'Skrining gejala cemas', intro:'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?', options: FREQ, source:'Generalized Anxiety Disorder-7 (Spitzer, Kroenke, Williams & Löwe)', items:[
+  gad7: {id:'gad7', title:'Kecemasan', short:'Skrining cemas (GAD-7)', emoji:'🍃', colors:['#06B6D4','#3B82F6'], intro:'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?', options: FREQ, optE: FREQ_E, source:'Generalized Anxiety Disorder-7 (Spitzer, Kroenke, Williams & Löwe)', items:[
     'Merasa gugup, cemas, atau tegang', 'Tidak mampu menghentikan atau mengendalikan rasa khawatir', 'Terlalu mengkhawatirkan berbagai hal', 'Sulit untuk merasa rileks', 'Sangat gelisah sampai sulit untuk duduk diam', 'Mudah kesal atau mudah tersinggung', 'Merasa takut seolah-olah sesuatu yang buruk akan terjadi']},
-  who5: {id:'who5', title:'Indeks Kesejahteraan (WHO-5)', short:'Seberapa baik kondisimu belakangan ini', intro:'Selama 2 minggu terakhir, seberapa sesuai pernyataan berikut dengan dirimu?', source:'WHO-5 Well-Being Index (WHO Collaborating Centre in Mental Health)',
-    options:[['Sepanjang waktu',5],['Sering sekali',4],['Lebih dari separuh waktu',3],['Kurang dari separuh waktu',2],['Kadang-kadang',1],['Tidak pernah',0]], items:[
+  burnout: {id:'burnout', title:'Burnout', short:'Kelelahan kerja & hidup (CBI)', emoji:'🔋', colors:['#EF4444','#F59E0B'], intro:'Pikirkan keadaanmu belakangan ini. Seberapa sering kamu…', options:[['Selalu',100],['Sering',75],['Kadang-kadang',50],['Jarang',25],['Tidak pernah / hampir tidak pernah',0]], optE:['🪫','😩','😐','🙂','⚡'], source:'Copenhagen Burnout Inventory — Personal Burnout (Kristensen dkk.)', items:[
+    'Merasa lelah?','Merasa capek secara fisik?','Merasa capek secara emosional?','Berpikir "aku sudah tidak sanggup lagi"?','Merasa terkuras habis?','Merasa lemah dan mudah sakit?']},
+  who5: {id:'who5', title:'Kebahagiaan', short:'Indeks kesejahteraan (WHO-5)', emoji:'🌻', colors:['#F59E0B','#F97316'], intro:'Selama 2 minggu terakhir, seberapa sesuai pernyataan berikut dengan dirimu?', source:'WHO-5 Well-Being Index (WHO Collaborating Centre in Mental Health)',
+    options:[['Sepanjang waktu',5],['Sering sekali',4],['Lebih dari separuh waktu',3],['Kurang dari separuh waktu',2],['Kadang-kadang',1],['Tidak pernah',0]], optE:['🤩','😄','🙂','😐','😕','😞'], items:[
     'Saya merasa ceria dan bersemangat', 'Saya merasa tenang dan santai', 'Saya merasa aktif dan bertenaga', 'Saya bangun dengan perasaan segar dan cukup istirahat', 'Hari-hari saya diisi dengan hal-hal yang menarik bagi saya']},
+  ucla3: {id:'ucla3', title:'Kesepian', short:'Rasa terhubung dengan orang lain (UCLA-3)', emoji:'🤝', colors:['#14B8A6','#22C55E'], intro:'Pertanyaan berikut tentang perasaanmu terhadap orang-orang di sekitarmu.', options:[['Hampir tidak pernah',1],['Kadang-kadang',2],['Sering',3]], optE:['😊','😐','😔'], source:'UCLA 3-Item Loneliness Scale (Hughes dkk., 2004)', items:[
+    'Seberapa sering kamu merasa kurang punya teman dekat untuk berbagi?','Seberapa sering kamu merasa ditinggalkan atau tidak diajak?','Seberapa sering kamu merasa terasing dari orang lain?']},
+  rses: {id:'rses', title:'Percaya Diri', short:'Harga diri & penerimaan diri (Rosenberg)', emoji:'💎', colors:['#D946EF','#8B5CF6'], intro:'Seberapa setuju kamu dengan pernyataan berikut tentang dirimu?', options:[['Sangat setuju',3],['Setuju',2],['Tidak setuju',1],['Sangat tidak setuju',0]], optE:['💯','👍','👎','🙅'], reverse:[1,4,5,7,8], source:'Rosenberg Self-Esteem Scale (Rosenberg, 1965)', items:[
+    'Secara keseluruhan, saya puas dengan diri saya','Kadang saya merasa diri saya sama sekali tidak baik','Saya merasa punya beberapa kelebihan yang baik','Saya mampu melakukan sesuatu sebaik kebanyakan orang lain','Saya merasa tidak banyak hal yang bisa saya banggakan',
+    'Kadang saya benar-benar merasa tidak berguna','Saya merasa diri saya berharga, setidaknya setara dengan orang lain','Saya berharap bisa lebih menghargai diri sendiri','Secara keseluruhan, saya cenderung merasa sebagai orang yang gagal','Saya bersikap positif terhadap diri saya sendiri']},
+  tidur: {id:'tidur', title:'Kualitas Tidur', short:'Cek mandiri pola tidur', emoji:'🌙', colors:['#4F46E5','#0EA5E9'], intro:'Selama 2 minggu terakhir, seberapa sering hal ini terjadi?', options: FREQ, optE: FREQ_E, clinical:false, source:'Cek mandiri IngetZeon (bukan alat klinis)', items:[
+    'Butuh lebih dari 30 menit untuk bisa tertidur','Terbangun di malam hari dan sulit tidur lagi','Bangun terlalu pagi dan tidak bisa tidur kembali','Bangun dengan badan tidak segar','Mengantuk atau sulit fokus di siang hari','Main HP di kasur sampai larut sebelum tidur']},
+  ptsd5: {id:'ptsd5', title:'Trauma', short:'Dampak kejadian berat (PC-PTSD-5)', emoji:'🕊️', colors:['#0EA5E9','#6366F1'], intro:'Kadang hal yang sangat menakutkan atau mengguncang terjadi — misalnya kecelakaan serius, kebakaran, kekerasan, kematian mendadak orang tercinta, atau bencana alam.', options:[['Ya',1],['Tidak',0]], optE:['✔️','✖️'], source:'Primary Care PTSD Screen for DSM-5 (U.S. National Center for PTSD), domain publik', items:[
+    'Pernahkah kamu mengalami kejadian seperti itu?','Dalam sebulan terakhir, apakah kamu mimpi buruk tentang kejadian itu, atau teringat padahal tidak ingin?','Dalam sebulan terakhir, apakah kamu berusaha keras tidak memikirkannya, atau menghindari situasi yang mengingatkanmu?',
+    'Dalam sebulan terakhir, apakah kamu terus waspada, berjaga-jaga, atau mudah kaget?','Dalam sebulan terakhir, apakah kamu merasa mati rasa atau berjarak dari orang lain, aktivitas, atau lingkunganmu?','Dalam sebulan terakhir, apakah kamu merasa bersalah atau terus menyalahkan diri sendiri/orang lain atas kejadian itu?']},
 };
-function evaluateTest(id, answers){
-  const score = answers.reduce((a,b) => a + b, 0);
+const PSY_QUOTES = ['Kamu lebih kuat dari yang kamu kira 💪','Langkah kecil tetap langkah maju 🌱','Jangan pernah menyerah — kamu sudah sejauh ini! 🔥','Mengenal diri sendiri adalah awal dari bangkit ✨','Hari yang berat tidak akan bertahan selamanya 🌈','Kamu layak bahagia, dan kamu sedang menuju ke sana ☀️','Berani jujur pada diri sendiri itu tanda pejuang 🏅'];
+function psyCheer(n, total){
+  if(n === 0) return 'Yuk mulai! Jawab sejujurnya, tidak ada jawaban benar atau salah 🌟';
+  const p = n / total;
+  return p >= .99 ? 'Pertanyaan terakhir! Kamu hebat 🏁' : p >= .75 ? 'Sedikit lagi, semangat! 🚀' : p >= .5 ? 'Setengah jalan! Kamu keren 💪' : p >= .25 ? 'Bagus, lanjut terus! ✨' : 'Mantap, terus jujur ya 👍';
+}
+const psyStops = (t, a) => t.id === 'ptsd5' && a.length === 1 && a[0] === 0;
+const SEEK = 'Konsultasi dengan psikolog/psikiater atau puskesmas, atau layanan gratis Healing119 (telepon 119 tekan 8).';
+const band = (s, bands) => { for(const b of bands) if(s <= b[0]) return [b[1], b[2]]; const l = bands[bands.length-1]; return [l[1], l[2]]; };
+function resultCheer(sev){
+  return sev === 0 ? 'Hebat! Kondisimu sedang baik. Pertahankan kebiasaan baikmu — kamu luar biasa! 🌟'
+    : sev === 1 ? 'Kamu sudah berani jujur pada diri sendiri, itu langkah pertama yang keren. Sedikit perhatian ekstra dan kamu pasti bisa bangkit! 🌱'
+    : 'Terima kasih sudah berani jujur. Yang kamu rasakan itu nyata — dan bantuan itu ada. Mencari bantuan bukan tanda lemah, itu tanda kamu pejuang. Jangan menyerah ya, kamu tidak sendirian 💛';
+}
+function evaluateTest(id, raw){
+  const t = PSY[id], rev = new Set(t.reverse || []);
+  const vals = t.options.map(o => o[1]), mx = Math.max(...vals), mn = Math.min(...vals);
+  const a = raw.map((v,i) => rev.has(i) ? mx + mn - v : v);
+  const score = a.reduce((x,y) => x + y, 0);
+  const F = arr => arr.filter(Boolean);
   if(id === 'phq9'){
-    const crisis = answers.length >= 9 && answers[8] > 0;
-    const [level, sev] = score <= 4 ? ['Minimal',0] : score <= 9 ? ['Ringan',1] : score <= 14 ? ['Sedang',2] : score <= 19 ? ['Cukup berat',3] : ['Berat',3];
-    return {score, max:27, level, sev, crisis,
-      summary: sev === 0 ? 'Gejala suasana hati murung minimal. Pertahankan kebiasaan baikmu!' : sev === 1 ? 'Ada beberapa gejala ringan. Perhatikan pola tidur, gerak, dan hubungan sosialmu.' : 'Gejalamu cukup terasa dan bisa mengganggu aktivitas. Sebaiknya bicarakan dengan psikolog atau dokter.',
-      advice: [sev >= 2 && 'Buat janji dengan psikolog/psikiater, puskesmas, atau konsultasi gratis di Healing119 (119 ext 8).', sev >= 1 && 'Coba catat mood harian & tulis jurnal untuk melihat polanya.', 'Jaga tidur teratur, gerak badan 20–30 menit, dan tetap terhubung dengan orang terdekat.', sev === 0 && 'Ulangi tes ini sebulan lagi untuk memantau kondisimu.'].filter(Boolean)};
+    const [level, sev] = band(score, [[4,'Minimal',0],[9,'Ringan',1],[14,'Sedang',2],[19,'Cukup berat',3],[27,'Berat',3]]);
+    return {score, max:27, level, sev, crisis: a.length >= 9 && a[8] > 0,
+      summary: sev === 0 ? 'Gejala suasana hati murung minimal.' : sev === 1 ? 'Ada beberapa gejala ringan. Perhatikan pola tidur, gerak, dan hubungan sosialmu.' : 'Gejalamu cukup terasa dan bisa mengganggu aktivitas. Sebaiknya bicarakan dengan psikolog atau dokter.',
+      advice: F([sev >= 2 && SEEK, sev >= 1 && 'Catat mood harian & tulis jurnal untuk melihat polanya.', 'Jaga tidur teratur, gerak badan 20–30 menit, dan tetap terhubung dengan orang terdekat.', sev === 0 && 'Ulangi tes ini sebulan lagi untuk memantau kondisimu.'])};
   }
   if(id === 'gad7'){
-    const [level, sev] = score <= 4 ? ['Minimal',0] : score <= 9 ? ['Ringan',1] : score <= 14 ? ['Sedang',2] : ['Berat',3];
+    const [level, sev] = band(score, [[4,'Minimal',0],[9,'Ringan',1],[14,'Sedang',2],[21,'Berat',3]]);
     return {score, max:21, level, sev, crisis:false,
-      summary: sev === 0 ? 'Tingkat kecemasanmu rendah. Bagus!' : sev === 1 ? 'Ada kecemasan ringan. Latihan napas & grounding bisa membantu.' : 'Kecemasanmu cukup tinggi dan bisa mengganggu keseharian. Sebaiknya konsultasikan dengan psikolog.',
-      advice: [sev >= 2 && 'Konsultasi dengan psikolog/dokter, atau hubungi Healing119 (119 ext 8, gratis).', sev >= 1 && 'Latih napas kotak atau 4-7-8 dua kali sehari, terutama saat cemas muncul.', 'Batasi kafein & berita yang memicu cemas, dan jaga waktu tidur.'].filter(Boolean)};
+      summary: sev === 0 ? 'Tingkat kecemasanmu rendah.' : sev === 1 ? 'Ada kecemasan ringan. Latihan napas & grounding bisa membantu.' : 'Kecemasanmu cukup tinggi dan bisa mengganggu keseharian. Sebaiknya konsultasikan dengan psikolog.',
+      advice: F([sev >= 2 && SEEK, sev >= 1 && 'Latih napas kotak atau 4-7-8 dua kali sehari, terutama saat cemas muncul.', 'Batasi kafein & berita yang memicu cemas, dan jaga waktu tidur.'])};
   }
-  const pct = score * 4;
-  const [level, sev] = pct > 50 ? ['Baik',0] : pct > 28 ? ['Rendah',2] : ['Sangat rendah',3];
-  return {score: pct, max:100, level, sev, crisis:false,
-    summary: sev === 0 ? 'Kesejahteraanmu dalam kondisi baik.' : 'Kesejahteraanmu sedang rendah. Ada baiknya mencoba tes PHQ-9 dan bicara dengan profesional bila berlanjut.',
-    advice: [sev > 0 && 'Coba tes Suasana Hati (PHQ-9) untuk gambaran yang lebih jelas.', sev === 3 && 'Pertimbangkan konsultasi ke psikolog atau Healing119 (119 ext 8).', 'Rencanakan satu kegiatan menyenangkan setiap hari, sekecil apa pun.'].filter(Boolean)};
+  if(id === 'dass21'){
+    const sum = ix => ix.reduce((x,i) => x + (a[i] || 0), 0) * 2;
+    const d = sum([2,4,9,12,15,16,20]), an = sum([1,3,6,8,14,18,19]), st = sum([0,5,7,10,11,13,17]);
+    const [dl, ds] = band(d, [[9,'Normal',0],[13,'Ringan',1],[20,'Sedang',2],[27,'Berat',3],[42,'Sangat berat',3]]);
+    const [al, as] = band(an, [[7,'Normal',0],[9,'Ringan',1],[14,'Sedang',2],[19,'Berat',3],[42,'Sangat berat',3]]);
+    const [sl, ss] = band(st, [[14,'Normal',0],[18,'Ringan',1],[25,'Sedang',2],[33,'Berat',3],[42,'Sangat berat',3]]);
+    const sev = Math.max(ds, as, ss);
+    const worst = [['stres',ss],['kecemasan',as],['depresi',ds]].reduce((x,y) => y[1] > x[1] ? y : x)[0];
+    return {score: d + an + st, max:126, level: ['Normal','Ringan','Sedang','Berat'][sev], sev, crisis: a.length >= 21 && a[20] >= 2,
+      parts: [['Stres', st, 42, sl, ss], ['Kecemasan', an, 42, al, as], ['Depresi', d, 42, dl, ds]],
+      summary: sev === 0 ? 'Ketiga sisi (stres, cemas, depresi) dalam batas normal.' : `Yang paling menonjol saat ini: ${worst}. Lihat rincian di bawah.`,
+      advice: F([sev >= 2 && SEEK, ss >= 1 && 'Stres: pecah tugas jadi langkah kecil, pakai timer fokus, dan sisihkan waktu istirahat.', as >= 1 && 'Cemas: latihan napas & grounding 5-4-3-2-1 saat gelisah muncul.', ds >= 1 && 'Suasana hati: lakukan satu kegiatan kecil yang menyenangkan setiap hari & tetap terhubung dengan orang terdekat.', sev === 0 && 'Pertahankan! Ulangi cek ini sebulan lagi.'])};
+  }
+  if(id === 'who5'){
+    const pct = score * 4, [level, sev] = pct > 50 ? ['Baik',0] : pct > 28 ? ['Rendah',2] : ['Sangat rendah',3];
+    return {score: pct, max:100, level, sev, crisis:false, summary: sev === 0 ? 'Kesejahteraanmu dalam kondisi baik.' : 'Kesejahteraanmu sedang rendah. Coba juga tes Suasana Hati (PHQ-9).',
+      advice: F([sev > 0 && 'Coba tes Suasana Hati (PHQ-9) untuk gambaran yang lebih jelas.', sev === 3 && SEEK, 'Rencanakan satu kegiatan menyenangkan setiap hari, sekecil apa pun.'])};
+  }
+  if(id === 'burnout'){
+    const avg = a.length ? Math.round(score / a.length) : 0, [level, sev] = band(avg, [[49,'Rendah',0],[74,'Sedang',1],[99,'Tinggi',2],[100,'Sangat tinggi',3]]);
+    return {score: avg, max:100, level, sev, crisis:false, summary: sev === 0 ? 'Tingkat kelelahanmu masih aman.' : 'Kamu menunjukkan tanda-tanda burnout. Tubuh dan pikiranmu butuh pemulihan.',
+      advice: F([sev >= 2 && 'Bicarakan beban kerja dengan atasan/keluarga, dan pertimbangkan konsultasi dengan psikolog.', sev >= 1 && 'Jadwalkan istirahat sungguhan: tidur cukup, cuti singkat, atau hari tanpa kerja.', 'Pakai timer fokus 25/5 agar kerja tidak terus-menerus tanpa jeda.'])};
+  }
+  if(id === 'ucla3'){
+    const [level, sev] = band(score, [[5,'Terhubung',0],[7,'Agak kesepian',1],[9,'Kesepian',2]]);
+    return {score, max:9, level, sev, crisis:false, summary: sev === 0 ? 'Kamu merasa cukup terhubung dengan orang lain.' : 'Kamu merasakan kesepian. Itu perasaan yang umum dan bisa membaik.',
+      advice: F([sev >= 1 && 'Kabari satu orang hari ini — teman lama, saudara, atau rekan kerja.', sev >= 1 && 'Ikut kegiatan rutin bersama orang lain: komunitas, olahraga, pengajian/ibadah bersama.', sev >= 2 && 'Kalau kesepian terasa sangat berat, cerita ke Healing119 (119 tekan 8) atau psikolog.', sev === 0 && 'Pertahankan hubunganmu — sapa orang-orang terdekatmu secara rutin.'])};
+  }
+  if(id === 'rses'){
+    const [level, sev] = score < 15 ? ['Rendah',2] : score <= 25 ? ['Normal',0] : ['Tinggi',0];
+    return {score, max:30, level, sev, crisis:false, summary: sev === 0 ? 'Penghargaanmu terhadap diri sendiri cukup sehat.' : 'Kamu sedang kurang menghargai diri sendiri. Padahal kamu punya nilai yang berharga.',
+      advice: sev ? ['Tulis 3 hal yang kamu lakukan dengan baik setiap malam di jurnal.', 'Perhatikan suara hati yang terlalu keras — bicaralah pada dirimu seperti pada sahabat.', 'Kalau perasaan tidak berharga terus muncul, bicarakan dengan psikolog.'] : ['Terus rawat dirimu dan rayakan pencapaian kecil.']};
+  }
+  if(id === 'ptsd5'){
+    if(!a.length || a[0] === 0) return {score:0, max:5, level:'Tidak ada kejadian traumatis', sev:0, crisis:false, summary:'Kamu tidak melaporkan pengalaman traumatis, jadi tes ini tidak perlu dilanjutkan.', advice:['Kalau suatu saat mengalami kejadian berat, jangan ragu cerita ke orang terdekat atau profesional.']};
+    const yes = a.slice(1).reduce((x,y) => x + y, 0);
+    const [level, sev] = yes >= 4 ? ['Positif (kuat)',3] : yes === 3 ? ['Positif',2] : yes >= 1 ? ['Ada beberapa gejala',1] : ['Minimal',0];
+    return {score: yes, max:5, level, sev, crisis:false,
+      summary: sev >= 2 ? 'Kejadian itu tampaknya masih sangat memengaruhimu. Ini reaksi yang bisa dipulihkan dengan bantuan yang tepat.' : sev === 1 ? 'Ada beberapa dampak dari kejadian itu. Perhatikan dirimu baik-baik.' : 'Dampak kejadian itu tampaknya sudah tidak terlalu mengganggu.',
+      advice: F([sev >= 2 && 'Sebaiknya konsultasi dengan psikolog/psikiater — trauma bisa ditangani dengan terapi yang terbukti efektif.', sev >= 2 && 'Bantuan gratis: Healing119 (telepon 119 tekan 8).', 'Grounding 5-4-3-2-1 dan latihan napas membantu saat ingatan buruk muncul.', 'Ceritakan ke orang yang kamu percaya; kamu tidak harus memendamnya sendiri.'])};
+  }
+  const [level, sev] = band(score, [[5,'Baik',0],[11,'Perlu perhatian',1],[18,'Terganggu',2]]);
+  return {score, max:18, level, sev, crisis:false, summary: sev === 0 ? 'Pola tidurmu cukup baik.' : 'Tidurmu sedang kurang berkualitas — ini bisa memengaruhi mood dan energi.',
+    advice: F(['Tidur & bangun di jam yang sama setiap hari, termasuk akhir pekan.', sev >= 1 && 'Jauhkan HP 30 menit sebelum tidur; coba napas 4-7-8 di kasur.', sev >= 1 && 'Kurangi kopi/teh setelah jam 2 siang.', sev >= 2 && 'Kalau berlangsung lebih dari sebulan, periksakan ke dokter.'])};
 }
 
 /* ---------------- RUANG TENANG: tampilan ---------------- */
@@ -3036,7 +3164,7 @@ function logMood(m, e, note = ''){
   save();
 }
 function toolLabel(t){
-  if(t.startsWith('tes:')){ const x = PSY[t.slice(4)]; return x ? '📝 ' + x.title : '📝 Pilih tes psikologi'; }
+  if(t.startsWith('tes:')){ const x = PSY[t.slice(4)]; return x ? `${x.emoji} Tes ${x.title}` : '🌈 Semua tes psikologi'; }
   return TOOL_LABEL[t] || t;
 }
 function toolChips(tools){
@@ -3342,47 +3470,97 @@ async function reflectJournal(j){
   $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
 }
 
-/* --- tes psikologi --- */
-let tsRun = null;
-function openTests(id){ tsRun = id ? {id, a:[], res:null} : null; renderTests(); openFull('#tests'); }
+/* --- tes psikologi (tampilan ceria + animasi) --- */
+let tsRun = null, tsQuoteIv = 0;
+const PSY_ORDER = ['dass21','phq9','gad7','burnout','who5','ucla3','rses','tidur','ptsd5'];
+function openTests(id){ tsRun = id && PSY[id] ? {id, a:[], res:null, picked:-1} : null; renderTests(); openFull('#tests'); }
+function psyGrad(t, a = 1){ const h = c => c + (a < 1 ? Math.round(a * 255).toString(16).padStart(2,'0') : ''); return `linear-gradient(135deg,${h(t.colors[0])},${h(t.colors[1])})`; }
 function renderTests(){
   const B = $('#tsBody');
-  $('#tsTitle').textContent = tsRun ? PSY[tsRun.id].title : 'Tes psikologi';
+  clearInterval(tsQuoteIv);
+  B.style.background = tsRun ? `linear-gradient(180deg, ${PSY[tsRun.id].colors[0]}14, transparent 320px)` : '';
+  $('#tsTitle').textContent = tsRun ? `${PSY[tsRun.id].emoji}  ${PSY[tsRun.id].title}` : 'Tes psikologi';
   if(!tsRun){
-    B.innerHTML = `<p class="muted-c" style="text-align:left">Kuesioner skrining singkat yang dipakai tenaga kesehatan di seluruh dunia. Jawab sesuai kondisimu 2 minggu terakhir.</p>
-      ${Object.values(PSY).map(t => { const last = state.psytests.find(r => r.k === t.id); return `<button class="tcard" data-ts="${t.id}"><i>📝</i><div class="tx"><b>${t.title}</b><small>${t.short} · ${t.items.length} pertanyaan · ±${Math.ceil(t.items.length/3)} menit</small>${last ? `<em>Terakhir: ${esc(last.l)} (${fmtDateShort(new Date(last.t))})</em>` : ''}</div>${icon('i-right')}</button>`; }).join('')}
-      <p class="foot-note">Hasil tes adalah skrining, BUKAN diagnosis. Diagnosis hanya bisa dilakukan oleh psikolog klinis, psikiater, atau dokter. Hasil tersimpan di perangkat ini saja.</p>`;
-    B.querySelectorAll('[data-ts]').forEach(b => b.onclick = () => { tsRun = {id: b.dataset.ts, a:[], res:null}; renderTests(); });
+    let q = 0;
+    B.innerHTML = `<div class="psy-hero"><span class="fl f1">🚀</span><span class="fl f2">✨</span><span class="fl f3">💪</span>
+        <h3>Kenali dirimu,<br>jadi makin kuat!</h3><p class="psy-q" id="psyQ">${PSY_QUOTES[0]}</p>
+        <span class="psy-pill">${PSY_ORDER.length} tes · ${state.psytests.length} kali dikerjakan</span></div>
+      <div class="pgrid">${PSY_ORDER.map((id,i) => { const t = PSY[id], last = state.psytests.find(r => r.k === id);
+        return `<button class="pcard${i === 0 ? ' wide' : ''}" data-ts="${id}" style="background:${psyGrad(t)};animation-delay:${i * 70}ms;--sh:${t.colors[1]}66">
+          <i class="bub b1"></i><i class="bub b2"></i><span class="pe" style="animation-delay:${i * 250}ms">${t.emoji}</span>
+          <div class="ptx">${i === 0 ? '<em>⭐ Mulai dari sini</em>' : ''}<b>${t.title}</b><small>${t.short}</small><u>${last ? 'Terakhir: ' + esc(last.l) : `${t.items.length} soal · ±${Math.max(1, Math.ceil(t.items.length / 4))} mnt`}</u></div>
+          ${i === 0 ? '<span class="pplay">▶</span>' : ''}</button>`; }).join('')}</div>
+      <p class="foot-note">Tes ini skrining singkat, BUKAN diagnosis. Diagnosis hanya bisa dilakukan psikolog klinis, psikiater, atau dokter. Hasil tersimpan di perangkat ini saja.</p>`;
+    B.querySelectorAll('[data-ts]').forEach(b => b.onclick = () => { tsRun = {id: b.dataset.ts, a:[], res:null, picked:-1}; renderTests(); B.scrollTop = 0; });
+    tsQuoteIv = setInterval(() => {
+      const el = $('#psyQ'); if(!el || !$('#tests').classList.contains('show')){ clearInterval(tsQuoteIv); return; }
+      q = (q + 1) % PSY_QUOTES.length; el.classList.remove('swap'); void el.offsetWidth; el.textContent = PSY_QUOTES[q]; el.classList.add('swap');
+    }, 4000);
     return;
   }
   const t = PSY[tsRun.id];
-  if(tsRun.res){
-    const r = tsRun.res, col = ['#12A150','#D97706','#EA580C','#E11D48'][r.sev];
-    B.innerHTML = `${r.crisis ? helpCard(true) + '<p style="font-weight:600;margin:10px 0 14px;line-height:1.5">Kamu menjawab pernah terpikir lebih baik mati atau ingin menyakiti diri. Itu hal serius dan kamu layak mendapat dukungan sekarang — tolong hubungi Healing119 atau orang yang kamu percaya hari ini.</p>' : ''}
-      <div class="tres" style="background:${col}1a"><b style="color:${col}">${r.score}</b><small>dari ${r.max}</small><h3 style="color:${col}">${r.level}</h3><p>${r.summary}</p></div>
-      <div class="section-h"><h2>Saran untukmu</h2></div><ul class="tips">${r.advice.map(a => `<li>${esc(a)}</li>`).join('')}</ul>
-      ${!r.crisis && r.sev >= 2 ? helpCard() : ''}${toolChips(['napas','jurnal','mood'])}
-      <p class="foot-note" style="margin-top:14px">Ini hasil skrining, bukan diagnosis. Kondisi bisa berubah — ulangi tes ini 2–4 minggu lagi untuk memantau.</p>
-      <button class="btn btn-soft btn-block" id="tsBack" style="margin-top:12px">Lihat tes lain</button>`;
-    $('#tsBack').onclick = () => { tsRun = null; renderTests(); };
-    return;
-  }
-  const i = Math.min(tsRun.a.length, t.items.length - 1);
-  B.innerHTML = `<div class="pbar"><i style="width:${tsRun.a.length / t.items.length * 100}%;background:#D97706"></i></div>
-    <p class="muted-c" style="text-align:left;margin-top:8px">Pertanyaan ${i+1} dari ${t.items.length}</p>
-    <p class="muted-c" style="text-align:left">${t.intro}</p><h3 class="tq">${t.items[i]}</h3>
-    ${t.options.map(o => `<button class="topt" data-v="${o[1]}">${o[0]}${icon('i-right')}</button>`).join('')}
-    ${tsRun.a.length ? `<button class="link" id="tsPrev" style="margin-top:6px">← Sebelumnya</button>` : ''}
-    <p class="foot-note" style="margin-top:12px">Sumber: ${t.source}. Terjemahan bebas untuk skrining mandiri.</p>`;
-  B.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
-    tsRun.a.push(+b.dataset.v);
-    if(tsRun.a.length === t.items.length){
-      tsRun.res = evaluateTest(t.id, tsRun.a);
-      state.psytests.unshift({k:t.id, s:tsRun.res.score, x:tsRun.res.max, l:tsRun.res.level, t:Date.now()}); state.psytests = state.psytests.slice(0,100); save();
-    }
-    renderTests(); B.scrollTop = 0;
+  if(tsRun.res){ renderTestResult(t, tsRun.res); return; }
+  const n = t.items.length, i = Math.min(tsRun.a.length, n - 1), p = tsRun.a.length / n;
+  B.innerHTML = `<div class="ptrack"><div class="pfill" style="width:${Math.max(3, p * 100)}%;background:${psyGrad(t)}"></div><span class="rocket" style="left:calc(${p * 100}% - 14px)">🚀</span><span class="flag">🏁</span></div>
+    <div class="pmeta"><b style="color:${t.colors[1]}">Pertanyaan ${i + 1} dari ${n}</b><span>${Math.round(p * 100)}%</span></div>
+    <p class="pcheer">${psyCheer(tsRun.a.length, n)}</p>
+    <div class="qwrap"><div class="qcard" style="border-color:${t.colors[0]}44">${i === 0 ? `<p class="qintro">${t.intro}</p>` : ''}<h3>${t.items[i]}</h3></div>
+    ${t.options.map((o,k) => `<button class="popt" data-k="${k}" style="background:${psyGrad(t, .07 + .05 * k)};border-color:${t.colors[k % 2]}55;--g:${psyGrad(t)};animation-delay:${80 + k * 60}ms"><span class="oe">${(t.optE || [])[k] || ''}</span><span class="ot">${o[0]}</span><span class="oa" style="color:${t.colors[1]}">→</span></button>`).join('')}</div>
+    ${tsRun.a.length ? '<button class="link" id="tsPrev" style="margin-top:6px">← Sebelumnya</button>' : ''}
+    <p class="foot-note" style="margin-top:12px">Sumber: ${t.source}.${t.clinical === false ? '' : ' Terjemahan bebas untuk skrining mandiri.'}</p>`;
+  B.querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+    if(tsRun.picked >= 0) return;
+    tsRun.picked = +b.dataset.k; b.classList.add('picked'); if(navigator.vibrate) navigator.vibrate(12);
+    setTimeout(() => {
+      tsRun.a.push(t.options[tsRun.picked][1]); tsRun.picked = -1;
+      if(tsRun.a.length === n || psyStops(t, tsRun.a)){
+        tsRun.res = evaluateTest(t.id, tsRun.a);
+        state.psytests.unshift({k:t.id, s:tsRun.res.score, x:tsRun.res.max, l:tsRun.res.level, t:Date.now()}); state.psytests = state.psytests.slice(0,100); save();
+      }
+      renderTests(); B.scrollTop = 0;
+    }, 260);
   });
   if($('#tsPrev')) $('#tsPrev').onclick = () => { tsRun.a.pop(); renderTests(); };
+}
+function renderTestResult(t, r){
+  const B = $('#tsBody'), col = ['#12A150','#F59E0B','#F97316','#E11D48'];
+  const gentle = r.sev >= 2 || r.crisis;
+  B.innerHTML = `${r.crisis ? helpCard(true) + '<p style="font-weight:600;margin:10px 0 14px;line-height:1.5">Kamu menjawab pernah merasa hidup tidak berarti atau ingin menyakiti diri. Itu hal serius dan kamu layak mendapat dukungan sekarang — tolong hubungi Healing119 atau orang yang kamu percaya hari ini. Kamu tidak sendirian 💛</p>' : ''}
+    <div class="rhero rise" style="background:${psyGrad(t)};--sh:${t.colors[1]}66"><span class="medal">${gentle ? '🤗' : '🏅'}</span><small>Tes selesai!</small>
+      <b id="rScore">0</b><small>dari ${r.max}</small><span class="rlevel" style="color:${col[r.sev]}">${esc(r.level)}</span><p>${esc(r.summary)}</p></div>
+    ${(r.parts || []).map((p,k) => `<div class="rpart rise" style="animation-delay:${120 + k * 90}ms"><div><b>${p[0]}</b><span style="color:${col[p[4]]}">${p[3]}</span></div><div class="pbar"><i data-w="${p[1] / p[2] * 100}" style="width:0;background:${col[p[4]]}"></i></div></div>`).join('')}
+    <div class="rcheer rise" style="animation-delay:200ms"><span class="pe">🔥</span><p>${resultCheer(r.sev)}</p></div>
+    <div class="section-h"><h2>Langkah kecil untukmu</h2></div>
+    ${r.advice.map((a,k) => `<div class="rstep rise" style="animation-delay:${260 + k * 80}ms"><i style="background:${psyGrad(t)}">${k + 1}</i><p>${esc(a)}</p></div>`).join('')}
+    ${!r.crisis && r.sev >= 2 ? helpCard() : ''}${toolChips(['napas','jurnal','mood'])}
+    <button class="btn btn-primary btn-block" id="tsBack" style="margin-top:16px">${icon('i-grid')}Coba tes lainnya</button>
+    <p class="foot-note" style="margin-top:14px">Ini hasil skrining, bukan diagnosis. Kondisi bisa berubah — ulangi tes 2–4 minggu lagi untuk memantau.</p>`;
+  $('#tsBack').onclick = () => { tsRun = null; renderTests(); B.scrollTop = 0; };
+  // angka naik
+  const t0 = performance.now(), el = $('#rScore');
+  const step = now => { const f = Math.min(1, (now - t0) / 1200), e = 1 - Math.pow(1 - f, 3); el.textContent = Math.round(r.score * e); if(f < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+  requestAnimationFrame(() => setTimeout(() => B.querySelectorAll('.pbar i[data-w]').forEach(x => x.style.width = x.dataset.w + '%'), 80));
+  celebrate(gentle, t.colors);
+}
+function celebrate(gentle, colors){
+  const cv = document.createElement('canvas'); cv.className = 'confetti'; document.body.appendChild(cv);
+  const W = cv.width = innerWidth * devicePixelRatio, H = cv.height = innerHeight * devicePixelRatio, ctx = cv.getContext('2d');
+  const cols = [...colors, '#FACC15', '#22C55E', '#EC4899'];
+  const P = [...Array(gentle ? 16 : 70)].map((_,i) => ({x: Math.random() * W, y: gentle ? H + Math.random() * H * .3 : -Math.random() * H * .4, vx: (Math.random() - .5) * 2, vy: gentle ? -(1 + Math.random() * 1.5) : 2 + Math.random() * 4, r: Math.random() * 6, c: cols[i % cols.length], s: 10 + Math.random() * 16, sq: i % 2}));
+  const t0 = performance.now(), dur = 3200;
+  const loop = now => {
+    const t = (now - t0) / dur; ctx.clearRect(0, 0, W, H);
+    if(t >= 1){ cv.remove(); return; }
+    ctx.globalAlpha = t < .75 ? 1 : 1 - (t - .75) / .25;
+    for(const p of P){
+      p.x += p.vx * devicePixelRatio + (gentle ? Math.sin((now / 400) + p.r) * .8 : 0); p.y += p.vy * devicePixelRatio; p.r += .1;
+      if(gentle){ ctx.font = `${p.s * devicePixelRatio}px serif`; ctx.fillText('💛', p.x, p.y); }
+      else { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; if(p.sq) ctx.fillRect(-5 * devicePixelRatio, -3 * devicePixelRatio, 10 * devicePixelRatio, 6 * devicePixelRatio); else { ctx.beginPath(); ctx.arc(0, 0, 3.5 * devicePixelRatio, 0, 7); ctx.fill(); } ctx.restore(); }
+    }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
 }
 
 /* --- teman cerita (chat) --- */
@@ -4306,8 +4484,8 @@ async function send(){
     }
     else if(testReq){
       const t = PSY[testReq];
-      state.chat.push({role:'bot', text: t ? `**${t.title}** — ${t.items.length} pertanyaan tentang kondisimu 2 minggu terakhir. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*` : 'Ada 3 tes singkat yang bisa kamu coba: **Suasana Hati (PHQ-9)**, **Kecemasan (GAD-7)**, dan **Kesejahteraan (WHO-5)**. Masing-masing 2–3 menit. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*',
-        tools: t ? ['tes:' + t.id] : ['tes:phq9','tes:gad7','tes:who5'], ts:Date.now()}); save(); renderChat();
+      state.chat.push({role:'bot', text: t ? `${t.emoji} **Tes ${t.title}** — ${t.items.length} pertanyaan singkat (${t.short}). Ketuk tombol di bawah untuk mulai, semangat! 💪\n*Hasilnya skrining, bukan diagnosis.*` : `Ada ${PSY_ORDER.length} tes yang bisa kamu coba: stres-cemas-depresi, suasana hati, kecemasan, burnout, kebahagiaan, kesepian, percaya diri, tidur, dan trauma. Mulai dari yang paling kamu rasakan ya 🌈\n*Hasilnya skrining, bukan diagnosis.*`,
+        tools: t ? ['tes:' + t.id] : ['tes:dass21','tes:phq9','tes:gad7','tes:burnout','tes:menu'], ts:Date.now()}); save(); renderChat();
     }
     else if(!photo && answerCycle(text)) { /* siklus haid */ }
     else if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();

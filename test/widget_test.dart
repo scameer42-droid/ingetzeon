@@ -290,6 +290,8 @@ void main() {
       expect(Feelings.testRequest('mau tes depresi'), 'phq9');
       expect(Feelings.testRequest('tes kecemasan dong'), 'gad7');
       expect(Feelings.testRequest('tes psikologi'), 'menu');
+      expect(Feelings.testRequest('aku mau tes stres'), 'dass21');
+      expect(Feelings.testRequest('tes percaya diri'), 'rses');
       expect(SupportReply.crisis().text.contains('119'), true);
     });
     test('skor tes', () {
@@ -299,6 +301,19 @@ void main() {
       expect(TestResult.evaluate(PsyTest.who5, [5, 5, 5, 5, 5]).score, 100);
       expect(TestResult.evaluate(PsyTest.who5, [1, 1, 1, 1, 1]).level, 'Sangat rendah');
       expect(MoodAdvice.forDay(5, 5).tools.contains(Tool.fokus), true);
+      final dass = TestResult.evaluate(PsyTest.dass21, List.filled(21, 0)..[0] = 3..[5] = 3..[7] = 3..[10] = 3..[11] = 3);
+      expect(dass.parts.first.label, 'Stres');
+      expect(dass.parts.first.score, 30);
+      expect(dass.parts.first.level, 'Berat');
+      expect(dass.parts[2].level, 'Normal');
+      // Rosenberg: butir negatif dibalik → semua "sangat setuju" pada positif & "sangat tidak setuju" pada negatif = 30
+      expect(TestResult.evaluate(PsyTest.rses, [3, 0, 3, 3, 0, 0, 3, 0, 0, 3]).score, 30);
+      expect(TestResult.evaluate(PsyTest.ptsd5, [0]).severity, 0);
+      expect(PsyTest.ptsd5.stopsAfter([0]), true);
+      expect(TestResult.evaluate(PsyTest.ptsd5, [1, 1, 1, 1, 0, 0]).level, 'Positif');
+      expect(TestResult.evaluate(PsyTest.burnout, [75, 75, 75, 50, 75, 50]).level, 'Sedang');
+      expect(TestResult.evaluate(PsyTest.ucla3, [3, 3, 2]).level, 'Kesepian');
+      expect(PsyTest.all.length, 9);
     });
   });
 

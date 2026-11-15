@@ -140,9 +140,9 @@ class ChatNotifier extends Notifier<ChatState> {
         final t = PsyTest.byId(testReq);
         _bot(
             t == null
-                ? 'Ada 3 tes singkat yang bisa kamu coba: **Suasana Hati (PHQ-9)**, **Kecemasan (GAD-7)**, dan **Kesejahteraan (WHO-5)**. Masing-masing 2–3 menit. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*'
-                : '**${t.title}** — ${t.items.length} pertanyaan tentang kondisimu 2 minggu terakhir. Ketuk tombol di bawah untuk mulai 📝\n*Hasilnya skrining, bukan diagnosis.*',
-            tools: t == null ? const ['tes:phq9', 'tes:gad7', 'tes:who5'] : ['tes:${t.id}']);
+                ? 'Ada ${PsyTest.all.length} tes yang bisa kamu coba: stres-cemas-depresi, suasana hati, kecemasan, burnout, kebahagiaan, kesepian, percaya diri, tidur, dan trauma. Mulai dari yang paling kamu rasakan ya 🌈\n*Hasilnya skrining, bukan diagnosis.*'
+                : '${t.emoji} **Tes ${t.title}** — ${t.items.length} pertanyaan singkat (${t.short}). Ketuk tombol di bawah untuk mulai, semangat! 💪\n*Hasilnya skrining, bukan diagnosis.*',
+            tools: t == null ? const ['tes:dass21', 'tes:phq9', 'tes:gad7', 'tes:burnout', 'tes:menu'] : ['tes:${t.id}']);
         return;
       }
       final aboutParking = lower.contains('parkir');

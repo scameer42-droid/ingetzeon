@@ -1,5 +1,7 @@
 import 'dart:math';
 
+export 'psy_tests.dart';
+
 /// Logika Ruang Tenang (tanpa UI) — sinkron dengan versi website (index.html).
 /// IngetZeon BUKAN pengganti psikolog/psikiater; bagian ini memberi dukungan awal,
 /// latihan menenangkan diri, dan mengarahkan ke bantuan profesional (Healing119).
@@ -85,7 +87,13 @@ class Feelings {
     if (RegExp(r'depresi|phq|suasana hati|mood').hasMatch(t)) return 'phq9';
     if (RegExp(r'cemas|kecemasan|anxiety|gad|khawatir|panik').hasMatch(t)) return 'gad7';
     if (RegExp(r'kesejahteraan|well[- ]?being|who[- ]?5|bahagia').hasMatch(t)) return 'who5';
-    if (RegExp(r'psikolog|kesehatan mental|mental|jiwa|stres|stress|kepribadian|emosi').hasMatch(t)) return 'menu';
+    if (RegExp(r'burnout|burn out|kelelahan|capek kerja').hasMatch(t)) return 'burnout';
+    if (RegExp(r'stres|stress|dass').hasMatch(t)) return 'dass21';
+    if (RegExp(r'kesepian|sepi|ucla').hasMatch(t)) return 'ucla3';
+    if (RegExp(r'percaya diri|harga diri|insecure|minder|self[- ]?esteem').hasMatch(t)) return 'rses';
+    if (RegExp(r'tidur|insomnia').hasMatch(t)) return 'tidur';
+    if (RegExp(r'trauma|ptsd').hasMatch(t)) return 'ptsd5';
+    if (RegExp(r'psikolog|kesehatan mental|mental|jiwa|kepribadian|emosi').hasMatch(t)) return 'menu';
     return null;
   }
 }
@@ -259,179 +267,3 @@ class MoodAdvice {
   }
 }
 
-/// Kuesioner skrining standar (bebas dipakai). Hasil = skrining, BUKAN diagnosis.
-class PsyTest {
-  const PsyTest({
-    required this.id,
-    required this.title,
-    required this.short,
-    required this.intro,
-    required this.items,
-    required this.options,
-    required this.source,
-  });
-  final String id;
-  final String title;
-  final String short;
-  final String intro;
-  final List<String> items;
-  final List<(String, int)> options;
-  final String source;
-
-  int get maxScore => items.length * options.map((o) => o.$2).reduce(max);
-
-  static const _freq = [('Tidak pernah', 0), ('Beberapa hari', 1), ('Lebih dari separuh waktu', 2), ('Hampir setiap hari', 3)];
-
-  static const phq9 = PsyTest(
-    id: 'phq9',
-    title: 'Tes Suasana Hati (PHQ-9)',
-    short: 'Skrining gejala depresi',
-    intro: 'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?',
-    items: [
-      'Kurang tertarik atau kurang senang dalam melakukan apa pun',
-      'Merasa murung, sedih, atau putus asa',
-      'Sulit tidur atau mudah terbangun, atau malah terlalu banyak tidur',
-      'Merasa lelah atau kurang bertenaga',
-      'Kurang nafsu makan atau makan berlebihan',
-      'Merasa buruk tentang diri sendiri — merasa gagal atau telah mengecewakan diri sendiri maupun keluarga',
-      'Sulit berkonsentrasi, misalnya saat membaca atau menonton televisi',
-      'Bergerak atau bicara sangat lambat sampai orang lain memperhatikannya — atau sebaliknya, sangat gelisah sehingga lebih banyak bergerak dari biasanya',
-      'Berpikir bahwa lebih baik mati, atau ingin menyakiti diri sendiri dengan cara apa pun',
-    ],
-    options: _freq,
-    source: 'Patient Health Questionnaire-9 (Kroenke, Spitzer & Williams)',
-  );
-
-  static const gad7 = PsyTest(
-    id: 'gad7',
-    title: 'Tes Kecemasan (GAD-7)',
-    short: 'Skrining gejala cemas',
-    intro: 'Selama 2 minggu terakhir, seberapa sering kamu terganggu oleh hal-hal berikut?',
-    items: [
-      'Merasa gugup, cemas, atau tegang',
-      'Tidak mampu menghentikan atau mengendalikan rasa khawatir',
-      'Terlalu mengkhawatirkan berbagai hal',
-      'Sulit untuk merasa rileks',
-      'Sangat gelisah sampai sulit untuk duduk diam',
-      'Mudah kesal atau mudah tersinggung',
-      'Merasa takut seolah-olah sesuatu yang buruk akan terjadi',
-    ],
-    options: _freq,
-    source: 'Generalized Anxiety Disorder-7 (Spitzer, Kroenke, Williams & Löwe)',
-  );
-
-  static const who5 = PsyTest(
-    id: 'who5',
-    title: 'Indeks Kesejahteraan (WHO-5)',
-    short: 'Seberapa baik kondisimu belakangan ini',
-    intro: 'Selama 2 minggu terakhir, seberapa sesuai pernyataan berikut dengan dirimu?',
-    items: [
-      'Saya merasa ceria dan bersemangat',
-      'Saya merasa tenang dan santai',
-      'Saya merasa aktif dan bertenaga',
-      'Saya bangun dengan perasaan segar dan cukup istirahat',
-      'Hari-hari saya diisi dengan hal-hal yang menarik bagi saya',
-    ],
-    options: [('Sepanjang waktu', 5), ('Sering sekali', 4), ('Lebih dari separuh waktu', 3), ('Kurang dari separuh waktu', 2), ('Kadang-kadang', 1), ('Tidak pernah', 0)],
-    source: 'WHO-5 Well-Being Index (WHO Collaborating Centre in Mental Health)',
-  );
-
-  static const all = [phq9, gad7, who5];
-  static PsyTest? byId(String id) {
-    for (final t in all) {
-      if (t.id == id) return t;
-    }
-    return null;
-  }
-}
-
-class TestResult {
-  const TestResult({required this.score, required this.max, required this.level, required this.summary, required this.advice, required this.severity, this.crisis = false});
-  final int score;
-  final int max;
-  final String level;
-  final String summary;
-  final List<String> advice;
-  final int severity; // 0 baik … 3 berat
-  final bool crisis;
-
-  static TestResult evaluate(PsyTest t, List<int> answers) {
-    final score = answers.fold<int>(0, (a, b) => a + b);
-    switch (t.id) {
-      case 'phq9':
-        final crisis = answers.length >= 9 && answers[8] > 0;
-        final (lvl, sev) = score <= 4
-            ? ('Minimal', 0)
-            : score <= 9
-                ? ('Ringan', 1)
-                : score <= 14
-                    ? ('Sedang', 2)
-                    : score <= 19
-                        ? ('Cukup berat', 3)
-                        : ('Berat', 3);
-        return TestResult(
-          score: score,
-          max: 27,
-          level: lvl,
-          severity: sev,
-          crisis: crisis,
-          summary: sev == 0
-              ? 'Gejala suasana hati murung minimal. Pertahankan kebiasaan baikmu!'
-              : sev == 1
-                  ? 'Ada beberapa gejala ringan. Perhatikan pola tidur, gerak, dan hubungan sosialmu.'
-                  : 'Gejalamu cukup terasa dan bisa mengganggu aktivitas. Sebaiknya bicarakan dengan psikolog atau dokter.',
-          advice: [
-            if (sev >= 2) 'Buat janji dengan psikolog/psikiater, puskesmas, atau konsultasi gratis di Healing119 (119 ext 8).',
-            if (sev >= 1) 'Coba catat mood harian & tulis jurnal untuk melihat polanya.',
-            'Jaga tidur teratur, gerak badan 20–30 menit, dan tetap terhubung dengan orang terdekat.',
-            if (sev == 0) 'Ulangi tes ini sebulan lagi untuk memantau kondisimu.',
-          ],
-        );
-      case 'gad7':
-        final (lvl, sev) = score <= 4
-            ? ('Minimal', 0)
-            : score <= 9
-                ? ('Ringan', 1)
-                : score <= 14
-                    ? ('Sedang', 2)
-                    : ('Berat', 3);
-        return TestResult(
-          score: score,
-          max: 21,
-          level: lvl,
-          severity: sev,
-          summary: sev == 0
-              ? 'Tingkat kecemasanmu rendah. Bagus!'
-              : sev == 1
-                  ? 'Ada kecemasan ringan. Latihan napas & grounding bisa membantu.'
-                  : 'Kecemasanmu cukup tinggi dan bisa mengganggu keseharian. Sebaiknya konsultasikan dengan psikolog.',
-          advice: [
-            if (sev >= 2) 'Konsultasi dengan psikolog/dokter, atau hubungi Healing119 (119 ext 8, gratis).',
-            if (sev >= 1) 'Latih napas kotak atau 4-7-8 dua kali sehari, terutama saat cemas muncul.',
-            'Batasi kafein & berita yang memicu cemas, dan jaga waktu tidur.',
-          ],
-        );
-      default: // who5
-        final pct = score * 4;
-        final (lvl, sev) = pct > 50
-            ? ('Baik', 0)
-            : pct > 28
-                ? ('Rendah', 2)
-                : ('Sangat rendah', 3);
-        return TestResult(
-          score: pct,
-          max: 100,
-          level: lvl,
-          severity: sev,
-          summary: sev == 0
-              ? 'Kesejahteraanmu dalam kondisi baik.'
-              : 'Kesejahteraanmu sedang rendah. Ada baiknya mencoba tes PHQ-9 dan bicara dengan profesional bila berlanjut.',
-          advice: [
-            if (sev > 0) 'Coba tes Suasana Hati (PHQ-9) untuk gambaran yang lebih jelas.',
-            if (sev == 3) 'Pertimbangkan konsultasi ke psikolog atau Healing119 (119 ext 8).',
-            'Rencanakan satu kegiatan menyenangkan setiap hari, sekecil apa pun.',
-          ],
-        );
-    }
-  }
-}
