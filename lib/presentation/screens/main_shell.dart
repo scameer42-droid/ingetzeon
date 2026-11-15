@@ -76,24 +76,18 @@ class _MainShellState extends ConsumerState<MainShell> {
       backgroundColor: Colors.transparent,
       body: AestheticBackground(child: IndexedStack(index: _index, children: screens)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(padding: const EdgeInsets.only(top: 18), child: _GradientFab(onTap: _openAi)),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-          child: Container(
-            height: 70,
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(
-              color: context.isDark ? const Color(0xFF241F46).withValues(alpha: .92) : Colors.white.withValues(alpha: .9),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: context.glassLine),
-              boxShadow: [BoxShadow(color: const Color(0xFF503CB4).withValues(alpha: .28), blurRadius: 36, offset: const Offset(0, 16), spreadRadius: -16)],
-            ),
+      floatingActionButton: Padding(padding: const EdgeInsets.only(top: 24), child: _GradientFab(onTap: _openAi)),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(color: context.card, border: Border(top: BorderSide(color: context.line))),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 64,
             child: Row(
               children: [
                 _NavItem(icon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => setState(() => _index = 0)),
                 _NavItem(icon: Icons.calendar_month_rounded, label: 'Kalender', active: _index == 1, onTap: () => setState(() => _index = 1)),
-                const SizedBox(width: 76),
+                const SizedBox(width: 72),
                 _NavItem(icon: Icons.insert_chart_rounded, label: 'Statistik', active: _index == 2, onTap: () => setState(() => _index = 2)),
                 _NavItem(icon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => setState(() => _index = 3)),
               ],
@@ -135,13 +129,6 @@ class _NavItem extends StatelessWidget {
             Icon(icon, color: color, size: 24),
             const SizedBox(height: 2),
             Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: active ? FontWeight.w600 : FontWeight.w500)),
-            const SizedBox(height: 3),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: active ? 5 : 0,
-              height: 5,
-              decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-            ),
           ],
         ),
       ),
@@ -156,20 +143,19 @@ class _GradientFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 70,
-      height: 70,
+      width: 56,
+      height: 56,
       decoration: BoxDecoration(
         gradient: AppColors.gradient,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: context.isDark ? AppColors.bgDark : Colors.white.withValues(alpha: .8), width: 5),
-        boxShadow: [BoxShadow(color: const Color(0xFF8C5AF0).withValues(alpha: .6), blurRadius: 26, offset: const Offset(0, 14), spreadRadius: -8)],
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -6)],
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(18),
           onTap: onTap,
-          child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 28),
+          child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 24),
         ),
       ),
     );

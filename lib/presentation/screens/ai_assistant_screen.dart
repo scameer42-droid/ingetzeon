@@ -154,7 +154,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           Container(
             width: 42,
             height: 42,
-            decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(15), boxShadow: context.glowShadow),
+            decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
             child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
           ),
           const SizedBox(width: 10),
@@ -216,10 +216,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             ),
           Container(
             decoration: BoxDecoration(
-              color: context.isDark ? const Color(0xFF241F46).withValues(alpha: .94) : Colors.white.withValues(alpha: .9),
-              border: Border(top: BorderSide(color: context.glassLine)),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
-              boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .15), blurRadius: 30, offset: const Offset(0, -10), spreadRadius: -20)],
+              color: context.card,
+              border: Border(top: BorderSide(color: context.line)),
             ),
             padding: EdgeInsets.fromLTRB(14, 10, 14, 12 + MediaQuery.of(context).padding.bottom),
             child: Column(
@@ -312,12 +310,11 @@ class _RoundBtn extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient ? null : background,
         gradient: gradient ? AppColors.gradient : null,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: gradient ? context.glowShadow : null,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Material(
         type: MaterialType.transparency,
-        child: InkWell(borderRadius: BorderRadius.circular(16), onTap: onTap, child: Icon(icon, color: foreground, size: 22)),
+        child: InkWell(borderRadius: BorderRadius.circular(12), onTap: onTap, child: Icon(icon, color: foreground, size: 22)),
       ),
     );
   }

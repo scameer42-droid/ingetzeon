@@ -26,7 +26,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final list = ref.watch(remindersProvider);
     final items = occurrencesOn(list, _selected);
     final today = DateTime.now();
-    final rect = BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(14));
+    final rect = BoxDecoration(shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10));
 
     return SafeArea(
       bottom: false,
@@ -87,9 +87,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 outsideDecoration: rect,
                 disabledDecoration: rect,
                 holidayDecoration: rect,
-                todayDecoration: rect.copyWith(color: AppColors.primary.withValues(alpha: .12)),
+                todayDecoration: rect.copyWith(border: Border.all(color: AppColors.primary, width: 1.5)),
                 todayTextStyle: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
-                selectedDecoration: rect.copyWith(gradient: AppColors.gradient, boxShadow: context.glowShadow),
+                selectedDecoration: rect.copyWith(color: AppColors.primary),
                 selectedTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                 defaultTextStyle: const TextStyle(fontWeight: FontWeight.w500),
                 weekendTextStyle: const TextStyle(fontWeight: FontWeight.w500),

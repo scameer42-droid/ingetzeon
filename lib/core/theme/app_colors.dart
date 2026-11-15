@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
 
-/// Palet warna IngetZeon.
+/// Palet warna IngetZeon — netral & profesional dengan satu warna aksen.
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFF6C63FF);
-  static const primaryDeep = Color(0xFF5148E0);
-  static const violetMid = Color(0xFF8E6BFF);
-  static const pink = Color(0xFFFF6584);
+  static const primary = Color(0xFF5B54E8);
+  static const primaryDeep = Color(0xFF4A43D4);
+  static const violetMid = Color(0xFF5B54E8);
+  static const pink = Color(0xFFE5484D); // merah untuk hapus / terlewat
+  static const peach = Color(0xFFD97706);
 
-  static const bgLight = Color(0xFFF5F3FF);
-  static const bgDark = Color(0xFF110E22);
+  static const bgLight = Color(0xFFF6F6F8);
+  static const bgDark = Color(0xFF0B0B0F);
   static const cardLight = Colors.white;
-  static const cardDark = Color(0xFF191730);
-  static const card2Light = Color(0xFFF1F0FB);
-  static const card2Dark = Color(0xFF221F3D);
-  static const lineLight = Color(0xFFECEAF7);
-  static const lineDark = Color(0xFF2A2748);
-  static const inkLight = Color(0xFF1E1B3A);
-  static const inkDark = Color(0xFFF2F1FF);
-  static const mutedLight = Color(0xFF6E6A8A);
-  static const mutedDark = Color(0xFFA9A5CC);
-  static const faintLight = Color(0xFFA9A5C4);
-  static const faintDark = Color(0xFF6F6B94);
+  static const cardDark = Color(0xFF16161C);
+  static const card2Light = Color(0xFFF2F2F5);
+  static const card2Dark = Color(0xFF1E1E26);
+  static const lineLight = Color(0xFFE6E6EB);
+  static const lineDark = Color(0xFF2A2A33);
+  static const inkLight = Color(0xFF111118);
+  static const inkDark = Color(0xFFEDEDF0);
+  static const mutedLight = Color(0xFF6B6B76);
+  static const mutedDark = Color(0xFF9A9AA6);
+  static const faintLight = Color(0xFFA1A1AA);
+  static const faintDark = Color(0xFF62626E);
 
-  static const peach = Color(0xFFFFB38A);
-
-  static const gradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF7B6CFF), Color(0xFFA47BFF), Color(0xFFFF7AA2), peach],
-    stops: [0, .38, .72, 1],
-  );
-
-  /// Gradasi "mesh" untuk kartu utama.
-  static const meshBase = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF8B72FF), Color(0xFFFF7AA2)],
-  );
+  /// Dipertahankan agar kode lama tetap jalan — kini warna aksen polos.
+  static const gradient = LinearGradient(colors: [primary, primary]);
+  static const meshBase = LinearGradient(colors: [primary, primary]);
 }
 
 /// Akses cepat warna sesuai tema terang/gelap.
@@ -48,22 +37,15 @@ extension ThemeX on BuildContext {
   Color get muted => isDark ? AppColors.mutedDark : AppColors.mutedLight;
   Color get faint => isDark ? AppColors.faintDark : AppColors.faintLight;
   Color get card => isDark ? AppColors.cardDark : AppColors.cardLight;
-
-  /// Kartu kaca (transparan lembut di atas latar pastel).
-  Color get glass => isDark ? const Color(0xFF241F46).withValues(alpha: .72) : Colors.white.withValues(alpha: .74);
-  Color get glassLine => isDark ? Colors.white.withValues(alpha: .07) : Colors.white.withValues(alpha: .92);
   Color get card2 => isDark ? AppColors.card2Dark : AppColors.card2Light;
   Color get line => isDark ? AppColors.lineDark : AppColors.lineLight;
   Color get bg => isDark ? AppColors.bgDark : AppColors.bgLight;
+  Color get glass => card;
+  Color get glassLine => line;
 
-  List<BoxShadow> get softShadow => isDark
-      ? [BoxShadow(color: Colors.black.withValues(alpha: .35), blurRadius: 22, offset: const Offset(0, 10), spreadRadius: -12)]
-      : [
-          BoxShadow(color: const Color(0xFF281E78).withValues(alpha: .04), blurRadius: 2, offset: const Offset(0, 1)),
-          BoxShadow(color: const Color(0xFF3C30B4).withValues(alpha: .22), blurRadius: 24, offset: const Offset(0, 8), spreadRadius: -14),
-        ];
+  List<BoxShadow> get softShadow =>
+      isDark ? const [] : [BoxShadow(color: const Color(0xFF101018).withValues(alpha: .04), blurRadius: 2, offset: const Offset(0, 1))];
 
-  List<BoxShadow> get glowShadow => [
-        BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 28, offset: const Offset(0, 14), spreadRadius: -12),
-      ];
+  List<BoxShadow> get glowShadow =>
+      [BoxShadow(color: AppColors.primary.withValues(alpha: .35), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
 }

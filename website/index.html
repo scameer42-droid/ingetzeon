@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F6F5FF" id="metaTheme">
+<meta name="theme-color" content="#F6F6F8" id="metaTheme">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="IngetZeon">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>IngetZeon</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -384,111 +384,134 @@ textarea.input{height:84px;padding:14px 16px;resize:none}
 @media (min-width:520px){
   body{background:radial-gradient(1200px 600px at 50% -10%,var(--primary-soft),var(--bg))}
 }
-/* =========== TAMPILAN ESTETIK (pastel glass) =========== */
+/* =========== TAMPILAN PROFESIONAL =========== */
 :root{
-  --bg:#F5F3FF;
-  --glass:rgba(255,255,255,.66);
-  --glass-strong:rgba(255,255,255,.82);
-  --glass-line:rgba(255,255,255,.9);
-  --card:var(--glass-strong);
-  --card-2:rgba(240,237,255,.75);
-  --line:rgba(108,99,255,.12);
-  --grad:linear-gradient(135deg,#7B6CFF 0%,#A47BFF 38%,#FF7AA2 72%,#FFB38A 100%);
-  --shadow:0 1px 1px rgba(60,40,140,.03),0 12px 32px -18px rgba(92,70,200,.35);
-  --shadow-lg:0 20px 44px -20px rgba(120,80,230,.6);
-  --r:22px;
+  --primary:#5B54E8; --primary-deep:#4A43D4; --primary-soft:#EEEDFD;
+  --pink:#E5484D; --pink-soft:#FDECEC;
+  --grad:#5B54E8;
+  --bg:#F6F6F8; --card:#FFFFFF; --card-2:#F2F2F5; --line:#E6E6EB;
+  --ink:#111118; --muted:#6B6B76; --faint:#A1A1AA;
+  --c-kerja:#5B54E8; --c-kerja-soft:#EEEDFD;
+  --c-pribadi:#D6336C; --c-pribadi-soft:#FCEAF1;
+  --c-kesehatan:#12A150; --c-kesehatan-soft:#E5F6EC;
+  --c-edukasi:#D97706; --c-edukasi-soft:#FDF1E1;
+  --c-parkir:#0891B2; --c-parkir-soft:#E2F4F8;
+  --c-lainnya:#64748B; --c-lainnya-soft:#EEF1F5;
+  --shadow:0 1px 2px rgba(16,16,24,.04);
+  --shadow-lg:0 6px 18px -8px rgba(16,16,24,.18);
+  --r:16px;
 }
 [data-theme="dark"]{
-  --bg:#110E22;
-  --glass:rgba(34,29,66,.55);
-  --glass-strong:rgba(36,31,70,.72);
-  --glass-line:rgba(255,255,255,.07);
-  --card:var(--glass-strong);
-  --card-2:rgba(255,255,255,.06);
-  --line:rgba(255,255,255,.08);
+  --bg:#0B0B0F; --card:#16161C; --card-2:#1E1E26; --line:#2A2A33;
+  --ink:#EDEDF0; --muted:#9A9AA6; --faint:#62626E;
+  --primary-soft:#24224A; --pink-soft:#3A1D20;
+  --c-kerja-soft:#24224A; --c-pribadi-soft:#3A1A27; --c-kesehatan-soft:#12301F;
+  --c-edukasi-soft:#33260F; --c-parkir-soft:#0F2D35; --c-lainnya-soft:#22262E;
+  --shadow:none; --shadow-lg:0 8px 24px -10px rgba(0,0,0,.6);
 }
-body{background:var(--bg)}
-body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(38% 30% at 12% 8%,rgba(184,170,255,.75),transparent 70%),
-    radial-gradient(34% 28% at 92% 14%,rgba(255,182,206,.7),transparent 70%),
-    radial-gradient(40% 32% at 85% 78%,rgba(255,214,186,.55),transparent 70%),
-    radial-gradient(36% 30% at 8% 88%,rgba(186,240,226,.55),transparent 70%);
-  filter:blur(10px);animation:drift 24s ease-in-out infinite alternate}
-[data-theme="dark"] body::before{opacity:.28}
-@keyframes drift{to{transform:translate3d(-2%,2%,0) scale(1.05)}}
+html,body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:-.01em;background:var(--bg)}
 @media (min-width:520px){body{background:var(--bg)}}
 
-/* kaca */
+/* kartu datar dengan garis tipis */
 .item,.ask,.progress-mini,.empty-state,.cal,.stat,.card,.group,.quick button,.park,.icon-btn,.msg.bot,.suggest button{
-  background:var(--glass)!important;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
-  border:1px solid var(--glass-line);box-shadow:var(--shadow)}
-.item{border-radius:20px}
-.item .cat,.park .ph:not(img){background-image:linear-gradient(145deg,rgba(255,255,255,.55),rgba(255,255,255,0))}
+  background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.item{border-radius:14px;padding:12px 12px 12px 14px}
+.item .cat{width:38px;height:38px;border-radius:11px}
+.item .cat svg{width:18px;height:18px}
+.item .t{font-weight:500;font-size:15px}
+.check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--faint)}
+.check svg{width:14px;height:14px}
+.item.done .check{background:var(--primary);border-color:var(--primary)}
+.pill{background:var(--card-2);font-weight:500}
 
 /* tipografi */
-.top h1{font-size:24px;letter-spacing:-.5px}
-.greet h1{font-size:26px;font-weight:600;letter-spacing:-.6px;line-height:1.15}
-.greet h1 span{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:31px;letter-spacing:-.3px;padding-right:4px}
-.eyebrow{letter-spacing:.2px}
-.section-h h2{font-size:16px;letter-spacing:-.2px}
-.section-h h2::before{content:"";display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--grad);margin-right:8px;vertical-align:2px}
+.top h1{font-size:26px;font-weight:700;letter-spacing:-.03em}
+.greet h1{font-size:24px;font-weight:600;letter-spacing:-.03em;line-height:1.25}
+.greet h1 span{background:none;-webkit-background-clip:initial;background-clip:initial;color:var(--ink)}
+.eyebrow{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0}
+.section-h{margin:26px 2px 10px}
+.section-h h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.section-h .link{font-weight:600}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--primary);font-size:16px;box-shadow:none}
 
-/* hero mesh */
-.hero{border-radius:28px;background:
-  radial-gradient(60% 80% at 100% 0%,rgba(255,179,138,.95),transparent 60%),
-  radial-gradient(70% 90% at 0% 100%,rgba(123,108,255,1),transparent 65%),
-  linear-gradient(135deg,#8B72FF,#FF7AA2);
-  box-shadow:0 24px 50px -24px rgba(140,90,240,.75),inset 0 1px 0 rgba(255,255,255,.35)}
-.hero::before{background:rgba(255,255,255,.16);filter:blur(2px)}
-.hero::after{background:rgba(255,255,255,.10)}
-.hero h3{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:25px;letter-spacing:-.2px}
-.hero-label{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35)}
-.hero .count b{border-radius:14px;box-shadow:0 6px 16px -8px rgba(60,30,120,.5)}
-.hero .done-btn{border-radius:14px;backdrop-filter:blur(6px);background:rgba(255,255,255,.12)}
-.avatar{border-radius:18px;box-shadow:0 10px 24px -10px rgba(140,90,240,.8),inset 0 1px 0 rgba(255,255,255,.4)}
+/* kartu "berikutnya" */
+.hero{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);min-height:0;padding:18px}
+.hero::before,.hero::after{display:none}
+.hero-label{background:var(--primary-soft);color:var(--primary);backdrop-filter:none;border:0;font-size:11.5px;letter-spacing:.02em}
+.hero h3{font-size:20px;font-weight:600;letter-spacing:-.02em;margin:10px 0 2px}
+.hero .when{color:var(--muted);opacity:1;font-size:14px}
+.hero .count b{background:var(--primary);color:#fff;border-radius:10px;font-weight:600;box-shadow:none}
+.hero .done-btn{color:var(--ink);border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.hero.empty p{color:var(--muted);opacity:1}
 
-/* nav melayang */
-.nav{bottom:calc(12px + var(--safe-b))}
-.nav-in{width:calc(100% - 28px);border-radius:28px;height:var(--nav-h);padding-bottom:0;
-  background:var(--glass-strong);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);
-  border:1px solid var(--glass-line);box-shadow:0 18px 40px -18px rgba(80,60,180,.45)}
-.fab{box-shadow:0 16px 30px -12px rgba(140,90,240,.85),0 0 0 6px rgba(255,255,255,.55);transform:translateY(-22px)}
-[data-theme="dark"] .fab{box-shadow:0 16px 30px -12px rgba(140,90,240,.85),0 0 0 6px rgba(17,14,34,.8)}
-.fab:active{transform:translateY(-22px) scale(.93)}
-.nav-b.active{color:var(--primary)}
-.screen{padding-bottom:calc(var(--nav-h) + 60px + var(--safe-b))}
-.toast{bottom:calc(var(--nav-h) + 40px + var(--safe-b));border-radius:16px}
+.ask{border-radius:14px;padding:10px 10px 10px 14px}
+.ask .spark{background:var(--card-2);color:var(--muted);border-radius:10px}
+.ask .mic{background:var(--primary);border-radius:10px}
+.quick button{border-radius:14px;font-weight:500}
+.quick .qi{border-radius:10px}
+.park{border-radius:16px}
+.progress-mini .bar i{background:var(--primary)}
+.progress-mini{border-radius:14px}
+
+/* navigasi bawah */
+.nav-in{border-radius:0;box-shadow:none;border-top:1px solid var(--line);background:var(--card)}
+.nav-b{font-weight:500;color:var(--faint)}
+.nav-b.active::after{display:none}
+.nav-b.active span{font-weight:600}
+.fab{width:56px;height:56px;border-radius:18px;background:var(--primary);box-shadow:0 8px 20px -8px rgba(91,84,232,.7);transform:translateY(-14px)}
+.fab:active{transform:translateY(-14px) scale(.94)}
+.fab svg{width:24px;height:24px}
 
 /* tombol & input */
-.btn{border-radius:18px}
-.btn-primary{background:var(--grad);box-shadow:0 14px 28px -14px rgba(140,90,240,.8),inset 0 1px 0 rgba(255,255,255,.3)}
-.input{background:var(--glass-strong);border-color:var(--line);border-radius:18px}
-.chip{border-radius:14px;background:var(--glass-strong);border-color:var(--line)}
-.check{border-radius:11px}
-.day.sel{background:var(--grad)}
+.btn{border-radius:12px;font-weight:600}
+.btn-primary{background:var(--primary);box-shadow:none}
+.btn-primary:hover{background:var(--primary-deep)}
+.btn-soft{background:var(--primary-soft)}
+.btn-ghost{background:var(--card-2)}
+.input{border-radius:12px;border:1px solid var(--line);background:var(--card);height:48px}
+textarea.input{height:84px}
+.input:focus{box-shadow:0 0 0 3px rgba(91,84,232,.15)}
+.chip{border-radius:10px;border:1px solid var(--line);height:38px;font-weight:500}
+.chip.on{background:var(--primary)}
+.switch.on{background:var(--primary)}
+
+/* kalender & statistik */
+.cal{border-radius:16px}
+.day{border-radius:10px}
+.day.today{background:transparent;color:var(--primary);box-shadow:inset 0 0 0 1.5px var(--primary)}
+.day.sel,.day.today.sel{background:var(--primary);color:#fff;box-shadow:none}
+.stat,.card{border-radius:16px}
+.stat .v{font-weight:700;letter-spacing:-.03em}
+
+/* profil */
+.profile-card{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:18px}
+.profile-card::after{display:none}
+.profile-card .av{background:var(--primary);color:#fff;border-radius:50%;width:56px;height:56px}
+.profile-card p{color:var(--muted);opacity:1}
+#pfEdit{background:var(--card-2)!important;color:var(--ink)!important}
+.group{border-radius:16px}
+.group-t{font-size:12px;letter-spacing:.06em}
+.row-s .ic{border-radius:10px;width:34px;height:34px}
 
 /* lembar & layar penuh */
-.sheet{background:var(--glass-strong);backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);border-top:1px solid var(--glass-line)}
-.full{background:transparent}
-.full::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--bg)}
-.full::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(45% 30% at 0% 0%,rgba(184,170,255,.55),transparent 70%),radial-gradient(40% 30% at 100% 20%,rgba(255,182,206,.45),transparent 70%)}
-[data-theme="dark"] .full::after{opacity:.3}
-.composer{background:var(--glass-strong);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid var(--glass-line)}
-.msg{border-radius:22px}
-.msg.bot{line-height:1.6}
+.sheet{border-radius:20px 20px 0 0}
+.full{background:var(--bg)}
+.composer{border-radius:0;border-top:1px solid var(--line);box-shadow:none}
+.composer textarea{border-radius:12px}
+.composer .mic-b,.composer .send-b,.composer .cam-b{border-radius:12px;width:44px;height:44px}
+.composer .send-b{background:var(--primary);box-shadow:none}
+.ai-ava{background:var(--primary);border-radius:12px;box-shadow:none;width:38px;height:38px}
+.msg{border-radius:18px;font-size:15px}
+.msg.me{background:var(--primary)}
+.msg.bot b{color:inherit}
 .msg.bot ul{margin:6px 0 2px 18px;padding:0}
 .msg.bot li{margin:2px 0}
 .msg.bot h4{font-size:14.5px;margin:6px 0 2px}
-.msg.bot a{color:var(--primary)}
 .msg .srcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;white-space:normal}
-.msg .srcs a{font-size:11.5px;padding:3px 9px;border-radius:99px;background:var(--card-2);text-decoration:none;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.alarm-box{background:var(--glass-strong);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--glass-line);border-radius:32px}
-.profile-card{border-radius:28px;background:
-  radial-gradient(60% 80% at 100% 0%,rgba(255,179,138,.9),transparent 60%),
-  radial-gradient(70% 90% at 0% 100%,rgba(123,108,255,1),transparent 65%),
-  linear-gradient(135deg,#8B72FF,#FF7AA2)}
+.msg .srcs a{font-size:11.5px;padding:3px 9px;border-radius:99px;background:var(--card-2);color:var(--primary);text-decoration:none;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alarm-box{border-radius:24px}
+.bell{background:var(--primary);border-radius:22px;box-shadow:none}
+.toast{border-radius:12px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -565,7 +588,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
       <div class="ring-wrap">
         <div class="ring">
           <svg viewBox="0 0 120 120">
-            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6C63FF"/><stop offset="1" stop-color="#FF6584"/></linearGradient></defs>
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B54E8"/><stop offset="1" stop-color="#5B54E8"/></linearGradient></defs>
             <circle cx="60" cy="60" r="50" fill="none" stroke="var(--card-2)" stroke-width="14"/>
             <circle id="ringArc" cx="60" cy="60" r="50" fill="none" stroke="url(#rg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" style="transition:stroke-dashoffset 1s var(--ease)"/>
           </svg>
@@ -1184,7 +1207,7 @@ function applyTheme(){
   const t = state.settings.theme;
   const dark = t==='dark' || (t==='system' && mq.matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  $('#metaTheme').setAttribute('content', dark ? '#0E0D1A' : '#F6F5FF');
+  $('#metaTheme').setAttribute('content', dark ? '#0B0B0F' : '#F6F6F8');
   $$('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.themeOpt===t));
 }
 mq.addEventListener?.('change', applyTheme);
@@ -1215,7 +1238,7 @@ function renderHome(){
   const now = new Date();
   const name = state.settings.name.trim();
   $('#todayLabel').textContent = fmtDateLong(now);
-  $('#greetText').innerHTML = `${greeting()},<br><span>${esc(name || 'Kamu')}</span> 👋`;
+  $('#greetText').innerHTML = `${greeting()}, <span>${esc(name || 'Kamu')}</span>`;
   $('#homeAvatar').textContent = (name || 'I')[0].toUpperCase();
 
   const nx = nextUpcoming();
@@ -1362,7 +1385,7 @@ function renderStats(){
   const bw = 26, gap = (W - padL*2 - bw*7) / 6;
   const ch = H - padB - top;
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik jumlah pengingat 7 hari terakhir">
-    <defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6584"/><stop offset="1" stop-color="#6C63FF"/></linearGradient></defs>`;
+    <defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B54E8"/><stop offset="1" stop-color="#5B54E8"/></linearGradient></defs>`;
   for(let g=0; g<=2; g++){
     const y = top + ch * g/2;
     svg += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-dasharray="3 5"/>`;

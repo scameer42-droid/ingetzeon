@@ -26,11 +26,11 @@ class ReminderTile extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: SoftCard(
         padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-        radius: 18,
+        radius: 14,
         onTap: () => showReminderDetail(context, ref, r, item.at),
         child: Row(
           children: [
-            CategoryIcon(r.category, faded: item.done),
+            CategoryIcon(r.category, faded: item.done, size: 38),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -41,7 +41,7 @@ class ReminderTile extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       fontSize: 15,
                       color: item.done ? context.faint : null,
                       decoration: item.done ? TextDecoration.lineThrough : null,
@@ -108,14 +108,14 @@ class _CheckButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
-        width: 32,
-        height: 32,
+        width: 26,
+        height: 26,
         decoration: BoxDecoration(
-          gradient: done ? AppColors.gradient : null,
-          borderRadius: BorderRadius.circular(10),
-          border: done ? null : Border.all(color: context.line, width: 2),
+          color: done ? AppColors.primary : null,
+          shape: BoxShape.circle,
+          border: done ? null : Border.all(color: context.faint, width: 1.5),
         ),
-        child: done ? const Icon(Icons.check_rounded, color: Colors.white, size: 18) : null,
+        child: done ? const Icon(Icons.check_rounded, color: Colors.white, size: 16) : null,
       ),
     );
   }

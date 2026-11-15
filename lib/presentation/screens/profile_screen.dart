@@ -56,21 +56,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(20)),
+                decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
                 alignment: Alignment.center,
                 child: Text((s.name.isEmpty ? 'I' : s.name[0]).toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700)),
+                    style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name, style: accentFont(size: 22, color: Colors.white)),
-                  Text('$count pengingat tersimpan', style: TextStyle(color: Colors.white.withValues(alpha: .9), fontSize: 13)),
+                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name, style: accentFont(size: 18, color: context.ink)),
+                  Text('$count pengingat tersimpan', style: TextStyle(color: context.muted, fontSize: 13)),
                 ]),
               ),
               IconButton(
-                style: IconButton.styleFrom(backgroundColor: Colors.white.withValues(alpha: .2)),
-                icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                style: IconButton.styleFrom(backgroundColor: context.card2),
+                icon: Icon(Icons.edit_rounded, color: context.ink, size: 20),
                 onPressed: () async {
                   final v = await inputDialog(context, title: 'Nama kamu', message: 'Dipakai untuk sapaan di beranda.', initial: s.name, hint: 'Nama panggilan');
                   if (v != null) notifier.setName(v);

@@ -18,11 +18,11 @@ enum RepeatType {
 }
 
 enum ReminderCategory {
-  kerja('Kerja', Color(0xFF6C63FF), Icons.work_outline_rounded),
-  pribadi('Pribadi', Color(0xFFFF6584), Icons.favorite_border_rounded),
-  kesehatan('Kesehatan', Color(0xFF1FB57A), Icons.monitor_heart_outlined),
-  edukasi('Edukasi', Color(0xFFF2A11B), Icons.menu_book_rounded),
-  parkir('Parkir', Color(0xFF0EA5B7), Icons.local_parking_rounded),
+  kerja('Kerja', Color(0xFF5B54E8), Icons.work_outline_rounded),
+  pribadi('Pribadi', Color(0xFFD6336C), Icons.favorite_border_rounded),
+  kesehatan('Kesehatan', Color(0xFF12A150), Icons.monitor_heart_outlined),
+  edukasi('Edukasi', Color(0xFFD97706), Icons.menu_book_rounded),
+  parkir('Parkir', Color(0xFF0891B2), Icons.local_parking_rounded),
   lainnya('Lainnya', Color(0xFF64748B), Icons.star_border_rounded);
 
   const ReminderCategory(this.label, this.color, this.icon);
@@ -30,7 +30,7 @@ enum ReminderCategory {
   final Color color;
   final IconData icon;
 
-  Color get soft => color.withValues(alpha: .14);
+  Color get soft => color.withValues(alpha: .11);
 
   static ReminderCategory fromName(String? n) =>
       ReminderCategory.values.firstWhere((e) => e.name == n, orElse: () => ReminderCategory.lainnya);

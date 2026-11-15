@@ -185,7 +185,7 @@ class StatsScreen extends ConsumerWidget {
                               color: context.card2,
                               rodStackItems: [
                                 if (days[i].done > 0)
-                                  BarChartRodStackItem(0, days[i].done.toDouble(), AppColors.violetMid),
+                                  BarChartRodStackItem(0, days[i].done.toDouble(), AppColors.primary),
                               ],
                             ),
                           ],
@@ -290,7 +290,7 @@ class _RingPainter extends CustomPainter {
       ..shader = const SweepGradient(
         startAngle: -math.pi / 2,
         endAngle: math.pi * 1.5,
-        colors: [AppColors.primary, AppColors.violetMid, AppColors.pink],
+        colors: [AppColors.primary, AppColors.primary],
       ).createShader(rect)
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
