@@ -8,7 +8,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'package:hive_flutter/hive_flutter.dart';
+
 import '../core/utils/date_utils.dart';
+import '../data/repositories/settings_repository.dart';
 import '../data/models/reminder.dart';
 
 /// Pilihan bunyi alarm. Tiap pilihan punya channel Android sendiri
@@ -80,7 +83,59 @@ class NotificationService {
 
     final launch = await _plugin.getNotificationAppLaunchDetails();
     if (launch?.didNotificationLaunchApp ?? false) _launchResponse = launch!.notificationResponse;
+    _loadSigs();
   }
+
+  // ---------- jadwal hemat: hanya daftar ulang yang berubah ----------
+  // Tiap panggilan jadwal/batal di Android membaca & menulis ulang SELURUH daftar jadwal di HP.
+  // Ratusan panggilan saat aplikasi dibuka bikin HP macet ("tidak menanggapi"), jadi kita catat
+  // jadwal yang sudah terdaftar dan hanya mengirim yang benar-benar berubah.
+  static const _sigKey = 'notif_sig_v2';
+  final Map<String, String> _sig = {};
+  bool _needsReset = false;
+  Box get _box => Hive.box(SettingsRepository.boxName);
+  String get _today => dayKey(DateTime.now());
+
+  void _loadSigs() {
+    final raw = _box.get(_sigKey);
+    if (raw is Map) {
+      raw.forEach((k, v) => _sig['$k'] = '$v');
+    } else {
+      _needsReset = true; // pertama kali setelah update: bersihkan jadwal lama sekaligus (1 panggilan)
+    }
+  }
+
+  Future<void> _saveSigs() => _box.put(_sigKey, Map<String, String>.from(_sig));
+
+  /// Sekali saja: hapus semua jadwal lama yang menumpuk, lalu semua didaftarkan ulang dengan rapi.
+  Future<void> resetIfNeeded() async {
+    if (!_needsReset) return;
+    _needsReset = false;
+    try {
+      await _plugin.cancelAll();
+    } catch (_) {}
+    _sig.clear();
+    await _saveSigs();
+  }
+
+  /// Sudah terdaftar dengan isi yang sama hari ini? (sekali sehari tetap didaftarkan ulang untuk jaga-jaga)
+  bool _same(int id, String sig) => _sig['$id'] == '$_today|$sig';
+
+  Future<void> _mark(int id, String sig) async {
+    _sig['$id'] = '$_today|$sig';
+    await _saveSigs();
+  }
+
+  /// Batalkan hanya bila memang pernah dijadwalkan (atau [force]).
+  Future<void> _cancelId(int id, {bool force = false}) async {
+    if (!force && !_sig.containsKey('$id')) return;
+    _sig.remove('$id');
+    await _saveSigs();
+    await _plugin.cancel(id);
+  }
+
+  /// Beri jeda kecil agar HP tetap responsif saat menjadwalkan banyak notifikasi.
+  Future<void> _breathe() => Future.delayed(const Duration(milliseconds: 12));
 
   /// Notifikasi yang membuka aplikasi saat aplikasi masih tertutup.
   NotificationResponse? takeLaunchResponse() {
@@ -195,11 +250,12 @@ class NotificationService {
   }
 
   /// Daftarkan (ulang) alarm untuk satu pengingat. Juga menghentikan alarm yang sedang berbunyi.
-  Future<void> schedule(Reminder r) async {
-    await _plugin.cancel(r.notifId);
-    if (!r.alarm) return;
-    final next = r.nextOccurrence();
-    if (next == null) return;
+  Future<void> schedule(Reminder r, {bool stopRinging = false}) async {
+    final next = r.alarm ? r.nextOccurrence() : null;
+    if (next == null) {
+      await _cancelId(r.notifId, force: stopRinging);
+      return;
+    }
 
     final when = tz.TZDateTime(tz.local, next.year, next.month, next.day, next.hour, next.minute);
     final match = switch (r.repeat) {
@@ -209,6 +265,10 @@ class NotificationService {
       RepeatType.once => null,
     };
     final body = [fmtTime(next), if (r.note != null) r.note!].join(' · ');
+    final mode = await _mode();
+    final sig = '${r.title}|$body|${when.toIso8601String()}|$match|${r.photoPath}|${sound.name}|${mode.name}';
+    if (_same(r.notifId, sig) && !stopRinging) return;
+    if (stopRinging) await _plugin.cancel(r.notifId);
 
     try {
       await _plugin.zonedSchedule(
@@ -217,10 +277,11 @@ class NotificationService {
         body,
         when,
         _details('⏰ ${r.title}', body, photoPath: r.photoPath),
-        androidScheduleMode: await _mode(),
+        androidScheduleMode: mode,
         matchDateTimeComponents: match,
         payload: r.id,
       );
+      await _mark(r.notifId, sig);
     } catch (e) {
       debugPrint('Gagal menjadwalkan notifikasi: $e');
     }
@@ -254,6 +315,7 @@ class NotificationService {
       if (!at.isAfter(DateTime.now())) continue;
       final body = 'Kamu sudah parkir $h jam di $lokasi (sejak ${fmtTime(start)}).';
       try {
+        await _breathe();
         await _plugin.zonedSchedule(
           _hourlyBase + h,
           '⏱ Sudah $h jam parkir',
@@ -263,6 +325,7 @@ class NotificationService {
           androidScheduleMode: mode,
           payload: r.id,
         );
+        await _mark(_hourlyBase + h, 'parkir');
       } catch (e) {
         debugPrint('Gagal jadwal parkir per jam: $e');
       }
@@ -274,9 +337,12 @@ class NotificationService {
   /// Pengingat haid: 2 hari sebelum & pada hari perkiraan (jam 08.00).
   /// [next] null → batalkan semua.
   Future<void> scheduleCycle(DateTime? next, {DateTime? endDay}) async {
+    final sigAll = '${next?.toIso8601String()}|${endDay?.toIso8601String()}';
+    if (_same(_cycleBase, sigAll)) return;
     for (var i = 1; i <= 3; i++) {
-      await _plugin.cancel(_cycleBase + i);
+      await _cancelId(_cycleBase + i);
     }
+    await _mark(_cycleBase, sigAll);
     if (next == null) return;
     final mode = await _modeSoft();
     final items = [
@@ -291,6 +357,7 @@ class NotificationService {
     for (final it in items) {
       if (!it.at.isAfter(DateTime.now())) continue;
       try {
+        await _mark(it.id, 'haid');
         await _plugin.zonedSchedule(
           it.id,
           it.title,
@@ -337,9 +404,14 @@ class NotificationService {
     final now = DateTime.now();
     var at = DateTime(now.year, now.month, now.day, hour, minute);
     if (!at.isAfter(now)) at = at.add(const Duration(days: 1));
+    final mode = await _modeSoft();
+    final sig = '$hour:$minute|$title|$body|${mode.name}';
+    if (_same(id, sig)) return;
     try {
+      await _breathe();
       await _plugin.zonedSchedule(id, title, body, tz.TZDateTime.from(at, tz.local), _simple(body, color),
-          androidScheduleMode: await _modeSoft(), matchDateTimeComponents: DateTimeComponents.time, payload: payload);
+          androidScheduleMode: mode, matchDateTimeComponents: DateTimeComponents.time, payload: payload);
+      await _mark(id, sig);
     } catch (e) {
       debugPrint('Gagal jadwal harian: $e');
     }
@@ -347,8 +419,8 @@ class NotificationService {
 
   /// Pengingat harian cek mood (pagi) & jurnal (malam). null = matikan.
   Future<void> scheduleCalm({int? checkinHour, int? journalHour}) async {
-    await _plugin.cancel(_calmBase + 1);
-    await _plugin.cancel(_calmBase + 2);
+    if (checkinHour == null) await _cancelId(_calmBase + 1);
+    if (journalHour == null) await _cancelId(_calmBase + 2);
     if (checkinHour != null) {
       await _daily(_calmBase + 1, checkinHour, 0, '🙂 Gimana perasaanmu pagi ini?', 'Catat mood & energimu, nanti aku sarankan jadwal yang pas untuk hari ini.', 'calm:mood', const Color(0xFF4F46E5));
     }
@@ -359,8 +431,10 @@ class NotificationService {
 
   /// Pengingat kebiasaan harian.
   Future<void> scheduleHabits(List<({int index, String title, int hour, int minute})> items) async {
+    final keep = {for (final it in items.take(60)) _calmBase + 10 + it.index};
     for (var i = 0; i < 60; i++) {
-      await _plugin.cancel(_calmBase + 10 + i);
+      final id = _calmBase + 10 + i;
+      if (!keep.contains(id)) await _cancelId(id);
     }
     for (final it in items.take(60)) {
       await _daily(_calmBase + 10 + it.index, it.hour, it.minute, it.title, 'Yuk, centang kebiasaan baikmu hari ini ✨', 'calm:kebiasaan', const Color(0xFF12A150));
@@ -369,7 +443,7 @@ class NotificationService {
 
   /// Notifikasi saat sesi fokus/istirahat selesai. [at] null = batalkan.
   Future<void> scheduleFocusEnd(DateTime? at, {String title = '', String body = ''}) async {
-    await _plugin.cancel(_calmBase + 900);
+    await _cancelId(_calmBase + 900, force: true);
     if (at == null || !at.isAfter(DateTime.now())) return;
     try {
       await _plugin.zonedSchedule(_calmBase + 900, title, body, tz.TZDateTime.from(at, tz.local), _details(title, body, override: AlarmSound.notif),
@@ -384,15 +458,23 @@ class NotificationService {
 
   /// Notifikasi waktu sholat (maks. 40 slot, dijadwalkan ulang tiap aplikasi dibuka).
   Future<void> schedulePrayers(List<({int id, DateTime at, String title, String body})> items) async {
-    for (var i = 0; i < 40; i++) {
-      await _plugin.cancel(_prayerBase + i);
-    }
     final mode = await _modeSoft();
-    for (final it in items) {
-      if (it.id >= 40 || !it.at.isAfter(DateTime.now())) continue;
+    final keep = <int, ({int id, DateTime at, String title, String body})>{
+      for (final it in items)
+        if (it.id < 40 && it.at.isAfter(DateTime.now())) _prayerBase + it.id: it,
+    };
+    for (var i = 0; i < 40; i++) {
+      if (!keep.containsKey(_prayerBase + i)) await _cancelId(_prayerBase + i);
+    }
+    for (final e in keep.entries) {
+      final it = e.value;
+      final sig = '${it.at.toIso8601String()}|${it.body}|${mode.name}';
+      if (_same(e.key, sig)) continue;
       try {
-        await _plugin.zonedSchedule(_prayerBase + it.id, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _simple(it.body, const Color(0xFF059669)),
+        await _breathe();
+        await _plugin.zonedSchedule(e.key, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _simple(it.body, const Color(0xFF059669)),
             androidScheduleMode: mode, payload: 'muslim');
+        await _mark(e.key, sig);
       } catch (e) {
         debugPrint('Gagal jadwal adzan: $e');
       }
@@ -401,7 +483,7 @@ class NotificationService {
 
   Future<void> cancelParkingHourly() async {
     for (var h = 1; h <= 12; h++) {
-      await _plugin.cancel(_hourlyBase + h);
+      await _cancelId(_hourlyBase + h);
     }
   }
 
@@ -409,13 +491,18 @@ class NotificationService {
   Future<void> stopSnooze(Reminder r) => _plugin.cancel(r.snoozeNotifId);
 
   Future<void> cancel(Reminder r) async {
-    await _plugin.cancel(r.notifId);
-    await _plugin.cancel(r.snoozeNotifId);
+    await _cancelId(r.notifId, force: true);
+    await _cancelId(r.snoozeNotifId, force: true);
   }
 
-  Future<void> cancelAll() => _plugin.cancelAll();
+  Future<void> cancelAll() async {
+    await _plugin.cancelAll();
+    _sig.clear();
+    await _saveSigs();
+  }
 
   Future<void> rescheduleAll(List<Reminder> list) async {
+    await resetIfNeeded();
     for (final r in list) {
       await schedule(r);
     }

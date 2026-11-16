@@ -43,20 +43,15 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     _sub = notif.responses.listen(_onNotification);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final launch0 = notif.takeLaunchResponse();
+      if (launch0 != null) await _onNotification(launch0);
+      // biarkan layar tampil dulu, baru urus jadwal di belakang
+      await Future.delayed(const Duration(milliseconds: 1500));
+      if (!mounted) return;
       await notif.requestPermissions();
-      final notifier = ref.read(remindersProvider.notifier);
-      await notifier.rescheduleAll();
-      await ref.read(cycleProvider.notifier).reschedule();
-      await ref.read(calmSettingsProvider.notifier).reschedule();
-      await ref.read(habitsProvider.notifier).reschedule();
-      await ref.read(muslimProvider.notifier).reschedule();
+      await _refreshSchedules();
       await ref.read(notesProvider.notifier).migrateSecrets();
-      final launch = notif.takeLaunchResponse();
-      if (launch != null) {
-        await _onNotification(launch);
-      } else {
-        await _askBatteryOnce();
-      }
+      if (launch0 == null && mounted) await _askBatteryOnce();
     });
   }
 
@@ -70,16 +65,33 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     if (mounted) await showNotifHealth(context, ref);
   }
 
-  DateTime _lastResume = DateTime.now();
+  bool _busy = false;
+  DateTime _lastRefresh = DateTime.now();
 
-  // dibuka lagi dari latar → segarkan jadwal (jadwal sholat 7 hari ke depan, dll.)
+  /// Daftarkan jadwal. Hanya yang berubah yang dikirim ke sistem, jadi ringan.
+  Future<void> _refreshSchedules() async {
+    if (_busy) return;
+    _busy = true;
+    try {
+      await ref.read(remindersProvider.notifier).rescheduleAll();
+      await ref.read(muslimProvider.notifier).reschedule();
+      await ref.read(cycleProvider.notifier).reschedule();
+      await ref.read(calmSettingsProvider.notifier).reschedule();
+      await ref.read(habitsProvider.notifier).reschedule();
+      _lastRefresh = DateTime.now();
+    } catch (e) {
+      debugPrint('Gagal menyegarkan jadwal: $e');
+    } finally {
+      _busy = false;
+    }
+  }
+
+  // dibuka lagi setelah lama di latar (mis. besoknya) → segarkan jadwal sholat dkk.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
-    if (DateTime.now().difference(_lastResume) < const Duration(minutes: 30)) return;
-    _lastResume = DateTime.now();
-    ref.read(remindersProvider.notifier).rescheduleAll();
-    ref.read(muslimProvider.notifier).reschedule();
+    if (DateTime.now().difference(_lastRefresh) < const Duration(hours: 3)) return;
+    Future.delayed(const Duration(seconds: 1), _refreshSchedules);
   }
 
   /// Notifikasi diketuk → layar alarm; tombol Selesai/Tunda → langsung diproses.

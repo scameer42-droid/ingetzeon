@@ -163,7 +163,7 @@ class MuslimNotifier extends Notifier<MuslimSettings> {
     if (s.adzan) {
       final now = DateTime.now();
       var i = 0;
-      for (var add = 0; add < 7; add++) {
+      for (var add = 0; add < 3; add++) {
         final day = DateTime(now.year, now.month, now.day + add);
         final t = s.timesOn(day);
         for (final k in prayerKeys) {

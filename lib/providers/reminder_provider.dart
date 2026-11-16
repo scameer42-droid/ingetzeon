@@ -38,7 +38,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
   Future<void> upsert(Reminder r) async {
     await _repo.put(r);
     state = _sorted([...state.where((x) => x.id != r.id), r]);
-    await _notif.schedule(r);
+    await _notif.schedule(r, stopRinging: true);
     if (r.category == ReminderCategory.parkir && r.hourly && !r.done) await _notif.scheduleParkingHourly(r);
     if (r.category == ReminderCategory.parkir && r.done) await _notif.cancelParkingHourly();
   }
@@ -116,7 +116,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
   Future<void> snooze(String id, {Duration delay = const Duration(minutes: 10)}) async {
     final r = byId(id);
     if (r == null) return;
-    await _notif.schedule(r); // hentikan bunyi & daftarkan jadwal berikutnya
+    await _notif.schedule(r, stopRinging: true); // hentikan bunyi & daftarkan jadwal berikutnya
     await _notif.snooze(r, delay);
   }
 
@@ -125,7 +125,7 @@ class RemindersNotifier extends Notifier<List<Reminder>> {
     final r = byId(id);
     if (r == null) return;
     await _notif.stopSnooze(r);
-    await _notif.schedule(r);
+    await _notif.schedule(r, stopRinging: true);
   }
 
   Future<void> replaceAll(List<Reminder> list) async {
