@@ -44,3 +44,9 @@ adb logcat -d -b crash > $D/crash.txt
 adb shell dumpsys alarm > $D/alarm.txt
 adb shell dumpsys activity processes | grep -iE "anr|notResponding" > $D/proc.txt
 echo selesai $(( $(date +%s) - T0 ))s >> $D/steps.txt
+echo "===== RINGKASAN ====="
+cat $D/steps.txt
+echo "===== ERROR FLUTTER / ANR ====="
+grep -iE "ANR in|Input dispatching|E/flutter|FATAL|Exception|Skipped [0-9]{2,} frames|Davey" $D/logcat.txt | grep -v "AccessibilityNodeInfo" | head -80
+echo "===== MAIN THREAD (kill -3) ====="
+f=$(ls -t $D/anr/* 2>/dev/null | head -1); [ -n "$f" ] && sed -n '/"main"/,/^$/p' "$f" | head -60
