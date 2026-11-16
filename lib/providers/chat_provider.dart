@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/utils/date_utils.dart';
@@ -12,6 +13,8 @@ import '../services/note_parser.dart';
 import '../services/voice_service.dart';
 import 'cycle_provider.dart';
 import 'muslim_provider.dart';
+import 'calorie_provider.dart';
+import '../services/calorie_logic.dart';
 import '../services/islam_logic.dart';
 import 'notes_provider.dart';
 import 'reminder_provider.dart';
@@ -122,6 +125,83 @@ class ChatNotifier extends Notifier<ChatState> {
     greet();
   }
 
+  String _kcalToday() {
+    final c = ref.read(calorieProvider);
+    final eaten = c.kcalOn(DateTime.now());
+    final t = c.target;
+    if (t == null) return 'Total hari ini **${fmtKcal(eaten)} kkal**. Atur berat & tinggi badan di menu Kalori supaya target harianmu dihitung otomatis.';
+    final left = t.target - eaten;
+    return 'Total hari ini **${fmtKcal(eaten)} / ${fmtKcal(t.target)} kkal** — ${left >= 0 ? 'sisa ${fmtKcal(left)} kkal 💪' : 'lebih ${fmtKcal(-left)} kkal, besok seimbangkan lagi ya 🙂'}';
+  }
+
+  /// Catat makan, tanya kalori, catat berat badan — tanpa internet.
+  Future<bool> _answerCalorie(String text) async {
+    final log = FoodParse.parse(text);
+    if (log != null) {
+      await ref.read(calorieProvider.notifier).add(log.meal, log.items, source: 'chat');
+      final rows = [for (final x in log.items) '• ${x.food.emoji} ${x.food.name} ${fmtQty(x.qty)}× ${x.food.portion} — **${fmtKcal(x.food.kcal * x.qty)} kkal**'].join('\n');
+      final sum = log.items.fold(0.0, (a, x) => a + x.food.kcal * x.qty);
+      _bot('✅ Dicatat ke **${mealNames[log.meal]}** (${fmtKcal(sum)} kkal):\n$rows\n\n${_kcalToday()}', tools: const ['kalori'],
+          speech: 'Dicatat ${fmtKcal(sum)} kilo kalori ke ${mealNames[log.meal]}.');
+      return true;
+    }
+    final kg = FoodParse.weight(text);
+    if (kg != null) {
+      final c = ref.read(calorieProvider);
+      await ref.read(calorieProvider.notifier).logWeight(kg);
+      final p = ref.read(calorieProvider).profile;
+      var extra = '';
+      if (p != null) {
+        final b = Body.bmi(kg, p.cm);
+        extra = ' BMI kamu ${b.toStringAsFixed(1)} (${Body.bmiLabel(b).$1}).';
+        final prev = c.weights.isNotEmpty ? c.weights.last.kg : null;
+        if (prev != null && prev != kg) extra += kg < prev ? ' Turun ${fmtQty(double.parse((prev - kg).toStringAsFixed(1)))} kg dari catatan sebelumnya 🎉' : '';
+      } else {
+        extra = ' Isi juga tinggi badanmu di menu Kalori supaya BMI & target kalori dihitung.';
+      }
+      _bot('⚖️ Berat **${fmtQty(kg)} kg** dicatat.$extra', tools: const ['kalori']);
+      return true;
+    }
+    final f = FoodParse.askCalorie(text);
+    if (f != null) {
+      _bot('${f.emoji} **${f.name}** (${f.portion}${f.gram > 0 ? ', ±${fmtQty(f.gram)} g' : ''}) sekitar **${fmtKcal(f.kcal)} kkal**.\nProtein ${fmtQty(f.protein)} g · Karbo ${fmtQty(f.carbs)} g · Lemak ${fmtQty(f.fat)} g.\n\nMau dicatat? Ketik misalnya "aku makan ${f.name.toLowerCase()}".',
+          tools: const ['kalori']);
+      return true;
+    }
+    if (FoodParse.askToday(text)) {
+      _bot('🥗 ${_kcalToday()}', tools: const ['kalori']);
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _scanFoodChat(String path) async {
+    if (!_settings.hasAi) {
+      _bot('📷 Untuk menghitung kalori dari foto, isi dulu kunci API Gemini (gratis) di Profil. Atau buka menu Kalori untuk cari makanan dari daftar.', tools: const ['kalori']);
+      return;
+    }
+    try {
+      final bytes = await File(path).readAsBytes();
+      final r = await ref.read(aiServiceProvider).scanFood(bytes, apiKey: _settings.apiKey, model: _settings.model);
+      if (r.items.isEmpty) {
+        _bot(r.note.isNotEmpty ? '🤔 ${r.note}' : '🤔 Aku tidak melihat makanan di foto itu.');
+        return;
+      }
+      double d(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
+      final foods = [
+        for (final x in r.items) (food: FoodItem('🍽️', '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'), qty: 1.0),
+      ];
+      final meal = mealByHour(DateTime.now().hour);
+      await ref.read(calorieProvider.notifier).add(meal, foods, source: 'foto');
+      final sum = foods.fold(0.0, (a, x) => a + x.food.kcal);
+      final rows = [for (final x in foods) '• ${x.food.name} (${x.food.portion}) — **${fmtKcal(x.food.kcal)} kkal**'].join('\n');
+      _bot('📷 Dari fotomu, perkiraan **${fmtKcal(sum)} kkal** — dicatat ke ${mealNames[meal]}:\n$rows\n\n${_kcalToday()}\n\n*Perkiraan AI, porsinya bisa diubah di menu Kalori.*',
+          tools: const ['kalori']);
+    } catch (_) {
+      _bot('Foto makanan belum bisa dibaca sekarang. Coba lagi, atau catat lewat menu Kalori.', tools: const ['kalori']);
+    }
+  }
+
   /// Jadwal sholat, kiblat, Hijriah & doa — dijawab langsung tanpa internet.
   bool _answerIslam(String text) {
     final doa = IslamAsk.doa(text);
@@ -193,6 +273,11 @@ class ChatNotifier extends Notifier<ChatState> {
         return;
       }
       if (photoPath == null && !RegExp(r'^(?:tolong\s+|tlg\s+)?(?:ingatkan|ingetin|ingatin|ingetkan|alarm|catat|catet|setel|bangunkan)').hasMatch(lower) && _answerIslam(text)) {
+        return;
+      }
+      if (photoPath == null && await _answerCalorie(text)) return;
+      if (photoPath != null && RegExp(r'kalori|kkal|makan|makanan|gizi|diet').hasMatch(lower)) {
+        await _scanFoodChat(photoPath);
         return;
       }
       final aboutParking = lower.contains('parkir');

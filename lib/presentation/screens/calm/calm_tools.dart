@@ -13,6 +13,7 @@ import '../../../providers/wellbeing_provider.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/wellbeing_logic.dart';
 import '../../widgets/common.dart';
+import '../calorie/calorie_screen.dart';
 import '../muslim/muslim_screen.dart';
 import '../muslim/muslim_tools.dart';
 import 'calm_screen.dart';
@@ -26,6 +27,7 @@ Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {
   Widget? page;
   if (tool.startsWith('muslim:doa:')) page = DoaScreen(focus: tool.substring(11));
   if (tool == 'muslim') page = const MuslimScreen();
+  if (tool == 'kalori') page = const CalorieScreen();
   if (tool == 'muslim:kiblat') page = const QiblaScreen();
   if (tool == 'muslim:quran') page = const QuranListScreen();
   if (tool.startsWith('tes:')) {
@@ -68,6 +70,7 @@ Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {
 String toolLabel(String tool) {
   if (tool.startsWith('muslim:doa:')) return '🤲 Buka doa harian';
   if (tool == 'muslim') return '🕌 Buka Muslim Harian';
+  if (tool == 'kalori') return '🥗 Buka Kalori';
   if (tool == 'muslim:kiblat') return '🧭 Kompas kiblat';
   if (tool == 'muslim:quran') return "📖 Al-Qur'an";
   if (tool.startsWith('tes:')) {

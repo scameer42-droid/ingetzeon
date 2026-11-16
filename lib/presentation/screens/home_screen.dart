@@ -17,6 +17,8 @@ import 'calm/tests_screen.dart';
 import '../../providers/cycle_provider.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
+import 'calorie/calorie_screen.dart';
+import '../../providers/calorie_provider.dart';
 import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'item_sheet.dart';
@@ -430,6 +432,7 @@ class _FeatureGrid extends ConsumerWidget {
     final cycle = ref.watch(cycleProvider);
     final cycleInfo = cycle.enabled ? CycleInfo.from(cycle) : null;
     final next = muslim.next(now);
+    final kal = ref.watch(calorieProvider);
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
 
     final tiles = <Widget>[
@@ -446,6 +449,13 @@ class _FeatureGrid extends ConsumerWidget {
         subtitle: mood == null ? 'Cek mood hari ini' : (habits.isEmpty ? 'Mood tercatat ✓' : 'Kebiasaan $habitsDone/${habits.length}'),
         gradient: kCalmGradient,
         onTap: () => push(CalmScreen(onOpenChat: onOpenAi)),
+      ),
+      _FeatureTile(
+        emoji: '🥗',
+        title: 'Kalori & Diet',
+        subtitle: calorieSummary(kal),
+        gradient: kKalGradient,
+        onTap: () => push(const CalorieScreen()),
       ),
       _FeatureTile(
         emoji: '📝',

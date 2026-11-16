@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
+import 'calorie/calorie_screen.dart';
+import '../../services/calorie_logic.dart';
+import '../../providers/calorie_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -309,6 +312,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ]),
           _groupTitle('Kesehatan'),
+          _Group(children: [
+            _Row(
+              icon: Icons.restaurant_rounded,
+              color: kKal,
+              title: 'Kalori & Diet',
+              subtitle: () {
+                final p = ref.watch(calorieProvider).profile;
+                return p == null ? 'Penghitung kalori, berat & tinggi badan' : '${fmtQty(p.kg)} kg · ${fmtQty(p.cm)} cm · target ${fmtKcal(ref.watch(calorieProvider).target!.target)} kkal';
+              }(),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CalorieScreen())),
+            ),
+          ]),
           _Group(children: [
             _Row(
               icon: Icons.spa_rounded,

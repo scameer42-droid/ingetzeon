@@ -329,4 +329,39 @@ Contoh Output:
       rethrow;
     }
   }
+
+  static const foodScanPrompt = 'Kamu ahli gizi Indonesia. Kenali semua makanan & minuman di foto ini dan perkirakan porsinya. '
+      'Balas HANYA JSON: {"items":[{"name":"nama makanan dalam bahasa Indonesia","portion":"mis. 1 piring","gram":150,"kcal":195,"protein":3.6,"carbs":42,"fat":0.3}],"note":"catatan singkat"}. '
+      'Pakai acuan TKPI Kemenkes. Jika foto bukan makanan, kembalikan {"items":[],"note":"alasan"}.';
+
+  /// Memindai foto makanan → daftar makanan + perkiraan kalori.
+  Future<({List<Map<String, dynamic>> items, String note})> scanFood(List<int> bytes, {required String apiKey, required String model, String mime = 'image/jpeg'}) async {
+    final out = await _generate(
+      apiKey: apiKey,
+      model: model,
+      system: foodScanPrompt,
+      json: true,
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'inlineData': {'mimeType': mime, 'data': base64Encode(bytes)}
+            },
+            {'text': 'Hitung kalori makanan di foto ini.'}
+          ]
+        }
+      ],
+    );
+    var txt = out.trim();
+    final a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+    if (a >= 0 && b > a) txt = txt.substring(a, b + 1);
+    final data = jsonDecode(txt);
+    final items = <Map<String, dynamic>>[
+      if (data is Map && data['items'] is List)
+        for (final x in data['items'] as List)
+          if (x is Map && x['name'] != null) Map<String, dynamic>.from(x),
+    ];
+    return (items: items, note: data is Map ? '${data['note'] ?? ''}' : '');
+  }
 }
