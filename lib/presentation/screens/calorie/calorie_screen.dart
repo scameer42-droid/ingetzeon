@@ -11,6 +11,7 @@ import '../../../providers/calorie_provider.dart';
 import '../../../services/calorie_logic.dart';
 import '../../widgets/common.dart';
 import 'calorie_add.dart';
+import 'food_detail.dart';
 
 const kKal = Color(0xFFF97316);
 const kKalGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFF97316), Color(0xFFF43F5E)]);
@@ -125,6 +126,9 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
         ]),
         // ---- waktu makan
         for (final m in mealKeys) _MealCard(meal: m, day: _day),
+        // ---- rincian gizi
+        const SectionHeader('Rincian gizi hari ini'),
+        _NutritionCard(day: _day),
         // ---- berat badan
         const SectionHeader('Berat badan'),
         const _WeightCard(),
@@ -158,6 +162,83 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
           Text('${v.round()}/$target g', style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w700)),
         ]),
       );
+}
+
+/// Tabel gizi harian: energi, lemak, karbo, protein vs target + sebaran per waktu makan.
+class _NutritionCard extends ConsumerWidget {
+  const _NutritionCard({required this.day});
+  final DateTime day;
+  static const _mealColors = {'pagi': Color(0xFFF59E0B), 'siang': Color(0xFFF97316), 'sore': Color(0xFFEC4899), 'malam': Color(0xFF6366F1)};
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(calorieProvider);
+    final t = s.target;
+    final kcal = s.kcalOn(day);
+    final m = s.macrosOn(day);
+    Widget row(String label, double v, num target, String unit, Color c) {
+      final pct = target <= 0 ? 0.0 : v / target;
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 7),
+        child: Column(children: [
+          Row(children: [
+            Container(width: 10, height: 10, decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(3))),
+            const SizedBox(width: 8),
+            Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700))),
+            Text('${unit == 'kkal' ? fmtKcal(v) : v.round()} / ${unit == 'kkal' ? fmtKcal(target) : target} $unit', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            SizedBox(
+              width: 48,
+              child: Text('${(pct * 100).round()}%',
+                  textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.w800, color: pct > 1.05 ? const Color(0xFFE11D48) : c)),
+            ),
+          ]),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: LinearProgressIndicator(value: pct.clamp(0, 1).toDouble(), minHeight: 7, color: pct > 1.05 ? const Color(0xFFE11D48) : c, backgroundColor: c.withValues(alpha: .12)),
+          ),
+        ]),
+      );
+    }
+
+    final split = {for (final k in mealKeys) k: s.mealKcal(day, k)};
+    return SoftCard(
+      radius: 20,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        row('Energi', kcal, t?.target ?? 2000, 'kkal', kKal),
+        row('Lemak total', m.f, t?.fat ?? 67, 'g', kFat),
+        row('Karbohidrat total', m.c, t?.carbs ?? 275, 'g', kCarb),
+        row('Protein', m.p, t?.protein ?? 60, 'g', kProt),
+        if (kcal > 0) ...[
+          const SizedBox(height: 10),
+          Text('Sebaran per waktu makan', style: TextStyle(color: context.muted, fontSize: 12.5, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: SizedBox(
+              height: 10,
+              child: Row(children: [
+                for (final k in mealKeys)
+                  if (split[k]! > 0) Expanded(flex: math.max(1, (split[k]! / kcal * 1000).round()), child: Container(color: _mealColors[k])),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(spacing: 12, runSpacing: 4, children: [
+            for (final k in mealKeys)
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                Container(width: 8, height: 8, decoration: BoxDecoration(color: _mealColors[k], shape: BoxShape.circle)),
+                const SizedBox(width: 5),
+                Text('${mealNames[k]} ${(split[k]! / kcal * 100).round()}%', style: TextStyle(fontSize: 12, color: context.muted)),
+              ]),
+          ]),
+        ],
+        const SizedBox(height: 6),
+        Text(t == null ? 'Target dihitung setelah profil tubuh diisi.' : 'Target: protein 20%, karbohidrat 50%, lemak 30% dari energi (pedoman gizi seimbang).',
+            style: TextStyle(fontSize: 11.5, color: context.faint)),
+      ]),
+    );
+  }
 }
 
 class _Ring extends CustomPainter {
@@ -254,8 +335,9 @@ class _MealCard extends ConsumerWidget {
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(e.food.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      Text('${fmtQty(e.qty)} × ${e.food.portion}${e.source == 'foto' ? ' · 📷' : e.source == 'barcode' ? ' · ▦' : ''}',
+                      Text('${fmtQty(e.qty)} × ${e.food.portion}${e.food.gram > 0 ? ' (${fmtQty(double.parse((e.food.gram * e.qty).toStringAsFixed(0)))} g)' : ''}${e.source == 'foto' ? ' · 📷' : e.source == 'barcode' ? ' · ▦' : ''}',
                           style: TextStyle(color: context.muted, fontSize: 12)),
+                      Text('P ${e.protein.round()} g · K ${e.carbs.round()} g · L ${e.fat.round()} g', style: TextStyle(color: context.faint, fontSize: 11.5)),
                     ]),
                   ),
                   Padding(
@@ -271,54 +353,16 @@ class _MealCard extends ConsumerWidget {
   }
 }
 
-/// Ubah jumlah / hapus makanan yang sudah dicatat.
+/// Ubah jumlah / waktu makan / hapus makanan yang sudah dicatat.
 Future<void> editEntry(BuildContext context, WidgetRef ref, FoodEntry e, DateTime day) async {
-  var q = e.qty;
-  await showModalBottomSheet(
-    context: context,
-    showDragHandle: true,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setS) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text('${e.food.emoji} ${e.food.name}', textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 4),
-            Text('${mealNames[e.meal]} · ${e.food.portion} = ${fmtKcal(e.food.kcal)} kkal', style: TextStyle(color: ctx.muted)),
-            const SizedBox(height: 14),
-            QtyStepper(value: q, onChanged: (v) => setS(() => q = v), unit: e.food.portion),
-            const SizedBox(height: 8),
-            Text('${fmtKcal(e.food.kcal * q)} kkal', style: accentFont(size: 30, color: kKal)),
-            const SizedBox(height: 14),
-            Row(children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFFE11D48), padding: const EdgeInsets.symmetric(vertical: 14)),
-                  onPressed: () {
-                    ref.read(calorieProvider.notifier).remove(e.id, day);
-                    Navigator.pop(ctx);
-                  },
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  label: const Text('Hapus'),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: kKal, padding: const EdgeInsets.symmetric(vertical: 14)),
-                  onPressed: () {
-                    ref.read(calorieProvider.notifier).setQty(e.id, day, q);
-                    Navigator.pop(ctx);
-                  },
-                  child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w700)),
-                ),
-              ),
-            ]),
-          ]),
-        ),
-      ),
-    ),
-  );
+  final r = await showFoodDetail(context, e.food, meal: e.meal, qty: e.qty, editing: true, action: 'Simpan');
+  if (r == null) return;
+  final n = ref.read(calorieProvider.notifier);
+  if (r.delete) {
+    await n.remove(e.id, day);
+  } else {
+    await n.update(e.id, day, qty: r.qty, meal: r.meal);
+  }
 }
 
 class QtyStepper extends StatelessWidget {

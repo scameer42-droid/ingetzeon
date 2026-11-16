@@ -899,6 +899,18 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .krow2 label{display:flex;align-items:center;gap:10px}.krow2 .tx{flex:1}.krow2 small{display:block;color:var(--muted);font-size:12px}.krow2 em{font-style:normal;font-weight:800;color:#F97316;white-space:nowrap}
 #bscan .full-body{display:flex;flex-direction:column;align-items:center}.bsbox{position:relative;width:100%;max-width:420px;aspect-ratio:3/4;background:#000;border-radius:22px;overflow:hidden}
 .bsbox video{width:100%;height:100%;object-fit:cover}.bsbox i{position:absolute;inset:0;margin:auto;width:78%;height:28%;border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+
+.fdh{display:flex;align-items:center;gap:14px;margin:2px 0 12px}.fdh>span{width:60px;height:60px;border-radius:18px;background:rgba(249,115,22,.1);display:grid;place-items:center;font-size:32px;flex:none}.fdh h3{margin:0;font-size:19px;line-height:1.2}.fdh small{color:var(--muted);font-size:13px}
+.fdg{display:flex;align-items:center;gap:10px;margin-top:12px}.fdg .input{font-size:26px;font-weight:800;text-align:center}.fdg span{font-weight:700;color:var(--muted)}.fdgc{justify-content:center;margin-top:8px}
+.fdk{margin-top:14px;border-radius:22px;padding:16px;color:#fff;background:linear-gradient(135deg,#F97316,#F43F5E)}.fdk1{display:flex;align-items:flex-end;gap:6px}.fdk1 b{font-size:40px;line-height:1}.fdk1 span{font-weight:700;margin-bottom:4px}.fdk1 small{margin-left:auto;font-weight:600;font-size:12.5px;margin-bottom:6px}
+.fdbar{display:flex;height:10px;border-radius:99px;overflow:hidden;background:rgba(127,127,127,.18);margin-top:10px}.fdbar i{display:block;height:100%}
+.fdms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.fdm{background:rgba(255,255,255,.18);border-radius:14px;padding:10px 6px;text-align:center}.fdm small{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;font-weight:600}.fdm small i{width:8px;height:8px;border-radius:50%}.fdm b{display:block;font-size:18px;margin-top:3px}.fdm em{font-style:normal;font-size:11px;opacity:.85}
+.nlabel{margin-top:16px;border:1.6px solid var(--ink);border-radius:14px;padding:14px 16px 10px}.nlabel .nt{display:block;font-size:16px;font-weight:900;letter-spacing:.03em}.nlabel>small{color:var(--muted);font-size:12.5px}
+.nlabel hr{border:0;border-top:1.4px solid var(--ink);margin:8px 0}.nlabel hr.thick{border-top-width:6px}.fdn{display:flex;justify-content:space-between;padding:5px 0;font-size:14px}.fdn.big{font-weight:900;font-size:15px}.fdn.sub{color:var(--muted);font-size:13px;padding-top:0}.fdn.akg b{font-size:12px;color:var(--muted)}
+.nfoot{display:block;font-size:11px;color:var(--faint,var(--muted));line-height:1.35;margin-top:6px}.kmac2{color:var(--faint,var(--muted))!important;font-size:11.5px!important}
+.nutc{padding:12px 16px}.nrow{padding:7px 0}.nrow>div{display:flex;align-items:center;gap:8px;font-size:13px}.nrow>div i{width:10px;height:10px;border-radius:3px}.nrow>div b{flex:1;font-size:14px}.nrow>div em{font-style:normal;font-weight:800;width:44px;text-align:right}
+.nrow p{height:7px;border-radius:99px;background:rgba(127,127,127,.14);margin:6px 0 0;overflow:hidden}.nrow p b{display:block;height:100%;border-radius:99px}.nsub{display:block;color:var(--muted);font-size:12.5px;font-weight:700;margin-top:10px}
+.nleg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nleg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 </head>
@@ -2013,10 +2025,22 @@ function renderKal(){
     <div class="kquick"><button data-kact="foto"><span style="background:#F973161f">📷</span>Foto makanan</button><button data-kact="barcode"><span style="background:#6366F11f;color:#6366F1;font-weight:900">▦</span>Barcode</button><button data-kact="cari"><span style="background:#10B9811f">🔎</span>Cari makanan</button></div>
     ${MEALS.map(([k, n, e]) => { const l = list.filter(x => x.m === k), mk = kalSum(l).k;
       return `<div class="kmeal"><div class="kmh"><span>${e}</span><div class="tx"><b>${n}</b><small>${l.length ? `${fmtK(mk)} kkal · ${l.length} makanan` : 'Belum dicatat'}</small></div><button class="kadd" data-kadd="${k}" aria-label="Tambah ${n}">+</button></div>
-        ${l.map(x => `<button class="kent" data-kent="${x.id}"><span>${x.f[0]}</span><div class="tx"><b>${esc(x.f[1])}</b><small>${fmtQ(x.q)} × ${esc(x.f[3])}${x.s === 'foto' ? ' · 📷' : x.s === 'barcode' ? ' · ▦' : ''}</small></div><em>${fmtK(x.f[5] * x.q)} kkal</em></button>`).join('')}</div>`; }).join('')}
+        ${l.map(x => `<button class="kent" data-kent="${x.id}"><span>${x.f[0]}</span><div class="tx"><b>${esc(x.f[1])}</b><small>${fmtQ(x.q)} × ${esc(x.f[3])}${x.f[4] ? ` (${Math.round(x.f[4] * x.q)} g)` : ''}${x.s === 'foto' ? ' · 📷' : x.s === 'barcode' ? ' · ▦' : ''}</small><small class="kmac2">P ${Math.round(x.f[6] * x.q)} g · K ${Math.round(x.f[7] * x.q)} g · L ${Math.round(x.f[8] * x.q)} g</small></div><em>${fmtK(x.f[5] * x.q)} kkal</em></button>`).join('')}</div>`; }).join('')}
+    <div class="section-h"><h2>Rincian gizi hari ini</h2></div>
+    ${kalNutCard(list, t)}
     <div class="section-h"><h2>Berat badan</h2></div>
     ${kalWeightCard()}
     <p class="mnote">Angka kalori adalah perkiraan. Untuk diet khusus atau kondisi medis, konsultasikan dengan dokter atau ahli gizi.</p>`;
+}
+function kalNutCard(list, t){
+  const s = kalSum(list), MC = {pagi: '#F59E0B', siang: '#F97316', sore: '#EC4899', malam: '#6366F1'};
+  const row = (l, v, tg, u, c) => { const pc = tg ? v / tg : 0, over = pc > 1.05, col = over ? '#E11D48' : c;
+    return `<div class="nrow"><div><i style="background:${c}"></i><b>${l}</b><span>${u === 'kkal' ? fmtK(v) : Math.round(v)} / ${u === 'kkal' ? fmtK(tg) : tg} ${u}</span><em style="color:${col}">${Math.round(pc * 100)}%</em></div><p><b style="width:${Math.min(100, pc * 100)}%;background:${col}"></b></p></div>`; };
+  const split = MEALS.map(([k, n]) => [k, n, kalSum(list.filter(x => x.m === k)).k]);
+  return `<div class="card nutc">${row('Energi', s.k, t ? t.target : 2000, 'kkal', '#F97316')}${row('Lemak total', s.fa, t ? t.fat : 67, 'g', '#10B981')}${row('Karbohidrat total', s.c, t ? t.carbs : 275, 'g', '#F59E0B')}${row('Protein', s.p, t ? t.protein : 60, 'g', '#6366F1')}
+    ${s.k > 0 ? `<small class="nsub">Sebaran per waktu makan</small><div class="fdbar">${split.filter(x => x[2] > 0).map(x => `<i style="flex:${x[2]};background:${MC[x[0]]}"></i>`).join('')}</div>
+      <div class="nleg">${split.map(x => `<span><i style="background:${MC[x[0]]}"></i>${x[1]} ${Math.round(x[2] / s.k * 100)}%</span>`).join('')}</div>` : ''}
+    <small class="nfoot">${t ? 'Target: protein 20%, karbohidrat 50%, lemak 30% dari energi (pedoman gizi seimbang).' : 'Target dihitung setelah profil tubuh diisi.'}</small></div>`;
 }
 function kalWeightCard(){
   const s = kalS(), p = s.profile;
@@ -2116,7 +2140,7 @@ function kalAddSheet(meal){
     <div class="kcats">${Object.entries(FOOD_CATS).map(([k, v]) => `<button data-kc="${k}">${v}</button>`).join('')}</div>
     <div id="kaList" class="kalist"></div>`);
   bindMealChips(() => m, v => m = v);
-  const row = f => `<button class="kfood" data-kf="${esc(f[1])}"><span>${f[0]}</span><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` (${fmtQ(f[4])} g)` : ''}</small></div><em>${fmtK(f[5])} kkal</em></button>`;
+  const row = f => `<button class="kfood" data-kf="${esc(f[1])}"><span>${f[0]}</span><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` (${fmtQ(f[4])} g)` : ''} · P ${fmtQ(f[6])} · K ${fmtQ(f[7])} · L ${fmtQ(f[8])} g</small></div><em>${fmtK(f[5])} kkal</em></button>`;
   const custom = () => Object.values(kalS().barcodes);
   let shown = [];
   const draw = () => {
@@ -2136,28 +2160,53 @@ function kalAddSheet(meal){
   draw();
 }
 function qtyStep(q, d){ const st = q <= 1 && d < 0 ? .25 : q < 1 ? .25 : .5; return Math.min(20, Math.max(.25, Math.round((q + d * st) * 100) / 100)); }
-function kalQtySheet(f, meal, q0 = 1, source = '', onDone){
-  let q = q0;
-  showSheet(`<h3 style="margin:4px 0 2px;text-align:center">${f[0]} ${esc(f[1])}</h3><p class="muted-c">${esc(f[3])} = ${fmtK(f[5])} kkal</p>
-    <div class="kstep"><button id="kqM">−</button><div><b id="kqV"></b><small>${esc(f[3])}</small></div><button id="kqP">+</button></div>
-    <div class="kbig" id="kqK"></div><p class="muted-c" id="kqMac"></p>
-    <button class="btn btn-block" id="kqOk" style="background:#F97316;color:#fff">Tambah ke ${MEAL_NAME[meal]}</button>`);
-  const upd = () => { $('#kqV').textContent = fmtQ(q) + '×'; $('#kqK').textContent = fmtK(f[5] * q) + ' kkal'; $('#kqMac').textContent = `P ${Math.round(f[6] * q)} g · K ${Math.round(f[7] * q)} g · L ${Math.round(f[8] * q)} g`; };
-  $('#kqM').onclick = () => { q = qtyStep(q, -1); upd(); }; $('#kqP').onclick = () => { q = qtyStep(q, 1); upd(); };
-  $('#kqOk').onclick = () => { kalAdd(meal, [{food: f, qty: q}], kalDay, source === 'list' ? '' : source); closeSheet(); toast(`${f[0]} ${f[1]} +${fmtK(f[5] * q)} kkal → ${MEAL_NAME[meal]}`); onDone && onDone(); };
-  upd();
+/** Detail makanan: porsi/gram, kalori, lemak, karbo, protein, Informasi Nilai Gizi (%AKG). */
+function kalFoodDetail(f, meal, q0 = 1, opt = {}){
+  let q = q0, m = meal, gram = false;
+  const hasG = f[4] > 0, cat = FOOD_CATS[f[9]] || (f[9] === 'kemasan' ? 'Produk kemasan' : f[9] === 'foto' ? 'Dari foto (perkiraan AI)' : 'Makanan');
+  const g1 = v => v < 10 ? fmtQ(Math.round(v * 10) / 10) : Math.round(v);
+  showSheet(`<div class="fdh"><span>${f[0]}</span><div><h3>${esc(f[1])}</h3><small>${esc(cat)} · ${esc(f[3])}${hasG ? ` (${fmtQ(f[4])} g)` : ''}</small></div></div>
+    ${mealChips(m)}
+    ${hasG ? '<div class="kseg" id="fdMode" style="margin-top:12px"><button data-v="p">🍽️ Porsi</button><button data-v="g">⚖️ Gram</button></div>' : ''}
+    <div id="fdQty"></div><div id="fdBody"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">${opt.editing ? '<button class="btn btn-soft" id="fdDel" style="flex:1;color:#E11D48">🗑️ Hapus</button>' : ''}<button class="btn" id="fdOk" style="flex:2;background:#F97316;color:#fff"></button></div>`);
+  bindMealChips(() => m, v => m = v);
+  const body = () => {
+    const k = f[5] * q, p = f[6] * q, c = f[7] * q, fa = f[8] * q, ek = p * 4 + c * 4 + fa * 9, t = kalTarget();
+    const sh = v => ek > 0 ? Math.round(v / ek * 100) : 0;
+    const mac = (l, v, e, col) => `<div class="fdm"><small><i style="background:${col}"></i>${l}</small><b>${g1(v)} g</b><em>${sh(e)}% energi</em></div>`;
+    const nut = (l, v, ref) => `<div class="fdn"><span><b>${l}</b> ${g1(v)} g</span><b>${Math.round(v / ref * 100)}%</b></div>`;
+    $('#fdBody').innerHTML = `<div class="fdk"><div class="fdk1"><b>${fmtK(k)}</b><span>kkal</span>${t ? `<small>${Math.round(k / t.target * 100)}% target harian</small>` : ''}</div>
+        <div class="fdbar">${ek > 0 ? `<i style="flex:${p * 4};background:#C7D2FE"></i><i style="flex:${c * 4};background:#FDE68A"></i><i style="flex:${fa * 9};background:#A7F3D0"></i>` : ''}</div>
+        <div class="fdms">${mac('Protein', p, p * 4, '#C7D2FE')}${mac('Karbohidrat', c, c * 4, '#FDE68A')}${mac('Lemak', fa, fa * 9, '#A7F3D0')}</div></div>
+      <div class="nlabel"><b class="nt">INFORMASI NILAI GIZI</b><small>Takaran saji: ${fmtQ(q)} × ${esc(f[3])}${hasG ? ` (${g1(f[4] * q)} g)` : ''}</small><hr class="thick">
+        <div class="fdn big"><span>Energi total</span><b>${fmtK(k)} kkal</b></div><div class="fdn sub"><span>Energi dari lemak</span><span>${fmtK(fa * 9)} kkal</span></div><hr>
+        <div class="fdn akg"><span></span><b>% AKG*</b></div>${nut('Lemak total', fa, 67)}${nut('Karbohidrat total', c, 325)}${nut('Protein', p, 60)}<hr>
+        <small class="nfoot">*Persen AKG berdasarkan kebutuhan energi 2150 kkal. Kebutuhanmu bisa lebih tinggi atau lebih rendah. ${f[9] === 'foto' ? 'Nilai dari foto adalah perkiraan AI.' : 'Nilai rata-rata, bisa berbeda tergantung resep & porsi.'}</small></div>`;
+    $('#fdOk').textContent = `${opt.action || 'Tambah'} · ${fmtK(k)} kkal`;
+  };
+  const qty = () => {
+    if($('#fdMode')) $('#fdMode').querySelectorAll('button').forEach(b => b.classList.toggle('on', (b.dataset.v === 'g') === gram));
+    if(gram){
+      $('#fdQty').innerHTML = `<div class="fdg"><input class="input" id="fdG" inputmode="decimal" value="${g1(f[4] * q)}"><span>gram</span></div><div class="kmchips fdgc">${[50, 100, 150, 200, 250].map(g => `<button data-g="${g}" class="${Math.abs(f[4] * q - g) < .5 ? 'on' : ''}">${g} g</button>`).join('')}</div>`;
+      $('#fdG').oninput = e => { const g = parseFloat(e.target.value.replace(',', '.')); if(g > 0){ q = g / f[4]; body(); $('#fdQty').querySelectorAll('[data-g]').forEach(b => b.classList.toggle('on', Math.abs(g - +b.dataset.g) < .5)); } };
+      $('#fdQty').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { q = +b.dataset.g / f[4]; qty(); body(); });
+    } else {
+      $('#fdQty').innerHTML = `<div class="kstep"><button id="kqM">−</button><div><b>${fmtQ(q)}×</b><small>${esc(f[3])}${hasG ? ` · ${g1(f[4] * q)} g` : ''}</small></div><button id="kqP">+</button></div>`;
+      $('#kqM').onclick = () => { q = qtyStep(q, -1); qty(); body(); }; $('#kqP').onclick = () => { q = qtyStep(q, 1); qty(); body(); };
+    }
+  };
+  if($('#fdMode')) $('#fdMode').onclick = e => { const b = e.target.closest('button'); if(b){ gram = b.dataset.v === 'g'; qty(); } };
+  $('#fdOk').onclick = () => { q = Math.round(q * 1000) / 1000; if(!(q > 0)) return; closeSheet(); opt.onSave ? opt.onSave(q, m) : (kalAdd(m, [{food: f, qty: q}], kalDay, opt.source || ''), toast(`${f[0]} ${f[1]} +${fmtK(f[5] * q)} kkal → ${MEAL_NAME[m]}`)); };
+  if($('#fdDel')) $('#fdDel').onclick = () => { closeSheet(); opt.onDelete && opt.onDelete(); };
+  qty(); body();
 }
+function kalQtySheet(f, meal, q0 = 1, source = ''){ kalFoodDetail(f, meal, q0, {source: source === 'list' ? '' : source}); }
 function kalEditSheet(id){
   const key = dayKey(kalDay), e = (kalS().days[key] || []).find(x => x.id === id); if(!e) return;
-  let q = e.q;
-  showSheet(`<h3 style="margin:4px 0 2px;text-align:center">${e.f[0]} ${esc(e.f[1])}</h3><p class="muted-c">${MEAL_NAME[e.m]} · ${esc(e.f[3])} = ${fmtK(e.f[5])} kkal</p>
-    <div class="kstep"><button id="kqM">−</button><div><b id="kqV"></b><small>${esc(e.f[3])}</small></div><button id="kqP">+</button></div><div class="kbig" id="kqK"></div>
-    <div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-soft" id="keDel" style="flex:1;color:#E11D48">🗑️ Hapus</button><button class="btn" id="keOk" style="flex:1;background:#F97316;color:#fff">Simpan</button></div>`);
-  const upd = () => { $('#kqV').textContent = fmtQ(q) + '×'; $('#kqK').textContent = fmtK(e.f[5] * q) + ' kkal'; };
-  $('#kqM').onclick = () => { q = qtyStep(q, -1); upd(); }; $('#kqP').onclick = () => { q = qtyStep(q, 1); upd(); };
-  $('#keDel').onclick = () => { kalS().days[key] = kalS().days[key].filter(x => x.id !== id); save(); closeSheet(); renderKal(); renderFeatures(); };
-  $('#keOk').onclick = () => { e.q = q; save(); closeSheet(); renderKal(); renderFeatures(); };
-  upd();
+  kalFoodDetail(e.f, e.m, e.q, {editing: true, action: 'Simpan',
+    onSave: (q, m) => { e.q = q; e.m = m; save(); renderKal(); renderFeatures(); },
+    onDelete: () => { kalS().days[key] = kalS().days[key].filter(x => x.id !== id); save(); renderKal(); renderFeatures(); }});
 }
 function kalManual(meal, name = '', barcode = null){
   let m = meal;
@@ -2208,7 +2257,7 @@ function kalReview(foods, meal, source, title, note = '', qtys){
     <button class="btn btn-block" id="krOk" style="background:#F97316;color:#fff;margin-top:12px"></button><p class="muted-c" style="font-size:12px">Perkiraan AI — sesuaikan porsinya bila perlu.</p>`);
   bindMealChips(() => m, v => m = v);
   const draw = () => {
-    $('#krList').innerHTML = foods.map((f, i) => `<div class="krow2${on[i] ? '' : ' off'}"><label><input type="checkbox" data-kon="${i}" ${on[i] ? 'checked' : ''}><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` · ±${fmtQ(f[4])} g` : ''}</small></div><em>${fmtK(f[5] * q[i])} kkal</em></label>
+    $('#krList').innerHTML = foods.map((f, i) => `<div class="krow2${on[i] ? '' : ' off'}"><label><input type="checkbox" data-kon="${i}" ${on[i] ? 'checked' : ''}><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` · ±${Math.round(f[4] * q[i])} g` : ''}</small><small>P ${Math.round(f[6] * q[i])} g · K ${Math.round(f[7] * q[i])} g · L ${Math.round(f[8] * q[i])} g</small></div><em>${fmtK(f[5] * q[i])} kkal</em></label>
       ${on[i] ? `<div class="kstep sm"><button data-kq="${i}" data-d="-1">−</button><div><b>${fmtQ(q[i])}×</b></div><button data-kq="${i}" data-d="1">+</button></div>` : ''}</div>`).join('');
     const tot = foods.reduce((a, f, i) => a + (on[i] ? f[5] * q[i] : 0), 0);
     $('#krOk').textContent = `Simpan ${fmtK(tot)} kkal`; $('#krOk').disabled = !on.some(Boolean);

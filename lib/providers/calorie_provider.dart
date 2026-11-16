@@ -160,6 +160,14 @@ class CalorieNotifier extends Notifier<CalorieState> {
     await _save(state.copyWith(days: {...state.days, key: state.on(day).where((e) => e.id != id).toList()}));
   }
 
+  Future<void> update(String id, DateTime day, {required double qty, required String meal}) async {
+    final key = dayKey(day);
+    await _save(state.copyWith(days: {
+      ...state.days,
+      key: [for (final e in state.on(day)) e.id == id ? FoodEntry(id: e.id, meal: meal, food: e.food, qty: qty, at: e.at, source: e.source) : e]
+    }));
+  }
+
   Future<void> setQty(String id, DateTime day, double qty) async {
     final key = dayKey(day);
     await _save(state.copyWith(days: {...state.days, key: [for (final e in state.on(day)) e.id == id ? e.withQty(qty) : e]}));

@@ -15,6 +15,7 @@ import '../../../services/ai_service.dart';
 import '../../../services/calorie_logic.dart';
 import '../../widgets/common.dart';
 import 'calorie_screen.dart';
+import 'food_detail.dart';
 
 /// Pilih waktu makan (chip).
 class MealPicker extends StatelessWidget {
@@ -161,42 +162,20 @@ class _FoodRow extends StatelessWidget {
         onTap: onTap,
         leading: Text(f.emoji, style: const TextStyle(fontSize: 24)),
         title: Text(f.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5)),
-        subtitle: Text('${f.portion}${f.gram > 0 ? ' (${fmtQty(f.gram)} g)' : ''}'),
+        subtitle: Text('${f.portion}${f.gram > 0 ? ' (${fmtQty(f.gram)} g)' : ''}  ·  P ${fmtQty(f.protein)} · K ${fmtQty(f.carbs)} · L ${fmtQty(f.fat)} g',
+            maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: Text('${fmtKcal(f.kcal)} kkal', style: const TextStyle(fontWeight: FontWeight.w800, color: kKal)),
       );
 }
 
 Future<void> _pick(BuildContext sheetCtx, WidgetRef ref, FoodItem f, String meal, DateTime day) async {
-  final q = await askQty(sheetCtx, f);
-  if (q == null) return;
-  await ref.read(calorieProvider.notifier).add(meal, [(food: f, qty: q)], day: day);
+  final r = await showFoodDetail(sheetCtx, f, meal: meal);
+  if (r == null) return;
+  await ref.read(calorieProvider.notifier).add(r.meal, [(food: f, qty: r.qty)], day: day);
   if (sheetCtx.mounted) {
     Navigator.pop(sheetCtx);
-    showToast(sheetCtx, '${f.emoji} ${f.name} +${fmtKcal(f.kcal * q)} kkal → ${mealNames[meal]}');
+    showToast(sheetCtx, '${f.emoji} ${f.name} +${fmtKcal(f.kcal * r.qty)} kkal → ${mealNames[r.meal]}');
   }
-}
-
-/// Minta jumlah porsi.
-Future<double?> askQty(BuildContext context, FoodItem f, {double initial = 1}) async {
-  var q = initial;
-  return showDialog<double>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setS) => AlertDialog(
-        title: Text('${f.emoji} ${f.name}', textAlign: TextAlign.center),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          QtyStepper(value: q, onChanged: (v) => setS(() => q = v), unit: f.portion),
-          const SizedBox(height: 10),
-          Text('${fmtKcal(f.kcal * q)} kkal', style: accentFont(size: 28, color: kKal)),
-          Text('P ${(f.protein * q).round()} g · K ${(f.carbs * q).round()} g · L ${(f.fat * q).round()} g', style: TextStyle(color: ctx.muted, fontSize: 12.5)),
-        ]),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
-          FilledButton(style: FilledButton.styleFrom(backgroundColor: kKal), onPressed: () => Navigator.pop(ctx, q), child: const Text('Tambah')),
-        ],
-      ),
-    ),
-  );
 }
 
 /// ---------- Input manual ----------
@@ -369,7 +348,8 @@ Future<void> reviewFoods(BuildContext context, WidgetRef ref,
                       activeColor: kKal,
                       onChanged: (v) => setS(() => on[i] = v ?? true),
                       title: Text(foods[i].name, style: const TextStyle(fontWeight: FontWeight.w800)),
-                      subtitle: Text('${foods[i].portion}${foods[i].gram > 0 ? ' · ±${fmtQty(foods[i].gram)} g' : ''}'),
+                      subtitle: Text('${foods[i].portion}${foods[i].gram > 0 ? ' · ±${fmtQty(foods[i].gram * q[i])} g' : ''}\n'
+                          'P ${(foods[i].protein * q[i]).round()} g · K ${(foods[i].carbs * q[i]).round()} g · L ${(foods[i].fat * q[i]).round()} g'),
                       secondary: Text('${fmtKcal(foods[i].kcal * q[i])}\nkkal', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w800, color: kKal)),
                     ),
                     if (on[i]) QtyStepper(value: q[i], onChanged: (v) => setS(() => q[i] = v), unit: foods[i].portion),
@@ -422,10 +402,10 @@ Future<PackFood?> fetchOpenFoodFacts(String code) async {
 Future<void> lookupBarcode(BuildContext context, WidgetRef ref, String code, {required String meal, required DateTime day}) async {
   final known = ref.read(calorieProvider).barcodes[code];
   if (known != null) {
-    final q = await askQty(context, known);
-    if (q == null) return;
-    await ref.read(calorieProvider.notifier).add(meal, [(food: known, qty: q)], day: day, source: 'barcode');
-    if (context.mounted) showToast(context, '📦 ${known.name} +${fmtKcal(known.kcal * q)} kkal → ${mealNames[meal]}');
+    final r = await showFoodDetail(context, known, meal: meal);
+    if (r == null) return;
+    await ref.read(calorieProvider.notifier).add(r.meal, [(food: known, qty: r.qty)], day: day, source: 'barcode');
+    if (context.mounted) showToast(context, '📦 ${known.name} +${fmtKcal(known.kcal * r.qty)} kkal → ${mealNames[r.meal]}');
     return;
   }
   showDialog(
