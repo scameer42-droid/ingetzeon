@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
+import 'notif_health.dart';
 import 'calorie/calorie_screen.dart';
 import '../../services/calorie_logic.dart';
 import '../../providers/calorie_provider.dart';
@@ -271,24 +272,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             _Row(
               icon: Icons.battery_saver_rounded,
-              color: const Color(0xFF64748B),
-              title: 'Tips: notifikasi telat/tidak muncul?',
-              subtitle: 'Atur baterai IngetZeon ke "Tanpa batasan"',
-              onTap: () => showDialog(
-                context: context,
-                builder: (c) => AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                  title: const Text('Supaya alarm selalu bunyi', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
-                  content: Text(
-                    'Beberapa HP (Xiaomi, Oppo, Vivo, Realme, Samsung) mematikan aplikasi di latar untuk hemat baterai.\n\n'
-                    '1. Buka Pengaturan HP → Aplikasi → IngetZeon\n'
-                    '2. Baterai → pilih "Tanpa batasan" / "Tidak dibatasi"\n'
-                    '3. Di Xiaomi: aktifkan juga "Mulai otomatis" (Autostart)',
-                    style: TextStyle(color: c.muted, fontSize: 14),
-                  ),
-                  actions: [FilledButton(onPressed: () => Navigator.pop(c), child: const Text('Mengerti'))],
-                ),
-              ),
+              color: const Color(0xFF10B981),
+              title: 'Notifikasi telat? Cek di sini',
+              subtitle: 'Periksa izin, hemat baterai & tes 1 menit',
+              onTap: () async {
+                await showNotifHealth(context, ref);
+                await _refreshPermissions();
+              },
             ),
           ]),
           _groupTitle('Catatan'),

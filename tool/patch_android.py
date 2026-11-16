@@ -25,6 +25,7 @@ PERMISSIONS = [
     '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>',
     '<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>',
     '<uses-permission android:name="android.permission.USE_BIOMETRIC"/>',
+    '<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>',
     '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>',
     '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>',
 ]

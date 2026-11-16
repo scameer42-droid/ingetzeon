@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -163,8 +164,35 @@ class NotificationService {
     );
   }
 
+  /// Pengingat utama: mode "jam alarm" — paling tepat waktu, tetap jalan saat HP tidur/hemat baterai.
   Future<AndroidScheduleMode> _mode() async =>
+      await canExact() ? AndroidScheduleMode.alarmClock : AndroidScheduleMode.inexactAllowWhileIdle;
+
+  /// Notifikasi pendukung (sholat, mood, kebiasaan, parkir): tepat waktu tanpa ikon alarm di status bar.
+  Future<AndroidScheduleMode> _modeSoft() async =>
       await canExact() ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle;
+
+  /// Bebas dari pembatasan hemat baterai?
+  Future<bool> batteryUnrestricted() async {
+    if (!Platform.isAndroid) return true;
+    return Permission.ignoreBatteryOptimizations.isGranted;
+  }
+
+  Future<bool> requestBatteryUnrestricted() async {
+    if (!Platform.isAndroid) return true;
+    final st = await Permission.ignoreBatteryOptimizations.request();
+    return st.isGranted;
+  }
+
+  /// Tes: notifikasi pengingat berbunyi [seconds] detik lagi, memakai mode yang sama dengan pengingat asli.
+  Future<void> testReminder({int seconds = 60}) async {
+    final when = tz.TZDateTime.now(tz.local).add(Duration(seconds: seconds));
+    const title = '⏰ Tes pengingat IngetZeon';
+    final body = 'Dijadwalkan untuk ${fmtTime(when)} — kalau muncul tepat waktu, notifikasi sudah beres ✅';
+    await _plugin.cancel(999998);
+    await _plugin.zonedSchedule(999998, title, body, when, _details(title, body, override: AlarmSound.notif),
+        androidScheduleMode: await _mode());
+  }
 
   /// Daftarkan (ulang) alarm untuk satu pengingat. Juga menghentikan alarm yang sedang berbunyi.
   Future<void> schedule(Reminder r) async {
@@ -218,7 +246,7 @@ class NotificationService {
   /// Pengingat parkir tiap jam (sampai 12 jam) sejak [r.createdAt].
   Future<void> scheduleParkingHourly(Reminder r) async {
     await cancelParkingHourly();
-    final mode = await _mode();
+    final mode = await _modeSoft();
     final start = r.createdAt;
     final lokasi = r.title.replaceFirst(RegExp(r'^Parkir di ', caseSensitive: false), '');
     for (var h = 1; h <= 12; h++) {
@@ -250,7 +278,7 @@ class NotificationService {
       await _plugin.cancel(_cycleBase + i);
     }
     if (next == null) return;
-    final mode = await _mode();
+    final mode = await _modeSoft();
     final items = [
       (id: _cycleBase + 1, at: DateTime(next.year, next.month, next.day - 2, 8), title: '🌸 Haid 2 hari lagi',
         body: 'Perkiraan haid ${fmtDateShort(next)}. Siapkan pembalut & jaga kondisi ya.'),
@@ -311,7 +339,7 @@ class NotificationService {
     if (!at.isAfter(now)) at = at.add(const Duration(days: 1));
     try {
       await _plugin.zonedSchedule(id, title, body, tz.TZDateTime.from(at, tz.local), _simple(body, color),
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle, matchDateTimeComponents: DateTimeComponents.time, payload: payload);
+          androidScheduleMode: await _modeSoft(), matchDateTimeComponents: DateTimeComponents.time, payload: payload);
     } catch (e) {
       debugPrint('Gagal jadwal harian: $e');
     }
@@ -359,7 +387,7 @@ class NotificationService {
     for (var i = 0; i < 40; i++) {
       await _plugin.cancel(_prayerBase + i);
     }
-    final mode = await _mode();
+    final mode = await _modeSoft();
     for (final it in items) {
       if (it.id >= 40 || !it.at.isAfter(DateTime.now())) continue;
       try {

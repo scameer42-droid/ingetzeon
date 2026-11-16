@@ -5958,7 +5958,8 @@ renderAll();
 photosLoad().then(() => { renderAll(); renderChat(); });
 updateAiMode();
 checkDue();
-setInterval(() => { checkDue(); if(current==='home') renderHome(); }, 20000);
+setInterval(() => { checkDue(); if(current==='home') renderHome(); }, 10000);
+window.addEventListener('focus', checkDue);
 document.addEventListener('visibilitychange', () => { if(!document.hidden){ checkDue(); renderAll(); } });
 // buka asisten langsung lewat pintasan: index.html?ai=1
 if(new URLSearchParams(location.search).get('ai')) openAI(false);

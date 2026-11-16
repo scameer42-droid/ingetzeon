@@ -19,6 +19,8 @@ import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'home_screen.dart';
 import 'muslim/muslim_screen.dart';
+import 'notif_health.dart';
+import '../../providers/settings_provider.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
 import '../widgets/common.dart';
@@ -30,7 +32,7 @@ class MainShell extends ConsumerStatefulWidget {
   ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends ConsumerState<MainShell> {
+class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserver {
   int _index = 0;
   StreamSubscription? _sub;
 
@@ -39,6 +41,7 @@ class _MainShellState extends ConsumerState<MainShell> {
     super.initState();
     final notif = NotificationService.instance;
     _sub = notif.responses.listen(_onNotification);
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await notif.requestPermissions();
       final notifier = ref.read(remindersProvider.notifier);
@@ -49,8 +52,34 @@ class _MainShellState extends ConsumerState<MainShell> {
       await ref.read(muslimProvider.notifier).reschedule();
       await ref.read(notesProvider.notifier).migrateSecrets();
       final launch = notif.takeLaunchResponse();
-      if (launch != null) await _onNotification(launch);
+      if (launch != null) {
+        await _onNotification(launch);
+      } else {
+        await _askBatteryOnce();
+      }
     });
+  }
+
+  /// Sekali saja: ajak atur supaya notifikasi tidak telat (hemat baterai / alarm tepat).
+  Future<void> _askBatteryOnce() async {
+    final repo = ref.read(settingsRepositoryProvider);
+    if (repo.get<bool>('askedNotifHealth', false)) return;
+    final n = NotificationService.instance;
+    if (await n.batteryUnrestricted() && await n.canExact()) return;
+    await repo.set('askedNotifHealth', true);
+    if (mounted) await showNotifHealth(context, ref);
+  }
+
+  DateTime _lastResume = DateTime.now();
+
+  // dibuka lagi dari latar → segarkan jadwal (jadwal sholat 7 hari ke depan, dll.)
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    if (DateTime.now().difference(_lastResume) < const Duration(minutes: 30)) return;
+    _lastResume = DateTime.now();
+    ref.read(remindersProvider.notifier).rescheduleAll();
+    ref.read(muslimProvider.notifier).reschedule();
   }
 
   /// Notifikasi diketuk → layar alarm; tombol Selesai/Tunda → langsung diproses.
@@ -90,6 +119,7 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   void dispose() {
     _sub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
