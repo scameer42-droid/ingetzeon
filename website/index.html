@@ -911,6 +911,23 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .nutc{padding:12px 16px}.nrow{padding:7px 0}.nrow>div{display:flex;align-items:center;gap:8px;font-size:13px}.nrow>div i{width:10px;height:10px;border-radius:3px}.nrow>div b{flex:1;font-size:14px}.nrow>div em{font-style:normal;font-weight:800;width:44px;text-align:right}
 .nrow p{height:7px;border-radius:99px;background:rgba(127,127,127,.14);margin:6px 0 0;overflow:hidden}.nrow p b{display:block;height:100%;border-radius:99px}.nsub{display:block;color:var(--muted);font-size:12.5px;font-weight:700;margin-top:10px}
 .nleg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nleg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* ===== Beranda rapi: menu ikon + ringkasan ===== */
+.mcard{margin-top:14px;background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px 8px 8px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:6px}
+.mitem{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px 2px 8px;font-size:12px;font-weight:600;color:var(--ink);line-height:1.2;text-align:center;-webkit-tap-highlight-color:transparent}
+.mitem .mic2{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;transition:transform .15s}
+.mitem .mic2 .i{width:24px;height:24px;stroke-width:2}
+.mitem:active .mic2{transform:scale(.92)}
+.mitem .mbadge{position:absolute;top:0;left:calc(50% + 14px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--danger,#E11D48);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;border:2px solid var(--card)}
+.sumrow{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;margin:0 -20px;padding:2px 20px 8px;scrollbar-width:none}.sumrow::-webkit-scrollbar{display:none}
+.scard{flex:0 0 152px;scroll-snap-align:start;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:14px;text-align:left;display:flex;flex-direction:column;gap:2px;min-height:118px;position:relative;overflow:hidden}
+.scard .sh{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scard b.t{font-size:16px}
+.scard .sh i{width:26px;height:26px;border-radius:9px;display:grid;place-items:center}.scard .sh .i{width:15px;height:15px;stroke-width:2.2}
+.scard b{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15}.scard b small{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0}
+.scard>small{font-size:12px;color:var(--muted)}
+.scard .sbar{height:5px;border-radius:99px;background:var(--line);margin-top:auto;overflow:hidden}.scard .sbar em{display:block;height:100%;border-radius:99px}
+[data-theme="dark"] .mitem .mic2{filter:saturate(1.1)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 </head>
@@ -934,14 +951,10 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
       <span>Ketik atau ucapkan pengingat…</span>
       <div class="mic"><svg class="i"><use href="#i-mic"/></svg></div>
     </button>
-    <div class="quick three">
-      <button id="qPark"><span class="qi" style="background:var(--c-parkir-soft);color:var(--c-parkir)"><svg class="i"><use href="#c-parkir"/></svg></span>Catat parkir</button>
-      <button id="qItem"><span class="qi" style="background:var(--c-barang-soft);color:var(--c-barang)"><svg class="i"><use href="#c-barang"/></svg></span>Ingat barang</button>
-      <button id="qNew"><span class="qi" style="background:var(--primary-soft);color:var(--primary)"><svg class="i"><use href="#i-alarm"/></svg></span>Pengingat</button>
-    </div>
+    <div class="mcard"><div class="mgrid" id="featGrid"></div></div>
     <div id="parkWrap"></div>
-    <div class="section-h"><h2>Fitur</h2></div>
-    <div class="fgrid" id="featGrid"></div>
+    <div class="section-h"><h2>Ringkasan hari ini</h2></div>
+    <div class="sumrow" id="sumRow"></div>
 
     <div class="section-h">
       <h2>Jadwal hari ini</h2>
@@ -1355,6 +1368,10 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
   <symbol id="c-kesehatan" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
   <symbol id="c-edukasi" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol>
   <symbol id="c-parkir" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M9.5 17V7h3.5a3 3 0 0 1 0 6H9.5"/></symbol>
+  <symbol id="i-mosque" viewBox="0 0 24 24"><path d="M12 3c-.8 1.8-4.5 3.3-4.5 6.6V11h9V9.6C16.5 6.3 12.8 4.8 12 3z"/><path d="M5 21v-9.5M19 21v-9.5"/><path d="M5 11.5l-1-1.5 1-2 1 2zM19 11.5l-1-1.5 1-2 1 2z"/><path d="M7.5 21v-7.5h9V21"/><path d="M10.5 21v-3a1.5 1.5 0 0 1 3 0v3"/><path d="M2.5 21h19"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 11.5h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-1.2 1.2-1.6 1.2-3M12 8c0-1.2 1.2-1.6 1.2-3M16 8c0-1.2 1.2-1.6 1.2-3"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20.5A7 7 0 0 1 4 13.5c0-6.5 6-9.5 16-9.5 0 10-3.5 16.5-9 16.5z"/><path d="M4.5 20c3-5 7-8.5 12-10.5"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.8 6.8 0 0 0-4 12.3V17h8v-2.2a6.8 6.8 0 0 0-4-12.3z"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></symbol>
   <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
@@ -2232,9 +2249,9 @@ async function scanFoodData(dataUrl){
   const [head, b64] = dataUrl.split(',');
   const mime = (/data:([^;]+)/.exec(head) || [])[1] || 'image/jpeg';
   let txt;
-  geminiTimeout = 75000;
+  geminiTimeout = 50000; geminiFast = true;
   try{ txt = await gemini(FOOD_SCAN_PROMPT, [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Hitung kalori makanan di foto ini.'}]}], true); }
-  finally{ geminiTimeout = 30000; }
+  finally{ geminiTimeout = 30000; geminiFast = false; }
   const a = txt.indexOf('{'), b = txt.lastIndexOf('}'); if(a >= 0 && b > a) txt = txt.slice(a, b + 1);
   const d = JSON.parse(txt);
   const n = v => +v || 0;
@@ -2258,13 +2275,18 @@ function kalScanProblem(meal, title, msg, retryUrl){
   $('#spMan').onclick = () => { closeSheet(); setTimeout(() => kalAddSheet(meal), 280); };
   $('#spRe').onclick = () => { if(retryUrl) kalScanUrl(retryUrl, meal); else { closeSheet(); setTimeout(() => kalPhoto(meal), 280); } };
 }
+let scanToken = 0;
 async function kalScanUrl(url, meal){
-  showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">AI sedang mengenali makananmu… 🍽️<br><small>Biasanya 5–20 detik</small></p>');
+  const my = ++scanToken, t0 = Date.now();
+  showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c"><b style="color:var(--ink)">AI sedang mengenali makananmu… 🍽️</b><br><small id="scanSec">Biasanya 5–15 detik</small></p><button class="btn btn-soft btn-block" id="scanCancel">Batal</button>');
+  const tick = setInterval(() => { const el = $('#scanSec'), s = Math.round((Date.now() - t0) / 1000); if(el) el.textContent = (s < 15 ? 'Biasanya 5–15 detik' : 'Internet agak lambat, sebentar lagi…') + ` · ${s} dtk`; }, 1000);
+  $('#scanCancel').onclick = () => { scanToken++; clearInterval(tick); closeSheet(); };
   try{
     const r = await scanFoodData(url);
+    clearInterval(tick); if(my !== scanToken) return;
     if(!r.foods.length) return kalScanProblem(meal, 'Makanan tidak terlihat', r.note || 'Coba foto makanannya dari atas, lebih dekat dan terang.');
     kalReview(r.foods, meal, 'foto', 'Hasil pindai foto', r.note);
-  }catch(e){ console.warn(e); kalScanProblem(meal, 'AI belum berhasil', scanErrText(e), url); }
+  }catch(e){ clearInterval(tick); if(my !== scanToken) return; console.warn(e); kalScanProblem(meal, 'AI belum berhasil', scanErrText(e), url); }
 }
 function kalPhoto(meal){
   if(!state.settings.apiKey){ showSheet(`<h3 style="margin:4px 0 8px">📷 Pindai makanan</h3><p style="line-height:1.5">Untuk mengenali makanan dari foto, isi dulu kunci API Gemini (gratis) di <b>Profil → Kunci API Gemini</b>.</p><p class="muted-c" style="text-align:left">Sementara itu kamu bisa cari makanan dari daftar atau pindai barcode kemasan.</p><button class="btn btn-block btn-soft" onclick="closeSheet()">Mengerti</button>`); return; }
@@ -2272,7 +2294,7 @@ function kalPhoto(meal){
   inp.onchange = async () => {
     const file = inp.files && inp.files[0]; if(!file) return;
     let url;
-    try{ url = await compressImage(file, 1024, .8); }catch(e){ return kalScanProblem(meal, 'Foto tidak bisa dibuka', 'Format foto ini tidak didukung. Coba ambil foto lagi atau pilih foto lain (JPG/PNG).'); }
+    try{ url = await compressImage(file, 800, .75); }catch(e){ return kalScanProblem(meal, 'Foto tidak bisa dibuka', 'Format foto ini tidak didukung. Coba ambil foto lagi atau pilih foto lain (JPG/PNG).'); }
     kalScanUrl(url, meal);
   };
   inp.click();
@@ -2336,21 +2358,21 @@ function packFromAi(d){
   return {name: String(d.name).trim(), kcal100: r1(k * f), p100: r1((n(d.protein_serving) || 0) * f), c100: r1((n(d.carbs_serving) || 0) * f), f100: r1((n(d.fat_serving) || 0) * f), serving: g, servingLabel: fmtQ(g) + ' g', ai: true};
 }
 async function aiLookupBarcode(code){
-  geminiTimeout = 60000;
+  geminiTimeout = 45000; geminiFast = true;
   try{
     const t = await gemini('Kamu membantu mencari informasi produk makanan/minuman kemasan dari nomor barcode (EAN/UPC), sering produk Indonesia (awalan 899). Cari di internet nama produk untuk barcode itu dan nilai gizinya per sajian (dari label "Informasi Nilai Gizi"). Jika nilai gizi tidak ditemukan tapi produknya jelas, perkirakan dari produk sejenis. Balas HANYA JSON: ' + PACK_JSON + '. Jika produk tidak bisa dipastikan, balas {"found":false}.',
       [{role: 'user', parts: [{text: 'Barcode: ' + code}]}], false, true);
     const d = jsonIn(t); return d && d.found === true && d.name ? packFromAi(d) : null;
-  }finally{ geminiTimeout = 30000; }
+  }finally{ geminiTimeout = 30000; geminiFast = false; }
 }
 async function aiReadPackage(dataUrl){
   const [head, b64] = dataUrl.split(','), mime = (/data:([^;]+)/.exec(head) || [])[1] || 'image/jpeg';
-  geminiTimeout = 75000;
+  geminiTimeout = 50000; geminiFast = true;
   try{
     const t = await gemini('Kamu ahli gizi Indonesia. Foto ini adalah kemasan makanan/minuman atau label "Informasi Nilai Gizi". Baca nama produk & mereknya, takaran saji (gram/ml) dan nilai gizi per sajian dari label. Jika label gizi tidak terlihat, perkirakan dari produk yang terlihat. Balas HANYA JSON: ' + PACK_JSON + '. Jika bukan produk makanan/minuman, balas {"found":false}.',
       [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Baca produk dan nilai gizinya.'}]}], true);
     const d = jsonIn(t); return d && d.found !== false && d.name ? packFromAi(d) : null;
-  }finally{ geminiTimeout = 30000; }
+  }finally{ geminiTimeout = 30000; geminiFast = false; }
 }
 const busy = msg => showSheet(`<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">${msg}</p>`);
 /** Barcode → Open Food Facts → AI cari di internet → foto kemasan (AI baca). Otomatis. */
@@ -2372,7 +2394,7 @@ async function kalLookup(code, meal){
       const file = inp.files && inp.files[0]; if(!file) return;
       busy('AI sedang membaca kemasan… 📦');
       let pp = null, err = null;
-      try{ pp = await aiReadPackage(await compressImage(file, 1400, .85)); }catch(e){ err = scanErrText(e); }
+      try{ pp = await aiReadPackage(await compressImage(file, 1200, .8)); }catch(e){ err = scanErrText(e); }
       if(pp) kalPackSheet(code, pp, meal); else { toast(err || 'Kemasan belum terbaca — isi manual dulu ya'); kalManual(meal, '', code); }
     };
     inp.click();
@@ -2952,36 +2974,60 @@ $('#homeAdd').onclick = () => openForm();
 
 
 /* --- beranda: satu kotak per fitur, isi lengkap dibuka saat diketuk --- */
+const MENU = [
+  ['new', 'i-alarm', 'Pengingat', '#6366F1'],
+  ['park', 'c-parkir', 'Parkir', '#0EA5B7'],
+  ['items', 'c-barang', 'Barang', '#F59E0B'],
+  ['notes', 'i-note', 'Catatan', '#8B5CF6'],
+  ['muslim', 'i-mosque', 'Muslim', '#059669'],
+  ['kal', 'i-bowl', 'Kalori', '#F97316'],
+  ['calm', 'i-leaf', 'Ruang Tenang', '#14B8A6'],
+  ['more', 'i-grid', 'Lainnya', '#64748B'],
+];
 function renderFeatures(){
   const box = $('#featGrid'); if(!box) return;
-  const now = new Date(), nx = nextPrayer(now), md = todayMood(), hs = state.habits, hd = hs.filter(h => (h.d||[]).includes(dayKey(now))).length;
-  const its = activeItems(), sec = state.notes.filter(n => n.secret).length;
-  const ci = state.cycle.enabled ? cycleInfo() : null;
-  const tiles = [
-    ['muslim','🕌','Muslim Harian', `${PRAYER_NAMES[nx.key]} ${fmtTime(nx.at)}`, '#047857,#10B981'],
-    ['kal','🥗','Kalori & Diet', kalSummaryText(), '#F97316,#F43F5E'],
-    ['calm', md ? MOOD_EMOJI[md.m-1] : '🌿', 'Ruang Tenang', !md ? 'Cek mood hari ini' : hs.length ? `Kebiasaan ${hd}/${hs.length}` : 'Mood tercatat ✓', '#14B8A6,#6366F1'],
-    ['notes','📝','Catatan', state.notes.length ? `${state.notes.length} catatan${sec ? ` · ${sec} 🔒` : ''}` : 'Belum ada catatan', '#6366F1,#8B5CF6'],
-    ['items','🎒','Barang', its.length ? `${its.length} barang disimpan` : 'Belum ada barang', '#F59E0B,#EA580C'],
-  ];
-  if(ci) tiles.push(['cycle','🩸','Siklus haid', cycleStatus(ci).title, '#F43F8E,#BE185D']);
-  tiles.push(['tests','🧠','Tes psikologi','Kenali dirimu','#EC4899,#F97316']);
-  if(tiles.length % 2) tiles.push(['stats','📊','Statistik','Lihat progresmu','#0EA5E9,#2563EB']);
-  box.innerHTML = tiles.map(([id, e, t, sub, g]) => `<button class="ftile" data-feat="${id}" style="background:linear-gradient(135deg,${g})"><div class="ft-top"><span class="ft-ic">${e}</span>${icon('i-right')}</div><div><b>${esc(t)}</b><small>${esc(sub)}</small></div></button>`).join('');
+  const its = activeItems().length, nn = state.notes.length;
+  const badge = {items: its, notes: 0};
+  box.innerHTML = MENU.map(([id, ic, label, c]) => `<button class="mitem" data-feat="${id}"><span class="mic2" style="background:${c}1a;color:${c}">${icon(ic)}</span>${badge[id] ? `<span class="mbadge">${badge[id]}</span>` : ''}${label}</button>`).join('');
+  renderSummary();
 }
-$('#featGrid').onclick = e => {
+function renderSummary(){
+  const row = $('#sumRow'); if(!row) return;
+  const now = new Date(), nx = nextPrayer(now), t = kalTarget(), eat = kalSum(kalOn(now)).k, md = todayMood();
+  const card = (id, ic, c, head, big, sub, bar, txt) => `<button class="scard" data-feat="${id}"><div class="sh"><i style="background:${c}1a;color:${c}">${icon(ic)}</i>${head}</div><b class="${txt ? 't' : ''}">${big}</b><small>${sub}</small>${bar != null ? `<div class="sbar"><em style="width:${Math.min(100, bar * 100)}%;background:${c}"></em></div>` : ''}</button>`;
+  const cards = [
+    card('muslim', 'i-mosque', '#059669', 'Sholat', `${PRAYER_NAMES[nx.key]} <small>${fmtTime(nx.at)}</small>`, cdText(nx.at - now)),
+    card('kal', 'i-bowl', '#F97316', 'Kalori', `${fmtK(eat)} <small>kkal</small>`, t ? (t.target - eat >= 0 ? `sisa ${fmtK(t.target - eat)} dari ${fmtK(t.target)}` : `lebih ${fmtK(eat - t.target)} kkal`) : 'Atur target diet', t ? eat / t.target : null),
+    card('mood', 'i-leaf', '#14B8A6', 'Mood', md ? `${MOOD_EMOJI[md.m - 1]} <small>${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')}</small>` : 'Belum dicek', md ? 'Tercatat hari ini ✓' : 'Ketuk untuk cek mood', null, !md),
+  ];
+  if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); cards.push(card('cycle', 'i-drop', '#EC4899', 'Siklus haid', esc(st.title), esc(st.sub || ''), null, true)); } }
+  const its = activeItems();
+  if(its.length) cards.push(card('items', 'c-barang', '#F59E0B', 'Barang disimpan', `${its.length} <small>barang</small>`, esc(its[0].title || '')));
+  row.innerHTML = cards.join('');
+}
+function openMoreMenu(){
+  const extra = [['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu', '#EC4899'], ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid', '#F43F5E'], ['calendar', 'i-calendar', 'Kalender', 'Semua jadwal per tanggal', '#6366F1'], ['stats', 'i-chart', 'Statistik', 'Progres & kebiasaanmu', '#0EA5E9'], ['ai', 'i-spark', 'Asisten AI', 'Tanya atau suruh apa saja', '#8B5CF6'], ['profile', 'i-user', 'Profil & pengaturan', 'Tema, suara, cadangan data', '#64748B']];
+  showSheet(`<h3 style="margin:4px 0 12px">Semua fitur</h3><div class="group">${extra.map(([id, ic, t, sub, c]) => `<button class="row-s" data-more="${id}"><div class="ic" style="background:${c}1a;color:${c}">${icon(ic)}</div><div class="tx"><b>${t}</b><small>${sub}</small></div><svg class="i chev"><use href="#i-right"/></svg></button>`).join('')}</div>`);
+  $('#sheetBody').querySelector('.group').onclick = e => { const b = e.target.closest('[data-more]'); if(!b) return; closeSheet(); const id = b.dataset.more;
+    setTimeout(() => id === 'tests' ? openTests(null) : id === 'cycle' ? openCycle() : id === 'ai' ? openAI(false) : go(id), 260); };
+}
+function onFeat(e){
   const b = e.target.closest('[data-feat]'); if(!b) return;
   switch(b.dataset.feat){
+    case 'new': openForm(); break;
+    case 'park': startParking(true); break;
     case 'muslim': openMuslim(); break;
     case 'calm': openCalm(); break;
+    case 'mood': moodCheckin(); break;
     case 'kal': openKal(); break;
     case 'notes': openNotes(); break;
     case 'items': showItemsSheet(); break;
     case 'cycle': openCycle(); break;
-    case 'tests': openTests(null); break;
-    case 'stats': go('stats'); break;
+    case 'more': openMoreMenu(); break;
   }
-};
+}
+$('#featGrid').onclick = onFeat;
+$('#sumRow').onclick = onFeat;
 function showItemsSheet(){
   const its = activeItems();
   if(!its.length){ startItem(); return; }
@@ -3556,7 +3602,7 @@ function startItem(){
   setTimeout(() => $('#itName') && $('#itName').focus(), 350);
   $('#overlay').onclick = () => { if(photo && !state.reminders.some(r=>r.photo===photo)) photoDel(photo); photo = null; closeSheet(); $('#overlay').onclick = closeSheet; };
 }
-$('#qItem').onclick = startItem;
+
 function answerItem(text){
   const found = findItems(text);
   if(!found.length) return false;
@@ -4928,8 +4974,7 @@ async function startParking(autoScan = false){
   if(autoScan){ const r = await scanTicket(); if(r){ ticket = r; draw(); } }
   $('#overlay').onclick = () => { if(photo && !state.reminders.some(r=>r.photo===photo)) photoDel(photo); photo = null; closeSheet(); $('#overlay').onclick = closeSheet; };
 }
-$('#qPark').onclick = () => startParking(true); // langsung scan tiket
-$('#qNew').onclick = () => openForm();
+
 
 /* ---------------- NOTIFICATIONS & ALARM ---------------- */
 let swReg = null;
@@ -5553,13 +5598,15 @@ function endpointFor(model, ep = 'studio'){
     ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${encodeURIComponent(model)}:generateContent`
     : `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 }
-let geminiTimeout = 30000;
+let geminiTimeout = 30000, geminiFast = false;
 async function gemini(system, contents, json, search = false){
   let firstAuthErr = null, lastErr = null;
   for(const ep of endpointOrder()){
     for(const model of modelCandidates(ep)){
       try{
-        const out = await geminiOnce(model, system, contents, json, search, ep);
+        let out;
+        try{ out = await geminiOnce(model, system, contents, json, search, ep); }
+        catch(e){ if(!(geminiFast && e.status === 400 && /think/i.test(e.message))) throw e; const f = geminiFast; geminiFast = false; try{ out = await geminiOnce(model, system, contents, json, search, ep); } finally{ geminiFast = f; } }
         workingModel = model; workingEp = ep;
         return out;
       }catch(e){
@@ -5574,7 +5621,10 @@ async function gemini(system, contents, json, search = false){
 }
 async function geminiOnce(model, system, contents, json, search, ep = 'studio'){
   const body = {systemInstruction:{parts:[{text:system}]}, contents};
-  if(json) body.generationConfig = {responseMimeType:'application/json'};
+  const gen = {};
+  if(json) gen.responseMimeType = 'application/json';
+  if(geminiFast) gen.thinkingConfig = /gemini-2/.test(model) ? {thinkingBudget: 0} : {thinkingLevel: 'low'}; // pindai: jawab langsung tanpa berpikir lama
+  if(Object.keys(gen).length) body.generationConfig = gen;
   if(search) body.tools = [{googleSearch:{}}];
   lastSources = [];
   const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), geminiTimeout);

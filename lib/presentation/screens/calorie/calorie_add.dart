@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -274,7 +275,7 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
     if (src == null) return;
     XFile? x;
     try {
-      x = await ImagePicker().pickImage(source: src, maxWidth: 1024, maxHeight: 1024, imageQuality: 80);
+      x = await ImagePicker().pickImage(source: src, maxWidth: 800, maxHeight: 800, imageQuality: 75);
     } on PlatformException catch (e) {
       if (!context.mounted) return;
       final denied = e.code.contains('denied') || e.code.contains('access');
@@ -298,22 +299,17 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
     bytes = await file.readAsBytes();
   }
   if (!context.mounted) return;
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (_) => const AlertDialog(
-      content: Row(children: [CircularProgressIndicator(color: kKal), SizedBox(width: 18), Expanded(child: Text('AI sedang mengenali makananmu… 🍽️'))]),
-    ),
-  );
   ({List<Map<String, dynamic>> items, String note})? res;
   String? err;
+  var cancelled = false;
   try {
-    res = await ref.read(aiServiceProvider).scanFood(bytes, apiKey: settings.apiKey, model: settings.model);
+    res = await runWithWait(context, 'AI sedang mengenali makananmu… 🍽️',
+        () => ref.read(aiServiceProvider).scanFood(bytes, apiKey: settings.apiKey, model: settings.model));
+    cancelled = res == null;
   } catch (e) {
     err = AiService.scanErrorText(e);
   }
-  if (!context.mounted) return;
-  Navigator.of(context, rootNavigator: true).pop();
+  if (!context.mounted || cancelled) return;
   if (err != null || res == null) {
     await _scanProblem(context, ref, meal: meal, day: day, title: 'AI belum berhasil', msg: err ?? 'Gagal memindai', retryPath: usedPath);
     return;
@@ -328,6 +324,77 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
       FoodItem(foodEmoji('${x['name']}'), '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'),
   ];
   await reviewFoods(context, ref, foods: foods, meal: meal, day: day, source: 'foto', title: 'Hasil pindai foto', note: res.note);
+}
+
+/// Jalankan [job] sambil menampilkan layar tunggu (detik berjalan + tombol Batal). Hasil null = dibatalkan.
+Future<T?> runWithWait<T extends Object>(BuildContext context, String msg, Future<T> Function() job) async {
+  var cancelled = false;
+  final nav = Navigator.of(context, rootNavigator: true);
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => _WaitDialog(
+      msg: msg,
+      onCancel: () {
+        cancelled = true;
+        nav.pop();
+      },
+    ),
+  );
+  try {
+    final r = await job();
+    if (cancelled) return null;
+    nav.pop();
+    return r;
+  } catch (e) {
+    if (cancelled) return null;
+    nav.pop();
+    rethrow;
+  }
+}
+
+class _WaitDialog extends StatefulWidget {
+  const _WaitDialog({required this.msg, required this.onCancel});
+  final String msg;
+  final VoidCallback onCancel;
+  @override
+  State<_WaitDialog> createState() => _WaitDialogState();
+}
+
+class _WaitDialogState extends State<_WaitDialog> {
+  final _sw = Stopwatch()..start();
+  Timer? _t;
+  @override
+  void initState() {
+    super.initState();
+    _t = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _t?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = _sw.elapsed.inSeconds;
+    return PopScope(
+      canPop: false,
+      child: AlertDialog(
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          const SizedBox(height: 6),
+          const SizedBox(width: 44, height: 44, child: CircularProgressIndicator(color: kKal, strokeWidth: 4)),
+          const SizedBox(height: 16),
+          Text(widget.msg, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Text(s < 15 ? 'Biasanya 5–15 detik · $s dtk' : 'Internet agak lambat, sebentar lagi… · $s dtk', textAlign: TextAlign.center, style: TextStyle(color: context.muted, fontSize: 12.5)),
+        ]),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [TextButton(onPressed: widget.onCancel, child: const Text('Batal'))],
+      ),
+    );
+  }
 }
 
 /// Dialog saat pindai gagal: alasan jelas + jalan keluar.
@@ -520,9 +587,9 @@ Future<void> lookupBarcode(BuildContext context, WidgetRef ref, String code, {re
 Future<void> _readPackPhoto(BuildContext context, WidgetRef ref, String code, {required String meal, required DateTime day}) async {
   XFile? x;
   try {
-    x = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1400, maxHeight: 1400, imageQuality: 85);
+    x = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1200, maxHeight: 1200, imageQuality: 80);
   } on PlatformException {
-    x = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1400, maxHeight: 1400, imageQuality: 85);
+    x = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1200, maxHeight: 1200, imageQuality: 80);
   }
   if (x == null) {
     final lost = await ImagePicker().retrieveLostData();
@@ -532,17 +599,17 @@ Future<void> _readPackPhoto(BuildContext context, WidgetRef ref, String code, {r
   final bytes = await x.readAsBytes();
   if (!context.mounted) return;
   final settings = ref.read(settingsProvider);
-  _busy(context, 'AI sedang membaca kemasan… 📦');
   PackFood? p;
   String? err;
   try {
-    final d = await ref.read(aiServiceProvider).readPackage(bytes, apiKey: settings.apiKey, model: settings.model);
-    if (d != null) p = PackFood.fromAi(d);
+    final d = await runWithWait(context, 'AI sedang membaca kemasan… 📦',
+        () => ref.read(aiServiceProvider).readPackage(bytes, apiKey: settings.apiKey, model: settings.model).then((v) => v ?? const <String, dynamic>{}));
+    if (d == null) return; // dibatalkan
+    if (d.isNotEmpty) p = PackFood.fromAi(d);
   } catch (e) {
     err = AiService.scanErrorText(e);
   }
   if (!context.mounted) return;
-  _unbusy(context);
   if (p == null) {
     showToast(context, err ?? 'Kemasan belum terbaca — isi manual dulu ya');
     await manualFood(context, ref, meal: meal, day: day, barcode: code);

@@ -127,8 +127,9 @@ Contoh Output:
     required List<Map<String, dynamic>> contents,
     bool json = false,
     Duration timeout = const Duration(seconds: 30),
+    bool fast = false,
   }) async =>
-      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json, timeout: timeout)).text;
+      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json, timeout: timeout, fast: fast)).text;
 
   /// Mencoba beberapa model sampai ada yang tersedia untuk kunci ini.
   Future<AiReply> _generateFull({
@@ -139,13 +140,21 @@ Contoh Output:
     bool json = false,
     bool search = false,
     Duration timeout = const Duration(seconds: 30),
+    bool fast = false,
   }) async {
     AiException? last, firstAuth;
     for (final vertex in _endpointOrder(apiKey)) {
       for (final m in _candidates(vertex, model)) {
         try {
-          final r = await _generateOnce(
-              apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search, timeout: timeout);
+          AiReply r;
+          try {
+            r = await _generateOnce(
+                apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search, timeout: timeout, fast: fast);
+          } on AiException catch (e) {
+            // model ini tidak mengenal pengaturan "berpikir" → ulangi tanpa itu
+            if (!fast || e.status != 400 || !e.message.toLowerCase().contains('think')) rethrow;
+            r = await _generateOnce(apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search, timeout: timeout);
+          }
           workingModel = m;
           workingVertex = vertex;
           return r;
@@ -175,7 +184,13 @@ Contoh Output:
     bool json = false,
     bool search = false,
     Duration timeout = const Duration(seconds: 30),
+    bool fast = false,
   }) async {
+    final gen = <String, dynamic>{
+      if (json) 'responseMimeType': 'application/json',
+      // pindai foto: jawab langsung tanpa "berpikir" lama
+      if (fast) 'thinkingConfig': model.contains('gemini-2') ? {'thinkingBudget': 0} : {'thinkingLevel': 'low'},
+    };
     final body = <String, dynamic>{
       'systemInstruction': {
         'parts': [
@@ -183,7 +198,7 @@ Contoh Output:
         ]
       },
       'contents': contents,
-      if (json) 'generationConfig': {'responseMimeType': 'application/json'},
+      if (gen.isNotEmpty) 'generationConfig': gen,
       if (search)
         'tools': [
           {'googleSearch': <String, dynamic>{}}
@@ -363,7 +378,8 @@ Contoh Output:
       model: model,
       system: foodScanPrompt,
       json: true,
-      timeout: const Duration(seconds: 75),
+      fast: true,
+      timeout: const Duration(seconds: 50),
       contents: [
         {
           'role': 'user',
@@ -407,7 +423,8 @@ Contoh Output:
       apiKey: apiKey,
       model: model,
       search: true,
-      timeout: const Duration(seconds: 60),
+      fast: true,
+      timeout: const Duration(seconds: 45),
       system: 'Kamu membantu mencari informasi produk makanan/minuman kemasan dari nomor barcode (EAN/UPC), sering produk Indonesia (awalan 899). '
           'Cari di internet nama produk untuk barcode itu dan nilai gizinya per sajian (dari label "Informasi Nilai Gizi"). '
           'Jika nilai gizi tidak ditemukan tapi produknya jelas, perkirakan dari produk sejenis. '
@@ -431,7 +448,8 @@ Contoh Output:
       apiKey: apiKey,
       model: model,
       json: true,
-      timeout: const Duration(seconds: 75),
+      fast: true,
+      timeout: const Duration(seconds: 50),
       system: 'Kamu ahli gizi Indonesia. Foto ini adalah kemasan makanan/minuman atau label "Informasi Nilai Gizi". '
           'Baca nama produk & mereknya, takaran saji (gram/ml) dan nilai gizi per sajian dari label. '
           'Jika label gizi tidak terlihat, perkirakan dari produk yang terlihat. '

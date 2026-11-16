@@ -28,6 +28,7 @@ import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
 import 'stats_screen.dart';
 import '../../services/islam_logic.dart';
+import '../../services/calorie_logic.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key, required this.onOpenAi, required this.onGoTo});
@@ -81,41 +82,14 @@ class HomeScreen extends ConsumerWidget {
           _HeroCard(next: next, now: now, onOpen: next == null ? null : () => showReminderDetail(context, ref, next.reminder, next.at)),
           const SizedBox(height: 16),
           _AskBar(onTap: onOpenAi),
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(
-              child: _QuickAction(
-                icon: Icons.local_parking_rounded,
-                label: 'Catat parkir',
-                color: ReminderCategory.parkir.color,
-                onTap: () => startParkingFlow(context, ref),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _QuickAction(
-                icon: ReminderCategory.barang.icon,
-                label: 'Ingat barang',
-                color: ReminderCategory.barang.color,
-                onTap: () => startItemFlow(context),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _QuickAction(
-                icon: Icons.add_alarm_rounded,
-                label: 'Pengingat',
-                color: AppColors.primary,
-                onTap: () => _openForm(context),
-              ),
-            ),
-          ]),
+          const SizedBox(height: 14),
+          _MenuCard(onOpenAi: onOpenAi, onGoTo: onGoTo, onItems: () => _showItems(context, items), onNew: () => _openForm(context)),
           if (parking != null) ...[
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
           ],
-          const SectionHeader('Fitur'),
-          _FeatureGrid(onOpenAi: onOpenAi, itemCount: items.length, onItems: () => _showItems(context, items)),
+          const SectionHeader('Ringkasan hari ini'),
+          _SummaryRow(onItems: () => _showItems(context, items)),
           SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
           _TodaySection(
             today: today,
@@ -272,43 +246,6 @@ class _AskBar extends StatelessWidget {
   }
 }
 
-class _QuickAction extends StatelessWidget {
-  const _QuickAction({required this.icon, required this.label, required this.color, required this.onTap});
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: color.withValues(alpha: context.isDark ? .2 : .11),
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: context.isDark ? Colors.white.withValues(alpha: .08) : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: context.isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: .08), blurRadius: 10, offset: const Offset(0, 4), spreadRadius: -6)],
-              ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 10),
-            Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
 class _ParkingCard extends ConsumerWidget {
   const _ParkingCard({required this.parking});
   final Reminder parking;
@@ -412,148 +349,243 @@ class _ItemRow extends ConsumerWidget {
 }
 
 
-/// Kotak fitur ringkas di beranda — satu kotak per fitur, isi lengkap dibuka saat diketuk.
-class _FeatureGrid extends ConsumerWidget {
-  const _FeatureGrid({required this.onOpenAi, required this.itemCount, required this.onItems});
-  final VoidCallback onOpenAi;
-  final int itemCount;
-  final VoidCallback onItems;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final now = ref.watch(tickerProvider).value ?? DateTime.now();
-    final muslim = ref.watch(muslimProvider);
-    ref.watch(moodProvider);
-    final mood = ref.read(moodProvider.notifier).today;
-    final habits = ref.watch(habitsProvider);
-    final habitsDone = habits.where((h) => h.doneOn(now)).length;
-    final notes = ref.watch(notesProvider);
-    final secretCount = notes.where((n) => n.secret).length;
-    final cycle = ref.watch(cycleProvider);
-    final cycleInfo = cycle.enabled ? CycleInfo.from(cycle) : null;
-    final next = muslim.next(now);
-    final kal = ref.watch(calorieProvider);
-    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-
-    final tiles = <Widget>[
-      _FeatureTile(
-        emoji: '🕌',
-        title: 'Muslim Harian',
-        subtitle: '${prayerNames[next.key]} ${fmtTime(next.at)}',
-        gradient: kMuslimGradient,
-        onTap: () => push(const MuslimScreen()),
-      ),
-      _FeatureTile(
-        emoji: mood == null ? '🌿' : MoodAdvice.moodEmoji[mood.mood - 1],
-        title: 'Ruang Tenang',
-        subtitle: mood == null ? 'Cek mood hari ini' : (habits.isEmpty ? 'Mood tercatat ✓' : 'Kebiasaan $habitsDone/${habits.length}'),
-        gradient: kCalmGradient,
-        onTap: () => push(CalmScreen(onOpenChat: onOpenAi)),
-      ),
-      _FeatureTile(
-        emoji: '🥗',
-        title: 'Kalori & Diet',
-        subtitle: calorieSummary(kal),
-        gradient: kKalGradient,
-        onTap: () => push(const CalorieScreen()),
-      ),
-      _FeatureTile(
-        emoji: '📝',
-        title: 'Catatan',
-        subtitle: notes.isEmpty ? 'Belum ada catatan' : '${notes.length} catatan${secretCount > 0 ? ' · $secretCount 🔒' : ''}',
-        gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
-        onTap: () => push(const NotesScreen()),
-      ),
-      _FeatureTile(
-        emoji: '🎒',
-        title: 'Barang',
-        subtitle: itemCount == 0 ? 'Belum ada barang' : '$itemCount barang disimpan',
-        gradient: const LinearGradient(colors: [Color(0xFFF59E0B), Color(0xFFEA580C)]),
-        onTap: onItems,
-      ),
-      if (cycleInfo != null)
-        _FeatureTile(
-          emoji: '🩸',
-          title: 'Siklus haid',
-          subtitle: cycleInfo.status().title,
-          gradient: kHaidGradient,
-          onTap: () => push(const CycleScreen()),
-        ),
-      _FeatureTile(
-        emoji: '🧠',
-        title: 'Tes psikologi',
-        subtitle: 'Kenali dirimu',
-        gradient: const LinearGradient(colors: [Color(0xFFEC4899), Color(0xFFF97316)]),
-        onTap: () => push(const TestsScreen()),
-      ),
-    ];
-    if (tiles.length.isOdd) {
-      tiles.add(_FeatureTile(
-        emoji: '📊',
-        title: 'Statistik',
-        subtitle: 'Lihat progresmu',
-        gradient: const LinearGradient(colors: [Color(0xFF0EA5E9), Color(0xFF2563EB)]),
-        onTap: () => push(const _StatsPage()),
-      ));
-    }
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 1.7,
-      children: tiles,
-    );
-  }
-}
-
 class _StatsPage extends StatelessWidget {
   const _StatsPage();
   @override
   Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Statistik')), body: const StatsScreen());
 }
 
-class _FeatureTile extends StatelessWidget {
-  const _FeatureTile({required this.emoji, required this.title, required this.subtitle, required this.gradient, required this.onTap});
-  final String emoji, title, subtitle;
-  final Gradient gradient;
+/// Menu ikon 4 kolom — satu tempat untuk semua fitur.
+class _MenuCard extends ConsumerWidget {
+  const _MenuCard({required this.onOpenAi, required this.onGoTo, required this.onItems, required this.onNew});
+  final VoidCallback onOpenAi, onItems, onNew;
+  final void Function(int) onGoTo;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = activeItems(ref.watch(remindersProvider)).length;
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+    final menu = <({IconData icon, String label, Color color, VoidCallback onTap, int badge})>[
+      (icon: Icons.add_alarm_rounded, label: 'Pengingat', color: const Color(0xFF6366F1), onTap: onNew, badge: 0),
+      (icon: Icons.local_parking_rounded, label: 'Parkir', color: ReminderCategory.parkir.color, onTap: () => startParkingFlow(context, ref), badge: 0),
+      (icon: ReminderCategory.barang.icon, label: 'Barang', color: const Color(0xFFF59E0B), onTap: onItems, badge: items),
+      (icon: Icons.sticky_note_2_rounded, label: 'Catatan', color: const Color(0xFF8B5CF6), onTap: () => push(const NotesScreen()), badge: 0),
+      (icon: Icons.mosque_rounded, label: 'Muslim', color: const Color(0xFF059669), onTap: () => push(const MuslimScreen()), badge: 0),
+      (icon: Icons.restaurant_rounded, label: 'Kalori', color: kKal, onTap: () => push(const CalorieScreen()), badge: 0),
+      (icon: Icons.spa_rounded, label: 'Ruang Tenang', color: const Color(0xFF14B8A6), onTap: () => push(CalmScreen(onOpenChat: onOpenAi)), badge: 0),
+      (icon: Icons.apps_rounded, label: 'Lainnya', color: const Color(0xFF64748B), onTap: () => _moreMenu(context, ref), badge: 0),
+    ];
+    return SoftCard(
+      radius: 22,
+      padding: const EdgeInsets.fromLTRB(6, 16, 6, 8),
+      child: GridView.count(
+        crossAxisCount: 4,
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: .86,
+        children: [
+          for (final m in menu)
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: m.onTap,
+              child: Column(children: [
+                Stack(clipBehavior: Clip.none, children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(color: m.color.withValues(alpha: .1), borderRadius: BorderRadius.circular(16)),
+                    child: Icon(m.icon, color: m.color, size: 25),
+                  ),
+                  if (m.badge > 0)
+                    Positioned(
+                      right: -6,
+                      top: -5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                        constraints: const BoxConstraints(minWidth: 18),
+                        decoration: BoxDecoration(color: const Color(0xFFE11D48), borderRadius: BorderRadius.circular(99), border: Border.all(color: context.card, width: 2)),
+                        child: Text('${m.badge}', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
+                      ),
+                    ),
+                ]),
+                const SizedBox(height: 7),
+                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, height: 1.2)),
+              ]),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _moreMenu(BuildContext context, WidgetRef ref) {
+    final cycleOn = ref.read(cycleProvider).enabled;
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+    final rows = <({IconData icon, String title, String sub, Color color, VoidCallback onTap})>[
+      (icon: Icons.psychology_rounded, title: 'Tes psikologi', sub: 'Kenali kondisi dirimu', color: const Color(0xFFEC4899), onTap: () => push(const TestsScreen())),
+      (icon: Icons.water_drop_rounded, title: 'Siklus haid', sub: cycleOn ? 'Pengingat & perkiraan haid' : 'Aktifkan pengingat haid', color: kHaid, onTap: () => push(const CycleScreen())),
+      (icon: Icons.calendar_month_rounded, title: 'Kalender', sub: 'Semua jadwal per tanggal', color: const Color(0xFF6366F1), onTap: () => onGoTo(1)),
+      (icon: Icons.bar_chart_rounded, title: 'Statistik', sub: 'Progres & kebiasaanmu', color: const Color(0xFF0EA5E9), onTap: () => push(const _StatsPage())),
+      (icon: Icons.auto_awesome_rounded, title: 'Asisten AI', sub: 'Tanya atau suruh apa saja', color: const Color(0xFF8B5CF6), onTap: onOpenAi),
+      (icon: Icons.settings_rounded, title: 'Profil & pengaturan', sub: 'Tema, suara, cadangan data', color: const Color(0xFF64748B), onTap: () => onGoTo(3)),
+    ];
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 8), child: Text('Semua fitur', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
+          for (final r in rows)
+            ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(color: r.color.withValues(alpha: .12), borderRadius: BorderRadius.circular(12)),
+                child: Icon(r.icon, color: r.color, size: 21),
+              ),
+              title: Text(r.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+              subtitle: Text(r.sub),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () {
+                Navigator.pop(ctx);
+                r.onTap();
+              },
+            ),
+          const SizedBox(height: 8),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Kartu ringkasan yang bisa digeser: sholat, kalori, mood, haid, barang.
+class _SummaryRow extends ConsumerWidget {
+  const _SummaryRow({required this.onItems});
+  final VoidCallback onItems;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(tickerProvider).value ?? DateTime.now();
+    final nx = ref.watch(muslimProvider).next(now);
+    final kal = ref.watch(calorieProvider);
+    final t = kal.target;
+    final eaten = kal.kcalOn(now);
+    ref.watch(moodProvider);
+    final mood = ref.read(moodProvider.notifier).today;
+    final cycle = ref.watch(cycleProvider);
+    final ci = cycle.enabled ? CycleInfo.from(cycle) : null;
+    final items = activeItems(ref.watch(remindersProvider));
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+    final cards = <Widget>[
+      _SumCard(
+        icon: Icons.mosque_rounded,
+        color: const Color(0xFF059669),
+        head: 'Sholat',
+        big: prayerNames[nx.key]!,
+        unit: fmtTime(nx.at),
+        sub: countdownText(nx.at.difference(now)),
+        onTap: () => push(const MuslimScreen()),
+      ),
+      _SumCard(
+        icon: Icons.restaurant_rounded,
+        color: kKal,
+        head: 'Kalori',
+        big: fmtKcal(eaten),
+        unit: 'kkal',
+        sub: t == null ? 'Atur target diet' : (t.target - eaten >= 0 ? 'sisa ${fmtKcal(t.target - eaten)} dari ${fmtKcal(t.target)}' : 'lebih ${fmtKcal(eaten - t.target)} kkal'),
+        progress: t == null ? null : eaten / t.target,
+        onTap: () => push(const CalorieScreen()),
+      ),
+      _SumCard(
+        icon: Icons.spa_rounded,
+        color: const Color(0xFF14B8A6),
+        head: 'Mood',
+        big: mood == null ? 'Belum dicek' : MoodAdvice.moodEmoji[mood.mood - 1],
+        unit: mood == null ? '' : MoodAdvice.moodLabel[mood.mood - 1],
+        sub: mood == null ? 'Ketuk untuk cek mood' : 'Tercatat hari ini ✓',
+        small: mood == null,
+        onTap: () => showMoodCheckin(context, ref),
+      ),
+      if (ci != null)
+        _SumCard(
+          icon: Icons.water_drop_rounded,
+          color: kHaid,
+          head: 'Siklus haid',
+          big: ci.status().title,
+          small: true,
+          sub: ci.status().sub,
+          onTap: () => push(const CycleScreen()),
+        ),
+      if (items.isNotEmpty)
+        _SumCard(
+          icon: ReminderCategory.barang.icon,
+          color: const Color(0xFFF59E0B),
+          head: 'Barang disimpan',
+          big: '${items.length}',
+          unit: 'barang',
+          sub: items.first.title,
+          onTap: onItems,
+        ),
+    ];
+    return SizedBox(
+      height: 132,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        itemCount: cards.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, i) => cards[i],
+      ),
+    );
+  }
+}
+
+class _SumCard extends StatelessWidget {
+  const _SumCard({required this.icon, required this.color, required this.head, required this.big, this.unit = '', required this.sub, this.progress, this.small = false, required this.onTap});
+  final IconData icon;
+  final Color color;
+  final String head, big, unit, sub;
+  final double? progress;
+  final bool small;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 18, offset: const Offset(0, 10), spreadRadius: -12)],
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(11)),
-                  alignment: Alignment.center,
-                  child: Text(emoji, style: const TextStyle(fontSize: 18)),
-                ),
-                const Spacer(),
-                Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white.withValues(alpha: .85)),
-              ]),
-              const Spacer(),
-              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14.5)),
-              Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: .88), fontSize: 12)),
+    return SizedBox(
+      width: 156,
+      child: SoftCard(
+        radius: 20,
+        padding: const EdgeInsets.all(14),
+        onTap: onTap,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Container(
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(9)),
+              child: Icon(icon, size: 15, color: color),
+            ),
+            const SizedBox(width: 7),
+            Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted))),
+          ]),
+          const SizedBox(height: 8),
+          Text.rich(
+            TextSpan(children: [
+              TextSpan(text: big, style: TextStyle(fontSize: small ? 15 : 21, fontWeight: FontWeight.w800, letterSpacing: -.3)),
+              if (unit.isNotEmpty) TextSpan(text: ' $unit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted)),
             ]),
+            maxLines: small ? 2 : 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
+          const SizedBox(height: 2),
+          Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.muted)),
+          const Spacer(),
+          if (progress != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(99),
+              child: LinearProgressIndicator(value: progress!.clamp(0, 1).toDouble(), minHeight: 5, color: color, backgroundColor: color.withValues(alpha: .12)),
+            ),
+        ]),
       ),
     );
   }
