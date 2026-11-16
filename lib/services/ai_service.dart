@@ -126,8 +126,9 @@ Contoh Output:
     required String system,
     required List<Map<String, dynamic>> contents,
     bool json = false,
+    Duration timeout = const Duration(seconds: 30),
   }) async =>
-      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json)).text;
+      (await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, json: json, timeout: timeout)).text;
 
   /// Mencoba beberapa model sampai ada yang tersedia untuk kunci ini.
   Future<AiReply> _generateFull({
@@ -137,13 +138,14 @@ Contoh Output:
     required List<Map<String, dynamic>> contents,
     bool json = false,
     bool search = false,
+    Duration timeout = const Duration(seconds: 30),
   }) async {
     AiException? last, firstAuth;
     for (final vertex in _endpointOrder(apiKey)) {
       for (final m in _candidates(vertex, model)) {
         try {
           final r = await _generateOnce(
-              apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search);
+              apiKey: apiKey, model: m, vertex: vertex, system: system, contents: contents, json: json, search: search, timeout: timeout);
           workingModel = m;
           workingVertex = vertex;
           return r;
@@ -172,6 +174,7 @@ Contoh Output:
     required List<Map<String, dynamic>> contents,
     bool json = false,
     bool search = false,
+    Duration timeout = const Duration(seconds: 30),
   }) async {
     final body = <String, dynamic>{
       'systemInstruction': {
@@ -194,7 +197,7 @@ Contoh Output:
             headers: {'Content-Type': 'application/json', 'x-goog-api-key': apiKey.trim()},
             body: jsonEncode(body),
           )
-          .timeout(const Duration(seconds: 30));
+          .timeout(timeout);
     } on TimeoutException {
       throw AiException(-1, 'timeout');
     } catch (e) {
@@ -330,6 +333,25 @@ Contoh Output:
     }
   }
 
+  /// Penjelasan error pindai foto yang mudah dipahami.
+  static String scanErrorText(Object e) {
+    if (e is AiException) {
+      final m = e.message.toLowerCase();
+      if (e.status == -1) return 'AI terlalu lama menjawab — biasanya karena internet lambat. Coba lagi di sinyal yang lebih bagus.';
+      if (e.status == -2) return 'Tidak tersambung ke internet. Nyalakan data/Wi-Fi lalu coba lagi.';
+      if (e.status == 429 || m.contains('quota') || m.contains('exhausted')) {
+        return 'Kuota gratis Gemini sedang habis. Tunggu 1–2 menit lalu coba lagi (kuota harian kembali penuh tiap hari).';
+      }
+      if (e.status == 401 || e.status == 403 || (e.status == 400 && (m.contains('api key') || m.contains('api_key')))) {
+        return 'Kunci API Gemini ditolak. Cek atau ganti kuncinya di Profil → Kunci API Gemini (tombol "Tes").';
+      }
+      if (e.status >= 500) return 'Server Gemini sedang sibuk. Coba lagi sebentar lagi.';
+      return 'AI belum bisa membaca foto ini (kode ${e.status}${e.message.isNotEmpty ? ': ${e.message.length > 80 ? e.message.substring(0, 80) : e.message}' : ''}).';
+    }
+    if (e is FormatException) return 'Jawaban AI terpotong. Coba foto ulang ya.';
+    return 'Foto belum bisa dikenali. Coba foto lebih dekat dan terang.';
+  }
+
   static const foodScanPrompt = 'Kamu ahli gizi Indonesia. Kenali semua makanan & minuman di foto ini dan perkirakan porsinya. '
       'Balas HANYA JSON: {"items":[{"name":"nama makanan dalam bahasa Indonesia","portion":"mis. 1 piring","gram":150,"kcal":195,"protein":3.6,"carbs":42,"fat":0.3}],"note":"catatan singkat"}. '
       'Pakai acuan TKPI Kemenkes. Jika foto bukan makanan, kembalikan {"items":[],"note":"alasan"}.';
@@ -341,6 +363,7 @@ Contoh Output:
       model: model,
       system: foodScanPrompt,
       json: true,
+      timeout: const Duration(seconds: 75),
       contents: [
         {
           'role': 'user',

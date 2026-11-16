@@ -197,8 +197,8 @@ class ChatNotifier extends Notifier<ChatState> {
       final rows = [for (final x in foods) '• ${x.food.name} (${x.food.portion}) — **${fmtKcal(x.food.kcal)} kkal**'].join('\n');
       _bot('📷 Dari fotomu, perkiraan **${fmtKcal(sum)} kkal** — dicatat ke ${mealNames[meal]}:\n$rows\n\n${_kcalToday()}\n\n*Perkiraan AI, porsinya bisa diubah di menu Kalori.*',
           tools: const ['kalori']);
-    } catch (_) {
-      _bot('Foto makanan belum bisa dibaca sekarang. Coba lagi, atau catat lewat menu Kalori.', tools: const ['kalori']);
+    } catch (e) {
+      _bot('📷 ${AiService.scanErrorText(e)}\n\nSementara itu kamu bisa catat lewat menu Kalori (cari makanan dari daftar).', tools: const ['kalori']);
     }
   }
 

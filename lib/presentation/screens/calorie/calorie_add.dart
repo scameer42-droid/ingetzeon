@@ -257,6 +257,7 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
     return;
   }
   List<int> bytes;
+  String? usedPath = path;
   if (path != null) {
     bytes = await XFile(path).readAsBytes();
   } else {
@@ -271,9 +272,30 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
       ),
     );
     if (src == null) return;
-    final x = await ImagePicker().pickImage(source: src, maxWidth: 1024, maxHeight: 1024, imageQuality: 80);
-    if (x == null) return;
-    bytes = await x.readAsBytes();
+    XFile? x;
+    try {
+      x = await ImagePicker().pickImage(source: src, maxWidth: 1024, maxHeight: 1024, imageQuality: 80);
+    } on PlatformException catch (e) {
+      if (!context.mounted) return;
+      final denied = e.code.contains('denied') || e.code.contains('access');
+      await _scanProblem(context, ref,
+          meal: meal,
+          day: day,
+          title: denied ? 'Izin kamera ditolak' : 'Kamera tidak bisa dibuka',
+          msg: denied
+              ? 'Buka Pengaturan HP → Aplikasi → IngetZeon → Izin → Kamera → Izinkan. Atau pilih foto dari galeri.'
+              : 'Kamera sedang dipakai aplikasi lain atau bermasalah (${e.code}). Coba lagi, atau pilih foto dari galeri.');
+      return;
+    }
+    if (x == null) {
+      // di beberapa HP aplikasi dimuat ulang saat kamera terbuka — ambil foto yang tertinggal
+      final lost = await ImagePicker().retrieveLostData();
+      if (lost.isEmpty || lost.file == null) return;
+      x = lost.file;
+    }
+    final file = x!;
+    usedPath = file.path;
+    bytes = await file.readAsBytes();
   }
   if (!context.mounted) return;
   showDialog(
@@ -287,19 +309,17 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
   String? err;
   try {
     res = await ref.read(aiServiceProvider).scanFood(bytes, apiKey: settings.apiKey, model: settings.model);
-  } on AiException catch (e) {
-    err = e.status == 401 || e.status == 403 ? 'Kunci API Gemini ditolak. Cek lagi di Profil.' : e.status == -1 ? 'Koneksi lambat — coba lagi.' : 'AI belum bisa membaca foto ini (${e.status}).';
-  } catch (_) {
-    err = 'Foto belum bisa dikenali. Coba foto lebih dekat dan terang, atau cari manual.';
+  } catch (e) {
+    err = AiService.scanErrorText(e);
   }
   if (!context.mounted) return;
   Navigator.of(context, rootNavigator: true).pop();
   if (err != null || res == null) {
-    showToast(context, err ?? 'Gagal memindai');
+    await _scanProblem(context, ref, meal: meal, day: day, title: 'AI belum berhasil', msg: err ?? 'Gagal memindai', retryPath: usedPath);
     return;
   }
   if (res.items.isEmpty) {
-    showToast(context, res.note.isNotEmpty ? res.note : 'Tidak ada makanan yang terlihat di foto');
+    await _scanProblem(context, ref, meal: meal, day: day, title: 'Makanan tidak terlihat', msg: res.note.isNotEmpty ? res.note : 'Coba foto makanannya dari atas, lebih dekat dan terang.');
     return;
   }
   double d(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
@@ -308,6 +328,27 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
       FoodItem(foodEmoji('${x['name']}'), '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'),
   ];
   await reviewFoods(context, ref, foods: foods, meal: meal, day: day, source: 'foto', title: 'Hasil pindai foto', note: res.note);
+}
+
+/// Dialog saat pindai gagal: alasan jelas + jalan keluar.
+Future<void> _scanProblem(BuildContext context, WidgetRef ref,
+    {required String meal, required DateTime day, required String title, required String msg, String? retryPath}) async {
+  final act = await showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      icon: const Text('📷', style: TextStyle(fontSize: 34)),
+      title: Text(title, textAlign: TextAlign.center),
+      content: Text(msg, textAlign: TextAlign.center, style: const TextStyle(height: 1.45)),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, 'manual'), child: const Text('Cari manual')),
+        FilledButton(style: FilledButton.styleFrom(backgroundColor: kKal), onPressed: () => Navigator.pop(ctx, 'retry'), child: const Text('Coba lagi')),
+      ],
+    ),
+  );
+  if (!context.mounted) return;
+  if (act == 'retry') await scanFoodPhoto(context, ref, meal: meal, day: day, path: retryPath);
+  if (act == 'manual') await showAddFood(context, ref, meal: meal, day: day);
 }
 
 /// Daftar hasil (foto/chat) yang bisa diubah sebelum disimpan.

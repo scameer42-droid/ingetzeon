@@ -1192,7 +1192,7 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 <div class="full" id="bscan"><div class="full-head"><button class="icon-btn" data-close="#bscan" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Pindai barcode</h2></div><div class="full-body">
   <div class="bsbox"><video id="bsVideo" playsinline muted></video><i></i></div><p class="muted-c" id="bsMsg" style="margin:12px 0"></p><input type="hidden" id="bsMeal">
   <div style="display:flex;gap:8px;width:100%;max-width:420px"><input class="input" id="bsCode" inputmode="numeric" placeholder="Ketik nomor barcode"><button class="btn" id="bsGo" style="background:#F97316;color:#fff">Cari</button></div></div></div>
-<input type="file" id="kalFile" accept="image/*" capture="environment" hidden>
+<input type="file" id="kalFile" accept="image/*" hidden>
 <div class="full" id="calm"><div class="full-head"><button class="icon-btn" data-close="#calm" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Ruang Tenang</h2></div><div class="full-body" id="calmBody"></div></div>
 <div class="full" id="habits"><div class="full-head"><button class="icon-btn" data-close="#habits" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kebiasaan</h2><button class="icon-btn" id="habAdd" style="margin-left:auto" aria-label="Tambah"><svg class="i"><use href="#i-plus"/></svg></button></div><div class="full-body" id="habBody"></div></div>
 <div class="full" id="breathe"><div class="full-head"><button class="icon-btn" data-close="#breathe" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Latihan napas</h2></div><div class="full-body" id="brBody"></div></div>
@@ -2231,23 +2231,49 @@ const FOOD_SCAN_PROMPT = 'Kamu ahli gizi Indonesia. Kenali semua makanan & minum
 async function scanFoodData(dataUrl){
   const [head, b64] = dataUrl.split(',');
   const mime = (/data:([^;]+)/.exec(head) || [])[1] || 'image/jpeg';
-  let txt = await gemini(FOOD_SCAN_PROMPT, [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Hitung kalori makanan di foto ini.'}]}], true);
+  let txt;
+  geminiTimeout = 75000;
+  try{ txt = await gemini(FOOD_SCAN_PROMPT, [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Hitung kalori makanan di foto ini.'}]}], true); }
+  finally{ geminiTimeout = 30000; }
   const a = txt.indexOf('{'), b = txt.lastIndexOf('}'); if(a >= 0 && b > a) txt = txt.slice(a, b + 1);
   const d = JSON.parse(txt);
   const n = v => +v || 0;
   return {note: d.note || '', foods: (d.items || []).filter(x => x && x.name).map(x => [foodEmoji(String(x.name)), String(x.name), [], String(x.portion || '1 porsi'), n(x.gram), n(x.kcal), n(x.protein), n(x.carbs), n(x.fat), 'foto'])};
+}
+function scanErrText(e){
+  const m = String((e && e.message) || '').toLowerCase(), st = e && e.status;
+  if(e && e.name === 'AbortError') return 'AI terlalu lama menjawab — biasanya karena internet lambat. Coba lagi di sinyal yang lebih bagus.';
+  if(!navigator.onLine) return 'Tidak tersambung ke internet. Nyalakan data/Wi-Fi lalu coba lagi.';
+  if(st === 429 || /quota|exhausted/.test(m)) return 'Kuota gratis Gemini sedang habis. Tunggu 1–2 menit lalu coba lagi (kuota harian kembali penuh tiap hari).';
+  if(st === 401 || st === 403 || (st === 400 && /api.?key/.test(m))) return 'Kunci API Gemini ditolak. Cek atau ganti kuncinya di Profil → Kunci API Gemini.';
+  if(st >= 500) return 'Server Gemini sedang sibuk. Coba lagi sebentar lagi.';
+  if(e instanceof SyntaxError) return 'Jawaban AI terpotong. Coba foto ulang ya.';
+  if(st) return `AI belum bisa membaca foto ini (kode ${st}${e.message ? ': ' + String(e.message).slice(0, 80) : ''}).`;
+  if(/failed to fetch|network/.test(m)) return 'Tidak tersambung ke server AI. Cek internet lalu coba lagi.';
+  return 'Foto belum bisa dikenali. Coba foto lebih dekat dan terang.';
+}
+function kalScanProblem(meal, title, msg, retryUrl){
+  showSheet(`<div style="text-align:center"><div style="font-size:40px">📷</div><h3 style="margin:6px 0">${esc(title)}</h3><p style="line-height:1.5;margin:0 0 16px">${esc(msg)}</p></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-soft" id="spMan" style="flex:1">Cari manual</button><button class="btn" id="spRe" style="flex:1;background:#F97316;color:#fff">Coba lagi</button></div>`);
+  $('#spMan').onclick = () => { closeSheet(); setTimeout(() => kalAddSheet(meal), 280); };
+  $('#spRe').onclick = () => { if(retryUrl) kalScanUrl(retryUrl, meal); else { closeSheet(); setTimeout(() => kalPhoto(meal), 280); } };
+}
+async function kalScanUrl(url, meal){
+  showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">AI sedang mengenali makananmu… 🍽️<br><small>Biasanya 5–20 detik</small></p>');
+  try{
+    const r = await scanFoodData(url);
+    if(!r.foods.length) return kalScanProblem(meal, 'Makanan tidak terlihat', r.note || 'Coba foto makanannya dari atas, lebih dekat dan terang.');
+    kalReview(r.foods, meal, 'foto', 'Hasil pindai foto', r.note);
+  }catch(e){ console.warn(e); kalScanProblem(meal, 'AI belum berhasil', scanErrText(e), url); }
 }
 function kalPhoto(meal){
   if(!state.settings.apiKey){ showSheet(`<h3 style="margin:4px 0 8px">📷 Pindai makanan</h3><p style="line-height:1.5">Untuk mengenali makanan dari foto, isi dulu kunci API Gemini (gratis) di <b>Profil → Kunci API Gemini</b>.</p><p class="muted-c" style="text-align:left">Sementara itu kamu bisa cari makanan dari daftar atau pindai barcode kemasan.</p><button class="btn btn-block btn-soft" onclick="closeSheet()">Mengerti</button>`); return; }
   const inp = $('#kalFile'); inp.value = '';
   inp.onchange = async () => {
     const file = inp.files && inp.files[0]; if(!file) return;
-    showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">AI sedang mengenali makananmu… 🍽️</p>');
-    try{
-      const url = await compressImage(file, 1024, .8), r = await scanFoodData(url);
-      if(!r.foods.length){ closeSheet(); return toast(r.note || 'Tidak ada makanan yang terlihat di foto'); }
-      kalReview(r.foods, meal, 'foto', 'Hasil pindai foto', r.note);
-    }catch(e){ closeSheet(); toast(e.status ? geminiErrorText(e) : 'Foto belum bisa dikenali. Coba foto lebih dekat dan terang, atau cari manual.'); }
+    let url;
+    try{ url = await compressImage(file, 1024, .8); }catch(e){ return kalScanProblem(meal, 'Foto tidak bisa dibuka', 'Format foto ini tidak didukung. Coba ambil foto lagi atau pilih foto lain (JPG/PNG).'); }
+    kalScanUrl(url, meal);
   };
   inp.click();
 }
@@ -2359,7 +2385,7 @@ async function scanFoodChat(photoKey){
     kalAdd(meal, items, new Date(), 'foto');
     const sum = r.foods.reduce((a, f) => a + f[5], 0);
     botTools(`📷 Dari fotomu, perkiraan **${fmtK(sum)} kkal** — dicatat ke ${MEAL_NAME[meal]}:\n${r.foods.map(f => `• ${f[1]} (${f[3]}) — **${fmtK(f[5])} kkal**`).join('\n')}\n\n${kalTodayLine()}\n\n*Perkiraan AI, porsinya bisa diubah di menu Kalori.*`, ['kalori']);
-  }catch(e){ botTools('Foto makanan belum bisa dibaca sekarang. Coba lagi, atau catat lewat menu Kalori.', ['kalori']); }
+  }catch(e){ botTools('📷 ' + scanErrText(e) + '\n\nSementara itu kamu bisa catat lewat menu Kalori (cari makanan dari daftar).', ['kalori']); }
 }
 
 /* ---------------- storage ---------------- */
@@ -5478,6 +5504,7 @@ function endpointFor(model, ep = 'studio'){
     ? `https://aiplatform.googleapis.com/v1/publishers/google/models/${encodeURIComponent(model)}:generateContent`
     : `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 }
+let geminiTimeout = 30000;
 async function gemini(system, contents, json, search = false){
   let firstAuthErr = null, lastErr = null;
   for(const ep of endpointOrder()){
@@ -5501,7 +5528,7 @@ async function geminiOnce(model, system, contents, json, search, ep = 'studio'){
   if(json) body.generationConfig = {responseMimeType:'application/json'};
   if(search) body.tools = [{googleSearch:{}}];
   lastSources = [];
-  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 30000);
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), geminiTimeout);
   try{
     const res = await fetch(endpointFor(model, ep), {
       method:'POST', signal: ctrl.signal,
