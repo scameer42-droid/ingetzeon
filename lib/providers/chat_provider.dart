@@ -189,7 +189,7 @@ class ChatNotifier extends Notifier<ChatState> {
       }
       double d(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
       final foods = [
-        for (final x in r.items) (food: FoodItem('🍽️', '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'), qty: 1.0),
+        for (final x in r.items) (food: FoodItem(foodEmoji('${x['name']}'), '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'), qty: 1.0),
       ];
       final meal = mealByHour(DateTime.now().hour);
       await ref.read(calorieProvider.notifier).add(meal, foods, source: 'foto');

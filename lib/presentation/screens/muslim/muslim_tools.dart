@@ -68,7 +68,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
     hy /= normH;
     hz /= normH;
     final normA = math.sqrt(ax * ax + ay * ay + az * az);
-    final nax = ax / normA, nay = ay / normA, naz = az / normA;
+    final nax = ax / normA, naz = az / normA;
     final my = naz * hx - nax * hz;
     final az2 = math.atan2(hy, my) * 180 / math.pi;
     final h = (az2 + 360) % 360;

@@ -236,9 +236,9 @@ svg.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .foot-note{text-align:center;font-size:12px;color:var(--faint);margin-top:24px}
 
 /* ---------- sheets / overlays ---------- */
-.overlay{position:fixed;inset:0;z-index:60;background:rgba(18,14,50,.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(18,14,50,.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
 .overlay.show{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-width:480px;margin:0 auto;background:var(--card);border-radius:28px 28px 0 0;padding:10px 20px calc(22px + var(--safe-b));transform:translateY(105%);visibility:hidden;transition:transform .35s var(--ease),visibility 0s .35s;max-height:92dvh;overflow:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:81;max-width:480px;margin:0 auto;background:var(--card);border-radius:28px 28px 0 0;padding:10px 20px calc(22px + var(--safe-b));transform:translateY(105%);visibility:hidden;transition:transform .35s var(--ease),visibility 0s .35s;max-height:92dvh;overflow:auto}
 .sheet.show{transform:none;visibility:visible;transition:transform .35s var(--ease)}
 .grab{width:42px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 14px}
 .sheet h3{font-size:18px;font-weight:600}
@@ -864,6 +864,41 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .tbtap:active span{transform:scale(.97)} .tbtap b{font-size:64px;line-height:1} .tbtap small{opacity:.8;font-weight:600}
 .spin-c{display:grid;place-items:center;padding:60px} .spin{width:36px;height:36px;border-radius:50%;border:4px solid rgba(5,150,105,.2);border-top-color:#059669;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== Kalori & Diet ===== */
+.kday{display:flex;align-items:center;justify-content:space-between;margin:-4px 0 6px}.kday b{font-size:15px}.kday .icon-btn{font-size:22px;font-weight:800}.kday .icon-btn:disabled{opacity:.3}
+.khero{border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,#F97316,#F43F5E);box-shadow:0 18px 34px -18px rgba(249,115,22,.75)}
+.krow{display:flex;align-items:center;gap:16px}.kring{width:132px;height:132px;flex:none}.karc{transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.kstats{display:flex;flex-direction:column}.kstats small{opacity:.85;font-size:12px;margin-top:4px}.kstats b{font-size:15px}
+.kmacs{display:flex;gap:10px;margin-top:14px}.kmac{flex:1}.kmac small{font-size:12px;font-weight:600;opacity:.9}.kmac i{display:block;height:6px;border-radius:99px;background:rgba(255,255,255,.25);margin:4px 0 3px;overflow:hidden}.kmac i b{display:block;height:100%;background:#fff;border-radius:99px}.kmac em{font-style:normal;font-size:11.5px;font-weight:700}
+.knote{margin-top:10px;background:#FFF7ED;color:#9A3412;border-radius:14px;padding:12px;font-size:13px;line-height:1.4}
+.kquick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.kquick button{background:var(--card);border-radius:18px;padding:12px 6px;box-shadow:var(--shadow);font-weight:700;font-size:12.5px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.kquick span{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:21px}
+.kmeal{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:10px 10px 6px 14px;margin-top:12px}
+.kmh{display:flex;align-items:center;gap:10px}.kmh>span{font-size:22px}.kmh .tx{flex:1}.kmh small,.kent small,.kfood small{display:block;color:var(--muted);font-size:12.5px}
+.kadd{width:40px;height:40px;border-radius:50%;background:rgba(249,115,22,.12);color:#F97316;font-size:24px;font-weight:700}
+.kent,.kfood{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;text-align:left}.kent>span,.kfood>span{width:30px;font-size:20px}.kent .tx,.kfood .tx{flex:1;min-width:0}.kent b,.kfood b{font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kent em,.kfood em{font-style:normal;font-weight:800;font-size:13px;padding-right:6px;white-space:nowrap}.kfood em{color:#F97316}.kfood+.kfood{border-top:1px solid var(--line)}
+.kweight .kwtop{display:flex;align-items:flex-end;gap:6px}.kkg{font-size:38px;font-weight:800;line-height:1}.kwtop>span{font-weight:700;margin-bottom:4px}.kwtop small{color:var(--muted);font-weight:700;margin:0 0 6px 6px}.kwtop .btn{margin-left:auto}
+.kchips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.kchip{border-radius:99px;padding:6px 10px;font-weight:700;font-size:12px}.kchart{width:100%;height:auto;margin-top:6px}
+.kmchips{display:flex;gap:8px;overflow:auto;padding:2px 0}.kmchips button,.kcats button{white-space:nowrap;border-radius:99px;padding:8px 12px;background:var(--card2,var(--bg));font-weight:600;font-size:13px;border:1px solid var(--line)}
+.kmchips button.on,.kcats button.on{background:rgba(249,115,22,.15);border-color:#F97316;color:#C2410C}
+.kacts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kacts3 button{border:1px solid var(--line);border-radius:12px;padding:10px;font-weight:700;font-size:13px}
+.kcats{display:flex;gap:6px;overflow:auto;margin:8px 0 4px}.kcats button{font-size:12px;padding:6px 10px}
+.kalist{max-height:46vh;overflow:auto}.klabel{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+.kstep{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px 0}.kstep>button{width:46px;height:46px;border-radius:50%;background:rgba(249,115,22,.12);color:#F97316;font-size:24px;font-weight:800}
+.kstep>div{min-width:130px;text-align:center}.kstep b{display:block;font-size:26px}.kstep small{color:var(--muted);font-size:12px}
+.kstep.sm{margin:4px 0 2px}.kstep.sm>button{width:36px;height:36px;font-size:20px}.kstep.sm>div{min-width:70px}.kstep.sm b{font-size:18px}
+.kbig{text-align:center;font-size:30px;font-weight:800;color:#F97316;margin:6px 0 10px}
+.kseg{display:flex;gap:6px;background:var(--card2,var(--bg));border-radius:14px;padding:4px}.kseg button{flex:1;padding:10px 6px;border-radius:11px;font-weight:700;font-size:13px}.kseg button.on{background:var(--card);box-shadow:var(--shadow);color:#C2410C}
+.k3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.k3 label,.klab2{font-size:12.5px;font-weight:700;color:var(--muted)}.k3 .input,.klab2 .input{margin-top:4px}
+.klab{display:block;margin:16px 0 8px}.klab2{display:block;margin-top:14px}
+.kacts{display:flex;flex-direction:column;gap:6px}.kacts button{text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--line)}.kacts button.on{border-color:#F97316;background:rgba(249,115,22,.08)}.kacts small{display:block;color:var(--muted);font-size:12px}
+.kprev{margin-top:14px;border-radius:20px;padding:16px;color:#fff;background:linear-gradient(135deg,#F97316,#F43F5E)}.kprev small{display:block;font-size:12.5px;opacity:.95}.kprev b{display:block;font-size:30px;font-weight:800}.kprev p{margin:6px 0 0;font-size:12.5px;line-height:1.35}
+.krow2{border-radius:14px;background:rgba(249,115,22,.06);padding:8px 10px;margin-top:8px}.krow2.off{opacity:.55;background:var(--card2,var(--bg))}
+.krow2 label{display:flex;align-items:center;gap:10px}.krow2 .tx{flex:1}.krow2 small{display:block;color:var(--muted);font-size:12px}.krow2 em{font-style:normal;font-weight:800;color:#F97316;white-space:nowrap}
+#bscan .full-body{display:flex;flex-direction:column;align-items:center}.bsbox{position:relative;width:100%;max-width:420px;aspect-ratio:3/4;background:#000;border-radius:22px;overflow:hidden}
+.bsbox video{width:100%;height:100%;object-fit:cover}.bsbox i{position:absolute;inset:0;margin:auto;width:78%;height:28%;border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 </head>
@@ -1035,6 +1070,11 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 
     <div class="group-t">Kesehatan</div>
     <div class="group">
+      <button class="row-s" id="rowKal">
+        <div class="ic" style="background:rgba(249,115,22,.12);color:#F97316;font-size:18px">🥗</div>
+        <div class="tx"><b>Kalori &amp; Diet</b><small id="kalState">Penghitung kalori, berat &amp; tinggi badan</small></div>
+        <svg class="i chev"><use href="#i-right"/></svg>
+      </button>
       <button class="row-s" id="rowCalm">
         <div class="ic" style="background:rgba(14,165,164,.12);color:#0EA5A4"><svg class="i"><use href="#i-heart"/></svg></div>
         <div class="tx"><b>Ruang Tenang</b><small>Mood, kebiasaan, fokus, jurnal, tes psikologi, teman cerita</small></div>
@@ -1136,6 +1176,11 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 <!-- ================= SIKLUS HAID ================= -->
 <div class="full" id="muslim"><div class="full-head"><button class="icon-btn" data-close="#muslim" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Muslim Harian</h2></div><div class="full-body" id="muslimBody"></div></div>
 <div class="full" id="mtool"><div class="full-head"><button class="icon-btn" data-close="#mtool" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="mtTitle">—</h2></div><div class="full-body" id="mtBody"></div></div>
+<div class="full" id="kal"><div class="full-head"><button class="icon-btn" data-close="#kal" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kalori &amp; Diet</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="kalBody"></div></div>
+<div class="full" id="bscan"><div class="full-head"><button class="icon-btn" data-close="#bscan" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Pindai barcode</h2></div><div class="full-body">
+  <div class="bsbox"><video id="bsVideo" playsinline muted></video><i></i></div><p class="muted-c" id="bsMsg" style="margin:12px 0"></p><input type="hidden" id="bsMeal">
+  <div style="display:flex;gap:8px;width:100%;max-width:420px"><input class="input" id="bsCode" inputmode="numeric" placeholder="Ketik nomor barcode"><button class="btn" id="bsGo" style="background:#F97316;color:#fff">Cari</button></div></div></div>
+<input type="file" id="kalFile" accept="image/*" capture="environment" hidden>
 <div class="full" id="calm"><div class="full-head"><button class="icon-btn" data-close="#calm" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Ruang Tenang</h2></div><div class="full-body" id="calmBody"></div></div>
 <div class="full" id="habits"><div class="full-head"><button class="icon-btn" data-close="#habits" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kebiasaan</h2><button class="icon-btn" id="habAdd" style="margin-left:auto" aria-label="Tambah"><svg class="i"><use href="#i-plus"/></svg></button></div><div class="full-body" id="habBody"></div></div>
 <div class="full" id="breathe"><div class="full-head"><button class="icon-btn" data-close="#breathe" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Latihan napas</h2></div><div class="full-body" id="brBody"></div></div>
@@ -1769,6 +1814,505 @@ function answerIslam(text){
   return true;
 }
 
+const FOOD_CATS = {"pokok": "Makanan pokok", "lauk": "Lauk", "sayur": "Sayur & berkuah", "camilan": "Camilan & jajanan", "buah": "Buah", "minum": "Minuman", "lain": "Bumbu & tambahan"};
+// [emoji, nama, alias[], porsi, gram, kkal, protein, karbo, lemak, kategori]
+const FOODS = [["🍚", "Nasi putih", ["nasi"], "1 piring", 150.0, 195.0, 3.6, 42.6, 0.3, "pokok"], ["🍚", "Nasi merah", ["beras merah"], "1 piring", 150.0, 165.0, 3.9, 34.5, 1.2, "pokok"], ["🍚", "Nasi uduk", ["nasi gurih"], "1 piring", 150.0, 280.0, 5.0, 42.0, 10.0, "pokok"], ["🍚", "Nasi kuning", [], "1 piring", 150.0, 270.0, 5.0, 45.0, 8.0, "pokok"], ["🍳", "Nasi goreng", ["nasgor"], "1 piring", 250.0, 420.0, 12.0, 55.0, 17.0, "pokok"], ["🍛", "Nasi padang", ["nasi rendang"], "1 bungkus", 450.0, 750.0, 30.0, 85.0, 32.0, "pokok"], ["🍛", "Nasi campur", ["nasi rames"], "1 piring", 400.0, 600.0, 22.0, 75.0, 22.0, "pokok"], ["🍙", "Nasi kucing", ["sego kucing"], "1 bungkus", 100.0, 180.0, 4.0, 35.0, 3.0, "pokok"], ["🍛", "Nasi gudeg", ["gudeg"], "1 porsi", 350.0, 550.0, 18.0, 70.0, 22.0, "pokok"], ["🍙", "Lontong", [], "1 potong", 100.0, 100.0, 1.9, 22.0, 0.2, "pokok"], ["🍙", "Ketupat", ["kupat"], "1 buah", 150.0, 150.0, 2.8, 33.0, 0.3, "pokok"], ["🥣", "Bubur ayam", ["bubur"], "1 mangkuk", 350.0, 370.0, 15.0, 50.0, 12.0, "pokok"], ["🍜", "Mie instan goreng", ["indomie goreng", "mie goreng instan"], "1 bungkus", 85.0, 380.0, 8.0, 54.0, 14.0, "pokok"], ["🍜", "Mie instan kuah", ["indomie kuah", "mie rebus", "mie kuah"], "1 bungkus", 75.0, 330.0, 7.0, 46.0, 13.0, "pokok"], ["🍝", "Mie goreng", ["bakmi goreng"], "1 piring", 250.0, 450.0, 13.0, 60.0, 18.0, "pokok"], ["🍜", "Mie ayam", ["bakmi ayam"], "1 mangkuk", 300.0, 420.0, 18.0, 55.0, 14.0, "pokok"], ["🍝", "Kwetiau goreng", ["kwetiaw"], "1 piring", 250.0, 480.0, 14.0, 62.0, 19.0, "pokok"], ["🍝", "Bihun goreng", ["bihun"], "1 piring", 200.0, 350.0, 8.0, 55.0, 11.0, "pokok"], ["🍞", "Roti tawar", ["roti putih"], "1 lembar", 25.0, 67.0, 2.3, 12.5, 0.8, "pokok"], ["🍞", "Roti gandum", ["roti whole wheat"], "1 lembar", 30.0, 75.0, 3.5, 12.0, 1.0, "pokok"], ["🍞", "Roti bakar", ["roti bakar coklat", "roti bakar keju"], "2 lembar", 90.0, 300.0, 7.0, 42.0, 11.0, "pokok"], ["🥪", "Sandwich", ["roti lapis"], "1 buah", 150.0, 300.0, 14.0, 30.0, 13.0, "pokok"], ["🥔", "Kentang rebus", ["kentang kukus"], "1 buah", 150.0, 130.0, 3.0, 30.0, 0.2, "pokok"], ["🍠", "Ubi rebus", ["ubi"], "1 buah", 150.0, 135.0, 2.0, 32.0, 0.2, "pokok"], ["🍠", "Singkong rebus", ["singkong"], "1 potong", 100.0, 160.0, 1.4, 38.0, 0.3, "pokok"], ["🌽", "Jagung rebus", ["jagung"], "1 tongkol", 100.0, 96.0, 3.4, 21.0, 1.5, "pokok"], ["🥣", "Oatmeal", ["oat", "havermut"], "1 mangkuk", 40.0, 150.0, 5.0, 27.0, 2.5, "pokok"], ["🥣", "Sereal dengan susu", ["sereal", "cereal"], "1 mangkuk", 250.0, 220.0, 7.0, 38.0, 5.0, "pokok"], ["🍟", "Kentang goreng", ["french fries"], "1 porsi", 110.0, 320.0, 3.5, 42.0, 15.0, "pokok"], ["🥚", "Telur rebus", ["telor rebus"], "1 butir", 55.0, 78.0, 6.3, 0.6, 5.3, "lauk"], ["🍳", "Telur ceplok", ["telur goreng", "telor ceplok", "telur mata sapi"], "1 butir", 55.0, 110.0, 6.3, 0.6, 9.0, "lauk"], ["🍳", "Telur dadar", ["telor dadar", "omelet"], "1 butir", 65.0, 120.0, 7.0, 1.0, 9.5, "lauk"], ["🍗", "Ayam goreng", ["ayam"], "1 potong", 100.0, 260.0, 22.0, 4.0, 17.0, "lauk"], ["🍗", "Ayam goreng tepung", ["fried chicken", "ayam krispi"], "1 potong", 120.0, 320.0, 22.0, 12.0, 20.0, "lauk"], ["🍗", "Ayam bakar", [], "1 potong", 100.0, 200.0, 25.0, 4.0, 9.0, "lauk"], ["🍗", "Dada ayam rebus", ["dada ayam", "ayam rebus", "chicken breast"], "100 gram", 100.0, 165.0, 31.0, 0.0, 3.6, "lauk"], ["🌶️", "Ayam geprek", ["ayam penyet"], "1 porsi", 150.0, 400.0, 25.0, 15.0, 26.0, "lauk"], ["🍗", "Opor ayam", [], "1 potong", 150.0, 300.0, 22.0, 6.0, 21.0, "lauk"], ["🦆", "Bebek goreng", ["bebek"], "1 potong", 100.0, 330.0, 20.0, 3.0, 27.0, "lauk"], ["🥩", "Rendang", ["rendang sapi"], "1 potong", 60.0, 180.0, 13.0, 4.0, 12.5, "lauk"], ["🥩", "Semur daging", ["daging sapi", "empal"], "1 potong", 50.0, 120.0, 10.0, 4.0, 7.0, "lauk"], ["🍢", "Sate ayam", [], "10 tusuk", 200.0, 400.0, 30.0, 15.0, 25.0, "lauk"], ["🍢", "Sate kambing", [], "10 tusuk", 200.0, 450.0, 30.0, 10.0, 32.0, "lauk"], ["🍢", "Sate padang", [], "1 porsi", 250.0, 450.0, 25.0, 40.0, 20.0, "lauk"], ["🐟", "Ikan goreng", ["ikan nila goreng"], "1 potong", 100.0, 200.0, 20.0, 3.0, 12.0, "lauk"], ["🐟", "Lele goreng", ["pecel lele"], "1 ekor", 100.0, 240.0, 17.0, 4.0, 17.0, "lauk"], ["🐟", "Ikan bakar", ["ikan panggang"], "1 potong", 100.0, 160.0, 24.0, 2.0, 6.0, "lauk"], ["🐟", "Ikan tongkol balado", ["tongkol"], "1 potong", 80.0, 150.0, 18.0, 4.0, 7.0, "lauk"], ["🍤", "Udang goreng", ["udang"], "100 gram", 100.0, 210.0, 20.0, 8.0, 10.0, "lauk"], ["🟫", "Tempe goreng", ["tempe"], "1 potong", 50.0, 120.0, 7.0, 5.0, 8.5, "lauk"], ["🟫", "Tempe bacem", [], "1 potong", 50.0, 150.0, 7.0, 15.0, 7.0, "lauk"], ["🟫", "Tempe mendoan", ["mendoan"], "1 buah", 50.0, 140.0, 6.0, 9.0, 9.0, "lauk"], ["⬜", "Tahu goreng", ["tahu"], "1 potong", 50.0, 80.0, 5.0, 2.0, 6.0, "lauk"], ["⬜", "Tahu isi", ["tahu isi goreng"], "1 buah", 60.0, 125.0, 4.0, 12.0, 7.0, "lauk"], ["🍲", "Bakso", ["baso"], "1 mangkuk", 300.0, 380.0, 20.0, 40.0, 15.0, "lauk"], ["🥟", "Siomay", [], "1 porsi", 250.0, 360.0, 18.0, 40.0, 14.0, "lauk"], ["🥟", "Batagor", [], "1 porsi", 200.0, 380.0, 14.0, 35.0, 20.0, "lauk"], ["🐟", "Pempek", ["empek-empek", "mpek-mpek"], "1 porsi", 150.0, 330.0, 14.0, 45.0, 10.0, "lauk"], ["🌭", "Sosis", [], "1 buah", 40.0, 120.0, 5.0, 3.0, 10.0, "lauk"], ["🍗", "Nugget ayam", ["nugget"], "4 buah", 80.0, 220.0, 11.0, 13.0, 14.0, "lauk"], ["🥟", "Dimsum", ["dim sum"], "4 buah", 120.0, 200.0, 9.0, 20.0, 9.0, "lauk"], ["🍲", "Soto ayam", ["soto"], "1 mangkuk", 350.0, 220.0, 18.0, 10.0, 12.0, "sayur"], ["🍲", "Rawon", [], "1 mangkuk", 350.0, 260.0, 20.0, 8.0, 17.0, "sayur"], ["🍲", "Coto makassar", ["coto"], "1 mangkuk", 350.0, 350.0, 25.0, 10.0, 23.0, "sayur"], ["🍲", "Gulai kambing", ["gulai"], "1 mangkuk", 300.0, 350.0, 20.0, 8.0, 27.0, "sayur"], ["🥣", "Sayur sop", ["sop", "sup sayur"], "1 mangkuk", 200.0, 80.0, 3.0, 12.0, 2.0, "sayur"], ["🥣", "Sayur asem", ["sayur asam"], "1 mangkuk", 200.0, 60.0, 2.0, 12.0, 0.5, "sayur"], ["🥥", "Sayur lodeh", ["lodeh"], "1 mangkuk", 200.0, 150.0, 4.0, 12.0, 10.0, "sayur"], ["🥬", "Sayur bayam", ["bayam bening", "bayam"], "1 mangkuk", 200.0, 40.0, 2.5, 6.0, 0.5, "sayur"], ["🥦", "Capcay", ["cap cay"], "1 piring", 200.0, 150.0, 8.0, 12.0, 8.0, "sayur"], ["🥬", "Tumis kangkung", ["kangkung", "cah kangkung"], "1 porsi", 100.0, 90.0, 3.0, 5.0, 7.0, "sayur"], ["🥗", "Gado-gado", ["gado gado"], "1 piring", 300.0, 400.0, 15.0, 35.0, 23.0, "sayur"], ["🥗", "Pecel", ["nasi pecel", "sayur pecel"], "1 piring", 250.0, 300.0, 11.0, 28.0, 17.0, "sayur"], ["🥗", "Ketoprak", [], "1 piring", 300.0, 450.0, 16.0, 55.0, 19.0, "sayur"], ["🥗", "Salad sayur", ["salad"], "1 mangkuk", 150.0, 35.0, 2.0, 7.0, 0.3, "sayur"], ["🍛", "Lontong sayur", [], "1 piring", 350.0, 400.0, 10.0, 50.0, 17.0, "sayur"], ["🍲", "Kupat tahu", [], "1 porsi", 350.0, 420.0, 15.0, 55.0, 16.0, "sayur"], ["🌶️", "Sambal", ["sambel"], "1 sendok makan", 15.0, 25.0, 0.4, 2.0, 1.8, "lain"], ["🍘", "Kerupuk", ["krupuk"], "1 buah", 10.0, 50.0, 0.5, 6.0, 2.5, "lain"], ["🥄", "Kecap manis", ["kecap"], "1 sendok makan", 15.0, 30.0, 0.5, 7.0, 0.0, "lain"], ["🥄", "Mayones", ["mayo", "mayonaise"], "1 sendok makan", 14.0, 95.0, 0.1, 0.1, 10.0, "lain"], ["🍬", "Gula pasir", ["gula"], "1 sendok teh", 5.0, 20.0, 0.0, 5.0, 0.0, "lain"], ["🫗", "Minyak goreng", ["minyak"], "1 sendok makan", 13.0, 115.0, 0.0, 0.0, 13.0, "lain"], ["🧈", "Mentega", ["margarin", "butter"], "1 sendok makan", 14.0, 100.0, 0.1, 0.0, 11.5, "lain"], ["🍯", "Madu", [], "1 sendok makan", 21.0, 64.0, 0.0, 17.0, 0.0, "lain"], ["🥜", "Selai kacang", ["peanut butter"], "1 sendok makan", 16.0, 95.0, 4.0, 3.0, 8.0, "lain"], ["🍤", "Bakwan", ["bala-bala", "ote-ote"], "1 buah", 40.0, 140.0, 2.0, 14.0, 8.5, "camilan"], ["🍌", "Pisang goreng", ["gorengan pisang"], "1 buah", 60.0, 150.0, 1.3, 22.0, 6.5, "camilan"], ["🥟", "Risoles", ["risol"], "1 buah", 50.0, 150.0, 4.0, 15.0, 8.0, "camilan"], ["🥟", "Lumpia goreng", ["lumpia"], "1 buah", 50.0, 130.0, 3.0, 14.0, 7.0, "camilan"], ["🥞", "Martabak manis", ["terang bulan"], "1 potong", 70.0, 280.0, 5.0, 35.0, 13.0, "camilan"], ["🥙", "Martabak telur", [], "1 potong", 70.0, 200.0, 8.0, 13.0, 13.0, "camilan"], ["🍩", "Donat", ["donut"], "1 buah", 50.0, 210.0, 3.0, 25.0, 11.0, "camilan"], ["🍰", "Kue basah", ["kue lapis", "kue"], "1 potong", 50.0, 120.0, 1.0, 22.0, 3.0, "camilan"], ["🟢", "Klepon", [], "3 buah", 60.0, 120.0, 1.0, 25.0, 2.0, "camilan"], ["🟤", "Onde-onde", ["onde onde"], "1 buah", 50.0, 170.0, 3.0, 25.0, 7.0, "camilan"], ["🥞", "Serabi", ["surabi"], "1 buah", 50.0, 120.0, 2.0, 20.0, 3.5, "camilan"], ["🍪", "Bakpia", [], "1 buah", 35.0, 130.0, 3.0, 22.0, 3.0, "camilan"], ["🥔", "Keripik kentang", ["chips", "keripik"], "1 bungkus kecil", 30.0, 160.0, 2.0, 15.0, 10.0, "camilan"], ["🥜", "Kacang goreng", ["kacang tanah"], "1 genggam", 30.0, 175.0, 7.5, 5.0, 15.0, "camilan"], ["🍫", "Cokelat batang", ["coklat", "cokelat"], "1 batang kecil", 25.0, 135.0, 2.0, 15.0, 7.5, "camilan"], ["🍪", "Biskuit", ["biscuit", "cookies"], "3 keping", 30.0, 140.0, 2.0, 20.0, 6.0, "camilan"], ["🥐", "Roti manis", ["roti isi", "roti coklat"], "1 buah", 70.0, 250.0, 6.0, 38.0, 8.0, "camilan"], ["🌶️", "Seblak", [], "1 mangkuk", 300.0, 400.0, 10.0, 50.0, 18.0, "camilan"], ["🟡", "Cilok", [], "10 butir", 100.0, 200.0, 3.0, 40.0, 3.0, "camilan"], ["🍔", "Burger", ["hamburger"], "1 buah", 150.0, 300.0, 15.0, 33.0, 12.0, "camilan"], ["🍕", "Pizza", [], "1 potong", 100.0, 270.0, 11.0, 33.0, 10.0, "camilan"], ["🌯", "Kebab", [], "1 buah", 200.0, 350.0, 17.0, 35.0, 15.0, "camilan"], ["🍧", "Es campur", ["es buah"], "1 mangkuk", 300.0, 280.0, 2.0, 55.0, 6.0, "camilan"], ["🥤", "Es cendol", ["cendol", "dawet", "es dawet"], "1 gelas", 300.0, 250.0, 1.0, 45.0, 8.0, "camilan"], ["🥣", "Kolak pisang", ["kolak"], "1 mangkuk", 250.0, 230.0, 2.0, 40.0, 7.0, "camilan"], ["🥣", "Bubur kacang hijau", ["burjo", "kacang hijau"], "1 mangkuk", 200.0, 200.0, 6.0, 35.0, 4.0, "camilan"], ["🥗", "Rujak buah", ["rujak"], "1 porsi", 200.0, 220.0, 2.0, 45.0, 4.0, "camilan"], ["🥛", "Yoghurt", ["yogurt"], "1 cup", 100.0, 80.0, 3.5, 12.0, 2.0, "camilan"], ["🍌", "Pisang", [], "1 buah", 100.0, 90.0, 1.1, 23.0, 0.3, "buah"], ["🍎", "Apel", [], "1 buah", 150.0, 80.0, 0.4, 21.0, 0.3, "buah"], ["🍊", "Jeruk", [], "1 buah", 130.0, 60.0, 1.2, 15.0, 0.2, "buah"], ["🍈", "Pepaya", [], "1 potong", 150.0, 65.0, 0.7, 16.0, 0.4, "buah"], ["🍉", "Semangka", [], "1 potong", 200.0, 60.0, 1.2, 15.0, 0.3, "buah"], ["🥭", "Mangga", [], "1 buah", 200.0, 120.0, 1.6, 30.0, 0.8, "buah"], ["🥑", "Alpukat", ["avokad"], "setengah buah", 100.0, 160.0, 2.0, 8.5, 15.0, "buah"], ["🍇", "Anggur", [], "1 mangkuk kecil", 100.0, 69.0, 0.7, 18.0, 0.2, "buah"], ["🍈", "Melon", [], "1 potong", 150.0, 50.0, 1.2, 12.0, 0.3, "buah"], ["🍍", "Nanas", ["nanas segar"], "1 potong", 100.0, 50.0, 0.5, 13.0, 0.1, "buah"], ["🟤", "Salak", [], "3 buah", 100.0, 80.0, 0.4, 20.0, 0.4, "buah"], ["🍐", "Jambu biji", ["jambu"], "1 buah", 100.0, 68.0, 2.6, 14.0, 1.0, "buah"], ["🐉", "Buah naga", [], "setengah buah", 150.0, 90.0, 2.0, 20.0, 0.5, "buah"], ["💧", "Air putih", ["air", "air mineral"], "1 gelas", 250.0, 0.0, 0.0, 0.0, 0.0, "minum"], ["🍵", "Teh manis", ["es teh manis", "es teh"], "1 gelas", 250.0, 90.0, 0.0, 22.0, 0.0, "minum"], ["🍵", "Teh tawar", ["teh tanpa gula", "es teh tawar"], "1 gelas", 250.0, 2.0, 0.0, 0.5, 0.0, "minum"], ["☕", "Kopi hitam", ["kopi tanpa gula", "americano"], "1 cangkir", 200.0, 5.0, 0.3, 0.0, 0.0, "minum"], ["☕", "Kopi manis", ["kopi gula", "kopi tubruk"], "1 cangkir", 200.0, 45.0, 0.3, 10.0, 0.0, "minum"], ["☕", "Kopi susu", ["es kopi susu", "kopi susu gula aren", "latte"], "1 gelas", 250.0, 200.0, 5.0, 28.0, 7.0, "minum"], ["🥛", "Susu full cream", ["susu", "susu sapi"], "1 gelas", 200.0, 130.0, 6.4, 9.6, 7.2, "minum"], ["🥛", "Susu rendah lemak", ["susu skim", "susu low fat"], "1 gelas", 200.0, 90.0, 7.0, 10.0, 2.5, "minum"], ["🥛", "Susu kental manis", ["skm"], "1 sendok makan", 20.0, 65.0, 1.6, 11.0, 1.7, "minum"], ["🧃", "Jus jeruk", [], "1 gelas", 250.0, 110.0, 1.7, 26.0, 0.5, "minum"], ["🥑", "Jus alpukat", [], "1 gelas", 300.0, 300.0, 3.0, 40.0, 15.0, "minum"], ["🧃", "Jus buah", ["jus"], "1 gelas", 250.0, 110.0, 1.0, 26.0, 0.3, "minum"], ["🍊", "Es jeruk", ["jeruk peras"], "1 gelas", 250.0, 120.0, 1.0, 29.0, 0.2, "minum"], ["🧋", "Boba milk tea", ["boba", "bubble tea", "milk tea"], "1 cup", 500.0, 450.0, 3.0, 70.0, 15.0, "minum"], ["🥤", "Minuman bersoda", ["soda", "cola", "coca cola"], "1 kaleng", 330.0, 140.0, 0.0, 35.0, 0.0, "minum"], ["🥤", "Minuman isotonik", ["isotonik", "pocari"], "1 botol", 500.0, 130.0, 0.0, 32.0, 0.0, "minum"], ["🧃", "Teh kemasan", ["teh botol"], "1 botol", 350.0, 130.0, 0.0, 32.0, 0.0, "minum"], ["🥛", "Susu kedelai", ["soya"], "1 gelas", 200.0, 110.0, 7.0, 10.0, 4.0, "minum"]];
+/* ===== Logika kalori (sinkron dengan lib/services/calorie_logic.dart) ===== */
+const MEALS = [['pagi', 'Sarapan', '🌅'], ['siang', 'Makan siang', '☀️'], ['sore', 'Makan sore', '🌇'], ['malam', 'Makan malam', '🌙']];
+const MEAL_NAME = {pagi: 'Sarapan', siang: 'Makan siang', sore: 'Makan sore', malam: 'Makan malam'};
+const ACTIVITY = [[1.2, 'Jarang bergerak', 'Kerja duduk, jarang olahraga'], [1.375, 'Ringan', 'Olahraga 1–3x seminggu'], [1.55, 'Sedang', 'Olahraga 3–5x seminggu'], [1.725, 'Aktif', 'Olahraga 6–7x seminggu'], [1.9, 'Sangat aktif', 'Kerja fisik berat / atlet']];
+const GOALS = [['turun', 'Turun berat', '📉'], ['jaga', 'Jaga berat', '⚖️'], ['naik', 'Naik berat', '📈']];
+const mealByHour = h => h < 10 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam';
+const r1 = x => Math.round(x * 10) / 10;
+function calcBmi(kg, cm){ const m = cm / 100; return kg / (m * m); }
+function bmiLabel(b){ return b < 18.5 ? ['Kurus', '#0EA5E9'] : b <= 25 ? ['Normal', '#10B981'] : b <= 27 ? ['Gemuk', '#F59E0B'] : ['Obesitas', '#E11D48']; }
+function healthyRange(cm){ const m = cm / 100; return [r1(18.5 * m * m), r1(25 * m * m)]; }
+function calcBmr(p){ return 10 * p.kg + 6.25 * p.cm - 5 * p.age + (p.sex === 'L' ? 5 : -161); }
+/** Target kalori harian + catatan keamanan. */
+function calorieTarget(p){
+  const bmr = calcBmr(p), tdee = bmr * p.act, floor = p.sex === 'L' ? 1500 : 1200, b = calcBmi(p.kg, p.cm);
+  let target = tdee, note = '', goal = p.goal;
+  if(p.age < 18){
+    goal = 'jaga';
+    note = 'Untuk usia di bawah 18 tahun target tidak dikurangi — atur pola makan bersama dokter atau ahli gizi ya.';
+  }else if(p.goal === 'turun'){
+    if(b < 18.5){ goal = 'jaga'; note = 'BMI kamu sudah di bawah normal, jadi menurunkan berat tidak disarankan. Target diatur untuk menjaga berat.'; }
+    else{
+      target = tdee - 500;
+      if(target < floor){ target = floor; note = `Target dibatasi minimal ${floor.toLocaleString('id-ID')} kkal supaya tubuh tetap sehat.`; }
+    }
+  }else if(p.goal === 'naik') target = tdee + 300;
+  const t = Math.round(target / 10) * 10;
+  return {target: t, tdee: Math.round(tdee), bmr: Math.round(bmr), goal, note,
+    protein: Math.round(t * .2 / 4), carbs: Math.round(t * .5 / 4), fat: Math.round(t * .3 / 9)};
+}
+/** Perkiraan minggu untuk mencapai berat target (±0,5 kg/minggu). */
+function weeksToTarget(kg, target){ return target ? Math.ceil(Math.abs(kg - target) / 0.5) : 0; }
+
+/* --- pencarian --- */
+const normFood = s => s.toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+function foodSearch(q, extra = []){
+  const n = normFood(q); const all = [...extra, ...FOODS];
+  if(!n) return all;
+  const words = n.split(' ');
+  return all.map(f => {
+    const name = normFood(f[1]), al = f[2].map(normFood);
+    let s = 0;
+    if(name === n || al.includes(n)) s = 10;
+    else if(name.startsWith(n)) s = 6;
+    else if(name.includes(n)) s = 4;
+    else if(al.some(a => a.includes(n))) s = 3;
+    else if(words.every(w => name.includes(w) || al.some(a => a.includes(w)))) s = 2;
+    return [s, f];
+  }).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).map(x => x[1]);
+}
+
+/* --- kalimat chat: "tadi siang aku makan nasi goreng 1 piring sama es teh" --- */
+const QTY_WORD = {satu: 1, sebuah: 1, se: 1, dua: 2, tiga: 3, empat: 4, lima: 5, enam: 6, setengah: 0.5, 'separuh': 0.5, '½': 0.5};
+const UNIT_RE = '(?:piring|mangkok|mangkuk|gelas|cangkir|potong|buah|butir|bungkus|porsi|tusuk|cup|botol|kaleng|lembar|sdm|sendok makan|sendok|sdt|biji|ekor|keping|tongkol|genggam|gram|gr|g)';
+const SE_RE = /\bse(piring|mangkok|mangkuk|gelas|cangkir|potong|buah|butir|bungkus|porsi|tusuk|cup|botol|kaleng|lembar|sendok|biji|ekor|keping|tongkol|genggam)\s*$/;
+let FOOD_KEYS = null;
+function foodKeys(){
+  if(FOOD_KEYS) return FOOD_KEYS;
+  FOOD_KEYS = [];
+  for(const f of FOODS) for(const k of [f[1], ...f[2]]) FOOD_KEYS.push([normFood(k), f]);
+  FOOD_KEYS.sort((a, b) => b[0].length - a[0].length);
+  return FOOD_KEYS;
+}
+function qtyFrom(numTxt, unit, food){
+  let q = QTY_WORD[numTxt] != null ? QTY_WORD[numTxt] : parseFloat(String(numTxt).replace(',', '.'));
+  if(!(q > 0)) return 1;
+  unit = (unit || '').trim();
+  if(/^(gram|gr|g)$/.test(unit)) return Math.max(0.1, q / food[4]);
+  const pm = /^(\d+)\s+(.+)$/.exec(food[3]);
+  if(pm && +pm[1] > 1 && unit && pm[2].startsWith(unit.slice(0, 4))) return q / +pm[1];
+  if(/^\d+ gram$/.test(food[3]) && !unit) return q; // "udang 2" → 2x100 g
+  return q;
+}
+function parseFoodLog(text, now = new Date()){
+  const t = normFood(text);
+  if(/\b(ingatkan|ingetin|ingatin|ingetkan|alarm|nanti|besok|mau makan|pengen|ingin|resep|cara)\b/.test(t)) return null;
+  if(/\?|\b(apa|berapa|kapan|gimana|bagaimana|boleh|enak|sebaiknya)\b/.test(t)) return null;
+  const verb = /\b(makan|sarapan|minum|ngemil|nyemil|maem|mamam|abis makan|habis makan|nyarap)\b/.test(t);
+  if(!verb) return null;
+  const items = [], used = [];
+  for(const [k, f] of foodKeys()){
+    let from = 0;
+    for(;;){
+      const i = t.indexOf(k, from); if(i < 0) break; from = i + 1;
+      const j = i + k.length;
+      if((i > 0 && /[a-z]/.test(t[i - 1])) || (j < t.length && /[a-z]/.test(t[j]))) continue;
+      if(used.some(([a, b]) => i < b && j > a)) continue;
+      if(k === 'air' && !/\bminum air\b/.test(t)) continue;
+      used.push([i, j]);
+      const before = t.slice(Math.max(0, i - 24), i), after = t.slice(j, j + 24);
+      let qty = 1, m;
+      if((m = new RegExp(`(\\d+(?:[.,]\\d+)?|setengah|separuh|½|satu|sebuah|dua|tiga|empat|lima|enam)\\s*(${UNIT_RE})?\\s*$`).exec(before))) qty = qtyFrom(m[1], m[2], f);
+      else if(SE_RE.test(before)) qty = 1;
+      else if((m = new RegExp(`^\\s*(\\d+(?:[.,]\\d+)?|setengah|satu|dua|tiga|empat|lima)\\s*(${UNIT_RE})\\b`).exec(after))) qty = qtyFrom(m[1], m[2], f);
+      items.push({food: f, qty: r1(qty), at: i});
+    }
+  }
+  if(!items.length) return null;
+  items.sort((a, b) => a.at - b.at);
+  let meal = mealByHour(now.getHours());
+  if(/\b(sarapan|nyarap|pagi)\b/.test(t)) meal = 'pagi';
+  else if(/\bsiang\b/.test(t)) meal = 'siang';
+  else if(/\bsore\b/.test(t)) meal = 'sore';
+  else if(/\b(malam|malem)\b/.test(t)) meal = 'malam';
+  return {meal, items: items.map(({food, qty}) => ({food, qty}))};
+}
+/** "berapa kalori nasi goreng" → makanan yang ditanyakan. */
+function askFoodCalorie(text){
+  const t = normFood(text);
+  if(!/\b(kalori|kalorinya|kkal|kcal)\b/.test(t)) return null;
+  for(const [k, f] of foodKeys()){
+    const i = t.indexOf(k);
+    if(i >= 0 && !(i > 0 && /[a-z]/.test(t[i - 1])) && !(t[i + k.length] && /[a-z]/.test(t[i + k.length]))) return f;
+  }
+  return null;
+}
+function askCalorieToday(text){
+  const t = normFood(text);
+  return /\b(kalori|kkal)\b.*\b(hari ini|sisa|tersisa|sudah|udah|masuk)\b|\bsisa kalori\b|\b(sudah|udah) makan berapa\b|\btarget kalori\b/.test(t);
+}
+/** "berat badan saya 68,5 kg" → 68.5 */
+function parseWeightLog(text){
+  const t = normFood(text);
+  if(/\?|\b(ideal|berapa|target)\b/.test(t)) return null;
+  const m = /\b(?:berat(?: badan)?|bb|timbangan)\b[^\d]{0,24}(\d{2,3}(?:[.,]\d)?)\s*(?:kg|kilo|kilogram)?\b/.exec(t);
+  if(!m) return null;
+  const v = parseFloat(m[1].replace(',', '.'));
+  return v >= 25 && v <= 300 ? v : null;
+}
+/** Nilai gizi dari Open Food Facts (per 100 g/ml + porsi saji). */
+function offNutrition(p){
+  const n = p.nutriments || {};
+  let kcal = n['energy-kcal_100g'];
+  if(kcal == null && n['energy_100g'] != null) kcal = n['energy_100g'] / 4.184;
+  if(kcal == null) return null;
+  const name = [p.product_name_id || p.product_name || p.generic_name || '', (p.brands || '').split(',')[0]].filter(Boolean).join(' · ').trim();
+  return {name: name || 'Produk kemasan', kcal100: r1(+kcal), p100: r1(+(n.proteins_100g || 0)), c100: r1(+(n.carbohydrates_100g || 0)), f100: r1(+(n.fat_100g || 0)),
+    serving: +(p.serving_quantity || 0) || null, servingLabel: p.serving_size || '', qty: p.quantity || ''};
+}
+
+/* ================= KALORI & DIET (UI web) ================= */
+const KAL_DEF = {profile: null, days: {}, weights: [], barcodes: {}, recent: []};
+const kalS = () => state.kal;
+const fmtK = v => Math.round(v).toLocaleString('id-ID');
+const fmtQ = q => (Math.round(q * 10) / 10).toString().replace('.', ',');
+let kalDay = new Date();
+function kalTarget(){ const p = kalS().profile; return p ? calorieTarget(p) : null; }
+function kalOn(d){ return kalS().days[dayKey(d)] || []; }
+function kalSum(list){ return list.reduce((a, e) => ({k: a.k + e.f[5] * e.q, p: a.p + e.f[6] * e.q, c: a.c + e.f[7] * e.q, fa: a.fa + e.f[8] * e.q}), {k: 0, p: 0, c: 0, fa: 0}); }
+function kalAdd(meal, items, day = new Date(), source = ''){
+  const s = kalS(), key = dayKey(day), now = Date.now();
+  const at = sameDay(day, new Date()) ? now : new Date(day.getFullYear(), day.getMonth(), day.getDate(), 12).getTime();
+  s.days[key] = [...(s.days[key] || []), ...items.map((x, i) => ({id: now.toString(36) + i, m: meal, f: x.food, q: x.qty, at, s: source}))];
+  const keys = Object.keys(s.days).sort(); while(keys.length > 120) delete s.days[keys.shift()];
+  const names = new Set(items.map(x => x.food[1]));
+  s.recent = [...items.map(x => x.food), ...s.recent.filter(f => !names.has(f[1]))].slice(0, 12);
+  save(); if($('#kal').classList.contains('show')) renderKal(); renderFeatures();
+}
+function kalLogWeight(kg){
+  const s = kalS(), today = dayKey(new Date());
+  s.weights = [...s.weights.filter(w => w[0] !== today), [today, kg]].sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-365);
+  if(s.profile) s.profile.kg = kg;
+  save();
+}
+function kalSummaryText(){
+  const t = kalTarget(), e = kalSum(kalOn(new Date())).k;
+  return t ? `${fmtK(e)} / ${fmtK(t.target)} kkal` : e ? `${fmtK(e)} kkal hari ini` : 'Atur target diet';
+}
+function kalTodayLine(){
+  const t = kalTarget(), e = kalSum(kalOn(new Date())).k;
+  if(!t) return `Total hari ini **${fmtK(e)} kkal**. Atur berat & tinggi badan di menu Kalori supaya target harianmu dihitung otomatis.`;
+  const left = t.target - e;
+  return `Total hari ini **${fmtK(e)} / ${fmtK(t.target)} kkal** — ${left >= 0 ? `sisa ${fmtK(left)} kkal 💪` : `lebih ${fmtK(-left)} kkal, besok seimbangkan lagi ya 🙂`}`;
+}
+
+function openKal(){ kalDay = new Date(); renderKal(); openFull('#kal'); if(!kalS().profile) setTimeout(kalProfileSheet, 250); }
+function renderKal(){
+  const box = $('#kalBody'); if(!box) return;
+  const s = kalS(), t = kalTarget(), list = kalOn(kalDay), sum = kalSum(list), goal = t ? t.target : 2000, left = goal - sum.k;
+  const isToday = sameDay(kalDay, new Date()), frac = Math.min(1, sum.k / goal), R = 56, C = 2 * Math.PI * R;
+  const g = t ? GOALS.find(x => x[0] === t.goal) : null;
+  const macro = (l, v, tg) => `<div class="kmac"><small>${l}</small><i><b style="width:${Math.min(100, v / tg * 100)}%"></b></i><em>${Math.round(v)}/${tg} g</em></div>`;
+  box.innerHTML = `<div class="kday"><button class="icon-btn" data-kact="prev">‹</button><b>${isToday ? 'Hari ini' : fmtDateLong(kalDay)}</b><button class="icon-btn" data-kact="next" ${isToday ? 'disabled' : ''}>›</button></div>
+    <div class="khero">
+      <div class="krow">
+        <svg viewBox="0 0 132 132" class="kring"><circle cx="66" cy="66" r="${R}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="12"/>
+          <circle cx="66" cy="66" r="${R}" fill="none" stroke="${left < 0 ? '#FDE047' : '#fff'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}" transform="rotate(-90 66 66)" class="karc"/>
+          <text x="66" y="66" text-anchor="middle" font-size="26" font-weight="800" fill="#fff">${fmtK(Math.abs(left))}</text>
+          <text x="66" y="86" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">${left >= 0 ? 'kkal tersisa' : 'kkal kelebihan'}</text></svg>
+        <div class="kstats"><small>🎯 Target</small><b>${fmtK(goal)} kkal</b><small>🍽️ Dimakan</small><b>${fmtK(sum.k)} kkal</b><small>${g ? g[2] + ' Tujuan' : '⚙️ Profil'}</small><b>${g ? g[1] : 'belum diatur'}</b></div>
+      </div>
+      <div class="kmacs">${macro('Protein', sum.p, t ? t.protein : 100)}${macro('Karbo', sum.c, t ? t.carbs : 250)}${macro('Lemak', sum.fa, t ? t.fat : 67)}</div>
+    </div>
+    ${t && t.note ? `<div class="knote">💡 ${esc(t.note)}</div>` : ''}
+    <div class="kquick"><button data-kact="foto"><span style="background:#F973161f">📷</span>Foto makanan</button><button data-kact="barcode"><span style="background:#6366F11f;color:#6366F1;font-weight:900">▦</span>Barcode</button><button data-kact="cari"><span style="background:#10B9811f">🔎</span>Cari makanan</button></div>
+    ${MEALS.map(([k, n, e]) => { const l = list.filter(x => x.m === k), mk = kalSum(l).k;
+      return `<div class="kmeal"><div class="kmh"><span>${e}</span><div class="tx"><b>${n}</b><small>${l.length ? `${fmtK(mk)} kkal · ${l.length} makanan` : 'Belum dicatat'}</small></div><button class="kadd" data-kadd="${k}" aria-label="Tambah ${n}">+</button></div>
+        ${l.map(x => `<button class="kent" data-kent="${x.id}"><span>${x.f[0]}</span><div class="tx"><b>${esc(x.f[1])}</b><small>${fmtQ(x.q)} × ${esc(x.f[3])}${x.s === 'foto' ? ' · 📷' : x.s === 'barcode' ? ' · ▦' : ''}</small></div><em>${fmtK(x.f[5] * x.q)} kkal</em></button>`).join('')}</div>`; }).join('')}
+    <div class="section-h"><h2>Berat badan</h2></div>
+    ${kalWeightCard()}
+    <p class="mnote">Angka kalori adalah perkiraan. Untuk diet khusus atau kondisi medis, konsultasikan dengan dokter atau ahli gizi.</p>`;
+}
+function kalWeightCard(){
+  const s = kalS(), p = s.profile;
+  if(!p) return `<div class="card" style="text-align:center"><div style="font-size:34px">⚖️</div><b style="font-size:16px">Isi berat & tinggi badan</b><p class="muted-c">Supaya target kalori harianmu dihitung otomatis sesuai tujuan diet.</p><button class="btn btn-block" data-kact="profil" style="background:#F97316;color:#fff">Atur profil tubuh</button></div>`;
+  const b = calcBmi(p.kg, p.cm), [lab, col] = bmiLabel(b), [lo, hi] = healthyRange(p.cm), w = s.weights.slice(-30);
+  const diff = s.weights.length ? p.kg - s.weights[0][1] : 0, wk = weeksToTarget(p.kg, p.target);
+  const chip = (t, c) => `<span class="kchip" style="color:${c};background:${c}1f">${t}</span>`;
+  let chart = '<p class="muted-c" style="font-size:12.5px;text-align:left">Catat berat badan rutin (mis. seminggu sekali di pagi hari) untuk melihat grafik perkembanganmu.</p>';
+  if(w.length >= 2){
+    const vals = [...w.map(x => x[1]), ...(p.target ? [p.target] : [])], mn = Math.floor(Math.min(...vals) - 1), mx = Math.ceil(Math.max(...vals) + 1);
+    const X = i => 34 + i * (290 / (w.length - 1)), Y = v => 10 + (mx - v) / (mx - mn) * 110;
+    const pts = w.map((x, i) => `${X(i)},${Y(x[1])}`).join(' ');
+    const dd = s => { const d = new Date(s); return `${d.getDate()}/${d.getMonth() + 1}`; };
+    chart = `<svg viewBox="0 0 330 145" class="kchart"><text x="0" y="16" font-size="11" fill="var(--muted)">${mx}</text><text x="0" y="122" font-size="11" fill="var(--muted)">${mn}</text>
+      ${p.target ? `<line x1="34" x2="324" y1="${Y(p.target)}" y2="${Y(p.target)}" stroke="#F97316" stroke-opacity=".6" stroke-dasharray="6 4"/>` : ''}
+      <polygon points="34,120 ${pts} ${X(w.length - 1)},120" fill="rgba(249,115,22,.1)"/><polyline points="${pts}" fill="none" stroke="#F97316" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+      ${w.map((x, i) => `<circle cx="${X(i)}" cy="${Y(x[1])}" r="4" fill="#F97316"/>`).join('')}
+      <text x="34" y="140" font-size="11" fill="var(--muted)">${dd(w[0][0])}</text><text x="324" y="140" text-anchor="end" font-size="11" fill="var(--muted)">${dd(w[w.length - 1][0])}</text></svg>`;
+  }
+  return `<div class="card kweight"><div class="kwtop"><b class="kkg">${fmtQ(p.kg)}</b><span>kg</span>${s.weights.length > 1 ? `<small>${diff > 0 ? '▲' : diff < 0 ? '▼' : '•'} ${fmtQ(Math.abs(diff))} kg</small>` : ''}<button class="btn btn-soft btn-sm" data-kact="berat">⚖️ Catat</button></div>
+    <div class="kchips">${chip(`BMI ${b.toFixed(1)} · ${lab}`, col)}${chip(`Ideal ${fmtQ(lo)}–${fmtQ(hi)} kg`, '#10B981')}${chip(`Tinggi ${fmtQ(p.cm)} cm`, '#6366F1')}${p.target ? chip(`Target ${fmtQ(p.target)} kg${wk ? ` · ±${wk} minggu` : ' ✓'}`, '#F97316') : ''}</div>${chart}</div>`;
+}
+function showSheet(html){ $('#sheetBody').innerHTML = html; $('#overlay').classList.add('show'); $('#sheet').classList.add('show'); }
+const mealChips = (m, attr = 'data-km') => `<div class="kmchips">${MEALS.map(([k, n, e]) => `<button ${attr}="${k}" class="${k === m ? 'on' : ''}">${e} ${n}</button>`).join('')}</div>`;
+function bindMealChips(get, set){ $('#sheetBody').querySelectorAll('[data-km]').forEach(b => b.onclick = () => { set(b.dataset.km); $('#sheetBody').querySelectorAll('[data-km]').forEach(x => x.classList.toggle('on', x === b)); }); }
+const mealNow = () => sameDay(kalDay, new Date()) ? mealByHour(new Date().getHours()) : 'siang';
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('#kalBody [data-kact], #kalBody [data-kadd], #kalBody [data-kent]'); if(!b) return;
+  if(b.dataset.kadd) return kalAddSheet(b.dataset.kadd);
+  if(b.dataset.kent) return kalEditSheet(b.dataset.kent);
+  switch(b.dataset.kact){
+    case 'prev': kalDay = addDays(kalDay, -1); renderKal(); break;
+    case 'next': kalDay = addDays(kalDay, 1); renderKal(); break;
+    case 'foto': kalPhoto(mealNow()); break;
+    case 'barcode': kalBarcode(mealNow()); break;
+    case 'cari': kalAddSheet(mealNow()); break;
+    case 'profil': kalProfileSheet(); break;
+    case 'berat': kalWeightSheet(); break;
+  }
+});
+
+/* --- profil tubuh --- */
+function kalProfileSheet(prefKg){
+  const p = kalS().profile || {kg: '', cm: '', age: '', sex: 'P', act: 1.375, goal: 'turun', target: null};
+  let sex = p.sex, act = p.act, goal = p.goal;
+  showSheet(`<h3 style="margin:4px 0 2px">Profil tubuh</h3><p class="muted-c" style="text-align:left;margin:0 0 12px">Dipakai untuk menghitung target kalori harianmu.</p>
+    <div class="kseg" id="kpSex"><button data-v="P">👩 Perempuan</button><button data-v="L">👨 Laki-laki</button></div>
+    <div class="k3"><label>Berat<input class="input" id="kpKg" inputmode="decimal" value="${prefKg || p.kg}" placeholder="kg"></label><label>Tinggi<input class="input" id="kpCm" inputmode="decimal" value="${p.cm}" placeholder="cm"></label><label>Umur<input class="input" id="kpAge" inputmode="numeric" value="${p.age}" placeholder="tahun"></label></div>
+    <b class="klab">Seberapa aktif kamu?</b><div class="kacts" id="kpAct">${ACTIVITY.map(([f, n, d]) => `<button data-v="${f}"><b>${n}</b><small>${d}</small></button>`).join('')}</div>
+    <b class="klab">Tujuanmu</b><div class="kseg" id="kpGoal">${GOALS.map(([k, n, e]) => `<button data-v="${k}">${e} ${n}</button>`).join('')}</div>
+    <label class="klab2">Berat target (opsional, kg)<input class="input" id="kpTg" inputmode="decimal" value="${p.target || ''}"></label><small id="kpHint" class="muted-c" style="display:block;text-align:left"></small>
+    <div id="kpPrev"></div><button class="btn btn-block" id="kpSave" style="background:#F97316;color:#fff;margin-top:12px">Simpan</button>`);
+  const num = id => parseFloat(($(id).value || '').replace(',', '.'));
+  const mark = () => {
+    $('#kpSex').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === sex));
+    $('#kpAct').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.v === act));
+    $('#kpGoal').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === goal));
+    const kg = num('#kpKg'), cm = num('#kpCm'), age = parseInt($('#kpAge').value), tg = num('#kpTg');
+    const ok = kg >= 25 && kg <= 300 && cm >= 100 && cm <= 250 && age >= 10 && age <= 100;
+    const rng = cm >= 100 ? healthyRange(cm) : null, low = rng && tg && tg < rng[0];
+    $('#kpHint').innerHTML = low ? `<span style="color:#E11D48">Di bawah berat sehat — pilih minimal ${fmtQ(rng[0])} kg</span>` : rng ? `Berat sehat untuk tinggimu: ${fmtQ(rng[0])}–${fmtQ(rng[1])} kg` : '';
+    if(ok){ const t = calorieTarget({kg, cm, age, sex, act, goal}), bm = calcBmi(kg, cm);
+      $('#kpPrev').innerHTML = `<div class="kprev"><small>Target kalori harianmu</small><b>${fmtK(t.target)} kkal</b><small>Kebutuhan tubuhmu ±${fmtK(t.tdee)} kkal/hari · BMI ${bm.toFixed(1)} (${bmiLabel(bm)[0]})</small>${t.note ? `<p>💡 ${esc(t.note)}</p>` : ''}</div>`;
+    } else $('#kpPrev').innerHTML = '';
+    $('#kpSave').disabled = !ok || !!low; $('#kpSave').textContent = ok ? 'Simpan' : 'Isi berat, tinggi & umur dulu';
+  };
+  $('#kpSex').onclick = e => { const b = e.target.closest('button'); if(b){ sex = b.dataset.v; mark(); } };
+  $('#kpAct').onclick = e => { const b = e.target.closest('button'); if(b){ act = +b.dataset.v; mark(); } };
+  $('#kpGoal').onclick = e => { const b = e.target.closest('button'); if(b){ goal = b.dataset.v; mark(); } };
+  ['#kpKg', '#kpCm', '#kpAge', '#kpTg'].forEach(id => $(id).oninput = mark);
+  $('#kpSave').onclick = () => {
+    const kg = num('#kpKg'); kalS().profile = {kg, cm: num('#kpCm'), age: parseInt($('#kpAge').value), sex, act, goal, target: num('#kpTg') || null};
+    kalLogWeight(kg); closeSheet(); renderKal(); renderFeatures(); toast('Profil tubuh disimpan 💪');
+  };
+  mark();
+}
+function kalWeightSheet(){
+  const cur = kalS().profile ? kalS().profile.kg : '';
+  showSheet(`<h3 style="margin:4px 0 12px">Berat badan hari ini</h3><input class="input" id="kwIn" inputmode="decimal" value="${cur ? fmtQ(cur) : ''}" placeholder="mis. 65,5" style="font-size:20px;text-align:center">
+    <button class="btn btn-block" id="kwSave" style="background:#F97316;color:#fff;margin-top:12px">Simpan</button>`);
+  $('#kwIn').focus();
+  $('#kwSave').onclick = () => {
+    const kg = parseFloat($('#kwIn').value.replace(',', '.'));
+    if(!(kg >= 25 && kg <= 300)) return toast('Masukkan berat 25–300 kg');
+    if(!kalS().profile){ closeSheet(); setTimeout(() => kalProfileSheet(kg), 280); return; }
+    kalLogWeight(kg); closeSheet(); renderKal(); toast(`Berat ${fmtQ(kg)} kg dicatat ⚖️`);
+  };
+}
+
+/* --- tambah makanan --- */
+function kalAddSheet(meal){
+  let m = meal, q = '', cat = '';
+  showSheet(`<h3 style="margin:4px 0 8px">Tambah makanan</h3>${mealChips(m)}
+    <input class="input" id="kaQ" placeholder="Cari: nasi goreng, bakso, teh manis…" autocomplete="off" style="margin:8px 0">
+    <div class="kacts3"><button data-ka="foto">📷 Foto</button><button data-ka="barcode">▦ Barcode</button><button data-ka="manual">✏️ Manual</button></div>
+    <div class="kcats">${Object.entries(FOOD_CATS).map(([k, v]) => `<button data-kc="${k}">${v}</button>`).join('')}</div>
+    <div id="kaList" class="kalist"></div>`);
+  bindMealChips(() => m, v => m = v);
+  const row = f => `<button class="kfood" data-kf="${esc(f[1])}"><span>${f[0]}</span><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` (${fmtQ(f[4])} g)` : ''}</small></div><em>${fmtK(f[5])} kkal</em></button>`;
+  const custom = () => Object.values(kalS().barcodes);
+  let shown = [];
+  const draw = () => {
+    let list;
+    if(!q && !cat){ const r = kalS().recent; shown = [...r, ...FOODS.slice(0, 30)];
+      $('#kaList').innerHTML = (r.length ? '<div class="klabel">Terakhir kamu makan</div>' + r.map(row).join('') : '') + '<div class="klabel">Makanan populer</div>' + FOODS.slice(0, 30).map(row).join(''); return; }
+    list = q ? foodSearch(q, custom()) : FOODS;
+    if(cat) list = list.filter(f => f[9] === cat);
+    shown = list.slice(0, 60);
+    $('#kaList').innerHTML = shown.length ? shown.map(row).join('') : `<p class="muted-c"><b>"${esc(q)}" belum ada di daftar.</b><br>Tambahkan manual, atau foto makanannya biar AI yang menghitung.</p>`;
+  };
+  $('#kaQ').oninput = e => { q = e.target.value; draw(); };
+  $('#sheetBody').querySelector('.kcats').onclick = e => { const b = e.target.closest('[data-kc]'); if(!b) return; cat = cat === b.dataset.kc ? '' : b.dataset.kc; $('#sheetBody').querySelectorAll('[data-kc]').forEach(x => x.classList.toggle('on', x.dataset.kc === cat)); draw(); };
+  $('#sheetBody').querySelector('.kacts3').onclick = e => { const b = e.target.closest('[data-ka]'); if(!b) return; closeSheet();
+    setTimeout(() => b.dataset.ka === 'foto' ? kalPhoto(m) : b.dataset.ka === 'barcode' ? kalBarcode(m) : kalManual(m, q), 280); };
+  $('#kaList').onclick = e => { const b = e.target.closest('[data-kf]'); if(!b) return; const f = shown.find(x => x[1] === b.dataset.kf); if(f) kalQtySheet(f, m, 1, 'list'); };
+  draw();
+}
+function qtyStep(q, d){ const st = q <= 1 && d < 0 ? .25 : q < 1 ? .25 : .5; return Math.min(20, Math.max(.25, Math.round((q + d * st) * 100) / 100)); }
+function kalQtySheet(f, meal, q0 = 1, source = '', onDone){
+  let q = q0;
+  showSheet(`<h3 style="margin:4px 0 2px;text-align:center">${f[0]} ${esc(f[1])}</h3><p class="muted-c">${esc(f[3])} = ${fmtK(f[5])} kkal</p>
+    <div class="kstep"><button id="kqM">−</button><div><b id="kqV"></b><small>${esc(f[3])}</small></div><button id="kqP">+</button></div>
+    <div class="kbig" id="kqK"></div><p class="muted-c" id="kqMac"></p>
+    <button class="btn btn-block" id="kqOk" style="background:#F97316;color:#fff">Tambah ke ${MEAL_NAME[meal]}</button>`);
+  const upd = () => { $('#kqV').textContent = fmtQ(q) + '×'; $('#kqK').textContent = fmtK(f[5] * q) + ' kkal'; $('#kqMac').textContent = `P ${Math.round(f[6] * q)} g · K ${Math.round(f[7] * q)} g · L ${Math.round(f[8] * q)} g`; };
+  $('#kqM').onclick = () => { q = qtyStep(q, -1); upd(); }; $('#kqP').onclick = () => { q = qtyStep(q, 1); upd(); };
+  $('#kqOk').onclick = () => { kalAdd(meal, [{food: f, qty: q}], kalDay, source === 'list' ? '' : source); closeSheet(); toast(`${f[0]} ${f[1]} +${fmtK(f[5] * q)} kkal → ${MEAL_NAME[meal]}`); onDone && onDone(); };
+  upd();
+}
+function kalEditSheet(id){
+  const key = dayKey(kalDay), e = (kalS().days[key] || []).find(x => x.id === id); if(!e) return;
+  let q = e.q;
+  showSheet(`<h3 style="margin:4px 0 2px;text-align:center">${e.f[0]} ${esc(e.f[1])}</h3><p class="muted-c">${MEAL_NAME[e.m]} · ${esc(e.f[3])} = ${fmtK(e.f[5])} kkal</p>
+    <div class="kstep"><button id="kqM">−</button><div><b id="kqV"></b><small>${esc(e.f[3])}</small></div><button id="kqP">+</button></div><div class="kbig" id="kqK"></div>
+    <div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-soft" id="keDel" style="flex:1;color:#E11D48">🗑️ Hapus</button><button class="btn" id="keOk" style="flex:1;background:#F97316;color:#fff">Simpan</button></div>`);
+  const upd = () => { $('#kqV').textContent = fmtQ(q) + '×'; $('#kqK').textContent = fmtK(e.f[5] * q) + ' kkal'; };
+  $('#kqM').onclick = () => { q = qtyStep(q, -1); upd(); }; $('#kqP').onclick = () => { q = qtyStep(q, 1); upd(); };
+  $('#keDel').onclick = () => { kalS().days[key] = kalS().days[key].filter(x => x.id !== id); save(); closeSheet(); renderKal(); renderFeatures(); };
+  $('#keOk').onclick = () => { e.q = q; save(); closeSheet(); renderKal(); renderFeatures(); };
+  upd();
+}
+function kalManual(meal, name = '', barcode = null){
+  let m = meal;
+  showSheet(`<h3 style="margin:4px 0 4px">${barcode ? 'Produk belum dikenal' : 'Tambah manual'}</h3>
+    ${barcode ? `<p class="muted-c" style="text-align:left">Barcode ${esc(barcode)}. Lihat "Informasi Nilai Gizi" di kemasan, lalu isi di bawah. Lain kali cukup pindai.</p>` : ''}
+    ${mealChips(m)}<input class="input" id="kmN" placeholder="Nama makanan" value="${esc(name)}" style="margin-top:10px">
+    <div style="display:flex;gap:10px;margin-top:10px"><input class="input" id="kmK" inputmode="numeric" placeholder="Kalori (kkal)"><input class="input" id="kmP" value="${barcode ? '1 kemasan' : '1 porsi'}" placeholder="Porsi"></div>
+    <button class="btn btn-block" id="kmOk" style="background:#F97316;color:#fff;margin-top:14px">Simpan</button>`);
+  bindMealChips(() => m, v => m = v);
+  $('#kmOk').onclick = () => {
+    const n = $('#kmN').value.trim(), k = parseFloat($('#kmK').value);
+    if(!n || !(k >= 0)) return toast('Isi nama & kalorinya dulu');
+    const f = [barcode ? '📦' : '🍽️', n, [], $('#kmP').value.trim() || '1 porsi', 0, k, 0, 0, 0, barcode ? 'kemasan' : 'lain'];
+    if(barcode) kalS().barcodes[barcode] = f;
+    kalAdd(m, [{food: f, qty: 1}], kalDay, barcode ? 'barcode' : ''); closeSheet(); toast(`${n} +${fmtK(k)} kkal → ${MEAL_NAME[m]}`);
+  };
+}
+
+/* --- pindai foto (Gemini) --- */
+function foodEmoji(name){ const n = normFood(name); for(const [k, f] of foodKeys()) if(n === k || n.startsWith(k + ' ') || n.includes(' ' + k)) return f[0]; return '🍽️'; }
+const FOOD_SCAN_PROMPT = 'Kamu ahli gizi Indonesia. Kenali semua makanan & minuman di foto ini dan perkirakan porsinya. Balas HANYA JSON: {"items":[{"name":"nama makanan dalam bahasa Indonesia","portion":"mis. 1 piring","gram":150,"kcal":195,"protein":3.6,"carbs":42,"fat":0.3}],"note":"catatan singkat"}. Pakai acuan TKPI Kemenkes. Jika foto bukan makanan, kembalikan {"items":[],"note":"alasan"}.';
+async function scanFoodData(dataUrl){
+  const [head, b64] = dataUrl.split(',');
+  const mime = (/data:([^;]+)/.exec(head) || [])[1] || 'image/jpeg';
+  let txt = await gemini(FOOD_SCAN_PROMPT, [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Hitung kalori makanan di foto ini.'}]}], true);
+  const a = txt.indexOf('{'), b = txt.lastIndexOf('}'); if(a >= 0 && b > a) txt = txt.slice(a, b + 1);
+  const d = JSON.parse(txt);
+  const n = v => +v || 0;
+  return {note: d.note || '', foods: (d.items || []).filter(x => x && x.name).map(x => [foodEmoji(String(x.name)), String(x.name), [], String(x.portion || '1 porsi'), n(x.gram), n(x.kcal), n(x.protein), n(x.carbs), n(x.fat), 'foto'])};
+}
+function kalPhoto(meal){
+  if(!state.settings.apiKey){ showSheet(`<h3 style="margin:4px 0 8px">📷 Pindai makanan</h3><p style="line-height:1.5">Untuk mengenali makanan dari foto, isi dulu kunci API Gemini (gratis) di <b>Profil → Kunci API Gemini</b>.</p><p class="muted-c" style="text-align:left">Sementara itu kamu bisa cari makanan dari daftar atau pindai barcode kemasan.</p><button class="btn btn-block btn-soft" onclick="closeSheet()">Mengerti</button>`); return; }
+  const inp = $('#kalFile'); inp.value = '';
+  inp.onchange = async () => {
+    const file = inp.files && inp.files[0]; if(!file) return;
+    showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">AI sedang mengenali makananmu… 🍽️</p>');
+    try{
+      const url = await compressImage(file, 1024, .8), r = await scanFoodData(url);
+      if(!r.foods.length){ closeSheet(); return toast(r.note || 'Tidak ada makanan yang terlihat di foto'); }
+      kalReview(r.foods, meal, 'foto', 'Hasil pindai foto', r.note);
+    }catch(e){ closeSheet(); toast(e.status ? geminiErrorText(e) : 'Foto belum bisa dikenali. Coba foto lebih dekat dan terang, atau cari manual.'); }
+  };
+  inp.click();
+}
+function kalReview(foods, meal, source, title, note = '', qtys){
+  let m = meal; const q = qtys ? [...qtys] : foods.map(() => 1), on = foods.map(() => true);
+  showSheet(`<h3 style="margin:4px 0 2px">${title}</h3>${note ? `<p class="muted-c" style="text-align:left;margin:0 0 6px">${esc(note)}</p>` : ''}${mealChips(m)}<div id="krList"></div>
+    <button class="btn btn-block" id="krOk" style="background:#F97316;color:#fff;margin-top:12px"></button><p class="muted-c" style="font-size:12px">Perkiraan AI — sesuaikan porsinya bila perlu.</p>`);
+  bindMealChips(() => m, v => m = v);
+  const draw = () => {
+    $('#krList').innerHTML = foods.map((f, i) => `<div class="krow2${on[i] ? '' : ' off'}"><label><input type="checkbox" data-kon="${i}" ${on[i] ? 'checked' : ''}><div class="tx"><b>${esc(f[1])}</b><small>${esc(f[3])}${f[4] ? ` · ±${fmtQ(f[4])} g` : ''}</small></div><em>${fmtK(f[5] * q[i])} kkal</em></label>
+      ${on[i] ? `<div class="kstep sm"><button data-kq="${i}" data-d="-1">−</button><div><b>${fmtQ(q[i])}×</b></div><button data-kq="${i}" data-d="1">+</button></div>` : ''}</div>`).join('');
+    const tot = foods.reduce((a, f, i) => a + (on[i] ? f[5] * q[i] : 0), 0);
+    $('#krOk').textContent = `Simpan ${fmtK(tot)} kkal`; $('#krOk').disabled = !on.some(Boolean);
+  };
+  $('#krList').onclick = e => { const b = e.target.closest('[data-kq]'); if(b){ const i = +b.dataset.kq; q[i] = qtyStep(q[i], +b.dataset.d); draw(); } };
+  $('#krList').onchange = e => { const c = e.target.closest('[data-kon]'); if(c){ on[+c.dataset.kon] = c.checked; draw(); } };
+  $('#krOk').onclick = () => { const items = foods.map((f, i) => ({food: f, qty: q[i]})).filter((_, i) => on[i]); const tot = items.reduce((a, x) => a + x.food[5] * x.qty, 0);
+    kalAdd(m, items, kalDay, source); closeSheet(); toast(`✅ ${fmtK(tot)} kkal dicatat ke ${MEAL_NAME[m]}`); };
+  draw();
+}
+
+/* --- pindai barcode --- */
+let bsStream = null, bsTimer = null;
+function kalBarcode(meal){
+  $('#bsMeal').value = meal; $('#bsMsg').textContent = 'Arahkan kamera ke barcode di kemasan';
+  openFull('#bscan');
+  if(!('BarcodeDetector' in window) || !navigator.mediaDevices){
+    $('#bsMsg').textContent = 'Browser ini belum bisa memindai barcode lewat kamera — ketik nomor barcode di bawah (angka di bawah garis-garis).';
+    return;
+  }
+  const det = new BarcodeDetector({formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128']});
+  navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}}).then(st => {
+    bsStream = st; const v = $('#bsVideo'); v.srcObject = st; v.play();
+    const tick = async () => {
+      if(!bsStream) return;
+      try{ const r = await det.detect(v); const c = r.map(x => x.rawValue).find(x => /^\d{8,14}$/.test(x)); if(c){ bsStop(); closeFull('#bscan'); try{ navigator.vibrate && navigator.vibrate(60); }catch(_){} return kalLookup(c, meal); } }catch(_){}
+      bsTimer = setTimeout(tick, 250);
+    };
+    tick();
+  }).catch(() => { $('#bsMsg').textContent = 'Kamera tidak bisa dibuka — izinkan kamera, atau ketik nomor barcode.'; });
+}
+function bsStop(){ clearTimeout(bsTimer); if(bsStream){ bsStream.getTracks().forEach(t => t.stop()); bsStream = null; } }
+async function fetchOFF(code){
+  const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json?fields=product_name,product_name_id,generic_name,brands,nutriments,serving_size,serving_quantity`);
+  if(r.status === 404) return null;
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const d = await r.json();
+  return d && d.status === 1 && d.product ? offNutrition(d.product) : null;
+}
+async function kalLookup(code, meal){
+  const known = kalS().barcodes[code];
+  if(known) return kalQtySheet(known, meal, 1, 'barcode');
+  showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">Mencari produk…</p>');
+  let p = null, failed = false;
+  try{ p = await fetchOFF(code); }catch(e){ failed = true; }
+  if(!p){ if(failed) toast('Database produk tidak bisa dihubungi — isi manual dulu ya'); return kalManual(meal, '', code); }
+  const g = p.serving || 100, k = g / 100;
+  const food = ['📦', p.name, [], p.serving ? '1 sajian' : '100 gram', g, r1(p.kcal100 * k), r1(p.p100 * k), r1(p.c100 * k), r1(p.f100 * k), 'kemasan'];
+  let m = meal, useG = !p.serving, sv = 1;
+  showSheet(`<h3 style="margin:4px 0 2px">📦 ${esc(p.name)}</h3><p class="muted-c" style="text-align:left">${fmtK(p.kcal100)} kkal per 100 g/ml${p.serving ? ` · 1 sajian ${fmtQ(p.serving)} g = ${fmtK(food[5])} kkal` : ''}</p>
+    ${mealChips(m)}${p.serving ? '<div class="kseg" id="pkMode" style="margin-top:10px"><button data-v="s">Per sajian</button><button data-v="g">Gram / ml</button></div>' : ''}
+    <div id="pkIn" style="margin-top:10px"></div><div class="kbig" id="pkK"></div>
+    <button class="btn btn-block" id="pkOk" style="background:#F97316;color:#fff">Simpan</button><p class="muted-c" style="font-size:11.5px">Data gizi dari Open Food Facts</p>`);
+  bindMealChips(() => m, v => m = v);
+  const grams = () => parseFloat(($('#pkG') || {}).value || '0');
+  const kcal = () => useG ? p.kcal100 * grams() / 100 : food[5] * sv;
+  const draw = () => {
+    if($('#pkMode')) $('#pkMode').querySelectorAll('button').forEach(b => b.classList.toggle('on', (b.dataset.v === 'g') === useG));
+    $('#pkIn').innerHTML = useG ? `<input class="input" id="pkG" inputmode="numeric" value="${Math.round(g)}" placeholder="gram / ml">` : `<div class="kstep"><button id="pkM">−</button><div><b>${fmtQ(sv)}×</b><small>sajian ${esc(p.servingLabel || fmtQ(g) + ' g')}</small></div><button id="pkP">+</button></div>`;
+    if(useG) $('#pkG').oninput = () => { $('#pkK').textContent = fmtK(kcal()) + ' kkal'; };
+    else { $('#pkM').onclick = () => { sv = qtyStep(sv, -1); draw(); }; $('#pkP').onclick = () => { sv = qtyStep(sv, 1); draw(); }; }
+    $('#pkK').textContent = fmtK(kcal()) + ' kkal';
+  };
+  if($('#pkMode')) $('#pkMode').onclick = e => { const b = e.target.closest('button'); if(b){ useG = b.dataset.v === 'g'; draw(); } };
+  $('#pkOk').onclick = () => { const kc = kcal(); if(!(kc > 0)) return toast('Isi jumlahnya dulu');
+    kalS().barcodes[code] = food; kalAdd(m, [{food, qty: Math.round((useG ? grams() / g : sv) * 100) / 100}], kalDay, 'barcode'); closeSheet(); toast(`📦 +${fmtK(kc)} kkal → ${MEAL_NAME[m]}`); };
+  draw();
+}
+
+/* --- chat --- */
+function answerCalorie(text){
+  const log = parseFoodLog(text);
+  if(log){
+    kalAdd(log.meal, log.items, new Date(), 'chat');
+    const sum = log.items.reduce((a, x) => a + x.food[5] * x.qty, 0);
+    botTools(`✅ Dicatat ke **${MEAL_NAME[log.meal]}** (${fmtK(sum)} kkal):\n${log.items.map(x => `• ${x.food[0]} ${x.food[1]} ${fmtQ(x.qty)}× ${x.food[3]} — **${fmtK(x.food[5] * x.qty)} kkal**`).join('\n')}\n\n${kalTodayLine()}`, ['kalori'], `Dicatat ${fmtK(sum)} kilo kalori ke ${MEAL_NAME[log.meal]}.`);
+    return true;
+  }
+  const kg = parseWeightLog(text);
+  if(kg){
+    const prev = kalS().weights.length ? kalS().weights[kalS().weights.length - 1][1] : null;
+    kalLogWeight(kg); const p = kalS().profile; let extra = '';
+    if(p){ const b = calcBmi(kg, p.cm); extra = ` BMI kamu ${b.toFixed(1)} (${bmiLabel(b)[0]}).`; if(prev && kg < prev) extra += ` Turun ${fmtQ(prev - kg)} kg dari catatan sebelumnya 🎉`; }
+    else extra = ' Isi juga tinggi badanmu di menu Kalori supaya BMI & target kalori dihitung.';
+    botTools(`⚖️ Berat **${fmtQ(kg)} kg** dicatat.${extra}`, ['kalori']); renderFeatures();
+    return true;
+  }
+  const f = askFoodCalorie(text);
+  if(f){ botTools(`${f[0]} **${f[1]}** (${f[3]}${f[4] ? `, ±${fmtQ(f[4])} g` : ''}) sekitar **${fmtK(f[5])} kkal**.\nProtein ${fmtQ(f[6])} g · Karbo ${fmtQ(f[7])} g · Lemak ${fmtQ(f[8])} g.\n\nMau dicatat? Ketik misalnya "aku makan ${f[1].toLowerCase()}".`, ['kalori']); return true; }
+  if(askCalorieToday(text)){ botTools('🥗 ' + kalTodayLine(), ['kalori']); return true; }
+  return false;
+}
+async function scanFoodChat(photoKey){
+  if(!state.settings.apiKey){ botTools('📷 Untuk menghitung kalori dari foto, isi dulu kunci API Gemini (gratis) di Profil. Atau buka menu Kalori untuk cari makanan dari daftar.', ['kalori']); return; }
+  try{
+    const r = await scanFoodData(photos[photoKey]);
+    if(!r.foods.length){ botTools(r.note ? '🤔 ' + r.note : '🤔 Aku tidak melihat makanan di foto itu.', []); return; }
+    const meal = mealByHour(new Date().getHours()), items = r.foods.map(f => ({food: f, qty: 1}));
+    kalAdd(meal, items, new Date(), 'foto');
+    const sum = r.foods.reduce((a, f) => a + f[5], 0);
+    botTools(`📷 Dari fotomu, perkiraan **${fmtK(sum)} kkal** — dicatat ke ${MEAL_NAME[meal]}:\n${r.foods.map(f => `• ${f[1]} (${f[3]}) — **${fmtK(f[5])} kkal**`).join('\n')}\n\n${kalTodayLine()}\n\n*Perkiraan AI, porsinya bisa diubah di menu Kalori.*`, ['kalori']);
+  }catch(e){ botTools('Foto makanan belum bisa dibaca sekarang. Coba lagi, atau catat lewat menu Kalori.', ['kalori']); }
+}
+
 /* ---------------- storage ---------------- */
 let state = {
   reminders: [],
@@ -1777,6 +2321,7 @@ let state = {
   cycle: {enabled:false, periods:[], cycleLen:28, periodLen:5, remind:true, notified:{}},
   notes: [],
   moods: [], habits: [], journal: [], psytests: [],
+  kal: {profile:null, days:{}, weights:[], barcodes:{}, recent:[]},
   muslim: {city:'Jakarta', lat:-6.2088, lng:106.8456, tz:7, auto:false, adzan:true, muted:[], done:{}, tasbih:0, ls:null, la:null, notified:{}},
   calm: {checkin:true, checkinH:8, journal:true, journalH:21, notified:{}},
   settings: {name:'', theme:'system', apiKey:'', model:'gemini-flash-latest', voice:true, alarmSound:'melodi'},
@@ -1794,6 +2339,7 @@ function load(){
       for(const k of ['moods','habits','journal','psytests']) state[k] = Array.isArray(d[k]) ? d[k] : [];
       if(d.calm) state.calm = Object.assign(state.calm, d.calm);
       if(d.muslim) state.muslim = Object.assign(state.muslim, d.muslim);
+      if(d.kal) state.kal = Object.assign(state.kal, d.kal);
       state.settings = Object.assign(state.settings, d.settings || {});
     }
   }catch(e){ console.warn('load', e); }
@@ -2289,6 +2835,7 @@ function renderFeatures(){
   const ci = state.cycle.enabled ? cycleInfo() : null;
   const tiles = [
     ['muslim','🕌','Muslim Harian', `${PRAYER_NAMES[nx.key]} ${fmtTime(nx.at)}`, '#047857,#10B981'],
+    ['kal','🥗','Kalori & Diet', kalSummaryText(), '#F97316,#F43F5E'],
     ['calm', md ? MOOD_EMOJI[md.m-1] : '🌿', 'Ruang Tenang', !md ? 'Cek mood hari ini' : hs.length ? `Kebiasaan ${hd}/${hs.length}` : 'Mood tercatat ✓', '#14B8A6,#6366F1'],
     ['notes','📝','Catatan', state.notes.length ? `${state.notes.length} catatan${sec ? ` · ${sec} 🔒` : ''}` : 'Belum ada catatan', '#6366F1,#8B5CF6'],
     ['items','🎒','Barang', its.length ? `${its.length} barang disimpan` : 'Belum ada barang', '#F59E0B,#EA580C'],
@@ -2303,6 +2850,7 @@ $('#featGrid').onclick = e => {
   switch(b.dataset.feat){
     case 'muslim': openMuslim(); break;
     case 'calm': openCalm(); break;
+    case 'kal': openKal(); break;
     case 'notes': openNotes(); break;
     case 'items': showItemsSheet(); break;
     case 'cycle': openCycle(); break;
@@ -2482,6 +3030,7 @@ function renderProfile(){
   { const ci = state.cycle.enabled ? cycleInfo() : null; $('#cycState').textContent = ci ? cycleStatus(ci).title + ' · ' + cycleStatus(ci).sub : 'Atur pengingat & perkiraan haid'; }
   const s = state.settings;
   const name = s.name.trim();
+  if($('#kalState')){ const kp = state.kal.profile; $('#kalState').textContent = kp ? `${fmtQ(kp.kg)} kg · ${fmtQ(kp.cm)} cm · target ${fmtK(calorieTarget(kp).target)} kkal` : 'Penghitung kalori, berat & tinggi badan'; }
   if($('#muslimState')) $('#muslimState').textContent = `${state.muslim.city} · jadwal sholat, kiblat, Al-Qur'an, doa`;
   $('#notesState').textContent = state.notes.length ? `${state.notes.length} catatan · ${state.notes.filter(n=>n.secret).length} rahasia` : 'Catat apa saja lewat asisten';
   paintAvatar($('#pfAv'));
@@ -2966,6 +3515,8 @@ function openCycle(){ renderCycleScreen(); $('#cycle').classList.add('show'); }
 $('#cycClose').onclick = () => $('#cycle').classList.remove('show');
 $('#rowCycle').onclick = openCycle;
 $('#rowMuslim').onclick = openMuslim;
+$('#rowKal').onclick = openKal;
+$('#bsGo').onclick = () => { const c = $('#bsCode').value.replace(/\D/g, ''); if(c.length < 8) return toast('Nomor barcode minimal 8 angka'); bsStop(); closeFull('#bscan'); $('#bsCode').value = ''; kalLookup(c, $('#bsMeal').value || 'siang'); };
 $('#rowNotes').onclick = openNotes;
 $('#rowCalm').onclick = openCalm;
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { closeFull(b.dataset.close); if(b.dataset.close === '#breathe') stopBreathe(); });
@@ -3737,6 +4288,7 @@ function logMood(m, e, note = ''){
 function toolLabel(t){
   if(t.startsWith('muslim:doa:')) return '🤲 Buka doa harian';
   if(t === 'muslim') return '🕌 Buka Muslim Harian';
+  if(t === 'kalori') return '🥗 Buka Kalori';
   if(t === 'muslim:kiblat') return '🧭 Kompas kiblat';
   if(t === 'muslim:quran') return "📖 Al-Qur'an";
   if(t.startsWith('tes:')){ const x = PSY[t.slice(4)]; return x ? `${x.emoji} Tes ${x.title}` : '🌈 Semua tes psikologi'; }
@@ -3752,10 +4304,11 @@ function helpCard(urgent = false){
 }
 
 function openFull(id){ $(id).classList.add('show'); }
-function closeFull(id){ $(id).classList.remove('show'); if(id === '#mtool') mtMode = ''; }
+function closeFull(id){ $(id).classList.remove('show'); if(id === '#mtool') mtMode = ''; if(id === '#bscan') bsStop(); }
 function openTool(t){
   if(t.startsWith('muslim:doa:')){ openDoa(t.slice(11)); return; }
   if(t === 'muslim'){ openMuslim(); return; }
+  if(t === 'kalori'){ openKal(); return; }
   if(t === 'muslim:kiblat'){ openQibla(); return; }
   if(t === 'muslim:quran'){ openQuran(); return; }
   if(t.startsWith('tes:')){ const id = t.slice(4); openTests(PSY[id] ? id : null); return; }
@@ -5069,6 +5622,8 @@ async function send(){
         tools: t ? ['tes:' + t.id] : ['tes:dass21','tes:phq9','tes:gad7','tes:burnout','tes:menu'], ts:Date.now()}); save(); renderChat();
     }
     else if(!photo && answerIslam(text)) { /* sholat, kiblat, doa */ }
+    else if(!photo && answerCalorie(text)) { /* catat makan, kalori, berat badan */ }
+    else if(photo && /kalori|kkal|makan|makanan|gizi|diet/.test(lower)) await scanFoodChat(photo);
     else if(!photo && answerCycle(text)) { /* siklus haid */ }
     else if(((aboutParking && /di ?mana|\bmana\b/.test(lower)) || asksTicket) && !photo) answerParking();
     else if(noteDraft && (noteDraft.secret || !(store && store.item && store.place))) saveNoteChat(noteDraft);
@@ -5228,7 +5783,7 @@ addEventListener('popstate', () => {
   if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
   if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
-  const open = ['#alarm','#dialog','#sheet','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
+  const open = ['#alarm','#dialog','#sheet','#bscan','#kal','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
   if(open){
     if(open==='#sheet') closeSheet(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
     history.pushState({app:1}, '');

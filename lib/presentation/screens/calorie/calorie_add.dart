@@ -326,7 +326,7 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
   double d(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
   final foods = [
     for (final x in res.items)
-      FoodItem('🍽️', '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'),
+      FoodItem(foodEmoji('${x['name']}'), '${x['name']}', const [], '${x['portion'] ?? '1 porsi'}', d(x['gram']), d(x['kcal']), d(x['protein']), d(x['carbs']), d(x['fat']), 'foto'),
   ];
   await reviewFoods(context, ref, foods: foods, meal: meal, day: day, source: 'foto', title: 'Hasil pindai foto', note: res.note);
 }

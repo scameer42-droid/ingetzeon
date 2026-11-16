@@ -569,7 +569,7 @@ Future<void> editBodyProfile(BuildContext context, WidgetRef ref, {double? kg}) 
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text('Target kalori harianmu', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                   Text('${fmtKcal(preview.target)} kkal', style: accentFont(size: 32, color: Colors.white)),
-                  Text('Kebutuhan tubuhmu ±${fmtKcal(preview.tdee)} kkal/hari · BMI ${Body.bmi(w, h).toStringAsFixed(1)} (${Body.bmiLabel(Body.bmi(w, h)).$1})',
+                  Text('Kebutuhan tubuhmu ±${fmtKcal(preview.tdee)} kkal/hari · BMI ${Body.bmi(w!, h!).toStringAsFixed(1)} (${Body.bmiLabel(Body.bmi(w, h)).$1})',
                       style: const TextStyle(color: Colors.white, fontSize: 12.5)),
                   if (preview.note.isNotEmpty) ...[
                     const SizedBox(height: 6),

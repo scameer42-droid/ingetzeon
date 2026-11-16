@@ -305,6 +305,15 @@ class PackFood {
   }
 }
 
+/// Emoji yang cocok untuk nama makanan dari AI (mis. "Nasi putih" → 🍚).
+String foodEmoji(String name) {
+  final n = normFood(name);
+  for (final (k, f) in FoodParse.keys) {
+    if (n == k || n.startsWith('$k ') || n.contains(' $k')) return f.emoji;
+  }
+  return '🍽️';
+}
+
 Map<String, dynamic> foodToMap(FoodItem f) =>
     {'e': f.emoji, 'n': f.name, 'a': f.alias, 'po': f.portion, 'g': f.gram, 'k': f.kcal, 'p': f.protein, 'c': f.carbs, 'f': f.fat, 'cat': f.cat};
 
