@@ -387,4 +387,68 @@ Contoh Output:
     ];
     return (items: items, note: data is Map ? '${data['note'] ?? ''}' : '');
   }
+
+  static Map<String, dynamic>? _jsonIn(String txt) {
+    final a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+    if (a < 0 || b <= a) return null;
+    try {
+      final d = jsonDecode(txt.substring(a, b + 1));
+      return d is Map ? Map<String, dynamic>.from(d) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static const _packJson = '{"found":true,"name":"nama produk + merek","serving_g":20,"kcal_serving":80,"protein_serving":0,"carbs_serving":18,"fat_serving":1}';
+
+  /// Cari produk dari nomor barcode lewat Google Search (untuk produk yang belum ada di Open Food Facts).
+  Future<Map<String, dynamic>?> lookupBarcode(String code, {required String apiKey, required String model}) async {
+    final r = await _generateFull(
+      apiKey: apiKey,
+      model: model,
+      search: true,
+      timeout: const Duration(seconds: 60),
+      system: 'Kamu membantu mencari informasi produk makanan/minuman kemasan dari nomor barcode (EAN/UPC), sering produk Indonesia (awalan 899). '
+          'Cari di internet nama produk untuk barcode itu dan nilai gizinya per sajian (dari label "Informasi Nilai Gizi"). '
+          'Jika nilai gizi tidak ditemukan tapi produknya jelas, perkirakan dari produk sejenis. '
+          'Balas HANYA JSON: $_packJson. Jika produk tidak bisa dipastikan, balas {"found":false}.',
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {'text': 'Barcode: $code'}
+          ]
+        }
+      ],
+    );
+    final d = _jsonIn(r.text);
+    return d != null && d['found'] == true && d['name'] != null ? d : null;
+  }
+
+  /// Baca kemasan / label "Informasi Nilai Gizi" dari foto.
+  Future<Map<String, dynamic>?> readPackage(List<int> bytes, {required String apiKey, required String model, String mime = 'image/jpeg'}) async {
+    final out = await _generate(
+      apiKey: apiKey,
+      model: model,
+      json: true,
+      timeout: const Duration(seconds: 75),
+      system: 'Kamu ahli gizi Indonesia. Foto ini adalah kemasan makanan/minuman atau label "Informasi Nilai Gizi". '
+          'Baca nama produk & mereknya, takaran saji (gram/ml) dan nilai gizi per sajian dari label. '
+          'Jika label gizi tidak terlihat, perkirakan dari produk yang terlihat. '
+          'Balas HANYA JSON: $_packJson. Jika bukan produk makanan/minuman, balas {"found":false}.',
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'inlineData': {'mimeType': mime, 'data': base64Encode(bytes)}
+            },
+            {'text': 'Baca produk dan nilai gizinya.'}
+          ]
+        }
+      ],
+    );
+    final d = _jsonIn(out);
+    return d != null && d['found'] != false && d['name'] != null ? d : null;
+  }
 }

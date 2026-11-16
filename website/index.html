@@ -2316,27 +2316,76 @@ function kalBarcode(meal){
   }).catch(() => { $('#bsMsg').textContent = 'Kamera tidak bisa dibuka — izinkan kamera, atau ketik nomor barcode.'; });
 }
 function bsStop(){ clearTimeout(bsTimer); if(bsStream){ bsStream.getTracks().forEach(t => t.stop()); bsStream = null; } }
+function codeVariants(c){ return [...new Set([c, c.length === 12 ? '0' + c : null, c.length === 13 && c[0] === '0' ? c.slice(1) : null].filter(Boolean))]; }
 async function fetchOFF(code){
-  const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json?fields=product_name,product_name_id,generic_name,brands,nutriments,serving_size,serving_quantity`);
-  if(r.status === 404) return null;
-  if(!r.ok) throw new Error('HTTP ' + r.status);
-  const d = await r.json();
-  return d && d.status === 1 && d.product ? offNutrition(d.product) : null;
+  for(const c of codeVariants(code)){
+    const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${c}.json?fields=product_name,product_name_id,generic_name,brands,nutriments,serving_size,serving_quantity`);
+    if(r.status === 404) continue;
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if(d && d.status === 1 && d.product){ const p = offNutrition(d.product); if(p) return p; }
+  }
+  return null;
 }
+const PACK_JSON = '{"found":true,"name":"nama produk + merek","serving_g":20,"kcal_serving":80,"protein_serving":0,"carbs_serving":18,"fat_serving":1}';
+function jsonIn(t){ const a = t.indexOf('{'), b = t.lastIndexOf('}'); if(a < 0 || b <= a) return null; try{ return JSON.parse(t.slice(a, b + 1)); }catch(e){ return null; } }
+function packFromAi(d){
+  const n = v => parseFloat(String(v ?? '').replace(',', '.'));
+  const k = n(d.kcal_serving); if(!(k >= 0)) return null;
+  let g = n(d.serving_g); if(!(g > 0)) g = 100; const f = 100 / g;
+  return {name: String(d.name).trim(), kcal100: r1(k * f), p100: r1((n(d.protein_serving) || 0) * f), c100: r1((n(d.carbs_serving) || 0) * f), f100: r1((n(d.fat_serving) || 0) * f), serving: g, servingLabel: fmtQ(g) + ' g', ai: true};
+}
+async function aiLookupBarcode(code){
+  geminiTimeout = 60000;
+  try{
+    const t = await gemini('Kamu membantu mencari informasi produk makanan/minuman kemasan dari nomor barcode (EAN/UPC), sering produk Indonesia (awalan 899). Cari di internet nama produk untuk barcode itu dan nilai gizinya per sajian (dari label "Informasi Nilai Gizi"). Jika nilai gizi tidak ditemukan tapi produknya jelas, perkirakan dari produk sejenis. Balas HANYA JSON: ' + PACK_JSON + '. Jika produk tidak bisa dipastikan, balas {"found":false}.',
+      [{role: 'user', parts: [{text: 'Barcode: ' + code}]}], false, true);
+    const d = jsonIn(t); return d && d.found === true && d.name ? packFromAi(d) : null;
+  }finally{ geminiTimeout = 30000; }
+}
+async function aiReadPackage(dataUrl){
+  const [head, b64] = dataUrl.split(','), mime = (/data:([^;]+)/.exec(head) || [])[1] || 'image/jpeg';
+  geminiTimeout = 75000;
+  try{
+    const t = await gemini('Kamu ahli gizi Indonesia. Foto ini adalah kemasan makanan/minuman atau label "Informasi Nilai Gizi". Baca nama produk & mereknya, takaran saji (gram/ml) dan nilai gizi per sajian dari label. Jika label gizi tidak terlihat, perkirakan dari produk yang terlihat. Balas HANYA JSON: ' + PACK_JSON + '. Jika bukan produk makanan/minuman, balas {"found":false}.',
+      [{role: 'user', parts: [{inlineData: {mimeType: mime, data: b64}}, {text: 'Baca produk dan nilai gizinya.'}]}], true);
+    const d = jsonIn(t); return d && d.found !== false && d.name ? packFromAi(d) : null;
+  }finally{ geminiTimeout = 30000; }
+}
+const busy = msg => showSheet(`<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">${msg}</p>`);
+/** Barcode → Open Food Facts → AI cari di internet → foto kemasan (AI baca). Otomatis. */
 async function kalLookup(code, meal){
   const known = kalS().barcodes[code];
   if(known) return kalQtySheet(known, meal, 1, 'barcode');
-  showSheet('<div class="spin-c" style="padding:30px"><div class="spin" style="border-top-color:#F97316"></div></div><p class="muted-c">Mencari produk…</p>');
-  let p = null, failed = false;
-  try{ p = await fetchOFF(code); }catch(e){ failed = true; }
-  if(!p){ if(failed) toast('Database produk tidak bisa dihubungi — isi manual dulu ya'); return kalManual(meal, '', code); }
+  busy('Mencari produk di database…');
+  let p = null;
+  try{ p = await fetchOFF(code); }catch(e){}
+  if(!p && state.settings.apiKey){ busy('Belum ada di database — AI mencari produk ini di internet… 🔎'); try{ p = await aiLookupBarcode(code); }catch(e){ console.warn(e); } }
+  if(p) return kalPackSheet(code, p, meal);
+  if(!state.settings.apiKey) return kalManual(meal, '', code);
+  showSheet(`<div style="text-align:center"><div style="font-size:40px">📦</div><h3 style="margin:6px 0">Produk belum dikenal</h3><p style="line-height:1.5;margin:0 0 16px">Foto kemasannya (bagian label "Informasi Nilai Gizi" paling bagus), nanti AI membaca nama & kalorinya otomatis. Lain kali cukup pindai barcode.</p></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-soft" id="pkMan" style="flex:1">Isi manual</button><button class="btn" id="pkFoto" style="flex:1;background:#F97316;color:#fff">📷 Foto kemasan</button></div>`);
+  $('#pkMan').onclick = () => kalManual(meal, '', code);
+  $('#pkFoto').onclick = () => {
+    const inp = $('#kalFile'); inp.value = '';
+    inp.onchange = async () => {
+      const file = inp.files && inp.files[0]; if(!file) return;
+      busy('AI sedang membaca kemasan… 📦');
+      let pp = null, err = null;
+      try{ pp = await aiReadPackage(await compressImage(file, 1400, .85)); }catch(e){ err = scanErrText(e); }
+      if(pp) kalPackSheet(code, pp, meal); else { toast(err || 'Kemasan belum terbaca — isi manual dulu ya'); kalManual(meal, '', code); }
+    };
+    inp.click();
+  };
+}
+function kalPackSheet(code, p, meal){
   const g = p.serving || 100, k = g / 100;
   const food = ['📦', p.name, [], p.serving ? '1 sajian' : '100 gram', g, r1(p.kcal100 * k), r1(p.p100 * k), r1(p.c100 * k), r1(p.f100 * k), 'kemasan'];
   let m = meal, useG = !p.serving, sv = 1;
   showSheet(`<h3 style="margin:4px 0 2px">📦 ${esc(p.name)}</h3><p class="muted-c" style="text-align:left">${fmtK(p.kcal100)} kkal per 100 g/ml${p.serving ? ` · 1 sajian ${fmtQ(p.serving)} g = ${fmtK(food[5])} kkal` : ''}</p>
     ${mealChips(m)}${p.serving ? '<div class="kseg" id="pkMode" style="margin-top:10px"><button data-v="s">Per sajian</button><button data-v="g">Gram / ml</button></div>' : ''}
     <div id="pkIn" style="margin-top:10px"></div><div class="kbig" id="pkK"></div>
-    <button class="btn btn-block" id="pkOk" style="background:#F97316;color:#fff">Simpan</button><p class="muted-c" style="font-size:11.5px">Data gizi dari Open Food Facts</p>`);
+    <button class="btn btn-block" id="pkOk" style="background:#F97316;color:#fff">Simpan</button><p class="muted-c" style="font-size:11.5px">${p.ai ? 'Dibaca/dicari oleh AI — angka bisa sedikit berbeda dari label asli' : 'Data gizi dari Open Food Facts'}</p>`);
   bindMealChips(() => m, v => m = v);
   const grams = () => parseFloat(($('#pkG') || {}).value || '0');
   const kcal = () => useG ? p.kcal100 * grams() / 100 : food[5] * sv;

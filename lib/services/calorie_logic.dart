@@ -271,8 +271,9 @@ class FoodParse {
 
 /// Produk kemasan dari Open Food Facts.
 class PackFood {
-  const PackFood({required this.name, required this.kcal100, required this.p100, required this.c100, required this.f100, this.serving, this.servingLabel = ''});
+  const PackFood({required this.name, required this.kcal100, required this.p100, required this.c100, required this.f100, this.serving, this.servingLabel = '', this.ai = false});
   final String name, servingLabel;
+  final bool ai; // nilai dari AI (perkiraan)
   final double kcal100, p100, c100, f100;
   final double? serving; // gram per sajian
 
@@ -296,6 +297,33 @@ class PackFood {
       servingLabel: '${p['serving_size'] ?? ''}',
     );
   }
+
+  /// Dari jawaban AI (nilai per sajian) → per 100 g.
+  static PackFood? fromAi(Map d) {
+    double? n(dynamic v) => v is num ? v.toDouble() : double.tryParse('${v ?? ''}'.replaceAll(',', '.'));
+    final k = n(d['kcal_serving']);
+    if (k == null || k < 0) return null;
+    var g = n(d['serving_g']);
+    if (g == null || g <= 0) g = 100;
+    final f = 100 / g;
+    return PackFood(
+      name: '${d['name']}'.trim(),
+      kcal100: _r1(k * f),
+      p100: _r1((n(d['protein_serving']) ?? 0) * f),
+      c100: _r1((n(d['carbs_serving']) ?? 0) * f),
+      f100: _r1((n(d['fat_serving']) ?? 0) * f),
+      serving: g,
+      servingLabel: '${fmtQty(g)} g',
+      ai: true,
+    );
+  }
+
+  /// Variasi nomor barcode (EAN-13 ↔ UPC-A).
+  static List<String> codeVariants(String code) => {
+        code,
+        if (code.length == 12) '0$code',
+        if (code.length == 13 && code.startsWith('0')) code.substring(1),
+      }.toList();
 
   /// Dijadikan FoodItem per sajian (atau per 100 g bila sajian tak diketahui).
   FoodItem toFood() {

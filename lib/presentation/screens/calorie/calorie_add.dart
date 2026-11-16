@@ -429,17 +429,31 @@ Future<void> scanBarcode(BuildContext context, WidgetRef ref, {required String m
 }
 
 Future<PackFood?> fetchOpenFoodFacts(String code) async {
-  final res = await http.get(
-    Uri.parse('https://world.openfoodfacts.org/api/v2/product/$code.json?fields=product_name,product_name_id,generic_name,brands,nutriments,serving_size,serving_quantity'),
-    headers: {'User-Agent': 'IngetZeon/1.0 (aplikasi pengingat)'},
-  ).timeout(const Duration(seconds: 15));
-  if (res.statusCode == 404) return null;
-  if (res.statusCode != 200) throw Exception('HTTP ${res.statusCode}');
-  final data = jsonDecode(utf8.decode(res.bodyBytes));
-  if (data is! Map || data['status'] != 1 || data['product'] is! Map) return null;
-  return PackFood.fromOff(data['product'] as Map);
+  for (final c in PackFood.codeVariants(code)) {
+    final res = await http.get(
+      Uri.parse('https://world.openfoodfacts.org/api/v2/product/$c.json?fields=product_name,product_name_id,generic_name,brands,nutriments,serving_size,serving_quantity'),
+      headers: {'User-Agent': 'IngetZeon/1.0 (aplikasi pengingat)'},
+    ).timeout(const Duration(seconds: 15));
+    if (res.statusCode == 404) continue;
+    if (res.statusCode != 200) throw Exception('HTTP ${res.statusCode}');
+    final data = jsonDecode(utf8.decode(res.bodyBytes));
+    if (data is Map && data['status'] == 1 && data['product'] is Map) {
+      final p = PackFood.fromOff(data['product'] as Map);
+      if (p != null) return p;
+    }
+  }
+  return null;
 }
 
+void _busy(BuildContext context, String msg) => showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(content: Row(children: [const CircularProgressIndicator(color: kKal), const SizedBox(width: 18), Expanded(child: Text(msg))])),
+    );
+
+void _unbusy(BuildContext context) => Navigator.of(context, rootNavigator: true).pop();
+
+/// Barcode → database Open Food Facts → AI cari di internet → foto kemasan (AI baca). Semua otomatis.
 Future<void> lookupBarcode(BuildContext context, WidgetRef ref, String code, {required String meal, required DateTime day}) async {
   final known = ref.read(calorieProvider).barcodes[code];
   if (known != null) {
@@ -449,22 +463,88 @@ Future<void> lookupBarcode(BuildContext context, WidgetRef ref, String code, {re
     if (context.mounted) showToast(context, '📦 ${known.name} +${fmtKcal(known.kcal * r.qty)} kkal → ${mealNames[r.meal]}');
     return;
   }
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (_) => const AlertDialog(content: Row(children: [CircularProgressIndicator(color: kKal), SizedBox(width: 18), Expanded(child: Text('Mencari produk…'))])),
-  );
+  final settings = ref.read(settingsProvider);
+  _busy(context, 'Mencari produk di database…');
   PackFood? p;
-  var failed = false;
   try {
     p = await fetchOpenFoodFacts(code);
-  } catch (_) {
-    failed = true;
+  } catch (_) {}
+  if (p == null && settings.hasAi) {
+    if (context.mounted) {
+      _unbusy(context);
+      _busy(context, 'Belum ada di database — AI mencari produk ini di internet… 🔎');
+    }
+    try {
+      final d = await ref.read(aiServiceProvider).lookupBarcode(code, apiKey: settings.apiKey, model: settings.model);
+      if (d != null) p = PackFood.fromAi(d);
+    } catch (_) {}
   }
   if (!context.mounted) return;
-  Navigator.of(context, rootNavigator: true).pop();
+  _unbusy(context);
+  if (p != null) {
+    await _packSheet(context, ref, code, p, meal: meal, day: day);
+    return;
+  }
+  if (!settings.hasAi) {
+    await manualFood(context, ref, meal: meal, day: day, barcode: code);
+    return;
+  }
+  // terakhir: foto kemasannya, biar AI yang membaca
+  final go = await showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      icon: const Text('📦', style: TextStyle(fontSize: 34)),
+      title: const Text('Produk belum dikenal', textAlign: TextAlign.center),
+      content: const Text('Foto kemasannya (bagian label "Informasi Nilai Gizi" paling bagus), nanti AI membaca nama & kalorinya otomatis. Lain kali cukup pindai barcode.',
+          textAlign: TextAlign.center, style: TextStyle(height: 1.45)),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, 'manual'), child: const Text('Isi manual')),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(backgroundColor: kKal),
+          onPressed: () => Navigator.pop(ctx, 'foto'),
+          icon: const Icon(Icons.photo_camera_rounded),
+          label: const Text('Foto kemasan'),
+        ),
+      ],
+    ),
+  );
+  if (!context.mounted || go == null) return;
+  if (go == 'manual') {
+    await manualFood(context, ref, meal: meal, day: day, barcode: code);
+    return;
+  }
+  await _readPackPhoto(context, ref, code, meal: meal, day: day);
+}
+
+Future<void> _readPackPhoto(BuildContext context, WidgetRef ref, String code, {required String meal, required DateTime day}) async {
+  XFile? x;
+  try {
+    x = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1400, maxHeight: 1400, imageQuality: 85);
+  } on PlatformException {
+    x = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1400, maxHeight: 1400, imageQuality: 85);
+  }
+  if (x == null) {
+    final lost = await ImagePicker().retrieveLostData();
+    x = lost.file;
+  }
+  if (x == null || !context.mounted) return;
+  final bytes = await x.readAsBytes();
+  if (!context.mounted) return;
+  final settings = ref.read(settingsProvider);
+  _busy(context, 'AI sedang membaca kemasan… 📦');
+  PackFood? p;
+  String? err;
+  try {
+    final d = await ref.read(aiServiceProvider).readPackage(bytes, apiKey: settings.apiKey, model: settings.model);
+    if (d != null) p = PackFood.fromAi(d);
+  } catch (e) {
+    err = AiService.scanErrorText(e);
+  }
+  if (!context.mounted) return;
+  _unbusy(context);
   if (p == null) {
-    if (failed) showToast(context, 'Database produk tidak bisa dihubungi — isi manual dulu ya');
+    showToast(context, err ?? 'Kemasan belum terbaca — isi manual dulu ya');
     await manualFood(context, ref, meal: meal, day: day, barcode: code);
     return;
   }
@@ -528,7 +608,7 @@ Future<void> _packSheet(BuildContext context, WidgetRef ref, String code, PackFo
             child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w800)),
           ),
           const SizedBox(height: 6),
-          Text('Data gizi dari Open Food Facts', textAlign: TextAlign.center, style: TextStyle(color: ctx.faint, fontSize: 11.5)),
+          Text(p.ai ? 'Dibaca/dicari oleh AI — angka bisa sedikit berbeda dari label asli' : 'Data gizi dari Open Food Facts', textAlign: TextAlign.center, style: TextStyle(color: ctx.faint, fontSize: 11.5)),
         ]),
       );
     }),
