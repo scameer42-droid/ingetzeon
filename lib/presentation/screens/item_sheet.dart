@@ -10,8 +10,9 @@ import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 
 /// "Ingat barang": catat di mana sebuah barang disimpan.
-Future<void> startItemFlow(BuildContext context) => showModalBottomSheet(
+Future<void> startItemFlow(BuildContext context) => showAppSheet(
       context: context,
+      scroll: false,
       isScrollControlled: true,
       builder: (c) => const _ItemForm(),
     );

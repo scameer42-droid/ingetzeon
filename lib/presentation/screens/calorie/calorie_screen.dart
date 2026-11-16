@@ -532,8 +532,9 @@ Future<void> editBodyProfile(BuildContext context, WidgetRef ref, {double? kg}) 
   final tgC = TextEditingController(text: p?.targetKg == null ? '' : fmtQty(p!.targetKg!));
   double? d(TextEditingController c) => double.tryParse(c.text.replaceAll(',', '.').trim());
 
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => StatefulBuilder(builder: (ctx, setS) {

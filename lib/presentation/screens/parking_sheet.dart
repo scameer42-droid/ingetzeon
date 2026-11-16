@@ -15,8 +15,9 @@ Future<void> startParkingFlow(BuildContext context, WidgetRef ref) async {
   // langsung buka kamera & scan tiket otomatis; bila dibatalkan, tetap bisa catat manual
   final ticket = await scanTicket(context);
   if (!context.mounted) return;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     builder: (c) => _ParkingForm(ticket: ticket),
   );

@@ -679,7 +679,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .nlist{display:flex;flex-direction:column;gap:8px}
 .nlist.inchat{margin-top:10px;white-space:normal}
 .ncard{display:flex;align-items:center;gap:10px;padding:10px 6px 10px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-.nlist.inchat .ncard{background:var(--card2,rgba(0,0,0,.03));box-shadow:none;border-color:transparent}
+.nlist.inchat .ncard{background:var(--card-2,rgba(0,0,0,.03));box-shadow:none;border-color:transparent}
 .ncard .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:rgba(13,148,136,.12);color:#0D9488}
 .ncard.sec .ic{background:rgba(219,39,119,.12);color:#DB2777}
 .ncard .ic svg{width:18px;height:18px}
@@ -720,7 +720,7 @@ html,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;let
 .helpc .btn{height:42px;font-size:13px}
 .muted-c{text-align:center;color:var(--muted);font-size:13.5px;margin:6px 0}
 .moodpick{display:flex;justify-content:space-between}
-.moodpick button{width:56px;height:56px;border-radius:18px;background:var(--card2,rgba(0,0,0,.04));font-size:28px;border:2px solid transparent}
+.moodpick button{width:56px;height:56px;border-radius:18px;background:var(--card-2,rgba(0,0,0,.04));font-size:28px;border:2px solid transparent}
 .moodpick button.on{border-color:var(--primary);background:var(--primary-soft);font-size:32px}
 .tips{list-style:none;padding:0;margin:0}.tips li{position:relative;padding-left:26px;margin-bottom:10px;line-height:1.45}
 .tips li::before{content:"✓";position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:#0EA5A4;color:#fff;font-size:11px;display:grid;place-items:center;font-weight:800}
@@ -881,7 +881,7 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .kent em,.kfood em{font-style:normal;font-weight:800;font-size:13px;padding-right:6px;white-space:nowrap}.kfood em{color:#F97316}.kfood+.kfood{border-top:1px solid var(--line)}
 .kweight .kwtop{display:flex;align-items:flex-end;gap:6px}.kkg{font-size:38px;font-weight:800;line-height:1}.kwtop>span{font-weight:700;margin-bottom:4px}.kwtop small{color:var(--muted);font-weight:700;margin:0 0 6px 6px}.kwtop .btn{margin-left:auto}
 .kchips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.kchip{border-radius:99px;padding:6px 10px;font-weight:700;font-size:12px}.kchart{width:100%;height:auto;margin-top:6px}
-.kmchips{display:flex;gap:8px;overflow:auto;padding:2px 0}.kmchips button,.kcats button{white-space:nowrap;border-radius:99px;padding:8px 12px;background:var(--card2,var(--bg));font-weight:600;font-size:13px;border:1px solid var(--line)}
+.kmchips{display:flex;gap:8px;overflow:auto;padding:2px 0}.kmchips button,.kcats button{white-space:nowrap;border-radius:99px;padding:8px 12px;background:var(--card-2,var(--bg));font-weight:600;font-size:13px;border:1px solid var(--line)}
 .kmchips button.on,.kcats button.on{background:rgba(249,115,22,.15);border-color:#F97316;color:#C2410C}
 .kacts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kacts3 button{border:1px solid var(--line);border-radius:12px;padding:10px;font-weight:700;font-size:13px}
 .kcats{display:flex;gap:6px;overflow:auto;margin:8px 0 4px}.kcats button{font-size:12px;padding:6px 10px}
@@ -890,12 +890,12 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .kstep>div{min-width:130px;text-align:center}.kstep b{display:block;font-size:26px}.kstep small{color:var(--muted);font-size:12px}
 .kstep.sm{margin:4px 0 2px}.kstep.sm>button{width:36px;height:36px;font-size:20px}.kstep.sm>div{min-width:70px}.kstep.sm b{font-size:18px}
 .kbig{text-align:center;font-size:30px;font-weight:800;color:#F97316;margin:6px 0 10px}
-.kseg{display:flex;gap:6px;background:var(--card2,var(--bg));border-radius:14px;padding:4px}.kseg button{flex:1;padding:10px 6px;border-radius:11px;font-weight:700;font-size:13px}.kseg button.on{background:var(--card);box-shadow:var(--shadow);color:#C2410C}
+.kseg{display:flex;gap:6px;background:var(--card-2,var(--bg));border-radius:14px;padding:4px}.kseg button{flex:1;padding:10px 6px;border-radius:11px;font-weight:700;font-size:13px}.kseg button.on{background:var(--card);box-shadow:var(--shadow);color:#C2410C}
 .k3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.k3 label,.klab2{font-size:12.5px;font-weight:700;color:var(--muted)}.k3 .input,.klab2 .input{margin-top:4px}
 .klab{display:block;margin:16px 0 8px}.klab2{display:block;margin-top:14px}
 .kacts{display:flex;flex-direction:column;gap:6px}.kacts button{text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--line)}.kacts button.on{border-color:#F97316;background:rgba(249,115,22,.08)}.kacts small{display:block;color:var(--muted);font-size:12px}
 .kprev{margin-top:14px;border-radius:20px;padding:16px;color:#fff;background:linear-gradient(135deg,#F97316,#F43F5E)}.kprev small{display:block;font-size:12.5px;opacity:.95}.kprev b{display:block;font-size:30px;font-weight:800}.kprev p{margin:6px 0 0;font-size:12.5px;line-height:1.35}
-.krow2{border-radius:14px;background:rgba(249,115,22,.06);padding:8px 10px;margin-top:8px}.krow2.off{opacity:.55;background:var(--card2,var(--bg))}
+.krow2{border-radius:14px;background:rgba(249,115,22,.06);padding:8px 10px;margin-top:8px}.krow2.off{opacity:.55;background:var(--card-2,var(--bg))}
 .krow2 label{display:flex;align-items:center;gap:10px}.krow2 .tx{flex:1}.krow2 small{display:block;color:var(--muted);font-size:12px}.krow2 em{font-style:normal;font-weight:800;color:#F97316;white-space:nowrap}
 #bscan .full-body{display:flex;flex-direction:column;align-items:center}.bsbox{position:relative;width:100%;max-width:420px;aspect-ratio:3/4;background:#000;border-radius:22px;overflow:hidden}
 .bsbox video{width:100%;height:100%;object-fit:cover}.bsbox i{position:absolute;inset:0;margin:auto;width:78%;height:28%;border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
@@ -928,6 +928,15 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .scard>small{font-size:12px;color:var(--muted)}
 .scard .sbar{height:5px;border-radius:99px;background:var(--line);margin-top:auto;overflow:hidden}.scard .sbar em{display:block;height:100%;border-radius:99px}
 [data-theme="dark"] .mitem .mic2{filter:saturate(1.1)}
+
+.sht{margin:4px 0 2px;font-size:19px;font-weight:800;letter-spacing:-.01em}.shs{margin:0 0 14px;color:var(--muted);font-size:13px}
+.iday{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:var(--card-2,var(--bg));margin-bottom:10px}.iday.c{background:none;margin:0}
+.idate{width:52px;height:56px;border-radius:14px;background:rgba(5,150,105,.12);color:#059669;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}.idate b{font-size:20px;line-height:1.1}.idate small{font-size:11px;font-weight:800;letter-spacing:.05em}
+.iday .tx{flex:1;min-width:0}.iday .tx b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.iday .tx small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iday em{font-style:normal;background:rgba(5,150,105,.1);color:#059669;border-radius:99px;padding:6px 10px;font-weight:800;font-size:12.5px;white-space:nowrap}.ihr{border:0;border-top:1px solid var(--line);margin:0 12px 0 76px}
+.moregrid{border:0!important;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;gap:10px;background:none;box-shadow:none;padding:0}
+.mtile{background:var(--card-2,var(--bg));border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;min-height:112px}.mtile i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin-bottom:auto}.mtile i .i{width:21px;height:21px}
+.mtile b{font-size:14px;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mtile small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 </head>
@@ -1574,7 +1583,7 @@ function renderMuslim(){
     <div class="card mtrack"><div class="ring" style="--p:${done.length / 5 * 100}"><b>${done.length}/5</b></div>
       <div><b>${done.length >= 5 ? 'MasyaAllah, 5 waktu lengkap hari ini! 🌟' : 'Centang sholat yang sudah kamu kerjakan'}</b><small>${streak ? `🔥 ${streak} hari berturut-turut lengkap` : 'Ayo mulai rutin hari ini'}</small></div></div>
     <div class="section-h"><h2>Hari besar terdekat</h2><button class="link" data-mact="hari">Semua</button></div>
-    <div class="card mev">${ev.map(e => `<div><span>🌙</span><div class="tx"><b>${e.name}</b><small>${fmtDateShort(e.date)} · ${e.hijri}</small></div><em>${e.days ? e.days + ' hari' : 'Hari ini'}</em></div>`).join('')}</div>
+    <div class="card" style="padding:4px 4px">${ev.map(e => idayRow(e, true)).join('<hr class="ihr">')}</div>
     <p class="mnote">Tanggal Hijriah dihitung secara aritmetika dan bisa beda ±1 hari; tanggal resmi mengikuti sidang isbat Kemenag.</p>`;
 }
 document.addEventListener('click', e => {
@@ -1621,10 +1630,11 @@ function pickCity(){
   };
   $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
 }
+const BLN = ['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'];
+function idayRow(e, compact){ return `<div class="iday${compact ? ' c' : ''}"><div class="idate"><b>${e.date.getDate()}</b><small>${BLN[e.date.getMonth()]}</small></div><div class="tx"><b>${e.name}</b><small>${fmtDateLong(e.date).split(',')[0]} · ${e.hijri}</small></div><em>${e.days ? e.days + ' hari' : 'Hari ini'}</em></div>`; }
 function showIslamicDays(){
   const list = ISL.nextIslamicDays(new Date(), 6);
-  $('#sheetBody').innerHTML = `<h3 style="margin:4px 0 12px">Hari besar Islam</h3><div class="mev">${list.map(e => `<div><span>🌙</span><div class="tx"><b>${e.name}</b><small>${fmtDateLong(e.date)}<br>${e.hijri}</small></div><em>${e.days ? e.days + ' hari lagi' : 'Hari ini'}</em></div>`).join('')}</div>
-    <p class="mnote">Perkiraan — tanggal resmi mengikuti sidang isbat.</p>`;
+  $('#sheetBody').innerHTML = `<h3 class="sht">Hari besar Islam</h3><p class="shs">Perkiraan — tanggal resmi mengikuti sidang isbat</p>${list.map(e => idayRow(e)).join('')}`;
   $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
 }
 
@@ -3007,7 +3017,7 @@ function renderSummary(){
 }
 function openMoreMenu(){
   const extra = [['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu', '#EC4899'], ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid', '#F43F5E'], ['calendar', 'i-calendar', 'Kalender', 'Semua jadwal per tanggal', '#6366F1'], ['stats', 'i-chart', 'Statistik', 'Progres & kebiasaanmu', '#0EA5E9'], ['ai', 'i-spark', 'Asisten AI', 'Tanya atau suruh apa saja', '#8B5CF6'], ['profile', 'i-user', 'Profil & pengaturan', 'Tema, suara, cadangan data', '#64748B']];
-  showSheet(`<h3 style="margin:4px 0 12px">Semua fitur</h3><div class="group">${extra.map(([id, ic, t, sub, c]) => `<button class="row-s" data-more="${id}"><div class="ic" style="background:${c}1a;color:${c}">${icon(ic)}</div><div class="tx"><b>${t}</b><small>${sub}</small></div><svg class="i chev"><use href="#i-right"/></svg></button>`).join('')}</div>`);
+  showSheet(`<h3 class="sht" style="margin-bottom:12px">Semua fitur</h3><div class="group moregrid">${extra.map(([id, ic, t, sub, c]) => `<button class="mtile" data-more="${id}"><i style="background:${c}24;color:${c}">${icon(ic)}</i><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`);
   $('#sheetBody').querySelector('.group').onclick = e => { const b = e.target.closest('[data-more]'); if(!b) return; closeSheet(); const id = b.dataset.more;
     setTimeout(() => id === 'tests' ? openTests(null) : id === 'cycle' ? openCycle() : id === 'ai' ? openAI(false) : go(id), 260); };
 }

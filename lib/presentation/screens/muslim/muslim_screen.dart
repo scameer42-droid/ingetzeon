@@ -49,8 +49,9 @@ Future<String> useGpsLocation(WidgetRef ref) async {
 
 Future<void> pickCity(BuildContext context, WidgetRef ref) async {
   var q = '';
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => StatefulBuilder(
@@ -232,14 +233,10 @@ class MuslimScreen extends ConsumerWidget {
         SoftCard(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Column(children: [
-            for (final e in events.take(2))
-              ListTile(
-                dense: true,
-                leading: const Text('🌙', style: TextStyle(fontSize: 22)),
-                title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text('${fmtDateShort(e.date)} · ${e.hijri}'),
-                trailing: Text(e.days == 0 ? 'Hari ini' : '${e.days} hari', style: const TextStyle(color: kGreen, fontWeight: FontWeight.w800)),
-              ),
+            for (var i = 0; i < 2 && i < events.length; i++) ...[
+              if (i > 0) Divider(height: 1, indent: 76, color: context.line),
+              IslamicDayRow(events[i], compact: true),
+            ],
           ]),
         ),
         const SizedBox(height: 8),
@@ -253,31 +250,59 @@ class MuslimScreen extends ConsumerWidget {
 
 Future<void> showIslamicDays(BuildContext context) async {
   final list = Hijri.upcoming(DateTime.now(), count: 6);
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
-    showDragHandle: true,
-    builder: (ctx) => SafeArea(
-      child: Padding(
+    builder: (ctx) => Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const SheetTitle('Hari besar Islam', subtitle: 'Perkiraan — tanggal resmi mengikuti sidang isbat'),
+      Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Padding(padding: EdgeInsets.only(left: 4, bottom: 8), child: Text('Hari besar Islam', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
-          for (final e in list)
-            ListTile(
-              leading: const Text('🌙', style: TextStyle(fontSize: 22)),
-              title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Text('${fmtDateLong(e.date)}\n${e.hijri}'),
-              isThreeLine: true,
-              trailing: Text(e.days == 0 ? 'Hari ini' : '${e.days} hari lagi', style: const TextStyle(color: kGreen, fontWeight: FontWeight.w800)),
-            ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text('Perkiraan — tanggal resmi mengikuti sidang isbat.', style: TextStyle(fontSize: 12, color: ctx.faint)),
-          ),
-        ]),
+        child: Column(children: [for (final e in list) IslamicDayRow(e)]),
       ),
-    ),
+    ]),
   );
 }
+
+/// Baris hari besar: kotak tanggal, nama + tanggal Hijriah, sisa hari.
+class IslamicDayRow extends StatelessWidget {
+  const IslamicDayRow(this.e, {super.key, this.compact = false});
+  final ({String name, DateTime date, int days, String hijri}) e;
+  final bool compact;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: compact ? 0 : 10),
+      padding: const EdgeInsets.all(12),
+      decoration: compact ? null : BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(18)),
+      child: Row(children: [
+        Container(
+          width: 52,
+          height: 56,
+          decoration: BoxDecoration(color: kGreen.withValues(alpha: .12), borderRadius: BorderRadius.circular(14)),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text('${e.date.day}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: kGreen, height: 1.1)),
+            Text(bulanShort[e.date.month - 1].toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: kGreen, letterSpacing: .5)),
+          ]),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(e.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            const SizedBox(height: 2),
+            Text('${hariLong(e.date)} · ${e.hijri}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 12.5)),
+          ]),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(color: kGreen.withValues(alpha: .1), borderRadius: BorderRadius.circular(99)),
+          child: Text(e.days == 0 ? 'Hari ini' : '${e.days} hari', style: const TextStyle(color: kGreen, fontWeight: FontWeight.w800, fontSize: 12.5)),
+        ),
+      ]),
+    );
+  }
+}
+
+String hariLong(DateTime d) => fmtDateLong(d).split(',').first;
 
 class _Tool extends StatelessWidget {
   const _Tool(this.emoji, this.label, this.color, this.onTap);

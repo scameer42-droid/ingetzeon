@@ -120,7 +120,7 @@ Future<void> showMoodCheckin(BuildContext context, WidgetRef ref) async {
   var mood = today?.mood ?? 0;
   var energy = today?.energy ?? 3;
   final note = TextEditingController(text: today?.note ?? '');
-  final saved = await showModalBottomSheet<bool>(
+  final saved = await showAppSheet<bool>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
@@ -183,7 +183,7 @@ Future<void> showMoodAdvice(BuildContext context, WidgetRef ref) async {
   if (m == null) return;
   final count = occurrencesOn(ref.read(remindersProvider), DateTime.now()).length;
   final a = MoodAdvice.forDay(m.mood, m.energy, remindersToday: count);
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
@@ -383,7 +383,7 @@ Future<void> showGrounding(BuildContext context) async {
     ('1', 'rasa yang bisa kamu KECAP', 'Atau satu hal baik tentang dirimu.', Icons.favorite_rounded),
   ];
   var i = 0;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     showDragHandle: true,
     builder: (ctx) => StatefulBuilder(

@@ -46,8 +46,9 @@ Future<void> showAddFood(BuildContext context, WidgetRef ref, {required String m
   var q = '';
   var cat = '';
   var m = meal;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => StatefulBuilder(builder: (ctx, setS) {
@@ -185,7 +186,7 @@ Future<void> manualFood(BuildContext context, WidgetRef ref, {required String me
   final kcalC = TextEditingController();
   final porC = TextEditingController(text: barcode != null ? '1 kemasan' : '1 porsi');
   var m = meal;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
@@ -262,7 +263,7 @@ Future<void> scanFoodPhoto(BuildContext context, WidgetRef ref, {required String
   if (path != null) {
     bytes = await XFile(path).readAsBytes();
   } else {
-    final src = await showModalBottomSheet<ImageSource>(
+    final src = await showAppSheet<ImageSource>(
       context: context,
       showDragHandle: true,
       builder: (ctx) => SafeArea(
@@ -424,7 +425,7 @@ Future<void> reviewFoods(BuildContext context, WidgetRef ref,
   final q = qtys ?? List<double>.filled(foods.length, 1);
   final on = List<bool>.filled(foods.length, true);
   var m = meal;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
@@ -624,7 +625,7 @@ Future<void> _packSheet(BuildContext context, WidgetRef ref, String code, PackFo
   var serv = 1.0;
   final gC = TextEditingController(text: '${(p.serving ?? 100).round()}');
   var m = meal;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,

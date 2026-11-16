@@ -109,8 +109,9 @@ class HomeScreen extends ConsumerWidget {
       startItemFlow(context);
       return;
     }
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
+      scroll: false,
       showDragHandle: true,
       isScrollControlled: true,
       builder: (ctx) => Consumer(builder: (ctx, ref, _) {
@@ -429,31 +430,51 @@ class _MenuCard extends ConsumerWidget {
       (icon: Icons.auto_awesome_rounded, title: 'Asisten AI', sub: 'Tanya atau suruh apa saja', color: const Color(0xFF8B5CF6), onTap: onOpenAi),
       (icon: Icons.settings_rounded, title: 'Profil & pengaturan', sub: 'Tema, suara, cadangan data', color: const Color(0xFF64748B), onTap: () => onGoTo(3)),
     ];
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 8), child: Text('Semua fitur', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
-          for (final r in rows)
-            ListTile(
-              leading: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(color: r.color.withValues(alpha: .12), borderRadius: BorderRadius.circular(12)),
-                child: Icon(r.icon, color: r.color, size: 21),
-              ),
-              title: Text(r.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Text(r.sub),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: () {
-                Navigator.pop(ctx);
-                r.onTap();
-              },
-            ),
-          const SizedBox(height: 8),
-        ]),
-      ),
+      builder: (ctx) => Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const SheetTitle('Semua fitur'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 1.55,
+            children: [
+              for (final r in rows)
+                Material(
+                  color: ctx.card2,
+                  borderRadius: BorderRadius.circular(18),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      r.onTap();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(color: r.color.withValues(alpha: .14), borderRadius: BorderRadius.circular(12)),
+                          child: Icon(r.icon, color: r.color, size: 21),
+                        ),
+                        const Spacer(),
+                        Text(r.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+                        Text(r.sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: ctx.muted, fontSize: 12)),
+                      ]),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ]),
     );
   }
 }

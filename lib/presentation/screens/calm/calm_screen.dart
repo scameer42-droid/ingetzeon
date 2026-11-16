@@ -346,7 +346,7 @@ class HabitsScreen extends ConsumerWidget {
     final name = TextEditingController();
     var emoji = '✅';
     int? hour = 8;
-    await showModalBottomSheet(
+    await showAppSheet(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -424,7 +424,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
   Future<void> _write() async {
     var prompt = JournalEntry.promptOfDay();
     final text = TextEditingController();
-    final saved = await showModalBottomSheet<JournalEntry>(
+    final saved = await showAppSheet<JournalEntry>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -482,7 +482,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
     }
   }
 
-  Future<void> _showCrisis() => showModalBottomSheet(
+  Future<void> _showCrisis() => showAppSheet(
         context: context,
         showDragHandle: true,
         builder: (ctx) => SafeArea(
@@ -525,7 +525,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
       }
     }
     if (!mounted) return;
-    await showModalBottomSheet(
+    await showAppSheet(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,

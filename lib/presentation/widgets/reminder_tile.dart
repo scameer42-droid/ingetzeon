@@ -132,8 +132,9 @@ Future<void> showReminderDetail(BuildContext context, WidgetRef ref, Reminder r,
   final at = r.occurrenceOn(day);
   final done = r.isDoneOn(day);
   final now = DateTime.now();
-  return showModalBottomSheet(
+  return showAppSheet(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     builder: (c) => SafeArea(
       child: SingleChildScrollView(

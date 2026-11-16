@@ -24,8 +24,9 @@ class FoodDetailResult {
 /// Lembar detail makanan: pilih porsi/gram, lihat kalori, lemak, karbo, protein & %AKG.
 Future<FoodDetailResult?> showFoodDetail(BuildContext context, FoodItem f,
     {required String meal, double qty = 1, bool editing = false, String action = 'Tambah'}) {
-  return showModalBottomSheet<FoodDetailResult>(
+  return showAppSheet<FoodDetailResult>(
     context: context,
+    scroll: false,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => _FoodDetail(food: f, meal: meal, qty: qty, editing: editing, action: action),

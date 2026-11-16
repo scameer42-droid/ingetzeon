@@ -142,7 +142,7 @@ Future<void> showNoteEditor(BuildContext context, WidgetRef ref, {Note? existing
   final value = TextEditingController(text: oldSecret ?? '');
   var secret = existing?.secret ?? false;
   var hide = true;
-  await showModalBottomSheet(
+  await showAppSheet(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,

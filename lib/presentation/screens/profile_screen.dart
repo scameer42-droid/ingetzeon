@@ -386,7 +386,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   /// Pilih foto profil dari kamera / galeri, atau hapus.
   Future<void> _changeAvatar(bool hasPhoto) async {
-    final choice = await showModalBottomSheet<String>(
+    final choice = await showAppSheet<String>(
       context: context,
       showDragHandle: true,
       builder: (ctx) => SafeArea(

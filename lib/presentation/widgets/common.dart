@@ -179,6 +179,47 @@ class EmptyState extends StatelessWidget {
   }
 }
 
+/// Lembar bawah standar: selalu bisa digulir, tidak lebih tinggi dari 92% layar,
+/// dan isinya tidak tertutup garis navigasi HP.
+Future<T?> showAppSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool scroll = true,
+  bool isScrollControlled = true,
+  bool showDragHandle = true,
+}) {
+  return showAppSheet<T>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: showDragHandle,
+    builder: (c) {
+      final child = SafeArea(top: false, child: builder(c));
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(c).height * .92),
+        child: scroll ? SingleChildScrollView(child: child) : child,
+      );
+    },
+  );
+}
+
+/// Judul lembar bawah yang seragam.
+class SheetTitle extends StatelessWidget {
+  const SheetTitle(this.title, {super.key, this.subtitle});
+  final String title;
+  final String? subtitle;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, letterSpacing: -.2)),
+          if (subtitle != null) ...[
+            const SizedBox(height: 3),
+            Text(subtitle!, style: TextStyle(fontSize: 13, color: context.muted)),
+          ],
+        ]),
+      );
+}
+
 void showToast(BuildContext context, String msg) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
