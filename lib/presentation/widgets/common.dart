@@ -188,7 +188,7 @@ Future<T?> showAppSheet<T>({
   bool isScrollControlled = true,
   bool showDragHandle = true,
 }) {
-  return showAppSheet<T>(
+  return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,
     showDragHandle: showDragHandle,

@@ -30,6 +30,7 @@ adb shell input keyevent KEYCODE_BACK; sleep 3
 tap "Barang" barang; sleep 6; snap 03_barang; anr
 adb shell input keyevent KEYCODE_BACK; sleep 3
 tap "Muslim" muslim; sleep 8; snap 04_muslim; anr
+tap "Subuh" subuh; sleep 2; snap 04b_tap; anr
 adb shell input swipe 540 1800 540 600 300; sleep 3
 tap "Semua" semua; sleep 6; snap 05_semua; anr
 adb shell input keyevent KEYCODE_BACK; sleep 2; adb shell input keyevent KEYCODE_BACK; sleep 3
