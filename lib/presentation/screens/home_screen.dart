@@ -27,6 +27,7 @@ import 'notes_screen.dart';
 import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
+import 'english/english_screen.dart';
 import '../../services/islam_logic.dart';
 import '../../services/calorie_logic.dart';
 
@@ -99,6 +100,8 @@ class HomeScreen extends ConsumerWidget {
           // C. akses cepat
           SectionHeader('Akses cepat', action: 'Semua fitur', onAction: () => onGoTo(2)),
           _QuickAccess(onNew: () => _openForm(context)),
+          const SizedBox(height: 12),
+          const EnglishHomeCard(),
           // D. jadwal hari ini
           SectionHeader('Jadwal hari ini', action: 'Tambah', onAction: () => _openForm(context)),
           _TodaySection(
@@ -396,11 +399,11 @@ class _QuickAccess extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-    final menu = <({IconData icon, String label, VoidCallback onTap})>[
-      (icon: Icons.add_alarm_rounded, label: 'Tambah pengingat', onTap: onNew),
-      (icon: Icons.sticky_note_2_outlined, label: 'Catatan', onTap: () => push(const NotesScreen())),
-      (icon: Icons.local_parking_rounded, label: 'Simpan parkir', onTap: () => startParkingFlow(context, ref)),
-      (icon: Icons.timer_outlined, label: 'Fokus', onTap: () => push(const FocusScreen())),
+    final menu = <({IconData icon, String label, Color color, VoidCallback onTap})>[
+      (icon: Icons.add_alarm_rounded, label: 'Tambah pengingat', color: AppColors.primary, onTap: onNew),
+      (icon: Icons.sticky_note_2_outlined, label: 'Catatan', color: const Color(0xFFDC6803), onTap: () => push(const NotesScreen())),
+      (icon: Icons.local_parking_rounded, label: 'Simpan parkir', color: const Color(0xFF0E9384), onTap: () => startParkingFlow(context, ref)),
+      (icon: Icons.timer_outlined, label: 'Fokus', color: const Color(0xFFE31B54), onTap: () => push(const FocusScreen())),
     ];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,8 +423,8 @@ class _QuickAccess extends ConsumerWidget {
                     Container(
                       width: 56,
                       height: 56,
-                      decoration: BoxDecoration(color: context.accentSoft, borderRadius: BorderRadius.circular(18)),
-                      child: Icon(m.icon, color: context.accent, size: 24),
+                      decoration: BoxDecoration(color: m.color.withValues(alpha: context.isDark ? .22 : .13), borderRadius: BorderRadius.circular(18)),
+                      child: Icon(m.icon, color: context.isDark ? Color.lerp(m.color, Colors.white, .25) : m.color, size: 24),
                     ),
                     const SizedBox(height: 8),
                     Text(m.label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,

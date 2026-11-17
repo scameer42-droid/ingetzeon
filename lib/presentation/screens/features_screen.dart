@@ -13,6 +13,7 @@ import 'calm/tests_screen.dart';
 import 'calorie/calorie_screen.dart';
 import 'calorie/weight_screen.dart';
 import 'cycle_screen.dart';
+import 'english/english_screen.dart';
 import 'home_screen.dart';
 import 'muslim/muslim_screen.dart';
 import 'muslim/muslim_tools.dart';
@@ -39,6 +40,10 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
   final _q = TextEditingController();
 
   static const List<(String, Color, List<_Feat>)> _groups = [
+    ('Belajar', Color(0xFFF79009), [
+      (id: 'eng', icon: Icons.school_outlined, title: 'Belajar Inggris', sub: 'Pelajaran seru 5 menit dengan Zeo'),
+      (id: 'engcards', icon: Icons.style_outlined, title: 'Kartu kosakata', sub: 'Hafalkan kata dengan kartu bolak-balik'),
+    ]),
     ('Produktivitas', AppColors.primary, [
       (id: 'new', icon: Icons.add_alarm_rounded, title: 'Pengingat', sub: 'Buat pengingat dengan alarm berlagu'),
       (id: 'notes', icon: Icons.sticky_note_2_outlined, title: 'Catatan & rahasia', sub: 'Simpan catatan, kata sandi terkunci'),
@@ -86,6 +91,10 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
 
   void _open(String id, Reminder? parking) {
     switch (id) {
+      case 'eng':
+        openEnglish(context);
+      case 'engcards':
+        openEnglishCards(context);
       case 'new':
         _push(const ReminderFormScreen());
       case 'notes':
