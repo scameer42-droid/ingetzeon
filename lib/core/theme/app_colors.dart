@@ -1,51 +1,49 @@
 import 'package:flutter/material.dart';
 
-/// Palet warna IngetZeon — netral & profesional dengan satu warna aksen.
+/// Palet IngetZeon — "Calm & Smart Daily Companion".
+/// Satu warna utama untuk aksi & status aktif; sisanya netral yang tenang.
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFF4F46E5);
-  static const primaryDeep = Color(0xFF4338CA);
-  static const violetMid = Color(0xFF7C3AED);
-  static const pink = Color(0xFFE5484D); // merah untuk hapus / terlewat
-  static const peach = Color(0xFFD97706);
+  static const primary = Color(0xFF5B5CE2);
+  static const primaryDeep = Color(0xFF4748C9);
+  static const primarySoft = Color(0xFFEEEDFF);
+  static const primarySoftDark = Color(0xFF262650);
+  static const primaryOnDark = Color(0xFF9A9BF7);
 
-  static const bgLight = Color(0xFFF5F5FB);
-  static const bgDark = Color(0xFF0C0D1A);
+  static const success = Color(0xFF16856B);
+  static const warning = Color(0xFFB76A09);
+  static const error = Color(0xFFD92D20);
+
+  /// Nama lama dipertahankan agar layar lain tetap jalan.
+  static const violetMid = primary;
+  static const pink = error; // hapus / terlewat
+  static const peach = warning;
+  static const magenta = primary;
+  static const sky = Color(0xFF0E8BD8);
+
+  static const bgLight = Color(0xFFF7F8FC);
+  static const bgDark = Color(0xFF0F1117);
   static const cardLight = Colors.white;
-  static const cardDark = Color(0xFF181A2E);
-  static const card2Light = Color(0xFFF1F2F8);
-  static const card2Dark = Color(0xFF22243A);
-  static const lineLight = Color(0xFFE8E9F2);
-  static const lineDark = Color(0xFF2B2D45);
-  static const inkLight = Color(0xFF14142B);
-  static const inkDark = Color(0xFFF1F1FA);
-  static const mutedLight = Color(0xFF6E6F86);
-  static const mutedDark = Color(0xFFA4A6C0);
-  static const faintLight = Color(0xFFA3A4B8);
-  static const faintDark = Color(0xFF686A86);
+  static const cardDark = Color(0xFF181B24);
+  static const card2Light = Color(0xFFF2F4F8);
+  static const card2Dark = Color(0xFF20242F);
+  static const lineLight = Color(0xFFE8ECF2);
+  static const lineDark = Color(0xFF2A2F3B);
+  static const inkLight = Color(0xFF182230);
+  static const inkDark = Color(0xFFF2F4F7);
+  static const mutedLight = Color(0xFF667085);
+  static const mutedDark = Color(0xFF98A2B3);
+  static const faintLight = Color(0xFF98A2B3);
+  static const faintDark = Color(0xFF667085);
 
-  static const magenta = Color(0xFFC026D3);
-  static const sky = Color(0xFF0EA5E9);
+  /// Dulu gradasi; kini warna polos supaya tampilan tenang dan konsisten.
+  static const gradient = LinearGradient(colors: [primary, primary]);
+  static const aurora = gradient;
+  static const meshBase = gradient;
 
-  /// Gradasi nila → ungu untuk elemen utama.
-  static const gradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [primary, violetMid]);
-
-  /// Gradasi "aurora" untuk kartu utama: nila → ungu → magenta.
-  static const aurora = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF4F46E5), Color(0xFFC026D3), Color(0xFFFB7185)],
-    stops: [0, .55, 1],
-  );
-  static const meshBase = aurora;
-
-  /// Gradasi lembut dari satu warna (untuk ikon menu berwarna).
-  static LinearGradient tint(Color c) => LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color.lerp(c, Colors.white, .18)!, Color.lerp(c, Colors.black, .12)!],
-      );
+  /// Isi polos satu warna (nama lama dipertahankan).
+  static LinearGradient tint(Color c) => LinearGradient(colors: [c, c]);
 }
 
 /// Akses cepat warna sesuai tema terang/gelap.
@@ -59,20 +57,20 @@ extension ThemeX on BuildContext {
   Color get line => isDark ? AppColors.lineDark : AppColors.lineLight;
   Color get bg => isDark ? AppColors.bgDark : AppColors.bgLight;
   Color get glass => card;
-  Color get glassLine => isDark ? line : Colors.transparent;
+  Color get glassLine => line;
+
+  /// Warna utama untuk teks/ikon (lebih terang di mode gelap agar terbaca).
+  Color get accent => isDark ? AppColors.primaryOnDark : AppColors.primary;
+
+  /// Latar lembut untuk status aktif & ikon.
+  Color get accentSoft => isDark ? AppColors.primarySoftDark : AppColors.primarySoft;
 
   List<BoxShadow> get softShadow => isDark
       ? const []
-      : [
-          BoxShadow(color: const Color(0xFF14143C).withValues(alpha: .035), blurRadius: 2, offset: const Offset(0, 1)),
-          BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: .14), blurRadius: 24, offset: const Offset(0, 10), spreadRadius: -12),
-        ];
+      : [BoxShadow(color: const Color(0xFF101828).withValues(alpha: .04), blurRadius: 2, offset: const Offset(0, 1))];
 
-  /// Bayangan berwarna untuk kartu/ikon bergradasi.
-  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => isDark
-      ? const []
-      : [BoxShadow(color: c.withValues(alpha: strength), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
+  /// Bayangan berwarna tidak dipakai lagi (dibiarkan agar pemanggil lama tetap jalan).
+  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => const [];
 
-  List<BoxShadow> get glowShadow =>
-      [BoxShadow(color: AppColors.primary.withValues(alpha: .35), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
+  List<BoxShadow> get glowShadow => const [];
 }

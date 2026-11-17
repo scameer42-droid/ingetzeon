@@ -32,7 +32,7 @@ class AppTheme {
     );
 
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: line, width: 1),
     );
 
@@ -44,7 +44,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: ink,
-        titleTextStyle: GoogleFonts.plusJakartaSans(fontSize: 19, fontWeight: FontWeight.w800, color: ink, letterSpacing: -.3),
+        titleTextStyle: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w700, color: ink, letterSpacing: -.2),
       ),
       cardTheme: CardThemeData(
         color: surface,
@@ -55,24 +55,25 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
+          minimumSize: const Size(64, 48),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 15),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+        style: OutlinedButton.styleFrom(minimumSize: const Size(64, 48), side: BorderSide(color: line), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
         ),
       ),
       chipTheme: ChipThemeData(
@@ -99,7 +100,7 @@ class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((s) => Colors.white),
@@ -107,6 +108,11 @@ class AppTheme {
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       ),
       dividerColor: line,
+      dividerTheme: DividerThemeData(color: line, thickness: 1, space: 1),
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      }),
     );
   }
 }
