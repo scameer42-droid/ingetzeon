@@ -27,8 +27,9 @@ const levelColors = [Color(0xFF94A3B8), Color(0xFF10B981), Color(0xFFF59E0B), Co
 String figureOf(WorkoutProgram p) => programFigure[p.id] ?? p.items.first.$1;
 
 /// Huruf tebal sempit untuk judul besar.
-TextStyle olaDisplay(double size, {Color color = Colors.white, double spacing = .3}) =>
-    GoogleFonts.barlowCondensed(fontSize: size, fontWeight: FontWeight.w800, color: color, height: 1.0, letterSpacing: spacing);
+TextStyle olaDisplay(double size, {Color color = Colors.white, double spacing = .3}) => useGoogleFonts
+    ? GoogleFonts.barlowCondensed(fontSize: size, fontWeight: FontWeight.w800, color: color, height: 1.0, letterSpacing: spacing)
+    : TextStyle(fontSize: size, fontWeight: FontWeight.w800, color: color, height: 1.0, letterSpacing: spacing);
 
 String fmtClock(int s) => '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
 String amountLabel(Exercise e, int a) => e.timed ? fmtClock(a) : '$a kali';

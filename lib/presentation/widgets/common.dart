@@ -270,8 +270,12 @@ Future<String?> inputDialog(BuildContext context, {required String title, String
 }
 
 /// Gaya judul tegas.
-TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWeight.w800}) =>
-    GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5);
+/// false = pakai font bawaan (untuk uji otomatis tanpa internet).
+bool useGoogleFonts = true;
+
+TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWeight.w800}) => useGoogleFonts
+    ? GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5)
+    : TextStyle(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5);
 
 /// Latar polos netral.
 class AestheticBackground extends StatelessWidget {
