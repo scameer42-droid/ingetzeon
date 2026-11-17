@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ingetzeon/core/utils/date_utils.dart';
@@ -47,7 +50,21 @@ Future<void> _scrollAll(WidgetTester t) async {
   }
 }
 
+/// Muat font Roboto asli dari SDK Flutter supaya ukuran teks di tes sama dengan di HP.
+Future<void> _loadRoboto() async {
+  final root = Platform.environment['FLUTTER_ROOT'];
+  if (root == null) return;
+  final dir = Directory('$root/bin/cache/artifacts/material_fonts');
+  if (!dir.existsSync()) return;
+  final loader = FontLoader('Roboto');
+  for (final f in dir.listSync().whereType<File>().where((f) => RegExp(r'Roboto-(Regular|Medium|Bold|Black)\.ttf$').hasMatch(f.path))) {
+    loader.addFont(Future.value(ByteData.view(f.readAsBytesSync().buffer)));
+  }
+  await loader.load();
+}
+
 void main() {
+  setUpAll(_loadRoboto);
   setUp(() => useGoogleFonts = false);
 
   for (final w in [360.0, 412.0]) {
@@ -58,8 +75,9 @@ void main() {
       expect(find.text('BERAT SAAT INI'), findsOneWidget);
       expect(find.text('Berat awal'), findsWidgets);
       expect(find.textContaining('Turun 5,6 kg'), findsOneWidget);
-      await _scrollAll(t);
+      await t.scrollUntilVisible(find.text('Riwayat penimbangan'), 300, scrollable: find.byType(Scrollable).first);
       expect(find.text('Riwayat penimbangan'), findsOneWidget);
+      await _scrollAll(t);
       await t.tap(find.text('Catat berat hari ini'));
       await t.pump(const Duration(milliseconds: 600));
       expect(find.text('Catat berat badan'), findsOneWidget);

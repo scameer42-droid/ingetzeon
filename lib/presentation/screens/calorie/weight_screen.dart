@@ -143,13 +143,15 @@ class WeightProgressCard extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: changeColor.withValues(alpha: .12), borderRadius: BorderRadius.circular(99)),
-                  child: Text('${st.change < -.04 ? '▼ ' : st.change > .04 ? '▲ ' : ''}${st.changeText}',
-                      style: TextStyle(color: changeColor, fontWeight: FontWeight.w800, fontSize: 12.5)),
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(color: changeColor.withValues(alpha: .12), borderRadius: BorderRadius.circular(99)),
+                    child: Text('${st.change < -.04 ? '▼ ' : st.change > .04 ? '▲ ' : ''}${st.changeText}',
+                        maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: changeColor, fontWeight: FontWeight.w800, fontSize: 12.5)),
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 if (st.bmi != null) Text('BMI ${st.bmi!.toStringAsFixed(1).replaceAll('.', ',')}', style: TextStyle(color: Color(Body.bmiLabel(st.bmi!).$2), fontWeight: FontWeight.w800, fontSize: 12.5)),
               ]),
             ),
@@ -254,12 +256,19 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('BERAT SAAT INI', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w800, letterSpacing: 1, fontSize: 12)),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text(kgStr(st.current.kg), style: accentFont(size: 54, color: Colors.white)),
+              Flexible(
+                flex: 3,
+                child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.bottomLeft, child: Text(kgStr(st.current.kg), style: accentFont(size: 54, color: Colors.white))),
+              ),
               const Padding(padding: EdgeInsets.only(bottom: 12, left: 4), child: Text('kg', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18))),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text('dicatat ${_dayShort(st.current.day).toLowerCase()}', style: const TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w600)),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text('dicatat ${_dayShort(st.current.day).toLowerCase()}',
+                      textAlign: TextAlign.right, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w600)),
+                ),
               ),
             ]),
             Text('${st.change < -.04 ? '▼ ' : st.change > .04 ? '▲ ' : ''}${st.changeText}', style: TextStyle(color: changeColor, fontWeight: FontWeight.w800, fontSize: 15)),
@@ -281,8 +290,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
             radius: 22,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                const Text('Menuju target', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-                const Spacer(),
+                const Expanded(child: Text('Menuju target', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))),
                 Text('${(st.progress! * 100).round()}%', style: accentFont(size: 20, color: kGood)),
               ]),
               const SizedBox(height: 14),
@@ -306,7 +314,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
           radius: 22,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              const Expanded(child: Text('Grafik berat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))),
+              const Expanded(child: Text('Grafik berat', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))),
               SegmentedButton<int>(
                 showSelectedIcon: false,
                 style: const ButtonStyle(visualDensity: VisualDensity.compact, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -462,8 +470,7 @@ class _BmiGauge extends StatelessWidget {
     const segs = [(15.0, 18.5, Color(0xFF0EA5E9), 'Kurus'), (18.5, 25.0, Color(0xFF10B981), 'Normal'), (25.0, 27.0, Color(0xFFF59E0B), 'Gemuk'), (27.0, 35.0, Color(0xFFE11D48), 'Obesitas')];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        const Text('Indeks massa tubuh', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-        const Spacer(),
+        const Expanded(child: Text('Indeks massa tubuh', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))),
         Text(bmi.toStringAsFixed(1).replaceAll('.', ','), style: accentFont(size: 24, color: Color(color))),
         const SizedBox(width: 6),
         Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(label, style: TextStyle(color: Color(color), fontWeight: FontWeight.w800))),
