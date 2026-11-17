@@ -28,7 +28,7 @@ sleep 20; snap 01_home; anr
 tap "Olahraga" olahraga; sleep 7; snap 02_olahraga; anr
 adb shell input swipe 540 1900 540 600 500; sleep 2
 adb shell input swipe 540 1900 540 900 500; sleep 2; snap 03_weightempty
-tap "Atur profil tubuh" profil; sleep 4; snap 04_profil
+echo "TAP profil 540 250" >> $D/steps.txt; adb shell input tap 540 250; sleep 4; snap 04_profil
 tap "Tinggi" tinggi; adb shell input text 165; sleep 1
 tap "Umur" umur; adb shell input text 30; sleep 1
 tap "Berat" berat; adb shell input text 82; sleep 1
