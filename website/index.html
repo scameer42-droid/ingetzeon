@@ -937,6 +937,35 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .moregrid{border:0!important;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;gap:10px;background:none;box-shadow:none;padding:0}
 .mtile{background:var(--card-2,var(--bg));border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;min-height:112px}.mtile i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;margin-bottom:auto}.mtile i .i{width:21px;height:21px}
 .mtile b{font-size:14px;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mtile small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== Olahraga ===== */
+.ohero{display:flex;align-items:center;gap:16px;border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,#FB923C,#E11D48);box-shadow:0 18px 34px -18px rgba(225,29,72,.7)}
+.oring{width:104px;height:104px;flex:none}.ohero>div{display:flex;flex-direction:column;gap:4px}.ohero small{opacity:.8;font-weight:600}.ohero b{font-size:17px}
+.ohero span{align-self:flex-start;background:rgba(255,255,255,.2);border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}
+.oinfo{margin-top:12px}.oinfo summary{cursor:pointer;list-style:none;font-size:15px}.oinfo summary::-webkit-details-marker{display:none}.oinfo p{color:var(--muted);font-size:13.5px;line-height:1.45;margin:8px 0 0}
+.och-h{display:flex;align-items:center;gap:12px}.och-h i{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal;font-size:22px;background:linear-gradient(135deg,#FB923C,#E11D48)}.och-h b{display:block}.och-h small{color:var(--muted);font-size:12.5px}
+.odays{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0}.odays span{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--muted)}
+.odays span.rest{background:var(--card-2,var(--bg));font-size:12px}.odays span.on{background:#F97316;color:#fff;border-color:#F97316}.odays span.now{border:2px solid #F97316}
+.obtn{background:linear-gradient(135deg,#FB923C,#E11D48)!important;color:#fff!important;font-weight:800}
+.oprog{display:flex;gap:14px;align-items:center;width:100%;text-align:left;margin-bottom:10px;padding:14px}.oprog>i{width:56px;height:56px;border-radius:17px;display:grid;place-items:center;font-style:normal;font-size:27px;flex:none}
+.oprog b{display:block;font-size:15px}.oprog small{display:block;color:var(--muted);font-size:12.5px;line-height:1.3;margin:3px 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.otag{display:inline-block;border-radius:99px;padding:3px 8px;font-size:11.5px;font-weight:700;margin-right:6px}
+.oex,.olog{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;text-align:left}.oex+.oex,.olog+.olog{border-top:1px solid var(--line)}
+.oex>i,.olog>i{width:44px;height:44px;border-radius:13px;background:rgba(249,115,22,.1);display:grid;place-items:center;font-style:normal;font-size:22px;flex:none}.olog>i{background:none;width:30px}
+.oex>div,.olog>div{flex:1;min-width:0}.oex b,.olog b{display:block}.oex small,.olog small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.oex em,.olog em{font-style:normal;font-weight:800;white-space:nowrap}.olog em{color:#F97316}
+.orem{display:flex;align-items:center;gap:12px}.orem div{flex:1}.orem b{display:block}.orem small{color:var(--muted);font-size:12.5px}.orem input{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.ophero{border-radius:24px;padding:18px;color:#fff}.ophero p{font-weight:600;line-height:1.4;margin:6px 0 12px}.opst{display:grid;grid-template-columns:repeat(4,1fr)}.opst b{display:block;font-size:22px}.opst small{opacity:.8;font-size:12px;font-weight:600}
+.ostep{display:flex;gap:10px;margin-bottom:10px;line-height:1.45}.ostep i{width:26px;height:26px;border-radius:50%;background:#F97316;color:#fff;font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
+.onote{background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:14px;padding:12px;margin-bottom:8px;font-size:13.5px;line-height:1.4}.onote b{color:var(--c)}
+@keyframes obounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}.bounce{display:inline-block;animation:obounce .9s ease-in-out infinite}.bounce.slow{animation-duration:1.6s}
+#olaPlay.rest{background:#0F766E}#olaPlay.rest .full-head,#olaPlay.rest .opname,#olaPlay.rest .opbar span,#olaPlay.rest .opring b,#olaPlay.rest .ophow{color:#fff}#olaPlay.rest .ophow{background:rgba(255,255,255,.14)}#olaPlay.rest .ophow .tip{color:#fff}
+#olaPlay .full-body{display:flex;flex-direction:column}
+.opbar{display:flex;align-items:center;gap:10px}.opbar p{flex:1;height:6px;border-radius:99px;background:rgba(127,127,127,.2);margin:0;overflow:hidden}.opbar p b{display:block;height:100%;border-radius:99px;transition:width 1s linear}.opbar span{font-weight:800}
+.opround{text-align:center;color:var(--muted);font-size:12.5px;font-weight:600;margin:4px 0 0}.opph{text-align:center;letter-spacing:.15em;font-weight:800;font-size:13px;margin:12px 0 2px}.opname{text-align:center;font-size:24px;margin:0 0 12px}
+.opring{position:relative;width:230px;height:230px;margin:0 auto}.opring svg{width:100%;height:100%}.opring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.opring b{font-size:46px;font-weight:800;line-height:1.1}.opring small{color:var(--muted);font-size:12px}
+.ophow{background:var(--card-2,var(--bg));border-radius:18px;padding:14px;margin-top:16px}.ophow p{margin:0 0 6px;font-size:13.5px;line-height:1.4}.ophow .tip{color:#059669;font-weight:600;margin:0}
+.opctl{display:flex;gap:12px;align-items:center;margin-top:auto;padding-top:16px}.opctl button{width:56px;height:56px;border-radius:50%;background:var(--card-2,var(--bg));font-size:22px}.opctl .main{flex:1;height:60px;border-radius:20px;font-weight:800;font-size:16px}
+.opsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 16px}.opsum div{border-radius:18px;padding:16px 6px;text-align:center}.opsum i{font-style:normal;font-size:22px;display:block}.opsum b{display:block;font-size:22px;margin-top:4px}.opsum small{color:var(--muted);font-size:11.5px}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 </head>
@@ -1104,6 +1133,11 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 
     <div class="group-t">Kesehatan</div>
     <div class="group">
+      <button class="row-s" id="rowOla">
+        <div class="ic" style="background:rgba(225,29,72,.12);color:#E11D48;font-size:18px">🏃</div>
+        <div class="tx"><b>Olahraga</b><small id="olaState">Program perut, kardio, full body</small></div>
+        <svg class="i chev"><use href="#i-right"/></svg>
+      </button>
       <button class="row-s" id="rowKal">
         <div class="ic" style="background:rgba(249,115,22,.12);color:#F97316;font-size:18px">🥗</div>
         <div class="tx"><b>Kalori &amp; Diet</b><small id="kalState">Penghitung kalori, berat &amp; tinggi badan</small></div>
@@ -1210,6 +1244,9 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 <!-- ================= SIKLUS HAID ================= -->
 <div class="full" id="muslim"><div class="full-head"><button class="icon-btn" data-close="#muslim" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Muslim Harian</h2></div><div class="full-body" id="muslimBody"></div></div>
 <div class="full" id="mtool"><div class="full-head"><button class="icon-btn" data-close="#mtool" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="mtTitle">—</h2></div><div class="full-body" id="mtBody"></div></div>
+<div class="full" id="ola"><div class="full-head"><button class="icon-btn" data-close="#ola" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Olahraga</h2></div><div class="full-body" id="olaBody"></div></div>
+<div class="full" id="olaP"><div class="full-head"><button class="icon-btn" data-close="#olaP" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPTitle">Program</h2></div><div class="full-body" id="olaPBody"></div></div>
+<div class="full" id="olaPlay"><div class="full-head"><button class="icon-btn" onclick="plClose()" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPlayTitle">Latihan</h2><button class="icon-btn" id="olaVoice" style="margin-left:auto" onclick="state.ola.voice=!state.ola.voice;save();drawPlayer()" aria-label="Suara pemandu">🔊</button></div><div class="full-body" id="olaPlayBody"></div></div>
 <div class="full" id="kal"><div class="full-head"><button class="icon-btn" data-close="#kal" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kalori &amp; Diet</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="kalBody"></div></div>
 <div class="full" id="bscan"><div class="full-head"><button class="icon-btn" data-close="#bscan" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Pindai barcode</h2></div><div class="full-body">
   <div class="bsbox"><video id="bsVideo" playsinline muted></video><i></i></div><p class="muted-c" id="bsMsg" style="margin:12px 0"></p><input type="hidden" id="bsMeal">
@@ -1377,6 +1414,7 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
   <symbol id="c-kesehatan" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
   <symbol id="c-edukasi" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol>
   <symbol id="c-parkir" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M9.5 17V7h3.5a3 3 0 0 1 0 6H9.5"/></symbol>
+  <symbol id="i-run" viewBox="0 0 24 24"><circle cx="14.5" cy="4" r="1.8"/><path d="M8 21l3-6 3 2v4"/><path d="M5.5 11.5l3-3.5 4 1 2.5 3.5 3 1"/><path d="M12.5 9l-1.5 6"/></symbol>
   <symbol id="i-mosque" viewBox="0 0 24 24"><path d="M12 3c-.8 1.8-4.5 3.3-4.5 6.6V11h9V9.6C16.5 6.3 12.8 4.8 12 3z"/><path d="M5 21v-9.5M19 21v-9.5"/><path d="M5 11.5l-1-1.5 1-2 1 2zM19 11.5l-1-1.5 1-2 1 2z"/><path d="M7.5 21v-7.5h9V21"/><path d="M10.5 21v-3a1.5 1.5 0 0 1 3 0v3"/><path d="M2.5 21h19"/></symbol>
   <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 11.5h18a9 9 0 0 1-18 0z"/><path d="M8 8c0-1.2 1.2-1.6 1.2-3M12 8c0-1.2 1.2-1.6 1.2-3M16 8c0-1.2 1.2-1.6 1.2-3"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20.5A7 7 0 0 1 4 13.5c0-6.5 6-9.5 16-9.5 0 10-3.5 16.5-9 16.5z"/><path d="M4.5 20c3-5 7-8.5 12-10.5"/></symbol>
@@ -2033,7 +2071,7 @@ function kalTodayLine(){
 function openKal(){ kalDay = new Date(); renderKal(); openFull('#kal'); if(!kalS().profile) setTimeout(kalProfileSheet, 250); }
 function renderKal(){
   const box = $('#kalBody'); if(!box) return;
-  const s = kalS(), t = kalTarget(), list = kalOn(kalDay), sum = kalSum(list), goal = t ? t.target : 2000, left = goal - sum.k;
+  const s = kalS(), t = kalTarget(), list = kalOn(kalDay), sum = kalSum(list), goal = t ? t.target : 2000, burned = olaKcalOn(kalDay), left = goal - sum.k + burned;
   const isToday = sameDay(kalDay, new Date()), frac = Math.min(1, sum.k / goal), R = 56, C = 2 * Math.PI * R;
   const g = t ? GOALS.find(x => x[0] === t.goal) : null;
   const macro = (l, v, tg) => `<div class="kmac"><small>${l}</small><i><b style="width:${Math.min(100, v / tg * 100)}%"></b></i><em>${Math.round(v)}/${tg} g</em></div>`;
@@ -2044,7 +2082,7 @@ function renderKal(){
           <circle cx="66" cy="66" r="${R}" fill="none" stroke="${left < 0 ? '#FDE047' : '#fff'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}" transform="rotate(-90 66 66)" class="karc"/>
           <text x="66" y="66" text-anchor="middle" font-size="26" font-weight="800" fill="#fff">${fmtK(Math.abs(left))}</text>
           <text x="66" y="86" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">${left >= 0 ? 'kkal tersisa' : 'kkal kelebihan'}</text></svg>
-        <div class="kstats"><small>🎯 Target</small><b>${fmtK(goal)} kkal</b><small>🍽️ Dimakan</small><b>${fmtK(sum.k)} kkal</b><small>${g ? g[2] + ' Tujuan' : '⚙️ Profil'}</small><b>${g ? g[1] : 'belum diatur'}</b></div>
+        <div class="kstats"><small>🎯 Target</small><b>${fmtK(goal)} kkal</b><small>🍽️ Dimakan${burned >= 1 ? ` · 🔥 +${fmtK(burned)}` : ''}</small><b>${fmtK(sum.k)} kkal</b><small>${g ? g[2] + ' Tujuan' : '⚙️ Profil'}</small><b>${g ? g[1] : 'belum diatur'}</b></div>
       </div>
       <div class="kmacs">${macro('Protein', sum.p, t ? t.protein : 100)}${macro('Karbo', sum.c, t ? t.carbs : 250)}${macro('Lemak', sum.fa, t ? t.fat : 67)}</div>
     </div>
@@ -2469,6 +2507,260 @@ async function scanFoodChat(photoKey){
   }catch(e){ botTools('📷 ' + scanErrText(e) + '\n\nSementara itu kamu bisa catat lewat menu Kalori (cari makanan dari daftar).', ['kalori']); }
 }
 
+const EX_AREAS = {"perut": "Perut & core", "kardio": "Kardio", "kaki": "Kaki & bokong", "lengan": "Lengan, dada & punggung", "stretch": "Peregangan"};
+// [id, nama, emoji, area, timed, jumlah, MET, level, langkah[], tips, kesalahan, hati2]
+const EXERCISES = [["crunch", "Crunch", "🙇", "perut", false, 15, 3.8, 1, ["Berbaring telentang, lutut ditekuk, telapak kaki menapak lantai.", "Letakkan ujung jari di samping telinga (jangan menarik kepala).", "Angkat bahu dari lantai dengan mengencangkan perut, buang napas.", "Tahan 1 detik, lalu turunkan perlahan sambil tarik napas."], "Bayangkan pusar ditarik ke arah tulang belakang.", "Menarik leher dengan tangan dan mengangkat badan terlalu tinggi.", ""], ["bicycle", "Bicycle crunch", "🚴", "perut", true, 30, 4.0, 2, ["Berbaring telentang, tangan di samping kepala, kaki diangkat 45°.", "Tekuk lutut kanan ke dada sambil memutar badan, siku kiri menuju lutut kanan.", "Ganti sisi: lutut kiri ke dada, siku kanan menuju lutut kiri.", "Lakukan bergantian seperti mengayuh sepeda dengan tempo terkontrol."], "Pelan tapi terkontrol lebih efektif daripada cepat.", "Punggung bawah terangkat dari lantai.", ""], ["plank", "Plank", "🧱", "perut", true, 30, 3.8, 1, ["Tumpukan badan pada lengan bawah dan ujung kaki.", "Siku tepat di bawah bahu.", "Badan lurus dari kepala sampai tumit, kencangkan perut & bokong.", "Tahan posisi sambil bernapas normal."], "Pandangan ke lantai sedikit di depan tangan agar leher netral.", "Pinggul turun (melengkung) atau terlalu tinggi.", "Hentikan bila punggung bawah terasa sakit."], ["side_plank", "Side plank", "📐", "perut", true, 20, 3.8, 2, ["Berbaring miring, tumpu pada satu lengan bawah, siku di bawah bahu.", "Angkat pinggul hingga badan lurus dari kepala ke kaki.", "Tahan, lalu ganti sisi pada set berikutnya."], "Pemula: tekuk lutut bawah untuk menopang.", "Pinggul turun ke lantai.", ""], ["leg_raise", "Leg raise", "🦵", "perut", false, 12, 3.8, 2, ["Berbaring telentang, tangan di samping badan atau di bawah bokong.", "Luruskan kaki dan rapatkan.", "Angkat kedua kaki hingga tegak lurus lantai.", "Turunkan perlahan tanpa menyentuh lantai, lalu ulangi."], "Semakin pelan saat turun, semakin terasa di perut bawah.", "Punggung bawah melengkung terangkat.", "Tekuk sedikit lutut bila punggung bawah terasa tertarik."], ["mountain", "Mountain climber", "⛰️", "perut", true, 30, 8.0, 2, ["Mulai dari posisi push-up, tangan di bawah bahu.", "Tarik lutut kanan ke arah dada.", "Kembalikan, lalu tarik lutut kiri.", "Lakukan bergantian dengan cepat seperti berlari di tempat."], "Jaga pinggul tetap sejajar dengan bahu.", "Pinggul terlalu tinggi atau bokong naik turun.", ""], ["russian", "Russian twist", "🔄", "perut", true, 30, 4.0, 2, ["Duduk, lutut ditekuk, condongkan badan ke belakang ±45°.", "Rapatkan kedua tangan di depan dada.", "Putar badan ke kanan lalu ke kiri, sentuhkan tangan ke lantai di samping pinggul.", "Angkat kaki dari lantai untuk versi lebih berat."], "Putar dari badan, bukan hanya tangan.", "Punggung membungkuk.", ""], ["flutter", "Flutter kick", "🏊", "perut", true, 30, 3.8, 2, ["Berbaring telentang, tangan di bawah bokong.", "Angkat kaki sekitar 15 cm dari lantai.", "Gerakkan kaki naik-turun bergantian dengan cepat dan kecil."], "Tempelkan punggung bawah ke lantai.", "Mengangkat kaki terlalu tinggi.", ""], ["dead_bug", "Dead bug", "🪲", "perut", false, 12, 3.0, 1, ["Berbaring telentang, angkat tangan lurus ke atas dan lutut ditekuk 90°.", "Luruskan tangan kanan ke belakang kepala dan kaki kiri ke depan bersamaan.", "Kembali ke tengah, lalu ganti sisi.", "Gerakan pelan dan terkontrol."], "Gerakan paling aman untuk perut pemula & punggung sensitif.", "Punggung bawah terangkat dari lantai.", ""], ["heel_touch", "Heel touch", "👣", "perut", true, 30, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki agak lebar.", "Angkat bahu sedikit dari lantai.", "Raih tumit kanan dengan tangan kanan, lalu tumit kiri dengan tangan kiri."], "Bahu tetap terangkat selama gerakan.", "Menarik leher.", ""], ["reverse_crunch", "Reverse crunch", "🔃", "perut", false, 12, 3.8, 2, ["Berbaring telentang, lutut ditekuk 90° dan kaki diangkat.", "Tarik lutut ke dada sambil mengangkat pinggul sedikit dari lantai.", "Turunkan perlahan ke posisi awal."], "Gunakan perut, bukan ayunan kaki.", "Mengayun kaki terlalu cepat.", ""], ["plank_tap", "Plank shoulder tap", "👋", "perut", true, 30, 4.5, 2, ["Posisi high plank (tangan lurus).", "Sentuh bahu kiri dengan tangan kanan.", "Kembalikan, lalu sentuh bahu kanan dengan tangan kiri."], "Lebarkan kaki agar pinggul tidak bergoyang.", "Pinggul berayun ke kiri-kanan.", ""], ["vacuum", "Stomach vacuum", "🫁", "perut", true, 20, 1.5, 1, ["Berdiri tegak atau merangkak.", "Buang napas sepenuhnya.", "Tarik perut ke dalam sedalam mungkin seolah pusar menyentuh tulang belakang.", "Tahan, lalu lepaskan dan bernapas normal."], "Melatih otot perut dalam (transversus) yang membuat perut tampak rata.", "Menahan napas terlalu lama sampai pusing.", "Jangan dilakukan saat hamil atau setelah makan."], ["jumping_jack", "Jumping jack", "🤸", "kardio", true, 30, 8.0, 1, ["Berdiri tegak, kaki rapat, tangan di samping badan.", "Lompat sambil membuka kaki selebar bahu dan mengangkat tangan ke atas.", "Lompat lagi kembali ke posisi awal.", "Ulangi dengan ritme stabil."], "Mendarat dengan ujung kaki, lutut sedikit ditekuk.", "Mendarat keras dengan tumit.", "Versi tanpa lompat: langkahkan kaki ke samping bergantian."], ["high_knees", "High knees", "🏃", "kardio", true, 30, 8.0, 2, ["Berdiri tegak.", "Lari di tempat sambil mengangkat lutut setinggi pinggul.", "Ayunkan tangan seperti berlari."], "Badan tegak, perut dikencangkan.", "Badan condong ke belakang.", ""], ["butt_kick", "Butt kick", "🦶", "kardio", true, 30, 7.0, 1, ["Lari di tempat.", "Tendang tumit ke arah bokong setiap langkah.", "Tangan diayun santai."], "Mendarat ringan dengan ujung kaki.", "Membungkuk ke depan.", ""], ["burpee", "Burpee", "💥", "kardio", false, 8, 8.0, 3, ["Berdiri, lalu jongkok dan letakkan tangan di lantai.", "Lompatkan kaki ke belakang ke posisi push-up.", "Lompatkan kaki kembali ke dekat tangan.", "Lompat ke atas sambil mengangkat tangan."], "Pemula: langkahkan kaki ke belakang tanpa lompat dan tanpa push-up.", "Punggung melengkung saat posisi push-up.", "Hentikan bila sesak berlebihan atau pusing."], ["skater", "Skater jump", "⛸️", "kardio", true, 30, 7.0, 2, ["Lompat ke samping kanan, mendarat dengan kaki kanan.", "Kaki kiri menyilang ke belakang, tangan diayun.", "Lompat ke kiri dan ulangi bergantian."], "Tekuk lutut saat mendarat.", "Lutut lurus kaku saat mendarat.", ""], ["march", "Jalan di tempat", "🚶", "kardio", true, 60, 3.5, 1, ["Berdiri tegak.", "Angkat lutut bergantian seperti berjalan di tempat.", "Ayunkan tangan berlawanan dengan kaki."], "Cocok untuk pemanasan atau pemula.", "Membungkuk.", ""], ["jump_rope", "Lompat tali (tanpa tali)", "🪢", "kardio", true, 30, 8.8, 1, ["Berdiri, tangan seolah memegang tali.", "Putar pergelangan tangan sambil melompat kecil dengan ujung kaki.", "Jaga lompatan rendah dan ringan."], "Lompatan kecil 2–3 cm sudah cukup.", "Lompat terlalu tinggi.", ""], ["squat", "Squat", "🏋️", "kaki", false, 15, 5.0, 1, ["Berdiri, kaki selebar bahu, ujung kaki sedikit ke luar.", "Dorong pinggul ke belakang dan tekuk lutut seperti mau duduk.", "Turun sampai paha sejajar lantai (atau semampunya).", "Dorong lewat tumit untuk berdiri."], "Dada tegak, lutut searah ujung kaki.", "Lutut masuk ke dalam atau tumit terangkat.", ""], ["lunge", "Lunge", "🚶‍♂️", "kaki", false, 12, 4.0, 2, ["Berdiri tegak.", "Langkahkan kaki kanan ke depan.", "Turunkan badan hingga kedua lutut menekuk 90°.", "Dorong kembali ke posisi awal, ganti kaki."], "Lutut depan tidak melewati ujung jari kaki.", "Badan condong ke depan.", ""], ["glute_bridge", "Glute bridge", "🌉", "kaki", false, 15, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki menapak.", "Angkat pinggul hingga badan lurus dari bahu ke lutut.", "Remas bokong 1 detik di atas.", "Turunkan perlahan."], "Dorong lewat tumit.", "Punggung terlalu melengkung di atas.", ""], ["wall_sit", "Wall sit", "🪑", "kaki", true, 30, 3.0, 2, ["Sandarkan punggung ke dinding.", "Turunkan badan sampai lutut 90° seperti duduk di kursi.", "Tahan posisi."], "Lutut tepat di atas pergelangan kaki.", "Lutut melewati ujung kaki.", ""], ["calf_raise", "Calf raise", "🦿", "kaki", false, 20, 2.8, 1, ["Berdiri tegak, bisa berpegangan ke dinding.", "Jinjit setinggi mungkin.", "Turunkan tumit perlahan."], "Tahan 1 detik di atas.", "Terlalu cepat.", ""], ["side_leg", "Side leg raise", "🦵", "kaki", false, 15, 3.0, 1, ["Berbaring miring, kepala ditopang tangan.", "Angkat kaki atas lurus ke atas.", "Turunkan perlahan, ganti sisi pada set berikutnya."], "Ujung kaki menghadap depan.", "Badan berguling ke belakang.", ""], ["donkey_kick", "Donkey kick", "🐴", "kaki", false, 15, 3.5, 1, ["Posisi merangkak, tangan di bawah bahu, lutut di bawah pinggul.", "Tendang satu kaki ke atas dengan lutut tetap ditekuk 90°.", "Turunkan, ulangi, lalu ganti kaki."], "Remas bokong saat kaki di atas.", "Punggung melengkung.", ""], ["pushup", "Push-up", "💪", "lengan", false, 10, 8.0, 2, ["Tangan sedikit lebih lebar dari bahu, badan lurus.", "Turunkan dada mendekati lantai dengan siku ±45° dari badan.", "Dorong kembali ke atas."], "Pemula: lakukan dengan lutut di lantai.", "Pinggul turun atau siku terbuka lebar.", ""], ["knee_pushup", "Push-up lutut", "🙌", "lengan", false, 10, 4.0, 1, ["Seperti push-up, tapi lutut bertumpu di lantai.", "Badan lurus dari kepala ke lutut.", "Turunkan dada, lalu dorong ke atas."], "Langkah awal sebelum push-up penuh.", "Bokong terangkat.", ""], ["tricep_dip", "Tricep dip (kursi)", "🪑", "lengan", false, 12, 4.0, 2, ["Duduk di tepi kursi yang kokoh, tangan di samping pinggul.", "Geser bokong ke depan dari kursi.", "Turunkan badan dengan menekuk siku ke belakang.", "Dorong kembali ke atas."], "Siku mengarah ke belakang, bukan ke samping.", "Bahu naik ke telinga.", "Pastikan kursi tidak bisa bergeser."], ["arm_circle", "Putar lengan", "🌀", "lengan", true, 30, 2.8, 1, ["Berdiri, rentangkan tangan ke samping sejajar bahu.", "Putar lengan membentuk lingkaran kecil ke depan.", "Setelah setengah waktu, putar ke belakang."], "Lingkaran kecil terasa lebih berat.", "Bahu terangkat.", ""], ["superman", "Superman", "🦸", "lengan", false, 12, 3.0, 1, ["Berbaring tengkurap, tangan lurus ke depan.", "Angkat tangan, dada, dan kaki bersamaan dari lantai.", "Tahan 2 detik, lalu turunkan."], "Menguatkan punggung bawah — penyeimbang latihan perut.", "Mendongakkan kepala terlalu tinggi.", ""], ["inchworm", "Inchworm", "🐛", "lengan", false, 6, 4.0, 2, ["Berdiri, bungkukkan badan dan letakkan tangan di lantai.", "Jalankan tangan ke depan sampai posisi push-up.", "Jalankan tangan kembali ke kaki, lalu berdiri."], "Tekuk lutut bila hamstring kaku.", "Punggung melengkung.", ""], ["cobra", "Cobra stretch", "🐍", "stretch", true, 30, 2.3, 1, ["Berbaring tengkurap, tangan di bawah bahu.", "Dorong dada ke atas perlahan, pinggul tetap di lantai.", "Rasakan peregangan di perut, tahan."], "Bahu rileks menjauhi telinga.", "Memaksa punggung melengkung terlalu jauh.", ""], ["child_pose", "Child’s pose", "🧘", "stretch", true, 30, 2.3, 1, ["Berlutut, duduk di atas tumit.", "Bungkukkan badan ke depan, tangan lurus di lantai.", "Dahi menyentuh lantai, bernapas dalam."], "Napas panjang lewat hidung.", "Menahan napas.", ""], ["cat_cow", "Cat-cow", "🐈", "stretch", true, 40, 2.3, 1, ["Posisi merangkak.", "Tarik napas: lengkungkan punggung ke bawah, angkat kepala (cow).", "Buang napas: bulatkan punggung ke atas, tundukkan kepala (cat).", "Ulangi mengikuti napas."], "Gerakan pelan mengikuti napas.", "Terlalu cepat.", ""], ["side_stretch", "Peregangan samping", "🌿", "stretch", true, 30, 2.3, 1, ["Berdiri, angkat tangan kanan ke atas.", "Condongkan badan ke kiri, tahan.", "Ganti sisi di setengah waktu."], "Pinggul tetap lurus.", "Badan condong ke depan.", ""], ["knee_hug", "Peluk lutut", "🤗", "stretch", true, 30, 2.3, 1, ["Berbaring telentang.", "Peluk kedua lutut ke dada.", "Goyangkan pelan ke kiri-kanan untuk memijat punggung bawah."], "Bagus untuk punggung setelah latihan perut.", "Mengangkat kepala.", ""], ["hamstring", "Peregangan paha belakang", "🙆", "stretch", true, 30, 2.3, 1, ["Duduk, luruskan kedua kaki.", "Raih ujung kaki dengan punggung lurus.", "Tahan tanpa menghentak."], "Tekuk lutut sedikit bila belum lentur.", "Menghentak-hentakkan badan.", ""]];
+// [id, nama, emoji, warna, level, deskripsi, istirahat, ronde, [[id, jumlah]]]
+const PROGRAMS = [["perut_pemula", "Perut rata — pemula", "🔥", "#F97316", 1, "Tanpa alat, gerakan ramah pemula. Mulai dari sini kalau baru mulai olahraga.", 20, 2, [["march", 60], ["crunch", 12], ["dead_bug", 10], ["heel_touch", 30], ["glute_bridge", 12], ["plank", 20], ["vacuum", 20], ["cobra", 30]]], ["perut_menengah", "Perut & core — menengah", "⚡", "#EF4444", 2, "Kombinasi kardio + perut untuk membakar lemak dan mengencangkan core.", 15, 3, [["jumping_jack", 40], ["bicycle", 40], ["mountain", 30], ["leg_raise", 12], ["russian", 30], ["plank", 40], ["side_plank", 25], ["flutter", 30]]], ["perut_lanjut", "Perut six-pack — lanjut", "🏆", "#7C3AED", 3, "Untuk yang sudah terbiasa. Intens dan melelahkan.", 10, 3, [["burpee", 10], ["mountain", 45], ["reverse_crunch", 15], ["bicycle", 45], ["plank_tap", 40], ["leg_raise", 15], ["russian", 45], ["plank", 60]]], ["kardio", "Kardio bakar lemak", "🏃", "#0EA5E9", 2, "HIIT tanpa alat — paling efektif membakar kalori dalam waktu singkat.", 15, 3, [["jumping_jack", 40], ["high_knees", 30], ["butt_kick", 30], ["skater", 30], ["jump_rope", 40], ["burpee", 8], ["mountain", 30]]], ["fullbody", "Full body tanpa alat", "💪", "#10B981", 2, "Melatih seluruh tubuh: kaki, dada, lengan, punggung dan perut.", 15, 2, [["jumping_jack", 30], ["squat", 15], ["pushup", 10], ["lunge", 12], ["superman", 12], ["glute_bridge", 15], ["plank", 30], ["mountain", 30], ["inchworm", 6]]], ["kaki", "Kaki & bokong", "🍑", "#EC4899", 1, "Mengencangkan paha dan bokong.", 15, 3, [["squat", 15], ["lunge", 12], ["glute_bridge", 15], ["donkey_kick", 15], ["side_leg", 15], ["wall_sit", 30], ["calf_raise", 20]]], ["lengan", "Lengan & dada", "🦾", "#6366F1", 1, "Mengencangkan lengan, dada dan punggung tanpa alat.", 20, 3, [["arm_circle", 30], ["knee_pushup", 10], ["tricep_dip", 12], ["superman", 12], ["pushup", 8], ["plank_tap", 30], ["inchworm", 6]]], ["stretch_pagi", "Peregangan pagi", "🌅", "#14B8A6", 1, "5 menit untuk melemaskan badan setelah bangun tidur.", 5, 1, [["march", 60], ["side_stretch", 30], ["cat_cow", 40], ["cobra", 30], ["hamstring", 30], ["child_pose", 40]]], ["stretch_malam", "Peregangan sebelum tidur", "🌙", "#8B5CF6", 1, "Rileks, meredakan pegal dan membantu tidur lebih nyenyak.", 5, 1, [["knee_hug", 40], ["cat_cow", 40], ["child_pose", 45], ["hamstring", 40], ["cobra", 30]]]];
+const BELLY_CHALLENGE = [["perut_pemula", 1.0], ["perut_pemula", 1.3], ["perut_menengah", 1.0], ["perut_menengah", 1.25]];
+const FREE_ACTIVITIES = [[["jalan kaki", "jalan santai", "jalan pagi", "jalan sore", "jalan"], "Jalan kaki", 3.5], [["jalan cepat", "power walk"], "Jalan cepat", 4.3], [["jogging", "joging", "lari pagi", "lari santai"], "Jogging", 7.0], [["lari"], "Lari", 9.8], [["bersepeda", "sepedaan", "gowes", "sepeda"], "Bersepeda", 6.8], [["renang", "berenang"], "Renang", 6.0], [["senam aerobik", "aerobik", "zumba", "senam"], "Senam", 6.5], [["yoga", "pilates"], "Yoga", 2.5], [["badminton", "bulu tangkis", "bulutangkis"], "Badminton", 5.5], [["futsal", "sepak bola", "main bola"], "Futsal/sepak bola", 7.0], [["basket"], "Basket", 6.5], [["tenis meja", "pingpong", "ping pong"], "Tenis meja", 4.0], [["angkat beban", "gym", "nge-gym", "ngegym", "fitness"], "Angkat beban/gym", 5.0], [["skipping", "lompat tali"], "Lompat tali", 11.0], [["hiking", "naik gunung", "mendaki"], "Hiking", 6.0], [["bersih bersih rumah", "bersih-bersih", "nyapu", "ngepel"], "Bersih-bersih rumah", 3.3]];
+/* ===== Logika olahraga (sinkron dengan lib/services/workout_logic.dart) ===== */
+const SEC_PER_REP = 3;
+const exById = id => EXERCISES.find(e => e[0] === id);
+const progById = id => PROGRAMS.find(p => p[0] === id);
+/** Urutan langkah latihan: [{ex, amount, secs, round, last}] (istirahat disisipkan oleh pemutar). */
+function workoutSteps(prog, mult = 1){
+  const out = [];
+  for(let r = 1; r <= prog[7]; r++) for(const [id, amt] of prog[8]){
+    const ex = exById(id), a = Math.max(1, Math.round((amt || ex[5]) * mult));
+    out.push({ex, amount: a, secs: ex[4] ? a : a * SEC_PER_REP, round: r});
+  }
+  return out;
+}
+function workoutSeconds(prog, mult = 1){ const s = workoutSteps(prog, mult); return s.reduce((a, x) => a + x.secs, 0) + Math.max(0, s.length - 1) * prog[6]; }
+/** Kalori = MET × berat(kg) × jam. */
+function kcalBurn(met, kg, secs){ return met * (kg || 65) * secs / 3600; }
+function workoutKcal(prog, kg, mult = 1){ return workoutSteps(prog, mult).reduce((a, x) => a + kcalBurn(x.ex[6], kg, x.secs), 0); }
+const amountText = (ex, a) => ex[4] ? (a >= 60 && a % 60 === 0 ? `${a / 60} menit` : `${a} detik`) : `${a}×`;
+
+/* "tadi jogging 30 menit", "renang 1 jam", "aku olahraga lari setengah jam" → {name, met, minutes} */
+function parseActivity(text){
+  const t = text.toLowerCase().replace(/\s+/g, ' ');
+  if(/\b(ingatkan|ingetin|ingatin|alarm|nanti|besok|mau|pengen|ingin|rencana)\b/.test(t) || t.includes('?')) return null;
+  let min = null, m;
+  if((m = /(\d+(?:[.,]\d+)?)\s*(menit|mnt|min)\b/.exec(t))) min = parseFloat(m[1].replace(',', '.'));
+  else if((m = /(\d+(?:[.,]\d+)?)\s*jam\b/.exec(t))) min = parseFloat(m[1].replace(',', '.')) * 60;
+  else if(/\bsetengah jam\b/.test(t)) min = 30;
+  else if(/\bsejam\b|\bsatu jam\b/.test(t)) min = 60;
+  if(!min || min > 600) return null;
+  for(const [keys, name, met] of FREE_ACTIVITIES.slice().sort((a, b) => Math.max(...b[0].map(k => k.length)) - Math.max(...a[0].map(k => k.length)))){
+    if(keys.some(k => new RegExp(`(^|[^a-z])${k.replace(/[-]/g, '\\-')}($|[^a-z])`).test(t))) return {name, met, minutes: Math.round(min)};
+  }
+  return null;
+}
+/** Pertanyaan/ajakan olahraga → id program yang cocok (atau 'hub'). */
+function askWorkout(text){
+  const t = text.toLowerCase();
+  if(!/\b(olahraga|olah raga|latihan|workout|senam|gerakan|kecilin|kecilkan|mengecilkan|mengencangkan|six ?pack|sixpack|peregangan|stretching|kardio|cardio|push ?up|sit ?up|plank|squat)\b/.test(t)) return null;
+  if(/\b(perut|buncit|begah|sixpack|six pack|six-pack|core|pinggang|lemak perut)\b/.test(t)) return /lanjut|berat|six ?-?pack/.test(t) ? 'perut_lanjut' : /menengah|sedang/.test(t) ? 'perut_menengah' : 'perut_pemula';
+  if(/\b(kardio|cardio|bakar lemak|bakar kalori|hiit)\b/.test(t)) return 'kardio';
+  if(/\b(kaki|paha|bokong|pantat|betis)\b/.test(t)) return 'kaki';
+  if(/\b(lengan|tangan|dada|push ?up|punggung)\b/.test(t)) return 'lengan';
+  if(/\b(peregangan|stretching|lentur|pegal|kaku)\b/.test(t)) return /malam|tidur/.test(t) ? 'stretch_malam' : 'stretch_pagi';
+  if(/\b(full ?body|seluruh badan|semua badan)\b/.test(t)) return 'fullbody';
+  return 'hub';
+}
+
+/* ================= OLAHRAGA (UI web) ================= */
+const LEVEL = ['', 'Pemula', 'Menengah', 'Lanjut'], LEVEL_C = ['#94A3B8', '#10B981', '#F59E0B', '#E11D48'];
+const olaS = () => state.ola;
+const olaKg = () => state.kal && state.kal.profile ? state.kal.profile.kg : null;
+function olaOn(d){ return olaS().logs.filter(l => sameDay(new Date(l.at), d)); }
+function olaKcalOn(d){ return olaOn(d).reduce((a, l) => a + l.k, 0); }
+function olaMinOn(d){ return Math.round(olaOn(d).reduce((a, l) => a + l.s, 0) / 60); }
+function olaWeekMin(){ const n = new Date(), st = addDays(startOfDay(n), -((n.getDay() + 6) % 7)); return Math.round(olaS().logs.filter(l => l.at >= st.getTime()).reduce((a, l) => a + l.s, 0) / 60); }
+function olaStreak(){ let n = 0, d = startOfDay(new Date()); if(!olaOn(d).length) d = addDays(d, -1); while(olaOn(d).length){ n++; d = addDays(d, -1); } return n; }
+function olaAdd(name, secs, kcal, program = null, emoji = '🏃'){ olaS().logs = [{id: Date.now().toString(36), at: Date.now(), n: name, s: secs, k: kcal, p: program, e: emoji}, ...olaS().logs].slice(0, 400); save(); renderFeatures(); if($('#ola').classList.contains('show')) renderOla(); }
+function chDay(){ const cs = olaS().cs; if(!cs) return null; const d = Math.floor((startOfDay(new Date()) - startOfDay(new Date(cs))) / 864e5) + 1; return d >= 1 && d <= 28 ? d : null; }
+function chDone(){ const cs = olaS().cs; if(!cs) return new Set(); const s0 = startOfDay(new Date(cs)); return new Set(olaS().logs.filter(l => (l.p || '').startsWith('tantangan')).map(l => Math.floor((startOfDay(new Date(l.at)) - s0) / 864e5) + 1).filter(d => d >= 1 && d <= 28)); }
+
+function openOla(focus){ renderOla(); openFull('#ola'); if(focus){ const p = progById(focus); if(p) setTimeout(() => openProg(p), 200); } }
+let olaArea = 'perut';
+function renderOla(){
+  const box = $('#olaBody'); if(!box) return;
+  const s = olaS(), wk = olaWeekMin(), goal = s.goal, kg = olaKg(), R = 44, C = 2 * Math.PI * R;
+  const day = chDay(), done = chDone(), started = !!s.cs, finished = started && !day && done.size >= 20;
+  const week = day ? Math.floor((day - 1) / 7) : 0, [cpid, cmult] = BELLY_CHALLENGE[Math.min(3, week)], cp = progById(cpid);
+  const tag = (t, c) => `<span class="otag" style="color:${c};background:${c}1f">${t}</span>`;
+  box.innerHTML = `<div class="ohero"><svg viewBox="0 0 104 104" class="oring"><circle cx="52" cy="52" r="${R}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="10"/><circle cx="52" cy="52" r="${R}" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - Math.min(1, wk / goal))}" transform="rotate(-90 52 52)"/><text x="52" y="52" text-anchor="middle" font-size="24" font-weight="800" fill="#fff">${wk}</text><text x="52" y="68" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">/ ${goal} mnt</text></svg>
+      <div><small>Minggu ini</small><b>${wk >= goal ? 'Target tercapai! 🏆' : `Sisa ${goal - wk} menit lagi`}</b><span>🔥 ${Math.round(olaKcalOn(new Date()))} kkal hari ini</span><span>⚡ ${olaStreak() ? olaStreak() + ' hari berturut-turut' : 'Mulai streak hari ini'}</span></div></div>
+    <details class="card oinfo"><summary>💡 <b>Cara benar mengecilkan perut</b></summary>
+      <p>1. Sit-up saja tidak membakar lemak perut. Lemak berkurang dari seluruh tubuh saat kalori yang keluar lebih banyak dari yang masuk.</p><p>2. Atur makan: sedikit di bawah kebutuhan (lihat target di fitur Kalori), kurangi gula & gorengan, perbanyak protein dan sayur.</p><p>3. Kardio 3–5× seminggu (jalan cepat, jogging, program "Kardio bakar lemak") untuk membakar kalori.</p><p>4. Latihan perut & kekuatan 3× seminggu supaya otot perut kencang dan postur tegak — perut tampak lebih rata.</p><p>5. Tidur 7–8 jam & kelola stres: kurang tidur membuat lemak perut lebih sulit turun.</p><p>6. Sabar & konsisten: turun 0,5 kg per minggu itu sehat. Hasil terlihat dalam 4–8 minggu.</p>
+      <button class="link" onclick="openKal()">🥗 Atur target kalori</button></details>
+    <div class="section-h"><h2>Tantangan 4 minggu perut</h2></div>
+    <div class="card och"><div class="och-h"><i>🔥</i><div><b>${!started ? '28 hari perut lebih rata' : finished ? 'Tantangan selesai! 🏆' : `Hari ke-${day || 28} dari 28`}</b><small>${!started ? 'Latihan bertahap, 6 hari seminggu + 1 hari istirahat' : `${done.size} hari selesai · minggu ${week + 1}: ${cp[1].split(' — ')[0]}`}</small></div></div>
+      <div class="odays">${Array.from({length: 28}, (_, k) => k + 1).map(d => `<span class="${done.has(d) ? 'on' : ''}${d === day ? ' now' : ''}${d % 7 === 0 ? ' rest' : ''}">${d % 7 === 0 ? '😴' : d}</span>`).join('')}</div>
+      ${!started || finished ? `<button class="btn btn-block obtn" data-oact="chstart">▶ ${finished ? 'Ulangi tantangan' : 'Mulai tantangan'}</button>`
+        : day % 7 === 0 ? '<p class="muted-c" style="text-align:left">😴 Hari ini istirahat — otot tumbuh saat beristirahat. Boleh jalan santai atau peregangan.</p>'
+        : `<button class="btn btn-block obtn" data-oact="chgo">▶ ${done.has(day) ? 'Hari ini sudah ✓ — ulangi?' : `Mulai hari ke-${day} (${Math.round(workoutSeconds(cp, cmult) / 60)} menit)`}</button>`}
+      ${started ? '<button class="link" data-oact="chstop" style="float:right;color:var(--muted)">Hentikan</button>' : ''}</div>
+    <div class="section-h"><h2>Program latihan</h2></div>
+    ${PROGRAMS.map(p => `<button class="card oprog" data-prog="${p[0]}"><i style="background:linear-gradient(135deg,${p[3]}dd,${p[3]})">${p[2]}</i><div><b>${p[1]}</b><small>${esc(p[5])}</small><div>${tag('⏱ ' + Math.round(workoutSeconds(p) / 60) + ' mnt', '#64748B')}${tag('🔥 ' + Math.round(workoutKcal(p, kg)) + ' kkal', '#64748B')}${tag(LEVEL[p[4]], LEVEL_C[p[4]])}</div></div></button>`).join('')}
+    <div class="section-h"><h2>Cara gerakan</h2></div>
+    <div class="kmchips">${Object.entries(EX_AREAS).map(([k, v]) => `<button data-oarea="${k}" class="${k === olaArea ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <div class="card" style="padding:4px 14px;margin-top:10px">${EXERCISES.filter(e => e[3] === olaArea).map(e => `<button class="oex" data-ex="${e[0]}"><i>${e[2]}</i><div><b>${e[1]}</b><small>${amountText(e, e[5])} · ${LEVEL[e[7]]}</small></div>›</button>`).join('')}</div>
+    <div class="section-h"><h2>Riwayat</h2><button class="link" data-oact="log">+ Catat aktivitas</button></div>
+    ${s.logs.length ? `<div class="card" style="padding:4px 14px">${s.logs.slice(0, 12).map(l => `<div class="olog"><i>${l.e}</i><div><b>${esc(l.n)}</b><small>${sameDay(new Date(l.at), new Date()) ? 'Hari ini' : fmtDateShort(new Date(l.at))} · ${fmtTime(new Date(l.at))} · ${Math.round(l.s / 60)} menit</small></div><em>${Math.round(l.k)} kkal</em><button class="ib" data-odel="${l.id}" aria-label="Hapus">🗑️</button></div>`).join('')}</div>`
+      : '<div class="card"><p class="muted-c" style="text-align:left;margin:0">Belum ada catatan. Mulai satu program di atas, atau catat jalan kaki, lari, renang dll. lewat "+ Catat aktivitas" — bisa juga lewat chat: "tadi jogging 30 menit".</p></div>'}
+    <div class="section-h"><h2>Pengingat</h2></div>
+    <div class="card orem"><div><b>Ingatkan olahraga tiap hari</b><small>Saat halaman ini terbuka</small></div><input type="time" id="olaRem" value="${s.rh != null ? pad(s.rh) + ':' + pad(s.rm || 0) : ''}"></div>
+    <p class="mnote">Hentikan latihan bila terasa nyeri, pusing atau sesak. Sedang hamil, punya penyakit jantung, tekanan darah tinggi atau cedera? Konsultasikan dulu dengan dokter.</p>`;
+  $('#olaRem').onchange = e => { const v = e.target.value; if(v){ const [h, m] = v.split(':').map(Number); s.rh = h; s.rm = m; toast(`Diingatkan olahraga tiap hari jam ${v.replace(':', '.')} 🏃`); } else { s.rh = null; toast('Pengingat olahraga dimatikan'); } save(); };
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('#olaBody [data-oact], #olaBody [data-prog], #olaBody [data-oarea], #olaBody [data-ex], #olaBody [data-odel]'); if(!b) return;
+  if(b.dataset.prog) return openProg(progById(b.dataset.prog));
+  if(b.dataset.oarea){ olaArea = b.dataset.oarea; renderOla(); return; }
+  if(b.dataset.ex) return exSheet(exById(b.dataset.ex));
+  if(b.dataset.odel){ olaS().logs = olaS().logs.filter(l => l.id !== b.dataset.odel); save(); renderOla(); renderFeatures(); return; }
+  const s = olaS(), day = chDay();
+  switch(b.dataset.oact){
+    case 'chstart': s.cs = Date.now(); save(); renderOla(); break;
+    case 'chgo': { const [pid, m] = BELLY_CHALLENGE[Math.min(3, Math.floor((day - 1) / 7))]; openProg(progById(pid), m, 'tantangan_' + day, `Tantangan hari ke-${day}`); break; }
+    case 'chstop': confirmDlg({title: 'Hentikan tantangan?', text: 'Progres tantangan akan diulang dari awal.', ok: 'Hentikan', danger: true}).then(ok => { if(ok){ s.cs = null; save(); renderOla(); } }); break;
+    case 'log': olaLogSheet(); break;
+  }
+});
+
+/* --- detail program --- */
+let olaCur = null;
+function openProg(p, mult = 1, logp = null, title = null){
+  olaCur = {p, mult, logp: logp || p[0], title: title || p[1]};
+  const kg = olaKg();
+  $('#olaPTitle').textContent = olaCur.title;
+  $('#olaPBody').innerHTML = `<div class="ophero" style="background:linear-gradient(135deg,${p[3]}d9,${p[3]})"><div style="font-size:38px">${p[2]}</div><p>${esc(p[5])}</p>
+      <div class="opst"><div><b>${Math.round(workoutSeconds(p, mult) / 60)}</b><small>menit</small></div><div><b>${Math.round(workoutKcal(p, kg, mult))}</b><small>kkal</small></div><div><b>${p[8].length}</b><small>gerakan</small></div><div><b>${p[7]}</b><small>ronde</small></div></div></div>
+    <p class="muted-c" style="text-align:left;font-weight:600;margin:14px 4px 8px">Ulangi ${p[7]} ronde · istirahat ${p[6]} detik antar gerakan</p>
+    <div class="card" style="padding:4px 14px">${p[8].map(([id, a], i) => { const e = exById(id); return `<button class="oex" data-pex="${id}"><i style="background:${p[3]}1f">${e[2]}</i><div><b>${i + 1}. ${e[1]}</b><small>${esc(e[8][0])}</small></div><em style="color:${p[3]}">${amountText(e, Math.round((a || e[5]) * mult))}</em></button>`; }).join('')}</div>
+    <p class="mnote">Ketuk gerakan untuk melihat cara melakukannya.</p>
+    <button class="btn btn-block obtn" id="olaStart" style="position:sticky;bottom:12px;margin-top:14px">▶ Mulai latihan</button>`;
+  $('#olaPBody').onclick = e => { const b = e.target.closest('[data-pex]'); if(b) exSheet(exById(b.dataset.pex)); };
+  $('#olaStart').onclick = () => startPlayer(olaCur);
+  openFull('#olaP');
+}
+
+/* --- cara gerakan --- */
+function exSheet(e){
+  showSheet(`<div style="text-align:center"><div class="bounce" style="font-size:64px">${e[2]}</div><h3 style="margin:6px 0 2px;font-size:21px">${e[1]}</h3><p class="muted-c" style="margin:0 0 14px">${EX_AREAS[e[3]]} · ${LEVEL[e[7]]} · ${amountText(e, e[5])}</p></div>
+    <b style="display:block;margin-bottom:8px">Cara melakukan</b>${e[8].map((t, i) => `<div class="ostep"><i>${i + 1}</i><span>${esc(t)}</span></div>`).join('')}
+    <div class="onote" style="--c:#10B981">✅ <b>Tips:</b> ${esc(e[9])}</div><div class="onote" style="--c:#F59E0B">⚠️ <b>Kesalahan umum:</b> ${esc(e[10])}</div>${e[11] ? `<div class="onote" style="--c:#E11D48">🩺 <b>Perhatian:</b> ${esc(e[11])}</div>` : ''}
+    <button class="btn btn-block obtn" id="exTry" style="margin-top:8px">▶ Latih gerakan ini</button>`);
+  $('#exTry').onclick = () => { closeSheet(); startPlayer({p: ['single_' + e[0], e[1], e[2], '#F97316', e[7], '', 20, 3, [[e[0], 0]]], mult: 1, logp: 'single', title: e[1]}); };
+}
+
+/* --- catat aktivitas --- */
+function olaLogSheet(name, minutes = 30){
+  let sel = Math.max(0, FREE_ACTIVITIES.findIndex(a => a[1] === name)), min = minutes;
+  const draw = () => {
+    const a = FREE_ACTIVITIES[sel], k = kcalBurn(a[2], olaKg(), min * 60);
+    showSheet(`<h3 style="margin:4px 0 12px">Catat aktivitas</h3><div class="kmchips" style="flex-wrap:wrap">${FREE_ACTIVITIES.map((x, i) => `<button data-act="${i}" class="${i === sel ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
+      <div class="kstep"><button id="oaM">−</button><div><b>${min} menit</b></div><button id="oaP">+</button></div>
+      <div class="kbig">🔥 ±${Math.round(k)} kkal</div><button class="btn btn-block obtn" id="oaOk">Simpan</button>`);
+    $('#sheetBody').querySelectorAll('[data-act]').forEach(b => b.onclick = () => { sel = +b.dataset.act; draw(); });
+    $('#oaM').onclick = () => { min = Math.max(5, min - 5); draw(); }; $('#oaP').onclick = () => { min = Math.min(600, min + 5); draw(); };
+    $('#oaOk').onclick = () => { olaAdd(a[1], min * 60, k, null, '🏅'); closeSheet(); toast(`${a[1]} ${min} menit dicatat · 🔥 ${Math.round(k)} kkal`); };
+  };
+  draw();
+}
+
+/* --- pemutar latihan --- */
+let pl = null, olaWake = null;
+function olaSay(t){ if(olaS().voice) speak(t, true); }
+function startPlayer(cfg){
+  const steps = workoutSteps(cfg.p, cfg.mult);
+  pl = {cfg, steps, i: 0, phase: 'ready', left: 10, rep: 0, paused: false, work: 0, kcal: 0, t0: Date.now(), saved: false};
+  try{ navigator.wakeLock && navigator.wakeLock.request('screen').then(w => olaWake = w).catch(() => {}); }catch(_){}
+  olaSay('Bersiap. Gerakan pertama: ' + steps[0].ex[1]);
+  clearInterval(pl.tm); pl.tm = setInterval(plTick, 1000);
+  $('#olaPlayTitle').textContent = cfg.title;
+  openFull('#olaPlay'); drawPlayer();
+}
+function plCur(){ return pl.steps[pl.i]; }
+function plTick(){
+  if(!pl || pl.paused || pl.phase === 'done') return;
+  const s = plCur();
+  if(pl.phase === 'work'){ pl.work++; pl.kcal += kcalBurn(s.ex[6], olaKg(), 1); if(!s.ex[4]){ pl.rep++; drawPlayer(); return; } }
+  pl.left--;
+  if(pl.left > 0 && pl.left <= 3){ try{ navigator.vibrate && navigator.vibrate(30); }catch(_){} }
+  if(pl.left === 3 && pl.phase !== 'work') olaSay('3, 2, 1');
+  if(pl.phase === 'work' && s.secs >= 30 && pl.left === Math.floor(s.secs / 2)) olaSay('Setengah jalan, terus!');
+  if(pl.left <= 0) plNext(); else drawPlayer();
+}
+function plWork(){ const s = plCur(); pl.phase = 'work'; pl.left = s.secs; pl.rep = 0; try{ navigator.vibrate && navigator.vibrate(80); }catch(_){} olaSay(s.ex[4] ? `${s.ex[1]}, ${amountText(s.ex, s.amount)}` : `${s.ex[1]}, ${s.amount} kali`); }
+function plNext(){
+  if(pl.phase === 'ready' || pl.phase === 'rest'){ plWork(); return drawPlayer(); }
+  if(pl.i >= pl.steps.length - 1) return plFinish();
+  pl.i++;
+  if(pl.cfg.p[6] > 0){ pl.phase = 'rest'; pl.left = pl.cfg.p[6]; olaSay('Istirahat. Berikutnya ' + plCur().ex[1]); } else plWork();
+  drawPlayer();
+}
+function plPrev(){ if(!((pl.phase === 'work' && pl.left < plCur().secs - 2) || pl.i === 0)) pl.i = Math.max(0, pl.i - 1); plWork(); drawPlayer(); }
+function plSave(){ if(pl.saved || pl.work < 30) return; pl.saved = true; const tot = Math.round((Date.now() - pl.t0) / 1000); olaAdd(pl.cfg.title, Math.max(pl.work, Math.min(tot, pl.work * 2)), pl.kcal, pl.cfg.logp, pl.cfg.p[2]); }
+function plFinish(){ pl.phase = 'done'; clearInterval(pl.tm); try{ navigator.vibrate && navigator.vibrate([80, 60, 160]); }catch(_){} olaSay('Latihan selesai. Kerja bagus!'); plSave(); drawPlayer(); }
+function plClose(){
+  if(!pl) return closeFull('#olaPlay');
+  if(pl.phase === 'done' || pl.work < 10){ plStop(); return; }
+  pl.paused = true; drawPlayer();
+  showSheet(`<h3 style="margin:4px 0 6px">Berhenti latihan?</h3><p class="muted-c" style="text-align:left">Sudah ${Math.round(pl.work / 60)} menit bergerak. Simpan yang sudah dikerjakan?</p>
+    <div style="display:flex;flex-direction:column;gap:8px"><button class="btn obtn" id="plSave">Simpan & keluar</button><button class="btn btn-soft" id="plGo">Lanjut latihan</button><button class="btn btn-soft" id="plOut" style="color:#E11D48">Keluar tanpa menyimpan</button></div>`);
+  $('#plSave').onclick = () => { closeSheet(); plSave(); plStop(); };
+  $('#plGo').onclick = () => { closeSheet(); pl.paused = false; drawPlayer(); };
+  $('#plOut').onclick = () => { closeSheet(); plStop(); };
+}
+function plStop(){ clearInterval(pl && pl.tm); pl = null; try{ olaWake && olaWake.release(); }catch(_){} olaWake = null; try{ speechSynthesis.cancel(); }catch(_){} closeFull('#olaPlay'); }
+function drawPlayer(){
+  const box = $('#olaPlayBody'); if(!box || !pl) return;
+  const c = pl.cfg.p[3];
+  $('#olaPlay').classList.toggle('rest', pl.phase === 'rest');
+  $('#olaVoice').textContent = olaS().voice ? '🔊' : '🔇';
+  if(pl.phase === 'done'){
+    box.innerHTML = `<div style="text-align:center;padding-top:20px"><div class="bounce" style="font-size:84px">🏆</div><h2 style="margin:8px 0 4px">Latihan selesai!</h2><p class="muted-c">${['Kerja bagus! Satu langkah lebih dekat ke perut rata 💪', 'Konsisten itu kuncinya. Sampai besok! 🔥', 'Badan berterima kasih padamu hari ini 🙌'][pl.work % 3]}</p></div>
+      <div class="opsum">${[['⏱', (pl.work / 60).toFixed(1).replace('.', ','), 'menit bergerak'], ['🔥', Math.round(pl.kcal), 'kkal terbakar'], ['⚡', olaStreak(), 'hari streak']].map(([e, v, l]) => `<div style="background:${c}1a"><i>${e}</i><b>${v}</b><small>${l}</small></div>`).join('')}</div>
+      <div class="card"><p class="muted-c" style="text-align:left;margin:0">Kalori yang terbakar otomatis menambah sisa kalori makan hari ini di fitur Kalori. Minum air putih yang cukup ya 💧</p></div>
+      <button class="btn btn-block obtn" style="margin-top:16px" onclick="plStop()">Selesai</button>`;
+    return;
+  }
+  const s = plCur(), rest = pl.phase === 'rest', ready = pl.phase === 'ready', reps = pl.phase === 'work' && !s.ex[4];
+  const total = ready ? 10 : rest ? pl.cfg.p[6] : s.secs, frac = reps ? 1 : Math.max(0, Math.min(1, pl.left / Math.max(1, total)));
+  const prog = (pl.i + (pl.phase === 'work' ? 1 - pl.left / Math.max(1, s.secs) : 0)) / pl.steps.length, R = 100, C = 2 * Math.PI * R;
+  const col = rest ? '#fff' : c;
+  box.innerHTML = `<div class="opbar"><p><b style="width:${Math.min(100, prog * 100)}%;background:${col}"></b></p><span>${pl.i + 1}/${pl.steps.length}</span></div>
+    ${pl.cfg.p[7] > 1 ? `<p class="opround">Ronde ${s.round} dari ${pl.cfg.p[7]}</p>` : ''}
+    <p class="opph" style="color:${rest ? 'rgba(255,255,255,.75)' : c}">${ready ? 'BERSIAP' : rest ? 'ISTIRAHAT' : 'GERAKAN'}</p>
+    <h2 class="opname">${rest || ready ? 'Berikutnya: ' + s.ex[1] : s.ex[1]}</h2>
+    <div class="opring"><svg viewBox="0 0 230 230"><circle cx="115" cy="115" r="${R}" fill="none" stroke="${col}" stroke-opacity=".15" stroke-width="12"/><circle cx="115" cy="115" r="${R}" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}" transform="rotate(-90 115 115)" style="transition:stroke-dashoffset 1s linear"/></svg>
+      <div><span class="bounce${rest ? ' slow' : ''}" style="font-size:58px">${s.ex[2]}</span><b>${reps ? s.amount + '×' : pl.left}</b>${reps ? `<small>${pl.rep}s · ketuk Selesai</small>` : ''}</div></div>
+    <div class="ophow">${s.ex[8].map((t, k) => `<p>${k + 1}. ${esc(t)}</p>`).join('')}<p class="tip">💡 ${esc(s.ex[9])}</p></div>
+    <div class="opctl"><button id="plPrev">⏮</button><button class="main" id="plMain" style="background:${rest ? '#fff' : c};color:${rest ? '#0F766E' : '#fff'}">${reps ? '✓ Selesai' : rest || ready ? '▶ Mulai sekarang' : pl.paused ? '▶ Lanjut' : '⏸ Jeda'}</button><button id="plNext">⏭</button></div>`;
+  $('#plPrev').onclick = plPrev; $('#plNext').onclick = plNext;
+  $('#plMain').onclick = () => { if(reps || rest || ready) plNext(); else { pl.paused = !pl.paused; drawPlayer(); } };
+}
+
+/* --- chat --- */
+function answerWorkout(text){
+  const a = parseActivity(text), kg = olaKg();
+  if(a){
+    const k = kcalBurn(a.met, kg, a.minutes * 60);
+    olaAdd(a.name, a.minutes * 60, k, null, '🏅');
+    botTools(`🏅 **${a.name} ${a.minutes} menit** dicatat — sekitar **${Math.round(k)} kkal** terbakar 🔥\nMinggu ini ${olaWeekMin()}/${olaS().goal} menit olahraga.${kg ? '' : '\n\n*Isi berat badan di menu Kalori supaya hitungan kalori lebih pas.*'}`, ['olahraga'], `${a.name} ${a.minutes} menit dicatat. Sekitar ${Math.round(k)} kilo kalori terbakar.`);
+    return true;
+  }
+  const id = askWorkout(text); if(!id) return false;
+  const belly = /perut|buncit|sixpack|six pack|pinggang/i.test(text);
+  if(id === 'hub'){ botTools('🏃 Ayo gerak! Di menu **Olahraga** ada program perut (pemula–lanjut), kardio bakar lemak, full body, kaki, lengan, dan peregangan — lengkap dengan cara tiap gerakan, timer & suara pemandu.', ['olahraga', 'olahraga:perut_pemula']); return true; }
+  const p = progById(id), list = [...new Set(p[8].map(([e]) => { const x = exById(e); return `• ${x[2]} ${x[1]}`; }))].join('\n');
+  const tip = belly ? '\n\n💡 Penting: lemak perut turun lewat **defisit kalori + kardio**, bukan sit-up saja. Latihan perut mengencangkan ototnya. Kombinasikan dengan program **Kardio bakar lemak** 3× seminggu dan target kalori di menu Kalori.' : '';
+  botTools(`${p[2]} **${p[1]}** (±${Math.round(workoutSeconds(p) / 60)} menit, ${p[7]} ronde):\n${list}${tip}`, ['olahraga:' + p[0], 'olahraga'], `Coba program ${p[1]}, sekitar ${Math.round(workoutSeconds(p) / 60)} menit.`);
+  return true;
+}
+function checkWorkoutReminder(){
+  const s = olaS(); if(s.rh == null) return;
+  const now = new Date(), key = dayKey(now);
+  if(now.getHours() === s.rh && now.getMinutes() >= (s.rm || 0) && now.getMinutes() < (s.rm || 0) + 30 && s.rn !== key){
+    s.rn = key; save(); notify('🏃 Waktunya olahraga!', 'Cukup 10–15 menit. Badan sehat, perut makin rata 💪'); chime(); toast('🏃 Waktunya olahraga!');
+  }
+}
+
 /* ---------------- storage ---------------- */
 let state = {
   reminders: [],
@@ -2477,6 +2769,7 @@ let state = {
   cycle: {enabled:false, periods:[], cycleLen:28, periodLen:5, remind:true, notified:{}},
   notes: [],
   moods: [], habits: [], journal: [], psytests: [],
+  ola: {logs:[], goal:150, rh:null, rm:0, cs:null, voice:true},
   kal: {profile:null, days:{}, weights:[], barcodes:{}, recent:[]},
   muslim: {city:'Jakarta', lat:-6.2088, lng:106.8456, tz:7, auto:false, adzan:true, muted:[], done:{}, tasbih:0, ls:null, la:null, notified:{}},
   calm: {checkin:true, checkinH:8, journal:true, journalH:21, notified:{}},
@@ -2496,6 +2789,7 @@ function load(){
       if(d.calm) state.calm = Object.assign(state.calm, d.calm);
       if(d.muslim) state.muslim = Object.assign(state.muslim, d.muslim);
       if(d.kal) state.kal = Object.assign(state.kal, d.kal);
+      if(d.ola) state.ola = Object.assign(state.ola, d.ola);
       state.settings = Object.assign(state.settings, d.settings || {});
     }
   }catch(e){ console.warn('load', e); }
@@ -2991,7 +3285,7 @@ const MENU = [
   ['notes', 'i-note', 'Catatan', '#8B5CF6'],
   ['muslim', 'i-mosque', 'Muslim', '#059669'],
   ['kal', 'i-bowl', 'Kalori', '#F97316'],
-  ['calm', 'i-leaf', 'Ruang Tenang', '#14B8A6'],
+  ['ola', 'i-run', 'Olahraga', '#E11D48'],
   ['more', 'i-grid', 'Lainnya', '#64748B'],
 ];
 function renderFeatures(){
@@ -3003,11 +3297,12 @@ function renderFeatures(){
 }
 function renderSummary(){
   const row = $('#sumRow'); if(!row) return;
-  const now = new Date(), nx = nextPrayer(now), t = kalTarget(), eat = kalSum(kalOn(now)).k, md = todayMood();
+  const now = new Date(), nx = nextPrayer(now), t = kalTarget(), eat = kalSum(kalOn(now)).k - olaKcalOn(now), wkm = olaWeekMin(), md = todayMood();
   const card = (id, ic, c, head, big, sub, bar, txt) => `<button class="scard" data-feat="${id}"><div class="sh"><i style="background:${c}1a;color:${c}">${icon(ic)}</i>${head}</div><b class="${txt ? 't' : ''}">${big}</b><small>${sub}</small>${bar != null ? `<div class="sbar"><em style="width:${Math.min(100, bar * 100)}%;background:${c}"></em></div>` : ''}</button>`;
   const cards = [
     card('muslim', 'i-mosque', '#059669', 'Sholat', `${PRAYER_NAMES[nx.key]} <small>${fmtTime(nx.at)}</small>`, cdText(nx.at - now)),
-    card('kal', 'i-bowl', '#F97316', 'Kalori', `${fmtK(eat)} <small>kkal</small>`, t ? (t.target - eat >= 0 ? `sisa ${fmtK(t.target - eat)} dari ${fmtK(t.target)}` : `lebih ${fmtK(eat - t.target)} kkal`) : 'Atur target diet', t ? eat / t.target : null),
+    card('kal', 'i-bowl', '#F97316', 'Kalori', `${fmtK(kalSum(kalOn(now)).k)} <small>kkal</small>`, t ? (t.target - eat >= 0 ? `sisa ${fmtK(t.target - eat)} dari ${fmtK(t.target)}` : `lebih ${fmtK(eat - t.target)} kkal`) : 'Atur target diet', t ? eat / t.target : null),
+    card('ola', 'i-run', '#E11D48', 'Olahraga', `${wkm} <small>/ ${olaS().goal} mnt</small>`, olaMinOn(now) ? `Hari ini ${olaMinOn(now)} menit 🔥` : 'Minggu ini · ayo gerak!', wkm / olaS().goal),
     card('mood', 'i-leaf', '#14B8A6', 'Mood', md ? `${MOOD_EMOJI[md.m - 1]} <small>${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')}</small>` : 'Belum dicek', md ? 'Tercatat hari ini ✓' : 'Ketuk untuk cek mood', null, !md),
   ];
   if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); cards.push(card('cycle', 'i-drop', '#EC4899', 'Siklus haid', esc(st.title), esc(st.sub || ''), null, true)); } }
@@ -3016,10 +3311,10 @@ function renderSummary(){
   row.innerHTML = cards.join('');
 }
 function openMoreMenu(){
-  const extra = [['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu', '#EC4899'], ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid', '#F43F5E'], ['calendar', 'i-calendar', 'Kalender', 'Semua jadwal per tanggal', '#6366F1'], ['stats', 'i-chart', 'Statistik', 'Progres & kebiasaanmu', '#0EA5E9'], ['ai', 'i-spark', 'Asisten AI', 'Tanya atau suruh apa saja', '#8B5CF6'], ['profile', 'i-user', 'Profil & pengaturan', 'Tema, suara, cadangan data', '#64748B']];
+  const extra = [['calm', 'i-leaf', 'Ruang Tenang', 'Mood, kebiasaan, fokus, jurnal', '#14B8A6'], ['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu', '#EC4899'], ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid', '#F43F5E'], ['calendar', 'i-calendar', 'Kalender', 'Semua jadwal per tanggal', '#6366F1'], ['stats', 'i-chart', 'Statistik', 'Progres & kebiasaanmu', '#0EA5E9'], ['ai', 'i-spark', 'Asisten AI', 'Tanya atau suruh apa saja', '#8B5CF6'], ['profile', 'i-user', 'Profil & pengaturan', 'Tema, suara, cadangan data', '#64748B']];
   showSheet(`<h3 class="sht" style="margin-bottom:12px">Semua fitur</h3><div class="group moregrid">${extra.map(([id, ic, t, sub, c]) => `<button class="mtile" data-more="${id}"><i style="background:${c}24;color:${c}">${icon(ic)}</i><b>${t}</b><small>${sub}</small></button>`).join('')}</div>`);
   $('#sheetBody').querySelector('.group').onclick = e => { const b = e.target.closest('[data-more]'); if(!b) return; closeSheet(); const id = b.dataset.more;
-    setTimeout(() => id === 'tests' ? openTests(null) : id === 'cycle' ? openCycle() : id === 'ai' ? openAI(false) : go(id), 260); };
+    setTimeout(() => id === 'calm' ? openCalm() : id === 'tests' ? openTests(null) : id === 'cycle' ? openCycle() : id === 'ai' ? openAI(false) : go(id), 260); };
 }
 function onFeat(e){
   const b = e.target.closest('[data-feat]'); if(!b) return;
@@ -3030,6 +3325,7 @@ function onFeat(e){
     case 'calm': openCalm(); break;
     case 'mood': moodCheckin(); break;
     case 'kal': openKal(); break;
+    case 'ola': openOla(); break;
     case 'notes': openNotes(); break;
     case 'items': showItemsSheet(); break;
     case 'cycle': openCycle(); break;
@@ -3210,6 +3506,7 @@ function renderProfile(){
   { const ci = state.cycle.enabled ? cycleInfo() : null; $('#cycState').textContent = ci ? cycleStatus(ci).title + ' · ' + cycleStatus(ci).sub : 'Atur pengingat & perkiraan haid'; }
   const s = state.settings;
   const name = s.name.trim();
+  if($('#olaState')) $('#olaState').textContent = `Program perut, kardio, full body · ${olaWeekMin()} menit minggu ini`;
   if($('#kalState')){ const kp = state.kal.profile; $('#kalState').textContent = kp ? `${fmtQ(kp.kg)} kg · ${fmtQ(kp.cm)} cm · target ${fmtK(calorieTarget(kp).target)} kkal` : 'Penghitung kalori, berat & tinggi badan'; }
   if($('#muslimState')) $('#muslimState').textContent = `${state.muslim.city} · jadwal sholat, kiblat, Al-Qur'an, doa`;
   $('#notesState').textContent = state.notes.length ? `${state.notes.length} catatan · ${state.notes.filter(n=>n.secret).length} rahasia` : 'Catat apa saja lewat asisten';
@@ -3696,6 +3993,7 @@ $('#cycClose').onclick = () => $('#cycle').classList.remove('show');
 $('#rowCycle').onclick = openCycle;
 $('#rowMuslim').onclick = openMuslim;
 $('#rowKal').onclick = openKal;
+$('#rowOla').onclick = () => openOla();
 $('#bsGo').onclick = () => { const c = $('#bsCode').value.replace(/\D/g, ''); if(c.length < 8) return toast('Nomor barcode minimal 8 angka'); bsStop(); closeFull('#bscan'); $('#bsCode').value = ''; kalLookup(c, $('#bsMeal').value || 'siang'); };
 $('#rowNotes').onclick = openNotes;
 $('#rowCalm').onclick = openCalm;
@@ -4469,6 +4767,8 @@ function toolLabel(t){
   if(t.startsWith('muslim:doa:')) return '🤲 Buka doa harian';
   if(t === 'muslim') return '🕌 Buka Muslim Harian';
   if(t === 'kalori') return '🥗 Buka Kalori';
+  if(t === 'olahraga') return '🏃 Buka Olahraga';
+  if(t.startsWith('olahraga:')) return '▶️ Mulai latihan';
   if(t === 'muslim:kiblat') return '🧭 Kompas kiblat';
   if(t === 'muslim:quran') return "📖 Al-Qur'an";
   if(t.startsWith('tes:')){ const x = PSY[t.slice(4)]; return x ? `${x.emoji} Tes ${x.title}` : '🌈 Semua tes psikologi'; }
@@ -4489,6 +4789,8 @@ function openTool(t){
   if(t.startsWith('muslim:doa:')){ openDoa(t.slice(11)); return; }
   if(t === 'muslim'){ openMuslim(); return; }
   if(t === 'kalori'){ openKal(); return; }
+  if(t === 'olahraga'){ openOla(); return; }
+  if(t.startsWith('olahraga:')){ openOla(t.slice(9)); return; }
   if(t === 'muslim:kiblat'){ openQibla(); return; }
   if(t === 'muslim:quran'){ openQuran(); return; }
   if(t.startsWith('tes:')){ const id = t.slice(4); openTests(PSY[id] ? id : null); return; }
@@ -5107,6 +5409,7 @@ function checkParkingHourly(){
   }
 }
 function checkDue(){
+  try{ checkWorkoutReminder(); }catch(e){ console.warn(e); }
   checkParkingHourly();
   checkCycle();
   checkCalm();
@@ -5807,6 +6110,7 @@ async function send(){
         tools: t ? ['tes:' + t.id] : ['tes:dass21','tes:phq9','tes:gad7','tes:burnout','tes:menu'], ts:Date.now()}); save(); renderChat();
     }
     else if(!photo && answerIslam(text)) { /* sholat, kiblat, doa */ }
+    else if(!photo && answerWorkout(text)) { /* catat olahraga & ajakan latihan */ }
     else if(!photo && answerCalorie(text)) { /* catat makan, kalori, berat badan */ }
     else if(photo && /kalori|kkal|makan|makanan|gizi|diet/.test(lower)) await scanFoodChat(photo);
     else if(!photo && answerCycle(text)) { /* siklus haid */ }
@@ -5969,7 +6273,7 @@ addEventListener('popstate', () => {
   if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
   if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
-  const open = ['#alarm','#dialog','#sheet','#bscan','#kal','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
+  const open = ['#alarm','#dialog','#sheet','#olaPlay','#olaP','#ola','#bscan','#kal','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
   if(open){
     if(open==='#sheet') closeSheet(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
     history.pushState({app:1}, '');
