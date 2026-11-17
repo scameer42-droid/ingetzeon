@@ -582,7 +582,7 @@ class ProgramScreen extends ConsumerWidget {
           expandedHeight: 300,
           backgroundColor: kNavy,
           foregroundColor: Colors.white,
-          title: Text(title ?? p.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          title: Text(title ?? p.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
             background: Container(

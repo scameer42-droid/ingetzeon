@@ -31,9 +31,11 @@ tap "Perut rata" perut; sleep 6; snap 04_program; anr
 tap "Crunch" crunch; sleep 5; snap 05_detail; anr
 adb shell input swipe 900 1200 150 1200 300; sleep 3; snap 06_detail2
 adb shell input keyevent KEYCODE_BACK; sleep 3
-tap "Mulai" mulai; sleep 6; snap 07_ready; anr
-sleep 8; snap 08_work; anr
+echo "TAP MULAI 540 2224" >> $D/steps.txt; adb shell input tap 540 2224; sleep 4; snap 07_ready; anr
+sleep 9; snap 08_work; anr
 tap "Lewati" lewati; sleep 3; snap 09_rest; anr
+tap "Lewati" lewati2; sleep 2; snap 10_work2; anr
+tap "Cara" cara; sleep 4; snap 11_cara; anr
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
