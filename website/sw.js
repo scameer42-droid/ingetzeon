@@ -1,5 +1,5 @@
 // Service worker IngetZeon: offline + notifikasi
-const CACHE = 'ingetzeon-v27';
+const CACHE = 'ingetzeon-v28';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './alarm.mp3', './adzan.mp3', './adzan_subuh.mp3', './lib/qrcode.js', './lib/JsBarcode.all.min.js', './lib/jsQR.js'];
 
 self.addEventListener('install', e => {
@@ -12,7 +12,7 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.hostname.includes('generativelanguage.googleapis.com')) return; // AI selalu lewat internet
+  if (/generativelanguage\.googleapis|api\.groq\.com|openrouter\.ai/.test(url.hostname)) return; // AI selalu lewat internet
   e.respondWith(
     caches.match(req).then(hit => {
       const net = fetch(req).then(res => {
