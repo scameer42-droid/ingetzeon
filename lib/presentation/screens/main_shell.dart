@@ -25,8 +25,7 @@ import 'workout/workout_screen.dart';
 import '../../providers/workout_provider.dart';
 import '../../providers/settings_provider.dart';
 import 'profile_screen.dart';
-import 'stats_screen.dart';
-import '../widgets/common.dart';
+import 'features_screen.dart';
 
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
@@ -158,37 +157,30 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
   @override
   Widget build(BuildContext context) {
     ref.listen<int>(openChatRequestProvider, (_, __) => _openAi());
+    void goTo(int i) => setState(() => _index = i);
     final screens = [
-      HomeScreen(onOpenAi: _openAi, onGoTo: (i) => setState(() => _index = i)),
+      HomeScreen(onOpenAi: _openAi, onGoTo: goTo),
       const CalendarScreen(),
-      const StatsScreen(),
+      FeaturesScreen(onGoTo: goTo),
       const ProfileScreen(),
     ];
 
     return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.transparent,
-      body: AestheticBackground(child: IndexedStack(index: _index, children: screens)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(padding: const EdgeInsets.only(top: 24), child: _GradientFab(onTap: _openAi)),
+      backgroundColor: context.bg,
+      body: IndexedStack(index: _index, children: screens),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: context.card,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          border: context.isDark ? Border(top: BorderSide(color: context.line)) : null,
-          boxShadow: [BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: context.isDark ? .4 : .14), blurRadius: 28, offset: const Offset(0, -6), spreadRadius: -8)],
-        ),
+        decoration: BoxDecoration(color: context.card, border: Border(top: BorderSide(color: context.line))),
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 66,
+            height: 72,
             child: Row(
               children: [
-                _NavItem(icon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => setState(() => _index = 0)),
-                _NavItem(icon: Icons.calendar_month_rounded, label: 'Kalender', active: _index == 1, onTap: () => setState(() => _index = 1)),
-                const SizedBox(width: 72),
-                _NavItem(icon: Icons.insert_chart_rounded, label: 'Statistik', active: _index == 2, onTap: () => setState(() => _index = 2)),
-                _NavItem(icon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => setState(() => _index = 3)),
+                _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => goTo(0)),
+                _NavItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month_rounded, label: 'Agenda', active: _index == 1, onTap: () => goTo(1)),
+                _NavItem(icon: Icons.auto_awesome_outlined, activeIcon: Icons.auto_awesome_rounded, label: 'Asisten', active: false, onTap: _openAi),
+                _NavItem(icon: Icons.grid_view_outlined, activeIcon: Icons.grid_view_rounded, label: 'Fitur', active: _index == 2, onTap: () => goTo(2)),
+                _NavItem(icon: Icons.person_outline_rounded, activeIcon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => goTo(3)),
               ],
             ),
           ),
@@ -199,68 +191,51 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
 }
 
 Route _slideUp(Widget page) => PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 380),
-      reverseTransitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 240),
+      reverseTransitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (_, __, ___) => page,
-      transitionsBuilder: (_, anim, __, child) => SlideTransition(
-        position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
+      transitionsBuilder: (context, anim, __, child) {
+        if (MediaQuery.of(context).disableAnimations) return child;
+        return SlideTransition(
+          position: Tween(begin: const Offset(0, .08), end: Offset.zero).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+          child: FadeTransition(opacity: anim, child: child),
+        );
+      },
     );
 
 class _NavItem extends StatelessWidget {
-  const _NavItem({required this.icon, required this.label, required this.active, required this.onTap});
-  final IconData icon;
+  const _NavItem({required this.icon, required this.activeIcon, required this.label, required this.active, required this.onTap});
+  final IconData icon, activeIcon;
   final String label;
   final bool active;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? AppColors.primary : context.faint;
+    final color = active ? context.accent : context.muted;
     return Expanded(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-              decoration: BoxDecoration(gradient: active ? AppColors.gradient : null, borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: active ? Colors.white : color, size: 22),
-            ),
-            const SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: active ? FontWeight.w600 : FontWeight.w500)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _GradientFab extends StatelessWidget {
-  const _GradientFab({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: AppColors.aurora,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withValues(alpha: .9), width: 3),
-        boxShadow: [BoxShadow(color: AppColors.violetMid.withValues(alpha: .5), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: -6)],
-      ),
-      child: Material(
-        type: MaterialType.transparency,
+      child: Semantics(
+        button: true,
+        selected: active,
+        label: tr(label),
+        excludeSemantics: true,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
           onTap: onTap,
-          child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                width: 56,
+                height: 32,
+                decoration: BoxDecoration(color: active ? context.accentSoft : Colors.transparent, borderRadius: BorderRadius.circular(99)),
+                child: Icon(active ? activeIcon : icon, color: color, size: 22),
+              ),
+              const SizedBox(height: 4),
+              Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11.5, color: color, fontWeight: active ? FontWeight.w700 : FontWeight.w500)),
+            ],
+          ),
         ),
       ),
     );

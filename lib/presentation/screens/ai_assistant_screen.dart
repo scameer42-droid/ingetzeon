@@ -13,6 +13,7 @@ import '../../services/ai_service.dart';
 import '../../services/photo_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
+import 'parking_sheet.dart';
 import '../widgets/photo_view.dart';
 import 'calm/calm_tools.dart';
 import 'notes_screen.dart';
@@ -231,21 +232,56 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
             ),
           ),
           if (!userSent)
-            SizedBox(
-              height: 46,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                itemCount: _suggestions.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (c, i) => ActionChip(
-                  label: Text(_suggestions[i], style: const TextStyle(fontSize: 12.5, color: AppColors.primary, fontWeight: FontWeight.w500)),
-                  backgroundColor: context.card,
-                  side: BorderSide.none,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  onPressed: () => _send(_suggestions[i]),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+                  child: Text('Coba minta', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.muted)),
                 ),
-              ),
+                for (final sg in <({IconData icon, String text, VoidCallback onTap})>[
+                  (icon: Icons.add_alarm_rounded, text: 'Ingatkan rapat besok jam 9', onTap: () => _send('Ingatkan rapat besok jam 9')),
+                  (icon: Icons.local_parking_rounded, text: 'Simpan lokasi parkir', onTap: () => startParkingFlow(context, ref)),
+                  (icon: Icons.today_rounded, text: 'Tampilkan jadwal hari ini', onTap: () => _send('Jadwal hari ini apa?')),
+                ])
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Material(
+                      color: context.card,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: context.line)),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
+                        onTap: sg.onTap,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 52),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            child: Row(children: [
+                              Icon(sg.icon, size: 20, color: context.accent),
+                              const SizedBox(width: 12),
+                              Expanded(child: Text(sg.text, style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w500, color: context.ink))),
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                SizedBox(
+                  height: 40,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _suggestions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (c, i) => ActionChip(
+                      label: Text(_suggestions[i], style: TextStyle(fontSize: 12.5, color: context.accent, fontWeight: FontWeight.w500)),
+                      backgroundColor: context.card,
+                      side: BorderSide(color: context.line),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      onPressed: () => _send(_suggestions[i]),
+                    ),
+                  ),
+                ),
+              ]),
             ),
           Container(
             decoration: BoxDecoration(

@@ -69,10 +69,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
           Text('Pengaturan', style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
-          const Text('Profil', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+          const Text('Profil', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -.4)),
           const SizedBox(height: 18),
           MeshCard(
             child: Row(children: [
@@ -95,7 +95,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name, style: accentFont(size: 19, color: Colors.white)),
+                  Text(s.name.isEmpty ? 'Pengguna IngetZeon' : s.name, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white)),
                   Text('$count pengingat tersimpan', style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 13)),
                 ]),
               ),

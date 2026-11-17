@@ -12,8 +12,6 @@ import '../../providers/settings_provider.dart';
 import '../widgets/common.dart';
 import '../widgets/photo_view.dart';
 import '../widgets/reminder_tile.dart';
-import 'calm/calm_screen.dart';
-import 'calm/tests_screen.dart';
 import '../../providers/cycle_provider.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
@@ -21,6 +19,7 @@ import 'calorie/calorie_screen.dart';
 import 'workout/workout_screen.dart';
 import '../../providers/workout_provider.dart';
 import '../../providers/calorie_provider.dart';
+import 'calm/calm_screen.dart';
 import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
 import 'item_sheet.dart';
@@ -28,11 +27,10 @@ import 'notes_screen.dart';
 import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
-import 'stats_screen.dart';
-import 'translate_screen.dart';
 import '../../services/islam_logic.dart';
 import '../../services/calorie_logic.dart';
 
+/// Beranda: agenda terdekat → akses cepat → jadwal hari ini → ringkasan harian.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key, required this.onOpenAi, required this.onGoTo});
   final VoidCallback onOpenAi;
@@ -44,10 +42,8 @@ class HomeScreen extends ConsumerWidget {
     final list = ref.watch(remindersProvider);
     final name = ref.watch(settingsProvider.select((s) => s.name));
 
-    // catatan parkir tanpa alarm sudah tampil di kartu parkir
     // catatan (parkir/barang) tampil di bagiannya sendiri
     final all = occurrencesOn(list, now).where((x) => x.reminder.alarm).toList();
-    final items = activeItems(list);
     final today = all.where((x) => !x.done).toList(); // yang selesai otomatis disembunyikan
     final logToday = ref.read(remindersProvider.notifier).doneLogOn(now);
     final totalCount = all.length + logToday;
@@ -63,67 +59,48 @@ class HomeScreen extends ConsumerWidget {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
+          // A. header
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: context.card.withValues(alpha: context.isDark ? .6 : .85),
-                      borderRadius: BorderRadius.circular(99),
-                      border: Border.all(color: context.line),
-                    ),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.primary),
-                      const SizedBox(width: 6),
-                      Flexible(child: Text(fmtDateLong(now), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.muted, fontWeight: FontWeight.w600))),
-                    ]),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('${greeting(now)},', style: accentFont(size: 26, color: context.ink)),
-                  ShaderMask(
-                    shaderCallback: (r) => AppColors.aurora.createShader(r),
-                    child: Text('${name.isEmpty ? tr('Kamu') : name} 👋', translate: false, style: accentFont(size: 26, color: Colors.white)),
-                  ),
+                  Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 2),
+                  Text('${tr(greeting(now))}, ${name.isEmpty ? tr('Kamu') : name}',
+                      translate: false, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -.3, height: 1.3, color: context.ink)),
                 ]),
               ),
-              Column(children: [
-                GestureDetector(
+              const SizedBox(width: 12),
+              const _LangChip(),
+              const SizedBox(width: 8),
+              Semantics(
+                button: true,
+                label: tr('Profil'),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
                   onTap: () => onGoTo(3),
-                  child: Container(
-                    padding: const EdgeInsets.all(2.5),
-                    decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.aurora),
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: context.bg),
-                      child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46, radius: 23),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 44, radius: 22),
                   ),
                 ),
-                const SizedBox(height: 8),
-                const _LangChip(),
-              ]),
+              ),
             ],
           ),
-          const SizedBox(height: 20),
-          _HeroCard(next: next, now: now, onOpen: next == null ? null : () => showReminderDetail(context, ref, next.reminder, next.at)),
-          const SizedBox(height: 16),
-          _AskBar(onTap: onOpenAi),
-          const SizedBox(height: 14),
-          _MenuCard(onOpenAi: onOpenAi, onGoTo: onGoTo, onItems: () => _showItems(context, items), onNew: () => _openForm(context)),
-          const SizedBox(height: 12),
-          const _TranslateBanner(),
+          const SizedBox(height: 24),
+          // B. agenda terdekat
+          _NextCard(next: next, now: now, onNew: () => _openForm(context), onOpenAi: onOpenAi),
           if (parking != null) ...[
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
           ],
-          const SectionHeader('Ringkasan hari ini'),
-          _SummaryRow(onItems: () => _showItems(context, items)),
-          SectionHeader('Jadwal hari ini', action: '+ Tambah', onAction: () => _openForm(context)),
+          // C. akses cepat
+          SectionHeader('Akses cepat', action: 'Semua fitur', onAction: () => onGoTo(2)),
+          _QuickAccess(onNew: () => _openForm(context)),
+          // D. jadwal hari ini
+          SectionHeader('Jadwal hari ini', action: 'Tambah', onAction: () => _openForm(context)),
           _TodaySection(
             today: today,
             upcoming: upcoming,
@@ -132,16 +109,25 @@ class HomeScreen extends ConsumerWidget {
             onAdd: () => _openForm(context),
             onCalendar: () => onGoTo(1),
           ),
+          // E. ringkasan harian
+          const SectionHeader('Ringkasan harian'),
+          const _DailySummary(),
         ],
       ),
     );
   }
 
-  void _showItems(BuildContext context, List<Reminder> items) {
-    if (items.isEmpty) {
-      startItemFlow(context);
-      return;
-    }
+  void _openForm(BuildContext context) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReminderFormScreen()));
+}
+
+/// Daftar barang yang disimpan (atau langsung tambah bila belum ada).
+void showItemsSheet(BuildContext context) {
+  final items = activeItems(ProviderScope.containerOf(context, listen: false).read(remindersProvider));
+  if (items.isEmpty) {
+    startItemFlow(context);
+    return;
+  }
     showAppSheet(
       context: context,
       scroll: false,
@@ -179,269 +165,6 @@ class HomeScreen extends ConsumerWidget {
         );
       }),
     );
-  }
-
-  void _openForm(BuildContext context) =>
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReminderFormScreen()));
-}
-
-class _HeroCard extends StatelessWidget {
-  const _HeroCard({required this.next, required this.now, this.onOpen});
-  final Occurrence? next;
-  final DateTime now;
-  final VoidCallback? onOpen;
-
-  @override
-  Widget build(BuildContext context) {
-    final n = next;
-    return MeshCard(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 110, minWidth: double.infinity),
-        child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(99)),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(n == null ? Icons.check_circle_outline_rounded : Icons.notifications_none_rounded, size: 14, color: Colors.white),
-                    const SizedBox(width: 6),
-                    Text(n == null ? 'Semua beres' : 'Jadwal terdekat',
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
-                  ]),
-                ),
-                const SizedBox(height: 12),
-                Text(n == null ? 'Belum ada jadwal berikutnya' : n.reminder.title,
-                    maxLines: 2, overflow: TextOverflow.ellipsis, style: accentFont(size: 22, color: Colors.white)),
-                const SizedBox(height: 4),
-                Text(
-                  n == null
-                      ? 'Tekan tombol ✦ di bawah lalu bilang "ingatkan…" untuk mulai.'
-                      : '${dayLabel(n.at, now)} · ${fmtTime(n.at)}${n.reminder.repeat != RepeatType.once ? ' · ${n.reminder.repeatLabel}' : ''}',
-                  style: TextStyle(color: Colors.white.withValues(alpha: .85), fontSize: 14),
-                ),
-                if (n != null) ...[
-                  const SizedBox(height: 14),
-                  Row(children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                      child: Text(countdown(n.at, now),
-                          style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w700)),
-                    ),
-                    const Spacer(),
-                    OutlinedButton(
-                      onPressed: onOpen,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.white.withValues(alpha: .14),
-                        side: BorderSide(color: Colors.white.withValues(alpha: .35)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      child: const Text('Lihat', style: TextStyle(fontWeight: FontWeight.w600)),
-                    ),
-                  ]),
-                ],
-              ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AskBar extends StatelessWidget {
-  const _AskBar({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(1.6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(colors: [
-          AppColors.primary.withValues(alpha: .55),
-          AppColors.magenta.withValues(alpha: .45),
-          AppColors.sky.withValues(alpha: .45),
-        ]),
-        boxShadow: context.softShadow,
-      ),
-      child: Material(
-        color: context.card,
-        borderRadius: BorderRadius.circular(18.5),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(18.5),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
-            child: Row(children: [
-              ShaderMask(
-                shaderCallback: (r) => AppColors.aurora.createShader(r),
-                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
-              ),
-              const SizedBox(width: 12),
-              Expanded(child: Text('Ketik atau ucapkan pengingat…', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 14))),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(gradient: AppColors.aurora, borderRadius: BorderRadius.circular(13), boxShadow: context.colorShadow(AppColors.violetMid)),
-                child: const Icon(Icons.mic_rounded, color: Colors.white, size: 21),
-              ),
-            ]),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Tombol cepat ganti bahasa ID ⇄ EN.
-class _LangChip extends ConsumerWidget {
-  const _LangChip();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final lang = ref.watch(settingsProvider.select((s) => s.lang));
-    return Material(
-      color: context.card,
-      borderRadius: BorderRadius.circular(99),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(99),
-        onTap: () => ref.read(settingsProvider.notifier).setLang(lang == 'en' ? 'id' : 'en'),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: context.line)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.language_rounded, size: 13, color: context.muted),
-            const SizedBox(width: 4),
-            Text(lang == 'en' ? 'EN' : 'ID', translate: false, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: AppColors.primary)),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
-/// Kartu fitur Terjemah Indonesia ⇄ Inggris.
-class _TranslateBanner extends StatelessWidget {
-  const _TranslateBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: kTrGradient,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: context.colorShadow(kTrColor, strength: .4),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: () => openTranslate(context),
-          child: Stack(children: [
-            Positioned(
-              right: -30,
-              top: -40,
-              child: Container(width: 130, height: 130, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .1))),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-              child: Row(children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(15)),
-                  child: const Icon(Icons.translate_rounded, color: Colors.white, size: 26),
-                ),
-                const SizedBox(width: 14),
-                const Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Terjemahkan', style: TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.w800)),
-                    SizedBox(height: 2),
-                    Text('🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w500)),
-                  ]),
-                ),
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: const Icon(Icons.arrow_forward_rounded, color: kTrColor, size: 19),
-                ),
-              ]),
-            ),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
-class _ParkingCard extends ConsumerWidget {
-  const _ParkingCard({required this.parking});
-  final Reminder parking;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(tickerProvider); // perbarui durasi tiap 30 detik
-    final c = ReminderCategory.parkir.color;
-    return SoftCard(
-      padding: const EdgeInsets.all(14),
-      radius: 20,
-      onTap: () => showReminderDetail(context, ref, parking, parking.scheduledAt),
-      child: Row(children: [
-        if (parking.photoPath != null)
-          PhotoThumb(parking.photoPath!, height: 72, width: 72, radius: 14)
-        else
-          const CategoryIcon(ReminderCategory.parkir, size: 72),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Icon(Icons.local_parking_rounded, size: 14, color: c),
-              const SizedBox(width: 4),
-              Text('Lokasi parkir kamu', style: TextStyle(fontSize: 12, color: c, fontWeight: FontWeight.w600)),
-            ]),
-            const SizedBox(height: 2),
-            Text(parking.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 2),
-            Row(children: [
-              Icon(Icons.timer_outlined, size: 14, color: c),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text('${elapsed(parking.createdAt)} · sejak ${fmtTime(parking.createdAt)}',
-                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: c)),
-              ),
-            ]),
-            if (parking.hasTicket)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(9),
-                  onTap: () => openTicket(context, parking),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: .1), borderRadius: BorderRadius.circular(9)),
-                    child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.qr_code_2_rounded, size: 15, color: AppColors.primary),
-                      SizedBox(width: 5),
-                      Text('Tampilkan tiket', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.primary)),
-                    ]),
-                  ),
-                ),
-              ),
-          ]),
-        ),
-        const SizedBox(width: 6),
-        TextButton(
-          onPressed: () => completeWithUndo(ScaffoldMessenger.of(context), ref, parking, parking.scheduledAt),
-          style: TextButton.styleFrom(foregroundColor: c, visualDensity: VisualDensity.compact),
-          child: const Text('Sudah\ndiambil', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-        ),
-      ]),
-    );
-  }
 }
 
 class _ItemRow extends ConsumerWidget {
@@ -481,297 +204,324 @@ class _ItemRow extends ConsumerWidget {
 }
 
 
-class _StatsPage extends StatelessWidget {
-  const _StatsPage();
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Statistik')), body: const StatsScreen());
-}
-
-/// Menu ikon 4 kolom — satu tempat untuk semua fitur.
-class _MenuCard extends ConsumerWidget {
-  const _MenuCard({required this.onOpenAi, required this.onGoTo, required this.onItems, required this.onNew});
-  final VoidCallback onOpenAi, onItems, onNew;
-  final void Function(int) onGoTo;
+/// Tombol cepat ganti bahasa ID ⇄ EN.
+class _LangChip extends ConsumerWidget {
+  const _LangChip();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = activeItems(ref.watch(remindersProvider)).length;
-    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-    final menu = <({IconData icon, String label, Color color, VoidCallback onTap, int badge})>[
-      (icon: Icons.add_alarm_rounded, label: 'Pengingat', color: const Color(0xFF6366F1), onTap: onNew, badge: 0),
-      (icon: Icons.local_parking_rounded, label: 'Parkir', color: ReminderCategory.parkir.color, onTap: () => startParkingFlow(context, ref), badge: 0),
-      (icon: ReminderCategory.barang.icon, label: 'Barang', color: const Color(0xFFF59E0B), onTap: onItems, badge: items),
-      (icon: Icons.sticky_note_2_rounded, label: 'Catatan', color: const Color(0xFF8B5CF6), onTap: () => push(const NotesScreen()), badge: 0),
-      (icon: Icons.mosque_rounded, label: 'Muslim', color: const Color(0xFF059669), onTap: () => push(const MuslimScreen()), badge: 0),
-      (icon: Icons.restaurant_rounded, label: 'Kalori', color: kKal, onTap: () => push(const CalorieScreen()), badge: 0),
-      (icon: Icons.directions_run_rounded, label: 'Olahraga', color: const Color(0xFFE11D48), onTap: () => push(const WorkoutScreen()), badge: 0),
-      (icon: Icons.apps_rounded, label: 'Lainnya', color: const Color(0xFF64748B), onTap: () => _moreMenu(context, ref), badge: 0),
-    ];
-    return SoftCard(
-      radius: 24,
-      padding: const EdgeInsets.fromLTRB(6, 16, 6, 6),
-      child: GridView.count(
-        crossAxisCount: 4,
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 4,
-        childAspectRatio: .92,
-        children: [
-          for (final m in menu)
-            InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: m.onTap,
-              child: Column(children: [
-                Stack(clipBehavior: Clip.none, children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(gradient: AppColors.tint(m.color), borderRadius: BorderRadius.circular(17), boxShadow: context.colorShadow(m.color, strength: .4)),
-                    child: Icon(m.icon, color: Colors.white, size: 25),
-                  ),
-                  if (m.badge > 0)
-                    Positioned(
-                      right: -6,
-                      top: -5,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                        constraints: const BoxConstraints(minWidth: 18),
-                        decoration: BoxDecoration(color: const Color(0xFFE11D48), borderRadius: BorderRadius.circular(99), border: Border.all(color: context.card, width: 2)),
-                        child: Text('${m.badge}', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
-                      ),
-                    ),
-                ]),
-                const SizedBox(height: 8),
-                Text(m.label, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.2)),
-              ]),
-            ),
-        ],
+    final lang = ref.watch(settingsProvider.select((s) => s.lang));
+    return Material(
+      color: context.card,
+      borderRadius: BorderRadius.circular(99),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(99),
+        onTap: () => ref.read(settingsProvider.notifier).setLang(lang == 'en' ? 'id' : 'en'),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 36),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: context.line)),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.language_rounded, size: 13, color: context.muted),
+            const SizedBox(width: 4),
+            Text(lang == 'en' ? 'EN' : 'ID', translate: false, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted)),
+          ]),
+        ),
       ),
     );
   }
+}
 
-  void _moreMenu(BuildContext context, WidgetRef ref) {
-    final cycleOn = ref.read(cycleProvider).enabled;
-    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-    final rows = <({IconData icon, String title, String sub, Color color, VoidCallback onTap})>[
-      (icon: Icons.spa_rounded, title: 'Ruang Tenang', sub: 'Mood, kebiasaan, fokus, jurnal', color: const Color(0xFF14B8A6), onTap: () => push(CalmScreen(onOpenChat: onOpenAi))),
-      (icon: Icons.psychology_rounded, title: 'Tes psikologi', sub: 'Kenali kondisi dirimu', color: const Color(0xFFEC4899), onTap: () => push(const TestsScreen())),
-      (icon: Icons.water_drop_rounded, title: 'Siklus haid', sub: cycleOn ? 'Pengingat & perkiraan haid' : 'Aktifkan pengingat haid', color: kHaid, onTap: () => push(const CycleScreen())),
-      (icon: Icons.calendar_month_rounded, title: 'Kalender', sub: 'Semua jadwal per tanggal', color: const Color(0xFF6366F1), onTap: () => onGoTo(1)),
-      (icon: Icons.bar_chart_rounded, title: 'Statistik', sub: 'Progres & kebiasaanmu', color: const Color(0xFF0EA5E9), onTap: () => push(const _StatsPage())),
-      (icon: Icons.translate_rounded, title: 'Terjemahkan', sub: 'Indonesia ⇄ Inggris', color: kTrColor, onTap: () => openTranslate(context)),
-      (icon: Icons.auto_awesome_rounded, title: 'Asisten AI', sub: 'Tanya atau suruh apa saja', color: const Color(0xFF8B5CF6), onTap: onOpenAi),
-      (icon: Icons.settings_rounded, title: 'Profil & pengaturan', sub: 'Tema, suara, cadangan data', color: const Color(0xFF64748B), onTap: () => onGoTo(3)),
-    ];
-    showAppSheet(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const SheetTitle('Semua fitur'),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 1.55,
-            children: [
-              for (final r in rows)
-                Material(
-                  color: ctx.card2,
-                  borderRadius: BorderRadius.circular(18),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(18),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      r.onTap();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(color: r.color.withValues(alpha: .14), borderRadius: BorderRadius.circular(12)),
-                          child: Icon(r.icon, color: r.color, size: 21),
-                        ),
-                        const Spacer(),
-                        Text(r.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
-                        Text(r.sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: ctx.muted, fontSize: 12)),
-                      ]),
-                    ),
-                  ),
-                ),
-            ],
+
+/// B. Kartu "Agenda terdekat" — fokus utama beranda.
+class _NextCard extends ConsumerWidget {
+  const _NextCard({required this.next, required this.now, required this.onNew, required this.onOpenAi});
+  final Occurrence? next;
+  final DateTime now;
+  final VoidCallback onNew, onOpenAi;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final n = next;
+    const onCard = Colors.white;
+    final dim = Colors.white.withValues(alpha: .8);
+    Widget btn(String label, VoidCallback onTap, {IconData? icon, bool primary = false}) => Expanded(
+          child: SizedBox(
+            height: 48,
+            child: FilledButton(
+              onPressed: onTap,
+              style: FilledButton.styleFrom(
+                backgroundColor: primary ? Colors.white : Colors.white.withValues(alpha: .16),
+                foregroundColor: primary ? AppColors.primary : Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 6)],
+                Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
+              ]),
+            ),
           ),
-        ),
+        );
+
+    if (n == null) {
+      return MeshCard(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Agenda terdekat', style: TextStyle(color: dim, fontSize: 13, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 12),
+          const Text('Belum ada agenda berikutnya.', style: TextStyle(color: onCard, fontSize: 20, fontWeight: FontWeight.w700, height: 1.3)),
+          const SizedBox(height: 4),
+          Text('Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.', style: TextStyle(color: dim, fontSize: 14, height: 1.5)),
+          const SizedBox(height: 20),
+          Row(children: [
+            btn('Tambah pengingat', onNew, icon: Icons.add_rounded, primary: true),
+            const SizedBox(width: 8),
+            btn('Buka Asisten', onOpenAi),
+          ]),
+        ]),
+      );
+    }
+
+    final r = n.reminder;
+    final isToday = dateOnly(n.at) == dateOnly(now);
+    return MeshCard(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text('Agenda terdekat', style: TextStyle(color: dim, fontSize: 13, fontWeight: FontWeight.w600))),
+          Container(
+            padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(99)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(r.category.icon, size: 14, color: onCard),
+              const SizedBox(width: 5),
+              Text(r.category.label, style: const TextStyle(color: onCard, fontSize: 12, fontWeight: FontWeight.w600)),
+            ]),
+          ),
+        ]),
+        const SizedBox(height: 14),
+        Text(r.title, translate: false, maxLines: 3, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: onCard, fontSize: 20, fontWeight: FontWeight.w700, height: 1.3, letterSpacing: -.2)),
+        const SizedBox(height: 8),
+        Row(children: [
+          const Icon(Icons.schedule_rounded, size: 16, color: onCard),
+          const SizedBox(width: 6),
+          Text(fmtTime(n.at), translate: false, style: const TextStyle(color: onCard, fontSize: 14, fontWeight: FontWeight.w700, fontFeatures: [FontFeature.tabularFigures()])),
+          Flexible(
+            child: Text(' · ${tr(dayLabel(n.at, now))}${r.repeat != RepeatType.once ? ' · ${tr(r.repeatLabel)}' : ''}',
+                translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: dim, fontSize: 14)),
+          ),
+        ]),
+        const SizedBox(height: 2),
+        Text(countdown(n.at, now), style: TextStyle(color: dim, fontSize: 13)),
+        const SizedBox(height: 20),
+        Row(children: [
+          if (isToday) ...[
+            btn('Tandai selesai', () => completeWithUndo(ScaffoldMessenger.of(context), ref, r, n.at), icon: Icons.check_rounded, primary: true),
+            const SizedBox(width: 8),
+          ],
+          btn('Lihat detail', () => showReminderDetail(context, ref, r, n.at), primary: !isToday),
+        ]),
       ]),
     );
   }
 }
 
-/// Kartu ringkasan yang bisa digeser: sholat, kalori, mood, haid, barang.
-class _SummaryRow extends ConsumerWidget {
-  const _SummaryRow({required this.onItems});
-  final VoidCallback onItems;
+/// Lokasi parkir yang masih aktif.
+class _ParkingCard extends ConsumerWidget {
+  const _ParkingCard({required this.parking});
+  final Reminder parking;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final now = ref.watch(tickerProvider).value ?? DateTime.now();
-    final nx = ref.watch(muslimProvider).next(now);
-    final kal = ref.watch(calorieProvider);
-    final t = kal.target;
-    final eaten = kal.kcalOn(now) - ref.watch(workoutProvider).kcalOn(now);
-    final wk = ref.watch(workoutProvider);
-    ref.watch(moodProvider);
-    final mood = ref.read(moodProvider.notifier).today;
-    final cycle = ref.watch(cycleProvider);
-    final ci = cycle.enabled ? CycleInfo.from(cycle) : null;
-    final items = activeItems(ref.watch(remindersProvider));
-    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-    final cards = <Widget>[
-      _SumCard(
-        icon: Icons.mosque_rounded,
-        color: const Color(0xFF059669),
-        head: 'Sholat',
-        big: prayerNames[nx.key]!,
-        unit: fmtTime(nx.at),
-        sub: countdownText(nx.at.difference(now)),
-        onTap: () => push(const MuslimScreen()),
-      ),
-      _SumCard(
-        icon: Icons.restaurant_rounded,
-        color: kKal,
-        head: 'Kalori',
-        big: fmtKcal(kal.kcalOn(now)),
-        unit: 'kkal',
-        sub: t == null ? 'Atur target diet' : (t.target - eaten >= 0 ? 'sisa ${fmtKcal(t.target - eaten)} dari ${fmtKcal(t.target)}' : 'lebih ${fmtKcal(eaten - t.target)} kkal'),
-        progress: t == null ? null : eaten / t.target,
-        onTap: () => push(const CalorieScreen()),
-      ),
-      _SumCard(
-        icon: Icons.directions_run_rounded,
-        color: const Color(0xFFE11D48),
-        head: 'Olahraga',
-        big: '${wk.weekMinutes}',
-        unit: '/ ${wk.weeklyGoal} mnt',
-        sub: wk.minutesOn(now) > 0 ? 'Hari ini ${wk.minutesOn(now)} menit 🔥' : 'Minggu ini · ayo gerak!',
-        progress: wk.weekMinutes / wk.weeklyGoal,
-        onTap: () => push(const WorkoutScreen()),
-      ),
-      _SumCard(
-        icon: Icons.spa_rounded,
-        color: const Color(0xFF14B8A6),
-        head: 'Mood',
-        big: mood == null ? 'Belum dicek' : MoodAdvice.moodEmoji[mood.mood - 1],
-        unit: mood == null ? '' : MoodAdvice.moodLabel[mood.mood - 1],
-        sub: mood == null ? 'Ketuk untuk cek mood' : 'Tercatat hari ini ✓',
-        small: mood == null,
-        onTap: () => showMoodCheckin(context, ref),
-      ),
-      if (ci != null)
-        _SumCard(
-          icon: Icons.water_drop_rounded,
-          color: kHaid,
-          head: 'Siklus haid',
-          big: ci.status().title,
-          small: true,
-          sub: ci.status().sub,
-          onTap: () => push(const CycleScreen()),
-        ),
-      if (items.isNotEmpty)
-        _SumCard(
-          icon: ReminderCategory.barang.icon,
-          color: const Color(0xFFF59E0B),
-          head: 'Barang disimpan',
-          big: '${items.length}',
-          unit: 'barang',
-          sub: items.first.title,
-          onTap: onItems,
-        ),
-    ];
-    return SizedBox(
-      height: 140,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (_, i) => cards[i],
-      ),
+    ref.watch(tickerProvider); // perbarui durasi tiap 30 detik
+    return SoftCard(
+      padding: const EdgeInsets.all(16),
+      onTap: () => showReminderDetail(context, ref, parking, parking.scheduledAt),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          if (parking.photoPath != null)
+            PhotoThumb(parking.photoPath!, height: 48, width: 48, radius: 14)
+          else
+            const CategoryIcon(ReminderCategory.parkir, size: 48),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Lokasi parkir kamu', style: TextStyle(fontSize: 12.5, color: context.muted)),
+              const SizedBox(height: 2),
+              Text(parking.title, translate: false, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, height: 1.3)),
+              const SizedBox(height: 2),
+              Text('${elapsed(parking.createdAt)} · sejak ${fmtTime(parking.createdAt)}', style: TextStyle(fontSize: 13, color: context.muted)),
+            ]),
+          ),
+        ]),
+        const SizedBox(height: 16),
+        Row(children: [
+          if (parking.hasTicket) ...[
+            Expanded(
+              child: SizedBox(
+                height: 48,
+                child: TextButton.icon(
+                  onPressed: () => openTicket(context, parking),
+                  icon: const Icon(Icons.qr_code_2_rounded, size: 18),
+                  label: const Text('Tampilkan tiket', maxLines: 1, overflow: TextOverflow.ellipsis),
+                  style: TextButton.styleFrom(foregroundColor: context.ink, backgroundColor: context.card2, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: TextButton.icon(
+                onPressed: () => completeWithUndo(ScaffoldMessenger.of(context), ref, parking, parking.scheduledAt),
+                icon: const Icon(Icons.check_rounded, size: 18),
+                label: const Text('Sudah diambil', maxLines: 1, overflow: TextOverflow.ellipsis),
+                style: TextButton.styleFrom(foregroundColor: context.accent, backgroundColor: context.accentSoft, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+              ),
+            ),
+          ),
+        ]),
+      ]),
     );
   }
 }
 
-class _SumCard extends StatelessWidget {
-  const _SumCard({required this.icon, required this.color, required this.head, required this.big, this.unit = '', required this.sub, this.progress, this.small = false, required this.onTap});
-  final IconData icon;
-  final Color color;
-  final String head, big, unit, sub;
-  final double? progress;
-  final bool small;
-  final VoidCallback onTap;
+/// C. Empat fitur yang paling sering dipakai.
+class _QuickAccess extends ConsumerWidget {
+  const _QuickAccess({required this.onNew});
+  final VoidCallback onNew;
 
   @override
-  Widget build(BuildContext context) {
-    const w70 = Color(0xD9FFFFFF);
-    return Container(
-      width: 156,
-      decoration: BoxDecoration(
-        gradient: AppColors.tint(color),
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: context.colorShadow(color, strength: .45),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: onTap,
-          child: Stack(children: [
-            Positioned(
-              right: -26,
-              top: -30,
-              child: Container(width: 86, height: 86, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .14))),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(10)),
-                    child: Icon(icon, size: 16, color: Colors.white),
-                  ),
-                  const SizedBox(width: 7),
-                  Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: w70))),
-                ]),
-                const SizedBox(height: 8),
-                Text.rich(
-                  TextSpan(children: [
-                    TextSpan(text: big, style: TextStyle(fontSize: small ? 15 : 21, fontWeight: FontWeight.w800, letterSpacing: -.3, color: Colors.white)),
-                    if (unit.isNotEmpty) TextSpan(text: ' $unit', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: w70)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+    final menu = <({IconData icon, String label, VoidCallback onTap})>[
+      (icon: Icons.add_alarm_rounded, label: 'Tambah pengingat', onTap: onNew),
+      (icon: Icons.sticky_note_2_outlined, label: 'Catatan', onTap: () => push(const NotesScreen())),
+      (icon: Icons.local_parking_rounded, label: 'Simpan parkir', onTap: () => startParkingFlow(context, ref)),
+      (icon: Icons.timer_outlined, label: 'Fokus', onTap: () => push(const FocusScreen())),
+    ];
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final m in menu)
+          Expanded(
+            child: Semantics(
+              button: true,
+              label: tr(m.label),
+              excludeSemantics: true,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: m.onTap,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+                  child: Column(children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(color: context.accentSoft, borderRadius: BorderRadius.circular(18)),
+                      child: Icon(m.icon, color: context.accent, size: 24),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(m.label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, height: 1.3, color: context.ink)),
                   ]),
-                  maxLines: small ? 2 : 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
-                Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: w70)),
-                const Spacer(),
-                if (progress != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(99),
-                    child: LinearProgressIndicator(value: progress!.clamp(0, 1).toDouble(), minHeight: 5, color: Colors.white, backgroundColor: Colors.white.withValues(alpha: .25)),
-                  ),
-              ]),
+              ),
             ),
-          ]),
-        ),
-      ),
+          ),
+      ],
     );
+  }
+}
+
+/// E. Ringkasan harian: mood, kebiasaan, sholat, lalu fitur lain yang sedang dipakai.
+class _DailySummary extends ConsumerWidget {
+  const _DailySummary();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(tickerProvider).value ?? DateTime.now();
+    ref.watch(moodProvider);
+    final mood = ref.read(moodProvider.notifier).today;
+    final habits = ref.watch(habitsProvider);
+    final habitsDone = habits.where((h) => h.doneOn(now)).length;
+    final nx = ref.watch(muslimProvider).next(now);
+    final kal = ref.watch(calorieProvider);
+    final t = kal.target;
+    final wk = ref.watch(workoutProvider);
+    final eaten = kal.kcalOn(now) - wk.kcalOn(now);
+    final cycle = ref.watch(cycleProvider);
+    final ci = cycle.enabled ? CycleInfo.from(cycle) : null;
+    final items = activeItems(ref.watch(remindersProvider));
+    void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+    Widget action(String s) => Text(s, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.accent));
+
+    return ListGroup(children: [
+      AppListRow(
+        icon: Icons.sentiment_satisfied_alt_rounded,
+        color: AppColors.success,
+        title: 'Mood',
+        subtitle: mood == null
+            ? 'Belum dicatat hari ini'
+            : '${MoodAdvice.moodEmoji[mood.mood - 1]} ${tr(MoodAdvice.moodLabel[mood.mood - 1])} · ${tr('tercatat hari ini')}',
+        trailing: mood == null ? action(tr('Catat')) : null,
+        onTap: () => showMoodCheckin(context, ref),
+      ),
+      AppListRow(
+        icon: Icons.task_alt_rounded,
+        color: AppColors.primary,
+        title: 'Kebiasaan',
+        subtitle: habits.isEmpty ? 'Belum ada kebiasaan' : '$habitsDone dari ${habits.length} selesai',
+        progress: habits.isEmpty ? null : habitsDone / habits.length,
+        trailing: habits.isEmpty ? action(tr('Buat')) : null,
+        onTap: () => push(const HabitsScreen()),
+      ),
+      AppListRow(
+        icon: Icons.mosque_outlined,
+        color: const Color(0xFF0F766E),
+        title: 'Sholat berikutnya',
+        subtitle: '${tr(prayerNames[nx.key]!)} ${fmtTime(nx.at)} · ${tr(countdownText(nx.at.difference(now)))}',
+        onTap: () => push(const MuslimScreen()),
+      ),
+      if (t != null)
+        AppListRow(
+          icon: Icons.restaurant_rounded,
+          color: AppColors.warning,
+          title: 'Kalori',
+          subtitle: t.target - eaten >= 0
+              ? 'Sisa ${fmtKcal(t.target - eaten)} dari ${fmtKcal(t.target)} kkal'
+              : 'Lebih ${fmtKcal(eaten - t.target)} kkal dari target',
+          progress: eaten / t.target,
+          onTap: () => push(const CalorieScreen()),
+        ),
+      if (wk.weekMinutes > 0)
+        AppListRow(
+          icon: Icons.directions_run_rounded,
+          color: AppColors.error,
+          title: 'Olahraga',
+          subtitle: '${wk.weekMinutes} dari ${wk.weeklyGoal} menit minggu ini',
+          progress: wk.weekMinutes / wk.weeklyGoal,
+          onTap: () => push(const WorkoutScreen()),
+        ),
+      if (ci != null)
+        AppListRow(
+          icon: Icons.water_drop_outlined,
+          color: kHaid,
+          title: 'Siklus haid',
+          subtitle: ci.status().title,
+          onTap: () => push(const CycleScreen()),
+        ),
+      if (items.isNotEmpty)
+        AppListRow(
+          icon: ReminderCategory.barang.icon,
+          color: ReminderCategory.barang.color,
+          title: 'Barang disimpan',
+          subtitle: '${items.length} barang · ${items.first.title}',
+          onTap: () => showItemsSheet(context),
+        ),
+    ]);
   }
 }
 
@@ -815,7 +565,7 @@ class _TodaySectionState extends State<_TodaySection> {
                   Container(height: 8, color: context.card2),
                   FractionallySizedBox(
                     widthFactor: w.doneCount / w.totalCount,
-                    child: Container(height: 8, decoration: const BoxDecoration(gradient: AppColors.gradient)),
+                    child: Container(height: 8, color: AppColors.success),
                   ),
                 ]),
               ),
@@ -826,7 +576,7 @@ class _TodaySectionState extends State<_TodaySection> {
         ),
         const SizedBox(height: 12),
         if (w.today.isEmpty)
-          const EmptyState(title: 'Semua selesai 🎉', subtitle: 'Kerja bagus! Tidak ada lagi pengingat hari ini.', icon: Icons.task_alt_rounded)
+          const EmptyState(title: 'Semua agenda hari ini selesai.', subtitle: 'Tidak ada lagi pengingat hari ini.', icon: Icons.task_alt_rounded)
         else ...[
           ...shown.map((x) => ReminderTile(x)),
           if (w.today.length > _show)
@@ -838,8 +588,8 @@ class _TodaySectionState extends State<_TodaySection> {
         ],
       ] else
         EmptyState(
-          title: 'Hari ini kosong',
-          subtitle: 'Nikmati harimu, atau tambahkan pengingat baru.',
+          title: 'Belum ada agenda hari ini.',
+          subtitle: 'Tambahkan pengingat pertamamu.',
           actionLabel: 'Tambah pengingat',
           onAction: w.onAdd,
         ),
@@ -850,7 +600,7 @@ class _TodaySectionState extends State<_TodaySection> {
           radius: 18,
           onTap: () => setState(() => _soon = !_soon),
           child: Row(children: [
-            const Icon(Icons.upcoming_rounded, color: AppColors.primary, size: 20),
+            Icon(Icons.upcoming_rounded, color: context.accent, size: 20),
             const SizedBox(width: 10),
             Expanded(child: Text('Akan datang · ${w.upcoming.length} jadwal', style: const TextStyle(fontWeight: FontWeight.w700))),
             AnimatedRotation(turns: _soon ? .5 : 0, duration: const Duration(milliseconds: 200), child: Icon(Icons.expand_more_rounded, color: context.muted)),
@@ -864,7 +614,7 @@ class _TodaySectionState extends State<_TodaySection> {
                   padding: const EdgeInsets.only(top: 10),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                     ...w.upcoming.take(6).map((x) => ReminderTile(x, showDay: true)),
-                    TextButton(onPressed: w.onCalendar, child: const Text('Buka kalender')),
+                    TextButton(onPressed: w.onCalendar, child: const Text('Buka agenda')),
                   ]),
                 )
               : const SizedBox(width: double.infinity),

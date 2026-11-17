@@ -36,13 +36,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
           Row(children: [
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Atur waktumu', style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
-                const Text('Kalender', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+                Text('Semua jadwal per tanggal', style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
+                const Text('Agenda', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -.4)),
               ]),
             ),
             SoftCard(

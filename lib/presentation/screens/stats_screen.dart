@@ -65,10 +65,10 @@ class StatsScreen extends ConsumerWidget {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
           Text('7 hari terakhir', style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
-          const Text('Statistik', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+          const Text('Statistik', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -.4)),
           const SizedBox(height: 18),
           SoftCard(
             radius: 22,
