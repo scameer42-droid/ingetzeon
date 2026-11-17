@@ -25,25 +25,15 @@ sleep 5
 T0=$(date +%s)
 adb shell am start -W -n $PKG/.MainActivity | tee -a $D/steps.txt
 sleep 20; snap 01_home; anr
+tap "Olahraga" olahraga; sleep 7; snap 02_olahraga; anr
+adb shell input swipe 540 1900 540 700 400; sleep 2; snap 03_scroll
+tap "Perut rata" perut; sleep 6; snap 04_program; anr
+tap "Crunch" crunch; sleep 5; snap 05_detail; anr
+adb shell input swipe 900 1200 150 1200 300; sleep 3; snap 06_detail2
 adb shell input keyevent KEYCODE_BACK; sleep 3
-tap "Lainnya" lainnya; sleep 6; snap 02_lainnya; anr
-adb shell input keyevent KEYCODE_BACK; sleep 3
-tap "Barang" barang; sleep 6; snap 03_barang; anr
-adb shell input keyevent KEYCODE_BACK; sleep 3
-tap "Muslim" muslim; sleep 8; snap 04_muslim; anr
-tap "Subuh" subuh; sleep 2; snap 04b_tap; anr
-adb shell input swipe 540 1800 540 600 300; sleep 3
-tap "Semua" semua; sleep 6; snap 05_semua; anr
-adb shell input keyevent KEYCODE_BACK; sleep 2; adb shell input keyevent KEYCODE_BACK; sleep 3
-tap "Profil" profil; sleep 6; snap 06_profil; anr
-tap "Kalori" kalori; sleep 6; snap 07_kalori; anr
-adb shell input keyevent KEYCODE_BACK; sleep 2; adb shell input keyevent KEYCODE_BACK; sleep 2
-adb shell am start -n $PKG/.MainActivity; sleep 4
-tap "Beranda" beranda; sleep 3
-tap "Olahraga" olahraga; sleep 6; snap 08_olahraga; anr
-adb shell input swipe 540 1800 540 500 300; sleep 2
-tap "Perut rata" perut; sleep 5; snap 09_program; anr
-tap "Mulai latihan" mulai; sleep 14; snap 10_player; anr
+tap "Mulai" mulai; sleep 6; snap 07_ready; anr
+sleep 8; snap 08_work; anr
+tap "Lewati" lewati; sleep 3; snap 09_rest; anr
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
