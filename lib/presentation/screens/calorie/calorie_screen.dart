@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,7 +50,7 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
       appBar: AppBar(
         title: const Text('Kalori & Diet'),
         centerTitle: false,
-        actions: [IconButton(tooltip: 'Profil tubuh', onPressed: () => editBodyProfile(context, ref), icon: const Icon(Icons.manage_accounts_rounded))],
+        actions: [IconButton(tooltip: tr('Profil tubuh'), onPressed: () => editBodyProfile(context, ref), icon: const Icon(Icons.manage_accounts_rounded))],
       ),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 0, 16, 32), children: [
         // ---- pilih hari
@@ -320,7 +321,7 @@ class _MealCard extends ConsumerWidget {
               ]),
             ),
             IconButton.filledTonal(
-              tooltip: 'Tambah ${mealNames[meal]!.toLowerCase()}',
+              tooltip: tr('Tambah ${mealNames[meal]!.toLowerCase()}'),
               onPressed: () => showAddFood(context, ref, meal: meal, day: day),
               icon: const Icon(Icons.add_rounded),
               style: IconButton.styleFrom(backgroundColor: kKal.withValues(alpha: .12), foregroundColor: kKal),
@@ -415,7 +416,7 @@ Future<void> editBodyProfile(BuildContext context, WidgetRef ref, {double? kg}) 
       final preview = ok ? Body.target(BodyProfile(kg: w, cm: h, age: a, male: male, activity: act, goal: goal, targetKg: tg)) : null;
       final range = h != null && h >= 100 ? Body.healthyRange(h) : null;
       final tgLow = tg != null && range != null && tg < range.$1;
-      InputDecoration deco(String l, String suf) => InputDecoration(labelText: l, suffixText: suf, border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)));
+      InputDecoration deco(String l, String suf) => InputDecoration(labelText: tr(l), suffixText: tr(suf), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)));
       return Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: SizedBox(
@@ -473,8 +474,8 @@ Future<void> editBodyProfile(BuildContext context, WidgetRef ref, {double? kg}) 
               controller: tgC,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: deco('Berat target (opsional)', 'kg').copyWith(
-                helperText: range == null ? null : 'Berat sehat untuk tinggimu: ${fmtQty(range.$1)}–${fmtQty(range.$2)} kg',
-                errorText: tgLow ? 'Di bawah berat sehat — pilih minimal ${fmtQty(range.$1)} kg' : null,
+                helperText: range == null ? null : tr('Berat sehat untuk tinggimu: ${fmtQty(range.$1)}–${fmtQty(range.$2)} kg'),
+                errorText: tgLow ? tr('Di bawah berat sehat — pilih minimal ${fmtQty(range.$1)} kg') : null,
               ),
               onChanged: (_) => setS(() {}),
             ),

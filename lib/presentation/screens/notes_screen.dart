@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -86,7 +87,7 @@ class _NoteTileState extends ConsumerState<NoteTile> {
                 maxLines: n.secret ? 1 : 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
             const SizedBox(height: 2),
             if (n.secret)
-              Text(_shown ?? '••••••••',
+              Text(_shown ?? '••••••••', translate: false,
                   style: TextStyle(
                     fontSize: _shown == null ? 14 : 15,
                     letterSpacing: _shown == null ? 2 : .2,
@@ -99,7 +100,7 @@ class _NoteTileState extends ConsumerState<NoteTile> {
         ),
         if (n.secret)
           IconButton(
-            tooltip: _shown == null ? 'Tampilkan' : 'Sembunyikan',
+            tooltip: tr(_shown == null ? 'Tampilkan' : 'Sembunyikan'),
             onPressed: _reveal,
             icon: Icon(_shown == null ? Icons.visibility_rounded : Icons.visibility_off_rounded, color: color),
           ),
@@ -159,8 +160,8 @@ Future<void> showNoteEditor(BuildContext context, WidgetRef ref, {Note? existing
             minLines: 1,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
-              labelText: secret ? 'Untuk apa? (mis. password FB)' : 'Isi catatan',
-              hintText: secret ? 'password facebook' : 'mis. saya punya emas 10 gr',
+              labelText: tr(secret ? 'Untuk apa? (mis. password FB)' : 'Isi catatan'),
+              hintText: tr(secret ? 'password facebook' : 'mis. saya punya emas 10 gr'),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
             ),
           ),
@@ -181,7 +182,7 @@ Future<void> showNoteEditor(BuildContext context, WidgetRef ref, {Note? existing
               autocorrect: false,
               enableSuggestions: false,
               decoration: InputDecoration(
-                labelText: 'Isi rahasia',
+                labelText: tr('Isi rahasia'),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
                 suffixIcon: IconButton(icon: Icon(hide ? Icons.visibility_rounded : Icons.visibility_off_rounded), onPressed: () => setS(() => hide = !hide)),
               ),
@@ -246,7 +247,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           onChanged: (v) => setState(() => _q = v),
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search_rounded),
-            hintText: 'Cari catatan…',
+            hintText: tr('Cari catatan…'),
             filled: true,
             fillColor: context.glass,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: context.line)),

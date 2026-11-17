@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -291,9 +292,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _send(),
                         decoration: InputDecoration(
-                          hintText: 'Tanya apa saja…',
+                          hintText: tr('Tanya apa saja…'),
                           prefixIcon: IconButton(
-                            tooltip: 'Foto',
+                            tooltip: tr('Foto'),
                             icon: const Icon(Icons.photo_camera_rounded, color: AppColors.primary),
                             onPressed: _takePhoto,
                           ),
@@ -390,7 +391,7 @@ class _Bubble extends ConsumerWidget {
               const SizedBox(height: 8),
             ],
             me
-                ? Text(message.text, style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.5))
+                ? Text(message.text, translate: false, style: const TextStyle(color: Colors.white, fontSize: 14.5, height: 1.5))
                 : _RichText(message.text),
             if (!me && message.sources.isNotEmpty) _Sources(message.sources),
             if (!me && message.tools.isNotEmpty)
@@ -451,7 +452,7 @@ class _Bubble extends ConsumerWidget {
                       ),
                       if (reminder.hasTicket)
                         IconButton(
-                          tooltip: 'Tampilkan tiket',
+                          tooltip: tr('Tampilkan tiket'),
                           icon: const Icon(Icons.qr_code_2_rounded, color: AppColors.primary),
                           onPressed: () => openTicket(context, reminder),
                         ),
@@ -503,7 +504,7 @@ class _RichText extends StatelessWidget {
     final ink = context.ink;
     final base = TextStyle(fontSize: 14.5, height: 1.55, color: ink);
     final children = <Widget>[];
-    for (final raw in text.trimRight().split('\n')) {
+    for (final raw in tr(text).trimRight().split('\n').map(tr)) {
       final bullet = RegExp(r'^\s*(?:[*\-•]|\d+[.)])\s+(.*)').firstMatch(raw);
       final heading = RegExp(r'^\s*#{1,4}\s+(.*)').firstMatch(raw);
       if (bullet != null) {
@@ -511,7 +512,7 @@ class _RichText extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, top: 2),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('•  ', style: base.copyWith(color: AppColors.primary, fontWeight: FontWeight.w700)),
-            Expanded(child: Text.rich(TextSpan(style: base, children: _inline(bullet.group(1)!, ink)))),
+            Expanded(child: Text.rich(TextSpan(style: base, children: _inline(tr(bullet.group(1)!), ink)), translate: false)),
           ]),
         ));
       } else if (heading != null) {
@@ -522,7 +523,7 @@ class _RichText extends StatelessWidget {
       } else if (raw.trim().isEmpty) {
         children.add(const SizedBox(height: 6));
       } else {
-        children.add(Text.rich(TextSpan(style: base, children: _inline(raw, ink))));
+        children.add(Text.rich(TextSpan(style: base, children: _inline(raw, ink)), translate: false));
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: children);

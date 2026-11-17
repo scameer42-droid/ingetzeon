@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -163,7 +164,7 @@ Future<void> showMoodCheckin(BuildContext context, WidgetRef ref) async {
             maxLines: 2,
             minLines: 1,
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(hintText: 'Catatan singkat (opsional)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+            decoration: InputDecoration(hintText: tr('Catatan singkat (opsional)'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
           ),
           const SizedBox(height: 16),
           GradientButton(
@@ -561,7 +562,7 @@ class _FocusScreenState extends State<FocusScreen> {
             enabled: !running,
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.edit_note_rounded),
-              hintText: 'Mau fokus mengerjakan apa?',
+              hintText: tr('Mau fokus mengerjakan apa?'),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
             ),
           ),

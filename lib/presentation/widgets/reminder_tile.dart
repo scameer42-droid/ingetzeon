@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -259,6 +260,6 @@ Future<void> completeWithUndo(ScaffoldMessengerState messenger, WidgetRef ref, R
     ..showSnackBar(SnackBar(
       duration: Duration(seconds: removed != null ? 5 : 2),
       content: Text(removed != null ? '"${r.title}" selesai & dihapus ✓' : '"${r.title}" selesai untuk hari ini ✓'),
-      action: removed != null ? SnackBarAction(label: 'Urungkan', onPressed: () => notifier.undoComplete(removed)) : null,
+      action: removed != null ? SnackBarAction(label: tr('Urungkan'), onPressed: () => notifier.undoComplete(removed)) : null,
     ));
 }

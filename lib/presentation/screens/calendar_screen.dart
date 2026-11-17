@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -59,7 +60,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             padding: const EdgeInsets.fromLTRB(10, 6, 10, 12),
             radius: 22,
             child: TableCalendar<Occurrence>(
-              locale: 'id_ID',
+              locale: I18n.isEn ? 'en_US' : 'id_ID',
               firstDay: DateTime(today.year - 2),
               lastDay: DateTime(today.year + 5, 12, 31),
               focusedDay: _focused,

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
 import 'notif_health.dart';
@@ -128,6 +129,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
                 selected: {s.themeMode},
                 onSelectionChanged: (v) => notifier.setTheme(v.first),
+              ),
+            ),
+          ),
+          _groupTitle('Bahasa · Language'),
+          SoftCard(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              width: double.infinity,
+              child: SegmentedButton<String>(
+                showSelectedIcon: false,
+                style: SegmentedButton.styleFrom(
+                  selectedBackgroundColor: AppColors.primary,
+                  selectedForegroundColor: Colors.white,
+                  side: BorderSide(color: context.line),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                segments: const [
+                  ButtonSegment(value: 'id', label: Text('🇮🇩  Indonesia', translate: false)),
+                  ButtonSegment(value: 'en', label: Text('🇬🇧  English', translate: false)),
+                ],
+                selected: {s.lang},
+                onSelectionChanged: (v) => notifier.setLang(v.first),
               ),
             ),
           ),
@@ -433,7 +456,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _groupTitle(String t) => Padding(
         padding: const EdgeInsets.fromLTRB(4, 22, 4, 10),
-        child: Text(t.toUpperCase(),
+        child: Text(tr(t).toUpperCase(), translate: false,
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.muted, letterSpacing: .6)),
       );
 }

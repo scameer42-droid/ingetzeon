@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -120,7 +121,7 @@ class _FoodDetailState extends ConsumerState<_FoodDetail> {
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
-              decoration: InputDecoration(suffixText: 'gram', border: OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+              decoration: InputDecoration(suffixText: tr('gram'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
               onChanged: (v) => _setGram(double.tryParse(v.replaceAll(',', '.')) ?? 0),
             ),
             const SizedBox(height: 8),

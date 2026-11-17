@@ -10,8 +10,8 @@ class AppColors {
   static const pink = Color(0xFFE5484D); // merah untuk hapus / terlewat
   static const peach = Color(0xFFD97706);
 
-  static const bgLight = Color(0xFFF4F5FA);
-  static const bgDark = Color(0xFF0E0F1C);
+  static const bgLight = Color(0xFFF5F5FB);
+  static const bgDark = Color(0xFF0C0D1A);
   static const cardLight = Colors.white;
   static const cardDark = Color(0xFF181A2E);
   static const card2Light = Color(0xFFF1F2F8);
@@ -25,9 +25,27 @@ class AppColors {
   static const faintLight = Color(0xFFA3A4B8);
   static const faintDark = Color(0xFF686A86);
 
+  static const magenta = Color(0xFFC026D3);
+  static const sky = Color(0xFF0EA5E9);
+
   /// Gradasi nila → ungu untuk elemen utama.
   static const gradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [primary, violetMid]);
-  static const meshBase = gradient;
+
+  /// Gradasi "aurora" untuk kartu utama: nila → ungu → magenta.
+  static const aurora = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF4338CA), Color(0xFF6D28D9), Color(0xFFA21CAF)],
+    stops: [0, .55, 1],
+  );
+  static const meshBase = aurora;
+
+  /// Gradasi lembut dari satu warna (untuk ikon menu berwarna).
+  static LinearGradient tint(Color c) => LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color.lerp(c, Colors.white, .18)!, Color.lerp(c, Colors.black, .12)!],
+      );
 }
 
 /// Akses cepat warna sesuai tema terang/gelap.
@@ -46,9 +64,14 @@ extension ThemeX on BuildContext {
   List<BoxShadow> get softShadow => isDark
       ? const []
       : [
-          BoxShadow(color: const Color(0xFF14143C).withValues(alpha: .04), blurRadius: 2, offset: const Offset(0, 1)),
-          BoxShadow(color: const Color(0xFF28286E).withValues(alpha: .16), blurRadius: 18, offset: const Offset(0, 6), spreadRadius: -10),
+          BoxShadow(color: const Color(0xFF14143C).withValues(alpha: .035), blurRadius: 2, offset: const Offset(0, 1)),
+          BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: .14), blurRadius: 24, offset: const Offset(0, 10), spreadRadius: -12),
         ];
+
+  /// Bayangan berwarna untuk kartu/ikon bergradasi.
+  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => isDark
+      ? const []
+      : [BoxShadow(color: c.withValues(alpha: strength), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
 
   List<BoxShadow> get glowShadow =>
       [BoxShadow(color: AppColors.primary.withValues(alpha: .35), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];

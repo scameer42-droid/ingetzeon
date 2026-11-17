@@ -10,6 +10,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../core/i18n/i18n.dart';
 import '../core/utils/date_utils.dart';
 import '../data/repositories/settings_repository.dart';
 import '../data/models/reminder.dart';
@@ -121,10 +122,10 @@ class NotificationService {
   }
 
   /// Sudah terdaftar dengan isi yang sama hari ini? (sekali sehari tetap didaftarkan ulang untuk jaga-jaga)
-  bool _same(int id, String sig) => _sig['$id'] == '$_today|$sig';
+  bool _same(int id, String sig) => _sig['$id'] == '$_today|${I18n.lang}|$sig';
 
   Future<void> _mark(int id, String sig) async {
-    _sig['$id'] = '$_today|$sig';
+    _sig['$id'] = '$_today|${I18n.lang}|$sig';
     await _saveSigs();
   }
 
@@ -178,6 +179,9 @@ class NotificationService {
 
   Future<bool> canExact() async => await _android?.canScheduleExactNotifications() ?? true;
 
+  /// Teks notifikasi mengikuti bahasa tampilan.
+  static String _t(String s) => tr(s);
+
   NotificationDetails _details(String title, String body, {String? photoPath, AlarmSound? override}) {
     final s = override ?? sound;
     final isAlarm = s != AlarmSound.notif;
@@ -192,7 +196,7 @@ class NotificationService {
         category: isAlarm ? AndroidNotificationCategory.alarm : AndroidNotificationCategory.reminder,
         icon: 'ic_notification',
         color: const Color(0xFF6C63FF),
-        ticker: title,
+        ticker: _t(title),
         playSound: true,
         sound: _soundFor(s),
         audioAttributesUsage: isAlarm ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
@@ -208,14 +212,14 @@ class NotificationService {
         styleInformation: hasPhoto
             ? BigPictureStyleInformation(
                 FilePathAndroidBitmap(photoPath),
-                contentTitle: title,
-                summaryText: body,
+                contentTitle: _t(title),
+                summaryText: _t(body),
                 hideExpandedLargeIcon: true,
               )
-            : BigTextStyleInformation(body),
+            : BigTextStyleInformation(_t(body)),
         actions: const [
-          AndroidNotificationAction(actionDone, 'Selesai', showsUserInterface: true, cancelNotification: true),
-          AndroidNotificationAction(actionSnooze, 'Tunda 10 menit', showsUserInterface: true, cancelNotification: true),
+          AndroidNotificationAction(actionDone, tr('Selesai'), showsUserInterface: true, cancelNotification: true),
+          AndroidNotificationAction(actionSnooze, tr('Tunda 10 menit'), showsUserInterface: true, cancelNotification: true),
         ],
       ),
     );
@@ -247,7 +251,7 @@ class NotificationService {
     const title = '⏰ Tes pengingat IngetZeon';
     final body = 'Dijadwalkan untuk ${fmtTime(when)} — kalau muncul tepat waktu, notifikasi sudah beres ✅';
     await _plugin.cancel(999998);
-    await _plugin.zonedSchedule(999998, title, body, when, _details(title, body, override: AlarmSound.notif),
+    await _plugin.zonedSchedule(999998, _t(title), _t(body), when, _details(title, body, override: AlarmSound.notif),
         androidScheduleMode: await _mode());
   }
 
@@ -275,8 +279,8 @@ class NotificationService {
     try {
       await _plugin.zonedSchedule(
         r.notifId,
-        '⏰ ${r.title}',
-        body,
+        _t('⏰ ${r.title}'),
+        _t(body),
         when,
         _details('⏰ ${r.title}', body, photoPath: r.photoPath),
         androidScheduleMode: mode,
@@ -295,8 +299,8 @@ class NotificationService {
     final body = 'Ditunda · ${fmtTime(when)}';
     await _plugin.zonedSchedule(
       r.snoozeNotifId,
-      '⏰ ${r.title}',
-      body,
+      _t('⏰ ${r.title}'),
+      _t(body),
       when,
       _details('⏰ ${r.title}', body, photoPath: r.photoPath),
       androidScheduleMode: await _mode(),
@@ -320,8 +324,8 @@ class NotificationService {
         await _breathe();
         await _plugin.zonedSchedule(
           _hourlyBase + h,
-          '⏱ Sudah $h jam parkir',
-          body,
+          _t('⏱ Sudah $h jam parkir'),
+          _t(body),
           tz.TZDateTime.from(at, tz.local),
           _details('⏱ Sudah $h jam parkir', body, override: AlarmSound.notif),
           androidScheduleMode: mode,
@@ -362,8 +366,8 @@ class NotificationService {
         await _mark(it.id, 'haid');
         await _plugin.zonedSchedule(
           it.id,
-          it.title,
-          it.body,
+          _t(it.title),
+          _t(it.body),
           tz.TZDateTime.from(it.at, tz.local),
           NotificationDetails(
             android: AndroidNotificationDetails(
@@ -374,7 +378,7 @@ class NotificationService {
               priority: Priority.high,
               icon: 'ic_notification',
               color: const Color(0xFFE11D74),
-              styleInformation: BigTextStyleInformation(it.body),
+              styleInformation: BigTextStyleInformation(_t(it.body)),
             ),
           ),
           androidScheduleMode: mode,
@@ -398,7 +402,7 @@ class NotificationService {
           priority: Priority.high,
           icon: 'ic_notification',
           color: color,
-          styleInformation: BigTextStyleInformation(body),
+          styleInformation: BigTextStyleInformation(_t(body)),
         ),
       );
 
@@ -411,7 +415,7 @@ class NotificationService {
     if (_same(id, sig)) return;
     try {
       await _breathe();
-      await _plugin.zonedSchedule(id, title, body, tz.TZDateTime.from(at, tz.local), _simple(body, color),
+      await _plugin.zonedSchedule(id, _t(title), _t(body), tz.TZDateTime.from(at, tz.local), _simple(body, color),
           androidScheduleMode: mode, matchDateTimeComponents: DateTimeComponents.time, payload: payload);
       await _mark(id, sig);
     } catch (e) {
@@ -457,7 +461,7 @@ class NotificationService {
     await _cancelId(_calmBase + 900, force: true);
     if (at == null || !at.isAfter(DateTime.now())) return;
     try {
-      await _plugin.zonedSchedule(_calmBase + 900, title, body, tz.TZDateTime.from(at, tz.local), _details(title, body, override: AlarmSound.notif),
+      await _plugin.zonedSchedule(_calmBase + 900, _t(title), _t(body), tz.TZDateTime.from(at, tz.local), _details(title, body, override: AlarmSound.notif),
           androidScheduleMode: await _mode(), payload: 'calm:fokus');
     } catch (e) {
       debugPrint('Gagal jadwal fokus: $e');
@@ -531,8 +535,8 @@ class NotificationService {
         audioAttributesUsage: adzan ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
         enableVibration: true,
         vibrationPattern: Int64List.fromList([0, 500, 300, 500]),
-        styleInformation: BigTextStyleInformation(body),
-        actions: adzan ? const [AndroidNotificationAction('stop_adzan', '🔇 Matikan adzan', cancelNotification: true)] : null,
+        styleInformation: BigTextStyleInformation(_t(body)),
+        actions: adzan ? [AndroidNotificationAction('stop_adzan', tr('🔇 Matikan adzan'), cancelNotification: true)] : null,
       ),
     );
   }
@@ -553,7 +557,7 @@ class NotificationService {
       if (_same(e.key, sig)) continue;
       try {
         await _breathe();
-        await _plugin.zonedSchedule(e.key, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _prayerDetails(it.body, sound, it.key == 'subuh'),
+        await _plugin.zonedSchedule(e.key, _t(it.title), _t(it.body), tz.TZDateTime.from(it.at, tz.local), _prayerDetails(it.body, sound, it.key == 'subuh'),
             androidScheduleMode: mode, payload: 'muslim');
         await _mark(e.key, sig);
       } catch (e) {
@@ -566,7 +570,7 @@ class NotificationService {
   Future<void> testAdzan(String sound, {bool subuh = false}) async {
     await _plugin.cancel(999997);
     final label = adzanModes.firstWhere((m) => m.$1 == sound, orElse: () => adzanModes.first).$2;
-    await _plugin.show(999997, '🕌 Tes suara sholat · $label', 'Beginilah bunyinya saat masuk waktu sholat. Ketuk "Matikan adzan" atau geser notifikasi untuk berhenti.',
+    await _plugin.show(999997, _t('🕌 Tes suara sholat · $label'), _t('Beginilah bunyinya saat masuk waktu sholat. Ketuk "Matikan adzan" atau geser notifikasi untuk berhenti.'),
         _prayerDetails('Beginilah bunyinya saat masuk waktu sholat. Ketuk "Matikan adzan" atau geser notifikasi untuk berhenti.', sound, subuh),
         payload: 'adzan_test');
   }
@@ -605,8 +609,8 @@ class NotificationService {
     await _plugin.cancel(999999);
     await _plugin.zonedSchedule(
       999999,
-      '⏰ Tes alarm IngetZeon',
-      '${s.label} · ketuk Selesai untuk mematikan',
+      _t('⏰ Tes alarm IngetZeon'),
+      _t('${s.label} · ketuk Selesai untuk mematikan'),
       tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
       _details('⏰ Tes alarm IngetZeon', s.label, override: s),
       androidScheduleMode: await _mode(),

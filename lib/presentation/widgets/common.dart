@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -8,7 +9,7 @@ import '../../data/models/reminder.dart';
 
 /// Kartu putih membulat dengan bayangan tipis.
 class SoftCard extends StatelessWidget {
-  const SoftCard({super.key, required this.child, this.padding = const EdgeInsets.all(16), this.radius = 16, this.onTap, this.color});
+  const SoftCard({super.key, required this.child, this.padding = const EdgeInsets.all(16), this.radius = 20, this.onTap, this.color});
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -71,13 +72,27 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(2, 26, 2, 10),
       child: Row(
         children: [
+          Container(
+            width: 4,
+            height: 18,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(gradient: AppColors.aurora, borderRadius: BorderRadius.circular(4)),
+          ),
           Expanded(
-            child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -.2, color: context.ink)),
+            child: Text(title, style: TextStyle(fontSize: 17.5, fontWeight: FontWeight.w800, letterSpacing: -.3, color: context.ink)),
           ),
           if (action != null)
-            GestureDetector(
-              onTap: onAction,
-              child: Text(action!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary)),
+            Material(
+              color: AppColors.primary.withValues(alpha: context.isDark ? .2 : .09),
+              borderRadius: BorderRadius.circular(99),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(99),
+                onTap: onAction,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Text(action!, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: context.isDark ? const Color(0xFFA5B4FC) : AppColors.primary)),
+                ),
+              ),
             ),
         ],
       ),
@@ -97,18 +112,22 @@ class GradientButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height,
-      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .4), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: -12)]),
+      decoration: BoxDecoration(
+        gradient: onPressed == null ? LinearGradient(colors: [context.faint, context.faint]) : AppColors.gradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: onPressed == null ? null : [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 22, offset: const Offset(0, 12), spreadRadius: -12)],
+      ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           onTap: onPressed,
           child: Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[Icon(icon, color: Colors.white, size: 20), const SizedBox(width: 8)],
-                Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15))),
               ],
             ),
           ),
@@ -258,7 +277,7 @@ Future<String?> inputDialog(BuildContext context, {required String title, String
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (message != null) ...[Text(message, style: TextStyle(color: c.muted, fontSize: 13.5)), const SizedBox(height: 14)],
-          TextField(controller: ctrl, autofocus: true, obscureText: obscure, decoration: InputDecoration(hintText: hint)),
+          TextField(controller: ctrl, autofocus: true, obscureText: obscure, decoration: InputDecoration(hintText: tr(hint))),
         ],
       ),
       actions: [
@@ -277,13 +296,34 @@ TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWe
     ? GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5)
     : TextStyle(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5);
 
-/// Latar polos netral.
+/// Latar dengan cahaya "aurora" lembut di bagian atas.
 class AestheticBackground extends StatelessWidget {
   const AestheticBackground({super.key, required this.child});
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(color: context.bg, child: child);
+  Widget build(BuildContext context) {
+    final dark = context.isDark;
+    Widget glow(Color c, double size, double a) => IgnorePointer(
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(colors: [c.withValues(alpha: a), c.withValues(alpha: 0)]),
+            ),
+          ),
+        );
+    return ColoredBox(
+      color: context.bg,
+      child: Stack(children: [
+        Positioned(top: -140, left: -120, child: glow(AppColors.primary, 380, dark ? .22 : .13)),
+        Positioned(top: -80, right: -140, child: glow(AppColors.magenta, 340, dark ? .16 : .10)),
+        Positioned(top: 160, left: 80, child: glow(AppColors.sky, 260, dark ? .08 : .06)),
+        Positioned.fill(child: child),
+      ]),
+    );
+  }
 }
 
 /// Kartu utama bergradasi nila → ungu dengan ornamen lingkaran halus.
@@ -298,9 +338,9 @@ class MeshCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.gradient,
+        gradient: AppColors.aurora,
         borderRadius: BorderRadius.circular(radius),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 30, offset: const Offset(0, 16), spreadRadius: -14)],
+        boxShadow: [BoxShadow(color: AppColors.violetMid.withValues(alpha: .45), blurRadius: 34, offset: const Offset(0, 18), spreadRadius: -14)],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(children: [
@@ -310,7 +350,19 @@ class MeshCard extends StatelessWidget {
           child: Container(
             width: 220,
             height: 220,
-            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white.withValues(alpha: .08), width: 34)),
+            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white.withValues(alpha: .09), width: 34)),
+          ),
+        ),
+        Positioned(
+          left: -60,
+          bottom: -80,
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(colors: [const Color(0xFF38BDF8).withValues(alpha: .35), const Color(0xFF38BDF8).withValues(alpha: 0)]),
+            ),
           ),
         ),
         Positioned(

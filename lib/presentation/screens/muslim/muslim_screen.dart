@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -82,7 +83,7 @@ Future<void> pickCity(BuildContext context, WidgetRef ref) async {
                 const SizedBox(height: 10),
                 TextField(
                   onChanged: (v) => setS(() => q = v),
-                  decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: 'Cari kota…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+                  decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: tr('Cari kota…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
                 ),
               ]),
             ),
@@ -381,7 +382,7 @@ class IslamicDayRow extends StatelessWidget {
           decoration: BoxDecoration(color: kGreen.withValues(alpha: .12), borderRadius: BorderRadius.circular(14)),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text('${e.date.day}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: kGreen, height: 1.1)),
-            Text(bulanShort[e.date.month - 1].toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: kGreen, letterSpacing: .5)),
+            Text(monthShortName(e.date.month).toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: kGreen, letterSpacing: .5)),
           ]),
         ),
         const SizedBox(width: 12),

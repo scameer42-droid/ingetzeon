@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -72,7 +73,7 @@ Future<void> showAddFood(BuildContext context, WidgetRef ref, {required String m
                 TextField(
                   autofocus: false,
                   onChanged: (v) => setS(() => q = v),
-                  decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: 'Cari: nasi goreng, bakso, teh manis…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+                  decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: tr('Cari: nasi goreng, bakso, teh manis…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
                 ),
                 const SizedBox(height: 8),
                 Row(children: [
@@ -137,7 +138,7 @@ Future<void> showAddFood(BuildContext context, WidgetRef ref, {required String m
 
 Widget _label(BuildContext c, String t) => Padding(
       padding: const EdgeInsets.fromLTRB(10, 12, 10, 4),
-      child: Text(t.toUpperCase(), style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: .6, color: c.muted)),
+      child: Text(tr(t).toUpperCase(), style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: .6, color: c.muted)),
     );
 
 class _Act extends StatelessWidget {
@@ -204,7 +205,7 @@ Future<void> manualFood(BuildContext context, WidgetRef ref, {required String me
           const SizedBox(height: 12),
           MealPicker(meal: m, onChanged: (v) => setS(() => m = v)),
           const SizedBox(height: 12),
-          TextField(controller: nameC, textCapitalization: TextCapitalization.sentences, decoration: InputDecoration(labelText: 'Nama makanan', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
+          TextField(controller: nameC, textCapitalization: TextCapitalization.sentences, decoration: InputDecoration(labelText: tr('Nama makanan'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
           const SizedBox(height: 10),
           Row(children: [
             Expanded(
@@ -212,11 +213,11 @@ Future<void> manualFood(BuildContext context, WidgetRef ref, {required String me
                 controller: kcalC,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(labelText: 'Kalori', suffixText: 'kkal', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+                decoration: InputDecoration(labelText: tr('Kalori'), suffixText: tr('kkal'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
               ),
             ),
             const SizedBox(width: 10),
-            Expanded(child: TextField(controller: porC, decoration: InputDecoration(labelText: 'Porsi', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))))),
+            Expanded(child: TextField(controller: porC, decoration: InputDecoration(labelText: tr('Porsi'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))))),
           ]),
           const SizedBox(height: 16),
           FilledButton(
@@ -654,7 +655,7 @@ Future<void> _packSheet(BuildContext context, WidgetRef ref, String code, PackFo
               controller: gC,
               keyboardType: TextInputType.number,
               onChanged: (_) => setS(() {}),
-              decoration: InputDecoration(labelText: 'Jumlah dimakan/diminum', suffixText: 'g/ml', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+              decoration: InputDecoration(labelText: tr('Jumlah dimakan/diminum'), suffixText: tr('g/ml'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
             )
           else
             QtyStepper(value: serv, onChanged: (v) => setS(() => serv = v), unit: 'sajian (${p.servingLabel.isNotEmpty ? p.servingLabel : '${fmtQty(p.serving ?? 100)} g'})'),

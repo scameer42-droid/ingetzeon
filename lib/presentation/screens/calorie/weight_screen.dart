@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -246,7 +247,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
     final changeColor = st.change.abs() < .05 ? Colors.white : (st.good ? const Color(0xFFA7F3D0) : const Color(0xFFFDE68A));
     return Scaffold(
       appBar: AppBar(title: const Text('Berat badan'), actions: [
-        IconButton(tooltip: 'Profil tubuh', onPressed: () => editBodyProfile(context, ref), icon: const Icon(Icons.manage_accounts_rounded)),
+        IconButton(tooltip: tr('Profil tubuh'), onPressed: () => editBodyProfile(context, ref), icon: const Icon(Icons.manage_accounts_rounded)),
       ]),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 110), children: [
         // ---- pahlawan: berat saat ini
@@ -658,7 +659,7 @@ Future<void> logWeightSheet(BuildContext context, WidgetRef ref, {String? day, d
               onTap: !showDate && editing
                   ? null
                   : () async {
-                      final d = await showDatePicker(context: ctx, initialDate: date, firstDate: DateTime.now().subtract(const Duration(days: 1095)), lastDate: DateTime.now(), helpText: 'Tanggal menimbang');
+                      final d = await showDatePicker(context: ctx, initialDate: date, firstDate: DateTime.now().subtract(const Duration(days: 1095)), lastDate: DateTime.now(), helpText: tr('Tanggal menimbang'));
                       if (d != null) setS(() => date = d);
                     },
             ),

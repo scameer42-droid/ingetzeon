@@ -1,6 +1,8 @@
 /// Alat bantu tanggal & waktu berbahasa Indonesia.
 library;
 
+import '../i18n/i18n.dart';
+
 const hariList = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 const hariShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 const bulanList = [
@@ -24,9 +26,27 @@ String dayKey(DateTime d) => '${d.year}-${two(d.month)}-${two(d.day)}';
 
 String fmtTime(DateTime d) => '${two(d.hour)}.${two(d.minute)}';
 
-String fmtDateLong(DateTime d) => '${hariList[jsDay(d)]}, ${d.day} ${bulanList[d.month - 1]} ${d.year}';
+const dayListEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const dayShortEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const monthListEn = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+const monthShortEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-String fmtDateShort(DateTime d) => '${hariShort[jsDay(d)]}, ${d.day} ${bulanShort[d.month - 1]}';
+/// Nama hari/bulan sesuai bahasa tampilan.
+String dayName(DateTime d) => (I18n.isEn ? dayListEn : hariList)[jsDay(d)];
+String dayShortName(DateTime d) => (I18n.isEn ? dayShortEn : hariShort)[jsDay(d)];
+String monthName(int m) => (I18n.isEn ? monthListEn : bulanList)[m - 1];
+String monthShortName(int m) => (I18n.isEn ? monthShortEn : bulanShort)[m - 1];
+
+String fmtDateLong(DateTime d) => I18n.isEn
+    ? '${dayName(d)}, ${monthName(d.month)} ${d.day}, ${d.year}'
+    : '${hariList[jsDay(d)]}, ${d.day} ${bulanList[d.month - 1]} ${d.year}';
+
+String fmtDateShort(DateTime d) => I18n.isEn
+    ? '${dayShortName(d)}, ${monthShortName(d.month)} ${d.day}'
+    : '${hariShort[jsDay(d)]}, ${d.day} ${bulanShort[d.month - 1]}';
 
 String toLocalIso(DateTime d) => '${dayKey(d)}T${two(d.hour)}:${two(d.minute)}';
 

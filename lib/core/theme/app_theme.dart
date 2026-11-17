@@ -32,7 +32,7 @@ class AppTheme {
     );
 
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
       borderSide: BorderSide(color: line, width: 1),
     );
 
@@ -44,8 +44,42 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: ink,
-        titleTextStyle: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w600, color: ink),
+        titleTextStyle: GoogleFonts.plusJakartaSans(fontSize: 19, fontWeight: FontWeight.w800, color: ink, letterSpacing: -.3),
       ),
+      cardTheme: CardThemeData(
+        color: surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        side: BorderSide(color: line),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.primary),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
@@ -65,7 +99,7 @@ class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((s) => Colors.white),

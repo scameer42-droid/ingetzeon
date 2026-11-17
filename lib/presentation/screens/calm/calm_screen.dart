@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -371,7 +372,7 @@ class HabitsScreen extends ConsumerWidget {
             TextField(
               controller: name,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(prefixText: '$emoji  ', labelText: 'Nama kebiasaan', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+              decoration: InputDecoration(prefixText: tr('$emoji  '), labelText: tr('Nama kebiasaan'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -456,7 +457,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
               minLines: 5,
               maxLines: 10,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(hintText: 'Tulis bebas, tidak ada yang menilai…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+              decoration: InputDecoration(hintText: tr('Tulis bebas, tidak ada yang menilai…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
             ),
             const SizedBox(height: 14),
             GradientButton(

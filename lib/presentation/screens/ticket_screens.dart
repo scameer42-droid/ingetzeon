@@ -1,5 +1,6 @@
 import 'package:barcode_widget/barcode_widget.dart' as bw;
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart' as ms;
 

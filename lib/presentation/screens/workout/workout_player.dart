@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -222,7 +223,7 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: fg)),
           ),
           IconButton(
-            tooltip: 'Suara pemandu',
+            tooltip: tr('Suara pemandu'),
             onPressed: () => setState(() => ref.read(workoutProvider.notifier).setVoice(!_voice)),
             icon: Icon(ref.watch(workoutProvider).voice ? Icons.volume_up_rounded : Icons.volume_off_rounded, color: fg),
           ),
@@ -311,7 +312,7 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
       const SizedBox(height: 14),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Text(ready ? 'BERIKUTNYA: ${s.ex.name.toUpperCase()}' : s.ex.name.toUpperCase(),
+        child: Text(ready ? 'BERIKUTNYA: ${tr(s.ex.name).toUpperCase()}' : tr(s.ex.name).toUpperCase(),
             textAlign: TextAlign.center, maxLines: 2, style: olaDisplay(ready ? 24 : 32, color: context.ink)),
       ),
       Text(big, style: olaDisplay(84, color: ready ? kOla : context.ink, spacing: 1)),
@@ -370,7 +371,7 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
   Widget _ctrl(IconData i, VoidCallback onTap, String tip) => SizedBox(
         width: 60,
         height: 60,
-        child: IconButton.filledTonal(tooltip: tip, onPressed: onTap, icon: Icon(i, size: 30)),
+        child: IconButton.filledTonal(tooltip: tr(tip), onPressed: onTap, icon: Icon(i, size: 30)),
       );
 
   Widget _restView() {
@@ -411,7 +412,7 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
             const SizedBox(width: 14),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(s.ex.name.toUpperCase(), style: olaDisplay(26, color: context.ink)),
+                Text(tr(s.ex.name).toUpperCase(), style: olaDisplay(26, color: context.ink)),
                 const SizedBox(height: 4),
                 Text(amountLabel(s.ex, s.amount), style: olaDisplay(22, color: kBlue)),
                 const SizedBox(height: 4),

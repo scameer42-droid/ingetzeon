@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../core/i18n/i18n.dart';
 import '../core/utils/date_utils.dart';
 import '../data/models/reminder.dart';
 import 'natural_parser.dart';
@@ -339,13 +340,42 @@ Contoh Output:
     while (contents.isNotEmpty && contents.first['role'] != 'user') {
       contents.removeAt(0);
     }
+    var sys = system;
+    if (I18n.isEn) {
+      sys = '$system\n\nIMPORTANT: The user has set the app language to ENGLISH. Always reply in natural, friendly English (even if the instructions above are in Indonesian).';
+    }
     try {
-      return await _generateFull(apiKey: apiKey, model: model, system: system, contents: contents, search: true);
+      return await _generateFull(apiKey: apiKey, model: model, system: sys, contents: contents, search: true);
     } on AiException catch (e) {
       // model yang tidak mendukung Google Search → coba tanpa
-      if (e.status == 400 || e.status == 403) return _generateFull(apiKey: apiKey, model: model, system: system, contents: contents);
+      if (e.status == 400 || e.status == 403) return _generateFull(apiKey: apiKey, model: model, system: sys, contents: contents);
       rethrow;
     }
+  }
+
+  /// Terjemahkan teks antara Bahasa Indonesia dan Inggris dengan Gemini.
+  /// [from]/[to]: 'id' atau 'en'.
+  Future<String> translate(String text, {required String from, required String to, required String apiKey, required String model}) async {
+    const names = {'id': 'Indonesian (Bahasa Indonesia)', 'en': 'English'};
+    final system = 'You are a professional, natural-sounding translator. Translate the user text from ${names[from]} to ${names[to]}. '
+        'Keep the meaning, tone, names, numbers, emoji and line breaks. Use everyday wording a native speaker would use. '
+        'Reply with ONLY the translation — no quotes, notes, or explanations.';
+    final out = await _generate(
+      apiKey: apiKey,
+      model: model,
+      system: system,
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {'text': text}
+          ]
+        }
+      ],
+      timeout: const Duration(seconds: 25),
+      fast: true,
+    );
+    return out.trim();
   }
 
   /// Penjelasan error pindai foto yang mudah dipahami.

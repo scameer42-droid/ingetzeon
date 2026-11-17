@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -69,7 +70,7 @@ class BigStartButton extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     if (icon != null) ...[Icon(icon, color: textColor, size: height * .42), const SizedBox(width: 6)],
-                    Text(label.toUpperCase(), maxLines: 1, style: olaDisplay(height * .42, color: textColor, spacing: 1)),
+                    Text(tr(label).toUpperCase(), maxLines: 1, style: olaDisplay(height * .42, color: textColor, spacing: 1)),
                   ]),
                 ),
               ),
@@ -99,7 +100,7 @@ class OlaRibbon extends StatelessWidget {
               child: Icon(icon, color: Colors.white, size: 16),
             ),
             const SizedBox(width: 10),
-            Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(text.toUpperCase(), maxLines: 1, style: olaDisplay(24, spacing: .8)))),
+            Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(tr(text).toUpperCase(), maxLines: 1, style: olaDisplay(24, spacing: .8)))),
           ]),
         ),
       );
@@ -307,7 +308,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
         child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(t.toUpperCase(), style: olaDisplay(24, color: context.ink, spacing: .6)),
+              Text(tr(t).toUpperCase(), style: olaDisplay(24, color: context.ink, spacing: .6)),
               if (sub != null) Text(sub, style: TextStyle(color: context.muted, fontSize: 12.5)),
             ]),
           ),
@@ -328,7 +329,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
               IconButton(onPressed: () => Navigator.of(context).maybePop(), icon: const Icon(Icons.arrow_back_rounded, color: Colors.white)),
               const Expanded(child: Text('Olahraga', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17))),
               IconButton(
-                tooltip: 'Pengingat olahraga',
+                tooltip: tr('Pengingat olahraga'),
                 onPressed: () => _reminder(context),
                 icon: Icon(s.reminderHour == null ? Icons.notifications_none_rounded : Icons.notifications_active_rounded, color: Colors.white),
               ),
@@ -383,7 +384,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
     final t = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: s.reminderHour ?? 6, minute: s.reminderMinute),
-      helpText: 'Ingatkan olahraga tiap hari jam',
+      helpText: tr('Ingatkan olahraga tiap hari jam'),
       cancelText: s.reminderHour != null ? 'Matikan' : 'Batal',
     );
     if (t == null) {
@@ -581,11 +582,11 @@ class _ProgramCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                     decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(99)),
-                    child: Text('${p.emoji} ${parts.length > 1 ? parts[1] : levelNames[p.level]}'.toUpperCase(),
+                    child: Text('${p.emoji} ${tr(parts.length > 1 ? parts[1] : levelNames[p.level])}'.toUpperCase(),
                         maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: .8)),
                   ),
                   const SizedBox(height: 8),
-                  Expanded(child: Align(alignment: Alignment.topLeft, child: Text(parts.first.toUpperCase(), maxLines: 2, overflow: TextOverflow.ellipsis, style: olaDisplay(28)))),
+                  Expanded(child: Align(alignment: Alignment.topLeft, child: Text(tr(parts.first).toUpperCase(), maxLines: 2, overflow: TextOverflow.ellipsis, style: olaDisplay(28)))),
                   Text('${(Workout.seconds(p) / 60).round()} MENIT · ${p.items.length} GERAKAN · ${fmtNum(Workout.kcal(p, kg))} KKAL', maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: .4)),
                 ]),
@@ -618,9 +619,9 @@ class _MiniProgram extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 12, 96, 12),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(levelNames[p.level].toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: .8)),
+                Text(tr(levelNames[p.level]).toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: .8)),
                 const SizedBox(height: 4),
-                Expanded(child: Align(alignment: Alignment.topLeft, child: Text(p.name.split(' — ').first.toUpperCase(), maxLines: 3, overflow: TextOverflow.ellipsis, style: olaDisplay(20)))),
+                Expanded(child: Align(alignment: Alignment.topLeft, child: Text(tr(p.name.split(' — ').first).toUpperCase(), maxLines: 3, overflow: TextOverflow.ellipsis, style: olaDisplay(20)))),
                 Text('${(Workout.seconds(p) / 60).round()} MNT · ${fmtNum(Workout.kcal(p, kg))} KKAL', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
               ]),
             ),
@@ -644,8 +645,8 @@ class ProgramScreen extends ConsumerWidget {
     final kg = ref.watch(calorieProvider).profile?.kg;
     final c = Color(p.color);
     final day = RegExp(r'hari ke-(\d+)').firstMatch(title ?? '')?.group(1);
-    final small = day != null ? 'TANTANGAN PERUT 28 HARI' : '${levelNames[p.level]} · ${p.rounds} ronde'.toUpperCase();
-    final big = day != null ? 'HARI KE-$day' : p.name.split(' — ').first.toUpperCase();
+    final small = day != null ? 'TANTANGAN PERUT 28 HARI' : tr('${levelNames[p.level]} · ${p.rounds} ronde').toUpperCase();
+    final big = day != null ? 'HARI KE-$day' : tr(p.name.split(' — ').first).toUpperCase();
     final items = [
       for (final it in p.items) (exerciseById(it.$1), ((it.$2 > 0 ? it.$2 : exerciseById(it.$1).amount) * mult).round()),
     ];
@@ -862,7 +863,7 @@ class _ExercisePageState extends ConsumerState<_ExercisePage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: kBlue, borderRadius: BorderRadius.circular(99)),
-              child: Text(exerciseAreas[e.area]!.toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: .8)),
+              child: Text(tr(exerciseAreas[e.area]!).toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: .8)),
             ),
           ),
           Positioned(
@@ -877,7 +878,7 @@ class _ExercisePageState extends ConsumerState<_ExercisePage> {
         ]),
       ),
       const SizedBox(height: 16),
-      Text(e.name.toUpperCase(), style: olaDisplay(36, color: context.ink)),
+      Text(tr(e.name).toUpperCase(), style: olaDisplay(36, color: context.ink)),
       const SizedBox(height: 10),
       Wrap(spacing: 8, runSpacing: 8, children: [
         _chip(context, e.timed ? Icons.timer_outlined : Icons.repeat_rounded, e.timed ? amountLabel(e, widget.amount) : '${widget.amount} kali', kBlue),
@@ -921,7 +922,7 @@ class _ExercisePageState extends ConsumerState<_ExercisePage> {
 
   Widget _head(BuildContext context, String t) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
-        child: Text(t.toUpperCase(), style: olaDisplay(20, color: context.ink, spacing: .8)),
+        child: Text(tr(t).toUpperCase(), style: olaDisplay(20, color: context.ink, spacing: .8)),
       );
 
   Widget _chip(BuildContext context, IconData ic, String t, Color c) => Container(

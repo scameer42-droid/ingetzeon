@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -78,9 +79,9 @@ class _ItemFormState extends ConsumerState<_ItemForm> {
               const Expanded(child: Text('Ingat barang', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))),
             ]),
             const SizedBox(height: 16),
-            TextField(controller: _name, autofocus: true, decoration: const InputDecoration(labelText: 'Barang apa?', hintText: 'Mis. kunci motor, tas kerja, paspor')),
+            TextField(controller: _name, autofocus: true, decoration: InputDecoration(labelText: tr('Barang apa?'), hintText: tr('Mis. kunci motor, tas kerja, paspor'))),
             const SizedBox(height: 12),
-            TextField(controller: _place, decoration: const InputDecoration(labelText: 'Disimpan di mana?', hintText: 'Mis. laci meja kamar')),
+            TextField(controller: _place, decoration: InputDecoration(labelText: tr('Disimpan di mana?'), hintText: tr('Mis. laci meja kamar'))),
             const SizedBox(height: 12),
             if (_photo != null)
               PhotoThumb(_photo!, height: 170)

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -28,6 +29,7 @@ import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
 import 'stats_screen.dart';
+import 'translate_screen.dart';
 import '../../services/islam_logic.dart';
 import '../../services/calorie_logic.dart';
 
@@ -64,19 +66,47 @@ class HomeScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 120),
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 2),
-                  Text('${greeting(now)},', style: accentFont(size: 25, color: context.ink)),
-                  Text('${name.isEmpty ? 'Kamu' : name} 👋', style: accentFont(size: 25, color: AppColors.primary)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: context.card.withValues(alpha: context.isDark ? .6 : .85),
+                      borderRadius: BorderRadius.circular(99),
+                      border: Border.all(color: context.line),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.primary),
+                      const SizedBox(width: 6),
+                      Flexible(child: Text(fmtDateLong(now), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.muted, fontWeight: FontWeight.w600))),
+                    ]),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('${greeting(now)},', style: accentFont(size: 26, color: context.ink)),
+                  ShaderMask(
+                    shaderCallback: (r) => AppColors.aurora.createShader(r),
+                    child: Text('${name.isEmpty ? tr('Kamu') : name} 👋', translate: false, style: accentFont(size: 26, color: Colors.white)),
+                  ),
                 ]),
               ),
-              GestureDetector(
-                onTap: () => onGoTo(3),
-                child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46),
-              ),
+              Column(children: [
+                GestureDetector(
+                  onTap: () => onGoTo(3),
+                  child: Container(
+                    padding: const EdgeInsets.all(2.5),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.aurora),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: context.bg),
+                      child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const _LangChip(),
+              ]),
             ],
           ),
           const SizedBox(height: 20),
@@ -85,6 +115,8 @@ class HomeScreen extends ConsumerWidget {
           _AskBar(onTap: onOpenAi),
           const SizedBox(height: 14),
           _MenuCard(onOpenAi: onOpenAi, onGoTo: onGoTo, onItems: () => _showItems(context, items), onNew: () => _openForm(context)),
+          const SizedBox(height: 12),
+          const _TranslateBanner(),
           if (parking != null) ...[
             const SizedBox(height: 12),
             _ParkingCard(parking: parking),
@@ -224,26 +256,124 @@ class _AskBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SoftCard(
-      padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-      radius: 18,
-      onTap: onTap,
-      child: Row(children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(10)),
-          child: Icon(Icons.auto_awesome_rounded, color: context.muted, size: 19),
+    return Container(
+      padding: const EdgeInsets.all(1.6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(colors: [
+          AppColors.primary.withValues(alpha: .55),
+          AppColors.magenta.withValues(alpha: .45),
+          AppColors.sky.withValues(alpha: .45),
+        ]),
+        boxShadow: context.softShadow,
+      ),
+      child: Material(
+        color: context.card,
+        borderRadius: BorderRadius.circular(18.5),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18.5),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+            child: Row(children: [
+              ShaderMask(
+                shaderCallback: (r) => AppColors.aurora.createShader(r),
+                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Text('Ketik atau ucapkan pengingat…', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 14))),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(gradient: AppColors.aurora, borderRadius: BorderRadius.circular(13), boxShadow: context.colorShadow(AppColors.violetMid)),
+                child: const Icon(Icons.mic_rounded, color: Colors.white, size: 21),
+              ),
+            ]),
+          ),
         ),
-        const SizedBox(width: 12),
-        Expanded(child: Text('Ketik atau ucapkan pengingat…', style: TextStyle(color: context.muted, fontSize: 14))),
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(12)),
-          child: const Icon(Icons.mic_rounded, color: Colors.white, size: 20),
+      ),
+    );
+  }
+}
+
+/// Tombol cepat ganti bahasa ID ⇄ EN.
+class _LangChip extends ConsumerWidget {
+  const _LangChip();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lang = ref.watch(settingsProvider.select((s) => s.lang));
+    return Material(
+      color: context.card,
+      borderRadius: BorderRadius.circular(99),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(99),
+        onTap: () => ref.read(settingsProvider.notifier).setLang(lang == 'en' ? 'id' : 'en'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: context.line)),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.language_rounded, size: 13, color: context.muted),
+            const SizedBox(width: 4),
+            Text(lang == 'en' ? 'EN' : 'ID', translate: false, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: AppColors.primary)),
+          ]),
         ),
-      ]),
+      ),
+    );
+  }
+}
+
+/// Kartu fitur Terjemah Indonesia ⇄ Inggris.
+class _TranslateBanner extends StatelessWidget {
+  const _TranslateBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: kTrGradient,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: context.colorShadow(kTrColor, strength: .4),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => openTranslate(context),
+          child: Stack(children: [
+            Positioned(
+              right: -30,
+              top: -40,
+              child: Container(width: 130, height: 130, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .1))),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+              child: Row(children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(15)),
+                  child: const Icon(Icons.translate_rounded, color: Colors.white, size: 26),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('Terjemah', style: TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.w800)),
+                    SizedBox(height: 2),
+                    Text('🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w500)),
+                  ]),
+                ),
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  child: const Icon(Icons.arrow_forward_rounded, color: kTrColor, size: 19),
+                ),
+              ]),
+            ),
+          ]),
+        ),
+      ),
     );
   }
 }
@@ -378,14 +508,14 @@ class _MenuCard extends ConsumerWidget {
       (icon: Icons.apps_rounded, label: 'Lainnya', color: const Color(0xFF64748B), onTap: () => _moreMenu(context, ref), badge: 0),
     ];
     return SoftCard(
-      radius: 22,
-      padding: const EdgeInsets.fromLTRB(6, 16, 6, 8),
+      radius: 24,
+      padding: const EdgeInsets.fromLTRB(6, 18, 6, 8),
       child: GridView.count(
         crossAxisCount: 4,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: .86,
+        childAspectRatio: .82,
         children: [
           for (final m in menu)
             InkWell(
@@ -394,10 +524,10 @@ class _MenuCard extends ConsumerWidget {
               child: Column(children: [
                 Stack(clipBehavior: Clip.none, children: [
                   Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(color: m.color.withValues(alpha: .1), borderRadius: BorderRadius.circular(16)),
-                    child: Icon(m.icon, color: m.color, size: 25),
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(gradient: AppColors.tint(m.color), borderRadius: BorderRadius.circular(17), boxShadow: context.colorShadow(m.color, strength: .4)),
+                    child: Icon(m.icon, color: Colors.white, size: 25),
                   ),
                   if (m.badge > 0)
                     Positioned(
@@ -411,8 +541,8 @@ class _MenuCard extends ConsumerWidget {
                       ),
                     ),
                 ]),
-                const SizedBox(height: 7),
-                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, height: 1.2)),
+                const SizedBox(height: 8),
+                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.2)),
               ]),
             ),
         ],
@@ -429,6 +559,7 @@ class _MenuCard extends ConsumerWidget {
       (icon: Icons.water_drop_rounded, title: 'Siklus haid', sub: cycleOn ? 'Pengingat & perkiraan haid' : 'Aktifkan pengingat haid', color: kHaid, onTap: () => push(const CycleScreen())),
       (icon: Icons.calendar_month_rounded, title: 'Kalender', sub: 'Semua jadwal per tanggal', color: const Color(0xFF6366F1), onTap: () => onGoTo(1)),
       (icon: Icons.bar_chart_rounded, title: 'Statistik', sub: 'Progres & kebiasaanmu', color: const Color(0xFF0EA5E9), onTap: () => push(const _StatsPage())),
+      (icon: Icons.translate_rounded, title: 'Terjemah', sub: 'Indonesia ⇄ Inggris', color: kTrColor, onTap: () => openTranslate(context)),
       (icon: Icons.auto_awesome_rounded, title: 'Asisten AI', sub: 'Tanya atau suruh apa saja', color: const Color(0xFF8B5CF6), onTap: onOpenAi),
       (icon: Icons.settings_rounded, title: 'Profil & pengaturan', sub: 'Tema, suara, cadangan data', color: const Color(0xFF64748B), onTap: () => onGoTo(3)),
     ];
@@ -588,16 +719,17 @@ class _SumCard extends StatelessWidget {
     return SizedBox(
       width: 156,
       child: SoftCard(
-        radius: 20,
+        radius: 22,
         padding: const EdgeInsets.all(14),
         onTap: onTap,
+        color: Color.alphaBlend(color.withValues(alpha: context.isDark ? .12 : .06), context.card),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Container(
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(9)),
-              child: Icon(icon, size: 15, color: color),
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(gradient: AppColors.tint(color), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, size: 16, color: Colors.white),
             ),
             const SizedBox(width: 7),
             Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted))),

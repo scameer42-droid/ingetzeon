@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../../core/i18n/tr_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -285,7 +286,7 @@ class _QuranListScreenState extends ConsumerState<QuranListScreen> {
                     ),
                   TextField(
                     onChanged: (v) => setState(() => _q = v),
-                    decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: 'Cari surah (mis. Yasin, 36)…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+                    decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: tr('Cari surah (mis. Yasin, 36)…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
                   ),
                   const SizedBox(height: 10),
                   for (final m in list)
@@ -371,7 +372,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
         centerTitle: false,
         actions: [
           IconButton(
-            tooltip: _latin ? 'Sembunyikan latin' : 'Tampilkan latin',
+            tooltip: tr(_latin ? 'Sembunyikan latin' : 'Tampilkan latin'),
             onPressed: () => setState(() => _latin = !_latin),
             icon: Icon(_latin ? Icons.text_fields_rounded : Icons.text_format_rounded),
           ),
@@ -417,7 +418,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                           const Spacer(),
                           IconButton(
                             visualDensity: VisualDensity.compact,
-                            tooltip: 'Tandai terakhir dibaca',
+                            tooltip: tr('Tandai terakhir dibaca'),
                             onPressed: () {
                               ref.read(muslimProvider.notifier).setLastRead(_no, a.n);
                               showToast(context, 'Ditandai: ${m['englishName']} ayat ${a.n} 🔖');
@@ -426,7 +427,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                           ),
                           IconButton(
                             visualDensity: VisualDensity.compact,
-                            tooltip: 'Salin',
+                            tooltip: tr('Salin'),
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: '${a.ar}\n\n${a.id}\n(QS ${m['englishName']}: ${a.n})'));
                               showToast(context, 'Ayat disalin');
@@ -467,7 +468,7 @@ class _DoaScreenState extends State<DoaScreen> {
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), children: [
         TextField(
           onChanged: (v) => setState(() => _q = v),
-          decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: 'Cari doa (mis. tidur, makan)…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+          decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: tr('Cari doa (mis. tidur, makan)…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
         ),
         const SizedBox(height: 12),
         for (final d in list) Padding(padding: const EdgeInsets.only(bottom: 10), child: DoaCard(d, initiallyExpanded: d.judul == widget.focus)),
@@ -537,7 +538,7 @@ class _AsmaScreenState extends State<AsmaScreen> {
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), children: [
         TextField(
           onChanged: (v) => setState(() => _q = v),
-          decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: 'Cari nama atau arti…', border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
+          decoration: InputDecoration(prefixIcon: const Icon(Icons.search_rounded), hintText: tr('Cari nama atau arti…'), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14))),
         ),
         const SizedBox(height: 12),
         GridView.builder(

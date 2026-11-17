@@ -2,6 +2,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../core/i18n/i18n.dart';
 import 'speech_text.dart';
 
 /// Input suara (speech_to_text) dan suara balasan (flutter_tts), Bahasa Indonesia.
@@ -28,10 +29,24 @@ class VoiceService {
     );
     if (_sttReady) {
       final locales = await _stt.locales();
+      _sttLocales = locales.map((l) => l.localeId).toList();
       final indo = locales.where((l) => l.localeId.toLowerCase().startsWith('id'));
       if (indo.isNotEmpty) _localeId = indo.first.localeId;
     }
     return _sttReady;
+  }
+
+  List<String> _sttLocales = const [];
+
+  /// Kode bahasa pengenalan suara untuk 'id' / 'en'.
+  String _sttLocaleFor(String lang) {
+    if (lang != 'en') return _localeId;
+    for (final p in const ['en_US', 'en-US', 'en_GB', 'en']) {
+      for (final l in _sttLocales) {
+        if (l.toLowerCase().startsWith(p.toLowerCase())) return l;
+      }
+    }
+    return 'en_US';
   }
 
   /// Mulai mendengarkan. Mengembalikan false bila mikrofon tidak tersedia/ditolak.
@@ -39,6 +54,7 @@ class VoiceService {
     required void Function(String text, bool isFinal) onResult,
     void Function(String status)? onStatus,
     void Function(String error)? onError,
+    String? lang,
   }) async {
     _onStatus = onStatus;
     _onError = onError;
@@ -46,7 +62,7 @@ class VoiceService {
     await stopSpeaking();
     await _stt.listen(
       onResult: (SpeechRecognitionResult r) => onResult(SpeechText.fromStt(r.recognizedWords), r.finalResult),
-      localeId: _localeId,
+      localeId: _sttLocaleFor(lang ?? I18n.lang),
       listenFor: const Duration(seconds: 40),
       pauseFor: const Duration(seconds: 4),
       listenOptions: stt.SpeechListenOptions(
@@ -111,9 +127,45 @@ class VoiceService {
     return _hasIndonesian;
   }
 
+  /// Bahasa suara yang sedang dipasang di mesin TTS ('id' / 'en').
+  String _ttsLang = 'id';
+
+  Future<void> _useLang(String lang) async {
+    if (_ttsLang == lang) return;
+    try {
+      if (lang == 'en') {
+        await _tts.setLanguage('en-US');
+        final voices = await _tts.getVoices;
+        if (voices is List) {
+          final en = voices.whereType<Map>().where((v) => RegExp(r'^en[-_]US', caseSensitive: false).hasMatch('${v['locale'] ?? ''}')).toList();
+          en.sort((a, b) => '${a['name']}'.contains('network') ? 1 : ('${b['name']}'.contains('network') ? -1 : 0));
+          if (en.isNotEmpty) await _tts.setVoice({'name': '${en.first['name']}', 'locale': '${en.first['locale']}'});
+        }
+        _ttsLang = 'en';
+      } else {
+        _ttsReady = false;
+        _ttsLang = 'id';
+        await _initTts();
+      }
+    } catch (_) {}
+  }
+
+  /// Bacakan teks. Saat bahasa tampilan Inggris, teks ikut diterjemahkan & dibaca berlogat Inggris.
   Future<void> speak(String text) async {
     await _initTts();
-    final clean = SpeechText.forTts(text);
+    final en = I18n.isEn;
+    await _useLang(en ? 'en' : 'id');
+    final clean = SpeechText.forTts(en ? tr(text) : text);
+    if (clean.isEmpty) return;
+    await _tts.stop();
+    await _tts.speak(clean);
+  }
+
+  /// Bacakan teks dalam bahasa tertentu tanpa diterjemahkan (dipakai fitur Terjemah).
+  Future<void> speakIn(String text, String lang) async {
+    await _initTts();
+    await _useLang(lang == 'en' ? 'en' : 'id');
+    final clean = text.trim();
     if (clean.isEmpty) return;
     await _tts.stop();
     await _tts.speak(clean);

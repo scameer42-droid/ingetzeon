@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/i18n/i18n.dart';
 import '../data/repositories/settings_repository.dart';
 import '../services/notification_service.dart';
 import '../services/photo_service.dart';
@@ -14,6 +15,7 @@ class AppSettings {
     this.voice = true,
     this.alarmSound = AlarmSound.melodi,
     this.avatarPath = '',
+    this.lang = 'id',
   });
 
   final String name;
@@ -26,9 +28,12 @@ class AppSettings {
   /// Foto profil (path file di HP), kosong = pakai inisial nama.
   final String avatarPath;
 
+  /// Bahasa tampilan: 'id' atau 'en'.
+  final String lang;
+
   bool get hasAi => apiKey.trim().isNotEmpty;
 
-  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound, String? avatarPath}) =>
+  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound, String? avatarPath, String? lang}) =>
       AppSettings(
         name: name ?? this.name,
         themeMode: themeMode ?? this.themeMode,
@@ -37,6 +42,7 @@ class AppSettings {
         voice: voice ?? this.voice,
         alarmSound: alarmSound ?? this.alarmSound,
         avatarPath: avatarPath ?? this.avatarPath,
+        lang: lang ?? this.lang,
       );
 }
 
@@ -57,6 +63,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
       voice: repo.get<bool>('voice', true),
       alarmSound: AlarmSound.fromName(repo.get<String>('alarmSound', 'melodi')),
       avatarPath: repo.get<String>('avatar', ''),
+      lang: I18n.lang,
     );
   }
 
@@ -71,6 +78,13 @@ class SettingsNotifier extends Notifier<AppSettings> {
     state = state.copyWith(avatarPath: path ?? '');
     await _repo.set('avatar', state.avatarPath);
     if (old.isNotEmpty && old != path) await PhotoService.instance.delete(old);
+  }
+
+  /// Ganti bahasa tampilan aplikasi.
+  Future<void> setLang(String l) async {
+    I18n.setLang(l);
+    state = state.copyWith(lang: I18n.lang);
+    await _repo.set('lang', I18n.lang);
   }
 
   Future<void> setTheme(ThemeMode m) async {

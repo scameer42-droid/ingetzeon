@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -152,7 +153,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
               autofocus: !_editing,
               maxLength: 80,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(hintText: 'Mis. Minum obat', counterText: ''),
+              decoration: InputDecoration(hintText: tr('Mis. Minum obat'), counterText: ''),
             ),
             const SizedBox(height: 16),
             _label('Catatan (opsional)'),
@@ -161,7 +162,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
               maxLines: 3,
               maxLength: 300,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(hintText: 'Detail tambahan…', counterText: ''),
+              decoration: InputDecoration(hintText: tr('Detail tambahan…'), counterText: ''),
             ),
             const SizedBox(height: 16),
             Row(children: [

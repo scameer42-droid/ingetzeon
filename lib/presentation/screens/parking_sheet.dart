@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text;
+import '../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -153,7 +154,7 @@ class _ParkingFormState extends ConsumerState<_ParkingForm> {
             TextField(
               controller: _loc,
               textCapitalization: TextCapitalization.characters,
-              decoration: const InputDecoration(hintText: 'Mis. B2, pilar C5 dekat lift'),
+              decoration: InputDecoration(hintText: tr('Mis. B2, pilar C5 dekat lift')),
             ),
             const SizedBox(height: 10),
             Wrap(
