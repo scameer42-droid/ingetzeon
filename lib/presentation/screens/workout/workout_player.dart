@@ -12,6 +12,7 @@ import '../../../providers/workout_provider.dart';
 import '../../../services/voice_service.dart';
 import '../../../services/workout_logic.dart';
 import '../../widgets/common.dart';
+import 'exercise_figure.dart';
 import 'workout_screen.dart';
 
 enum _Phase { ready, work, rest, done }
@@ -168,9 +169,18 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
     return true;
   }
 
+  void _addRest() => setState(() => _left += 20);
+
+  Future<void> _showSteps() async {
+    setState(() => _paused = true);
+    await showExerciseDetail(context, [for (final st in _steps) st.ex], index: _i, amounts: [for (final st in _steps) st.amount]);
+    if (mounted) setState(() => _paused = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final c = Color(widget.program.color);
+    final rest = _phase == _Phase.rest;
+    final dark = rest || _phase == _Phase.done;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -178,198 +188,279 @@ class _WorkoutPlayerState extends ConsumerState<WorkoutPlayer> {
         if (await _confirmExit() && context.mounted) Navigator.of(context).pop();
       },
       child: Scaffold(
-        backgroundColor: _phase == _Phase.rest ? const Color(0xFF0F766E) : null,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          foregroundColor: _phase == _Phase.rest ? Colors.white : null,
-          leading: IconButton(
-            icon: const Icon(Icons.close_rounded),
-            onPressed: () async {
-              if (await _confirmExit() && context.mounted) Navigator.of(context).pop();
-            },
+        backgroundColor: dark ? kNavy : (context.isDark ? null : Colors.white),
+        body: Container(
+          decoration: dark ? const BoxDecoration(gradient: kNavyGradient) : null,
+          child: SafeArea(
+            child: _phase == _Phase.done
+                ? _summary()
+                : Column(children: [
+                    _top(rest),
+                    Expanded(child: rest ? _restView() : _workView()),
+                  ]),
           ),
-          title: Text(widget.title, style: const TextStyle(fontSize: 16)),
-          actions: [
-            IconButton(
-              tooltip: 'Suara pemandu',
-              onPressed: () => setState(() => ref.read(workoutProvider.notifier).setVoice(!_voice)),
-              icon: Icon(ref.watch(workoutProvider).voice ? Icons.volume_up_rounded : Icons.volume_off_rounded),
-            ),
-          ],
         ),
-        body: SafeArea(top: false, child: _phase == _Phase.done ? _summary(c) : _player(c)),
       ),
     );
   }
 
-  Widget _player(Color c) {
-    final rest = _phase == _Phase.rest, ready = _phase == _Phase.ready;
-    final s = _s;
+  Widget _top(bool rest) {
     final fg = rest ? Colors.white : context.ink;
-    final total = ready ? 10 : rest ? widget.program.rest : s.secs;
-    final progress = (_i + (_phase == _Phase.work ? 1 - _left / math.max(1, s.secs) : 0)) / _steps.length;
-    return Column(children: [
-      // progres keseluruhan
-      Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-        child: Row(children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(99),
-              child: LinearProgressIndicator(value: progress.clamp(0, 1).toDouble(), minHeight: 6, color: rest ? Colors.white : c, backgroundColor: (rest ? Colors.white : c).withValues(alpha: .18)),
-            ),
+    final n = _steps.length;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+      child: Column(children: [
+        Row(children: [
+          IconButton(
+            icon: Icon(Icons.close_rounded, color: fg),
+            onPressed: () async {
+              if (await _confirmExit() && mounted) Navigator.of(context).pop();
+            },
           ),
-          const SizedBox(width: 10),
-          Text('${_i + 1}/${_steps.length}', style: TextStyle(fontWeight: FontWeight.w800, color: fg)),
+          Expanded(
+            child: Text(widget.title, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: fg)),
+          ),
+          IconButton(
+            tooltip: 'Suara pemandu',
+            onPressed: () => setState(() => ref.read(workoutProvider.notifier).setVoice(!_voice)),
+            icon: Icon(ref.watch(workoutProvider).voice ? Icons.volume_up_rounded : Icons.volume_off_rounded, color: fg),
+          ),
         ]),
-      ),
-      if (widget.program.rounds > 1)
-        Text('Ronde ${s.round} dari ${widget.program.rounds}', style: TextStyle(color: rest ? Colors.white70 : context.muted, fontWeight: FontWeight.w600, fontSize: 12.5)),
-      Expanded(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(children: [
-            const SizedBox(height: 10),
-            Text(ready ? 'BERSIAP' : rest ? 'ISTIRAHAT' : 'GERAKAN', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.w800, color: rest ? Colors.white70 : c, fontSize: 13)),
-            const SizedBox(height: 4),
-            Text(rest || ready ? 'Berikutnya: ${s.ex.name}' : s.ex.name,
-                textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: fg)),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: 230,
-              height: 230,
-              child: Stack(alignment: Alignment.center, children: [
-                SizedBox.expand(
-                  child: CircularProgressIndicator(
-                    value: !ready && !rest && !s.ex.timed ? 1 : (_left / math.max(1, total)).clamp(0, 1).toDouble(),
-                    strokeWidth: 12,
-                    strokeCap: StrokeCap.round,
-                    color: rest ? Colors.white : c,
-                    backgroundColor: (rest ? Colors.white : c).withValues(alpha: .15),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
+          child: Row(children: [
+            for (var k = 0; k < n; k++)
+              Expanded(
+                child: Container(
+                  height: 5,
+                  margin: EdgeInsets.only(right: k == n - 1 ? 0 : 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9),
+                    color: k < _i || (k == _i && _phase == _Phase.work && _left <= 0)
+                        ? (rest ? Colors.white : kBlue)
+                        : k == _i && !rest
+                            ? kBlue.withValues(alpha: .45)
+                            : (rest ? Colors.white : kBlue).withValues(alpha: .14),
                   ),
                 ),
-                Column(mainAxisSize: MainAxisSize.min, children: [
-                  BouncingEmoji(s.ex.emoji, size: 58, speed: rest ? 1400 : 600),
-                  const SizedBox(height: 4),
-                  Text(!ready && !rest && !s.ex.timed ? '${s.amount}×' : '$_left',
-                      style: accentFont(size: 46, color: fg)),
-                  if (!ready && !rest && !s.ex.timed)
-                    Text('${_repElapsed}s · ketuk Selesai', style: TextStyle(color: context.muted, fontSize: 12)),
-                ]),
-              ]),
+              ),
+          ]),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+          child: Row(children: [
+            Text('GERAKAN ${_i + 1}/$n', style: olaDisplay(15, color: rest ? Colors.white70 : context.muted, spacing: 1)),
+            const Spacer(),
+            if (widget.program.rounds > 1)
+              Text('RONDE ${_s.round}/${widget.program.rounds}', style: olaDisplay(15, color: rest ? Colors.white70 : context.muted, spacing: 1)),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  Widget _workView() {
+    final s = _s, ready = _phase == _Phase.ready, reps = !ready && !s.ex.timed;
+    final big = ready ? '$_left' : reps ? 'x${s.amount}' : fmtClock(_left);
+    return Column(children: [
+      Expanded(
+        flex: 6,
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: context.isDark ? [const Color(0xFF1E293B), const Color(0xFF14203A)] : [const Color(0xFFF1F5FD), const Color(0xFFDCE7FA)],
             ),
-            const SizedBox(height: 18),
-            // cara singkat
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: rest ? Colors.white.withValues(alpha: .14) : context.card2, borderRadius: BorderRadius.circular(18)),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                for (var k = 0; k < s.ex.steps.length; k++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Text('${k + 1}. ${s.ex.steps[k]}', style: TextStyle(color: fg, height: 1.4, fontSize: 13.5)),
-                  ),
-                Text('💡 ${s.ex.tip}', style: TextStyle(color: rest ? Colors.white : const Color(0xFF059669), fontWeight: FontWeight.w600, fontSize: 13, height: 1.4)),
-              ]),
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Stack(children: [
+            Positioned.fill(child: Padding(padding: const EdgeInsets.fromLTRB(8, 30, 8, 4), child: ExerciseFigure(s.ex.id, paused: _paused))),
+            if (ready)
+              Positioned(
+                left: 14,
+                top: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(gradient: kFireGradient, borderRadius: BorderRadius.circular(99)),
+                  child: Text('BERSIAP', style: olaDisplay(16, spacing: 1.2)),
+                ),
+              ),
+            Positioned(
+              right: 6,
+              top: 4,
+              child: TextButton.icon(
+                onPressed: _showSteps,
+                icon: const Icon(Icons.menu_book_rounded, size: 18),
+                label: const Text('Cara', style: TextStyle(fontWeight: FontWeight.w800)),
+              ),
             ),
-            const SizedBox(height: 12),
+            if (_paused)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.black.withValues(alpha: .35), borderRadius: BorderRadius.circular(28)),
+                  alignment: Alignment.center,
+                  child: Text('JEDA', style: olaDisplay(44, spacing: 2)),
+                ),
+              ),
           ]),
         ),
       ),
-      // kontrol
+      const SizedBox(height: 14),
       Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-        child: Row(children: [
-          _ctrl(Icons.skip_previous_rounded, _prev, fg),
-          const SizedBox(width: 12),
-          Expanded(
-            child: SizedBox(
-              height: 60,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: rest ? Colors.white : c,
-                  foregroundColor: rest ? const Color(0xFF0F766E) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                onPressed: () {
-                  if (_phase == _Phase.work && !s.ex.timed) {
-                    _next();
-                  } else if (rest || ready) {
-                    _next();
-                  } else {
-                    setState(() => _paused = !_paused);
-                  }
-                },
-                icon: Icon(_phase == _Phase.work && !s.ex.timed
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text(ready ? 'BERIKUTNYA: ${s.ex.name.toUpperCase()}' : s.ex.name.toUpperCase(),
+            textAlign: TextAlign.center, maxLines: 2, style: olaDisplay(ready ? 24 : 32, color: context.ink)),
+      ),
+      Text(big, style: olaDisplay(84, color: ready ? kOla : context.ink, spacing: 1)),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Text(
+          ready
+              ? 'Ambil posisi — ${amountLabel(s.ex, s.amount)}'
+              : reps
+                  ? 'Ketuk ✓ kalau sudah ${s.amount} kali · ${_repElapsed}s'
+                  : '💡 ${s.ex.tip}',
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: context.muted, fontSize: 13, height: 1.35),
+        ),
+      ),
+      const Spacer(flex: 1),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(24, 6, 24, 18),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          _ctrl(Icons.skip_previous_rounded, _prev, 'Sebelumnya'),
+          GestureDetector(
+            onTap: () {
+              if (ready || reps) {
+                _next();
+              } else {
+                setState(() => _paused = !_paused);
+              }
+            },
+            child: Container(
+              width: 92,
+              height: 92,
+              decoration: BoxDecoration(
+                gradient: reps ? const LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF15803D)]) : kBlueGradient,
+                shape: BoxShape.circle,
+                boxShadow: [BoxShadow(color: (reps ? const Color(0xFF16A34A) : kBlue).withValues(alpha: .45), blurRadius: 24, offset: const Offset(0, 10), spreadRadius: -8)],
+              ),
+              child: Icon(
+                reps
                     ? Icons.check_rounded
-                    : rest || ready
+                    : ready || _paused
                         ? Icons.play_arrow_rounded
-                        : _paused
-                            ? Icons.play_arrow_rounded
-                            : Icons.pause_rounded),
-                label: Text(
-                  _phase == _Phase.work && !s.ex.timed
-                      ? 'Selesai'
-                      : rest || ready
-                          ? 'Mulai sekarang'
-                          : _paused
-                              ? 'Lanjut'
-                              : 'Jeda',
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
-                ),
+                        : Icons.pause_rounded,
+                color: Colors.white,
+                size: 48,
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          _ctrl(Icons.skip_next_rounded, _next, fg),
+          _ctrl(Icons.skip_next_rounded, _next, 'Lewati'),
         ]),
       ),
     ]);
   }
 
-  Widget _ctrl(IconData i, VoidCallback onTap, Color fg) => SizedBox(
-        width: 56,
-        height: 56,
-        child: IconButton.filledTonal(onPressed: onTap, icon: Icon(i, size: 28, color: fg)),
+  Widget _ctrl(IconData i, VoidCallback onTap, String tip) => SizedBox(
+        width: 60,
+        height: 60,
+        child: IconButton.filledTonal(tooltip: tip, onPressed: onTap, icon: Icon(i, size: 30)),
       );
 
-  Widget _summary(Color c) {
-    final s = ref.watch(workoutProvider);
-    return ListView(padding: const EdgeInsets.fromLTRB(24, 10, 24, 24), children: [
-      const Center(child: BouncingEmoji('🏆', size: 84)),
-      const SizedBox(height: 10),
-      const Text('Latihan selesai!', textAlign: TextAlign.center, style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
-      const SizedBox(height: 6),
-      Text(['Kerja bagus! Satu langkah lebih dekat ke perut rata 💪', 'Konsisten itu kuncinya. Sampai besok! 🔥', 'Badan berterima kasih padamu hari ini 🙌'][_workSecs % 3],
-          textAlign: TextAlign.center, style: TextStyle(color: context.muted, fontSize: 15)),
-      const SizedBox(height: 22),
-      Row(children: [
-        _box('⏱', '${(_workSecs / 60).toStringAsFixed(_workSecs < 600 ? 1 : 0).replaceAll('.', ',')}', 'menit bergerak', c),
-        const SizedBox(width: 10),
-        _box('🔥', fmtNum(_kcal), 'kkal terbakar', c),
-        const SizedBox(width: 10),
-        _box('⚡', '${s.streak}', 'hari streak', c),
+  Widget _restView() {
+    final s = _s;
+    return Column(children: [
+      const Spacer(flex: 2),
+      Text('ISTIRAHAT', style: olaDisplay(34, color: Colors.white70, spacing: 3)),
+      Text(fmtClock(_left), style: olaDisplay(96, spacing: 2)),
+      const SizedBox(height: 14),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: Colors.white54, width: 1.5),
+            minimumSize: const Size(120, 52),
+            shape: const StadiumBorder(),
+          ),
+          onPressed: _addRest,
+          child: Text('+20 DTK', style: olaDisplay(20, spacing: 1)),
+        ),
+        const SizedBox(width: 12),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: Colors.white, foregroundColor: kNavy, minimumSize: const Size(140, 52), shape: const StadiumBorder()),
+          onPressed: _next,
+          child: Text('LEWATI', style: olaDisplay(20, color: kNavy, spacing: 1)),
+        ),
       ]),
-      const SizedBox(height: 16),
-      SoftCard(
-        child: Text('Kalori yang terbakar otomatis menambah sisa kalori makan hari ini di fitur Kalori. Minum air putih yang cukup ya 💧',
-            style: TextStyle(color: context.muted, height: 1.4)),
+      const Spacer(flex: 2),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 20),
+        decoration: BoxDecoration(color: context.isDark ? const Color(0xFF1E293B) : Colors.white, borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('BERIKUTNYA  ${_i + 1}/${_steps.length}', style: olaDisplay(17, color: context.muted, spacing: 1.2)),
+          const SizedBox(height: 10),
+          Row(children: [
+            SizedBox(width: 140, child: FigureTile(s.ex.id, animate: true, radius: 16)),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(s.ex.name.toUpperCase(), style: olaDisplay(26, color: context.ink)),
+                const SizedBox(height: 4),
+                Text(amountLabel(s.ex, s.amount), style: olaDisplay(22, color: kBlue)),
+                const SizedBox(height: 4),
+                Text(s.ex.steps.first, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 12.5, height: 1.3)),
+              ]),
+            ),
+          ]),
+        ]),
       ),
-      const SizedBox(height: 20),
-      GradientButton(label: 'Selesai', icon: Icons.check_rounded, onPressed: () => Navigator.of(context).pop()),
     ]);
   }
 
-  Widget _box(String e, String v, String l, Color c) => Expanded(
+  Widget _summary() {
+    final st = ref.watch(workoutProvider);
+    return ListView(padding: const EdgeInsets.fromLTRB(22, 30, 22, 24), children: [
+      const Center(child: Text('🏆', style: TextStyle(fontSize: 86))),
+      const SizedBox(height: 8),
+      Text('LATIHAN SELESAI!', textAlign: TextAlign.center, style: olaDisplay(44)),
+      const SizedBox(height: 6),
+      Text(['Kerja bagus! Satu langkah lebih dekat ke perut rata 💪', 'Konsisten itu kuncinya. Sampai besok! 🔥', 'Badan berterima kasih padamu hari ini 🙌'][_workSecs % 3],
+          textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70, fontSize: 15)),
+      const SizedBox(height: 26),
+      Row(children: [
+        _box('${(_workSecs / 60).toStringAsFixed(_workSecs < 600 ? 1 : 0).replaceAll('.', ',')}', 'menit\nbergerak'),
+        const SizedBox(width: 10),
+        _box(fmtNum(_kcal), 'kkal\nterbakar'),
+        const SizedBox(width: 10),
+        _box('${st.streak}', 'hari\nstreak'),
+      ]),
+      const SizedBox(height: 16),
+      Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(color: Colors.white.withValues(alpha: .08), borderRadius: BorderRadius.circular(18)),
+        child: const Text('Kalori yang terbakar otomatis menambah sisa kalori makan hari ini di fitur Kalori. Minum air putih yang cukup ya 💧',
+            style: TextStyle(color: Colors.white70, height: 1.4)),
+      ),
+      const SizedBox(height: 24),
+      BigStartButton(label: 'Selesai', icon: Icons.check_rounded, onTap: () => Navigator.of(context).pop()),
+    ]);
+  }
+
+  Widget _box(String v, String l) => Expanded(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(color: c.withValues(alpha: .1), borderRadius: BorderRadius.circular(18)),
+          decoration: BoxDecoration(color: Colors.white.withValues(alpha: .1), borderRadius: BorderRadius.circular(18)),
           child: Column(children: [
-            Text(e, style: const TextStyle(fontSize: 22)),
-            const SizedBox(height: 4),
-            Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
-            Text(l, textAlign: TextAlign.center, style: TextStyle(color: context.muted, fontSize: 11.5)),
+            Text(v, style: olaDisplay(36)),
+            const SizedBox(height: 2),
+            Text(l, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.2)),
           ]),
         ),
       );

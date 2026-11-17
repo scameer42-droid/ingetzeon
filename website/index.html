@@ -939,35 +939,89 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 .mtile b{font-size:14px;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mtile small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ===== Olahraga ===== */
-.ohero{display:flex;align-items:center;gap:16px;border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,#FB923C,#E11D48);box-shadow:0 18px 34px -18px rgba(225,29,72,.7)}
-.oring{width:104px;height:104px;flex:none}.ohero>div{display:flex;flex-direction:column;gap:4px}.ohero small{opacity:.8;font-weight:600}.ohero b{font-size:17px}
-.ohero span{align-self:flex-start;background:rgba(255,255,255,.2);border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}
-.oinfo{margin-top:12px}.oinfo summary{cursor:pointer;list-style:none;font-size:15px}.oinfo summary::-webkit-details-marker{display:none}.oinfo p{color:var(--muted);font-size:13.5px;line-height:1.45;margin:8px 0 0}
-.och-h{display:flex;align-items:center;gap:12px}.och-h i{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal;font-size:22px;background:linear-gradient(135deg,#FB923C,#E11D48)}.och-h b{display:block}.och-h small{color:var(--muted);font-size:12.5px}
-.odays{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0}.odays span{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--muted)}
-.odays span.rest{background:var(--card-2,var(--bg));font-size:12px}.odays span.on{background:#F97316;color:#fff;border-color:#F97316}.odays span.now{border:2px solid #F97316}
-.obtn{background:linear-gradient(135deg,#FB923C,#E11D48)!important;color:#fff!important;font-weight:800}
-.oprog{display:flex;gap:14px;align-items:center;width:100%;text-align:left;margin-bottom:10px;padding:14px}.oprog>i{width:56px;height:56px;border-radius:17px;display:grid;place-items:center;font-style:normal;font-size:27px;flex:none}
-.oprog b{display:block;font-size:15px}.oprog small{display:block;color:var(--muted);font-size:12.5px;line-height:1.3;margin:3px 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.otag{display:inline-block;border-radius:99px;padding:3px 8px;font-size:11.5px;font-weight:700;margin-right:6px}
-.oex,.olog{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;text-align:left}.oex+.oex,.olog+.olog{border-top:1px solid var(--line)}
-.oex>i,.olog>i{width:44px;height:44px;border-radius:13px;background:rgba(249,115,22,.1);display:grid;place-items:center;font-style:normal;font-size:22px;flex:none}.olog>i{background:none;width:30px}
-.oex>div,.olog>div{flex:1;min-width:0}.oex b,.olog b{display:block}.oex small,.olog small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.oex em,.olog em{font-style:normal;font-weight:800;white-space:nowrap}.olog em{color:#F97316}
-.orem{display:flex;align-items:center;gap:12px}.orem div{flex:1}.orem b{display:block}.orem small{color:var(--muted);font-size:12.5px}.orem input{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-.ophero{border-radius:24px;padding:18px;color:#fff}.ophero p{font-weight:600;line-height:1.4;margin:6px 0 12px}.opst{display:grid;grid-template-columns:repeat(4,1fr)}.opst b{display:block;font-size:22px}.opst small{opacity:.8;font-size:12px;font-weight:600}
-.ostep{display:flex;gap:10px;margin-bottom:10px;line-height:1.45}.ostep i{width:26px;height:26px;border-radius:50%;background:#F97316;color:#fff;font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
-.onote{background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:14px;padding:12px;margin-bottom:8px;font-size:13.5px;line-height:1.4}.onote b{color:var(--c)}
-@keyframes obounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}.bounce{display:inline-block;animation:obounce .9s ease-in-out infinite}.bounce.slow{animation-duration:1.6s}
-#olaPlay.rest{background:#0F766E}#olaPlay.rest .full-head,#olaPlay.rest .opname,#olaPlay.rest .opbar span,#olaPlay.rest .opring b,#olaPlay.rest .ophow{color:#fff}#olaPlay.rest .ophow{background:rgba(255,255,255,.14)}#olaPlay.rest .ophow .tip{color:#fff}
-#olaPlay .full-body{display:flex;flex-direction:column}
-.opbar{display:flex;align-items:center;gap:10px}.opbar p{flex:1;height:6px;border-radius:99px;background:rgba(127,127,127,.2);margin:0;overflow:hidden}.opbar p b{display:block;height:100%;border-radius:99px;transition:width 1s linear}.opbar span{font-weight:800}
-.opround{text-align:center;color:var(--muted);font-size:12.5px;font-weight:600;margin:4px 0 0}.opph{text-align:center;letter-spacing:.15em;font-weight:800;font-size:13px;margin:12px 0 2px}.opname{text-align:center;font-size:24px;margin:0 0 12px}
-.opring{position:relative;width:230px;height:230px;margin:0 auto}.opring svg{width:100%;height:100%}.opring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.opring b{font-size:46px;font-weight:800;line-height:1.1}.opring small{color:var(--muted);font-size:12px}
-.ophow{background:var(--card-2,var(--bg));border-radius:18px;padding:14px;margin-top:16px}.ophow p{margin:0 0 6px;font-size:13.5px;line-height:1.4}.ophow .tip{color:#059669;font-weight:600;margin:0}
-.opctl{display:flex;gap:12px;align-items:center;margin-top:auto;padding-top:16px}.opctl button{width:56px;height:56px;border-radius:50%;background:var(--card-2,var(--bg));font-size:22px}.opctl .main{flex:1;height:60px;border-radius:20px;font-weight:800;font-size:16px}
-.opsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 16px}.opsum div{border-radius:18px;padding:16px 6px;text-align:center}.opsum i{font-style:normal;font-size:22px;display:block}.opsum b{display:block;font-size:22px;margin-top:4px}.opsum small{color:var(--muted);font-size:11.5px}
+:root{--figA:#F1F5FD;--figB:#DCE7FA}[data-theme="dark"]{--figA:#1E293B;--figB:#14203A}
+.odisp{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:800;letter-spacing:.01em;line-height:1;text-transform:uppercase}
+.fig svg{display:block;width:100%;height:auto}
+.ftile{background:linear-gradient(var(--figA),var(--figB));border-radius:14px;padding:4px}
+#ola .full-head,#olaP .full-head,#olaPlay .full-head{display:none}
+#ola .full-body,#olaP .full-body{padding:0 0 28px}
+.ohero{background:linear-gradient(135deg,#0F172A,#1E3A8A);color:#fff;border-radius:0 0 30px 30px;padding:calc(8px + env(safe-area-inset-top,0px)) 0 20px}
+.ohtop{display:flex;align-items:center;gap:6px;padding:0 8px}.ohtop b{flex:1;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ohtop button{width:44px;height:44px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:22px;flex:none}
+.ohmain{display:flex;align-items:center}.ohmain>div:first-child{flex:1;min-width:0}.ohmain h1{font-size:44px;padding:4px 0 14px 20px;margin:0;white-space:nowrap}.ohfig{width:150px;margin-right:12px;flex:none}
+.oribbon{display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 34px 0 16px;background:linear-gradient(90deg,#E11D48,#F97316);clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%);font-size:24px;white-space:nowrap}
+.oribbon i{width:28px;height:28px;border:2.5px solid #fff;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:14px;font-family:system-ui}
+.ohstats{display:grid;grid-template-columns:repeat(3,1fr);padding:18px 20px 0}.ohstats b{font-size:34px;display:block}.ohstats small{color:rgba(255,255,255,.7);font-size:11.5px;font-weight:600;line-height:1.25;display:block;margin-top:2px}
+.ohbar{margin:14px 20px 0;height:8px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden}.ohbar b{display:block;height:100%;background:#F97316;border-radius:99px}
+.ohnote{margin:8px 20px 0;color:rgba(255,255,255,.7);font-size:12.5px;font-weight:600}
+.owrap{padding:18px 16px 0}
+.och{position:relative;overflow:hidden;border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,#F97316,#E11D48);box-shadow:0 18px 30px -16px rgba(249,115,22,.7)}
+.och>.fig{position:absolute;right:-6px;top:6px;width:160px}.och>*:not(.fig){position:relative}
+.och .lbl{font-size:16px;opacity:.85;letter-spacing:.1em}.och h3{font-size:46px;margin:4px 0 8px}.och p{font-size:12.5px;font-weight:600;line-height:1.35;margin:0 0 14px}
+.odays{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}.odays span{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;background:rgba(255,255,255,.16)}.odays span.rest{background:rgba(255,255,255,.08);font-size:12px}.odays span.on{background:#fff;color:#E11D48}.odays span.now{box-shadow:inset 0 0 0 2.2px #fff}
+.obig{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:56px;border-radius:99px;font-size:24px;letter-spacing:.04em;color:#fff;background:linear-gradient(90deg,#3B82F6,#1D4ED8);box-shadow:0 12px 22px -12px rgba(37,99,235,.8)}
+.obig.white{background:#fff;color:#E11D48;box-shadow:0 12px 22px -12px rgba(0,0,0,.5)}
+.orest{background:rgba(255,255,255,.16);border-radius:16px;padding:12px;line-height:1.4}
+.ochstop{display:block;margin:8px 0 -6px auto;color:rgba(255,255,255,.8);font-size:13px;font-weight:600}
+.oinfo{margin-top:12px}.oinfo summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px}.oinfo summary::-webkit-details-marker{display:none}
+.oinfo summary>i{width:40px;height:40px;border-radius:12px;background:#FEF3C7;display:grid;place-items:center;font-style:normal;font-size:20px;flex:none}.oinfo summary div{flex:1}.oinfo summary b{display:block;font-size:15px}.oinfo summary small{color:var(--muted);font-size:12px}.oinfo summary span{color:var(--muted);font-size:20px;transition:transform .2s}.oinfo[open] summary span{transform:rotate(180deg)}
+.oinfo p{display:flex;gap:10px;color:var(--muted);font-size:13.5px;line-height:1.45;margin:10px 0 0}.oinfo p i{font-style:normal;font-size:16px}
+.osec{display:flex;align-items:flex-end;justify-content:space-between;margin:24px 2px 10px}.osec h2{font-size:24px;margin:0;letter-spacing:.03em}.osec small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}.osec .link{font-size:13px;color:var(--primary);font-weight:700}
+.opcard{position:relative;display:block;width:100%;height:156px;border-radius:24px;overflow:hidden;margin-bottom:12px;text-align:left;color:#fff;padding:16px 140px 14px 18px}
+.opcard .fig{position:absolute;right:4px;bottom:6px;width:168px}.opcard>*:not(.fig){position:relative}
+.opcard .lv{display:inline-block;background:rgba(255,255,255,.2);border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:800;letter-spacing:.06em}
+.opcard h3{font-size:27px;margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.opcard .meta{position:absolute;left:18px;bottom:14px;font-size:11.5px;font-weight:800;letter-spacing:.03em}
+.ochips button.on{background:#2563EB;border-color:#2563EB;color:#fff}
+.ogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}.ogrid button{background:var(--card);border-radius:18px;padding:8px;text-align:left;box-shadow:var(--shadow)}.ogrid b{display:block;font-size:14px;padding:8px 4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ogrid small{display:block;color:var(--muted);font-size:12px;padding:1px 4px 2px}
+.olog{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;text-align:left}.olog+.olog{border-top:1px solid var(--line)}.olog>i{font-style:normal;font-size:22px;width:30px}.olog>div{flex:1;min-width:0}.olog b{display:block}.olog small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.olog em{font-style:normal;font-weight:800;white-space:nowrap;color:#F97316}
+.ophero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0F172A,var(--pc));color:#fff;padding:calc(8px + env(safe-area-inset-top,0px)) 20px 18px;min-height:300px;display:flex;flex-direction:column}
+.ophero .ohtop{padding:0;margin:0 -12px;position:relative;z-index:1}.ophero>.fig{position:absolute;right:8px;top:62px;width:190px}
+.ophero .sm{font-size:18px;opacity:.8;letter-spacing:.08em;margin-top:auto;position:relative}.ophero h1{font-size:50px;margin:4px 0 14px;position:relative}
+.opst{display:grid;grid-template-columns:repeat(4,1fr);position:relative}.opst b{display:block;font-size:28px}.opst small{color:rgba(255,255,255,.7);font-size:12px;font-weight:600}
+.oplist{padding:14px 16px 10px}.oprh{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 12px}.oprh b{font-size:22px}.oprh small{color:var(--muted);font-size:12.5px;font-weight:600}
+.oprow{display:flex;align-items:center;gap:14px;width:100%;background:var(--card);border-radius:18px;padding:8px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow)}
+.oprow .ftile{width:112px;flex:none}.oprow b{display:block;font-size:16px}.oprow em{display:block;font-style:normal;font-size:22px;margin:4px 0 2px}.oprow small{color:var(--muted);font-size:12px}.oprow .oi{color:var(--faint,var(--muted));font-size:18px;padding-right:6px}
+.opgo{position:sticky;bottom:calc(12px + var(--safe-b));padding:0 20px}
+#olaEx .full-body{padding:4px 16px 24px}
+.exfig{position:relative;height:250px;border-radius:26px;background:linear-gradient(var(--figA),var(--figB));padding:28px 10px 6px}
+.exfig .fig{height:100%;display:flex;justify-content:center}.exfig .fig svg{height:100%;width:auto;max-width:100%}
+.exfig .area{position:absolute;left:12px;top:12px;background:#2563EB;color:#fff;border-radius:99px;padding:4px 10px;font-size:10.5px;font-weight:800;letter-spacing:.06em}
+.exfig .slow{position:absolute;right:10px;top:8px;color:#2563EB;font-weight:700;font-size:13px;padding:4px 8px}
+.exname{font-size:36px;margin:16px 0 10px}
+.exchips{display:flex;flex-wrap:wrap;gap:8px}.exchips span{border-radius:12px;padding:8px 12px;font-weight:800;font-size:13px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.exh{font-size:20px;margin:20px 0 10px;letter-spacing:.05em}
+.exmus{display:flex;flex-wrap:wrap;gap:8px}.exmus span{background:rgba(37,99,235,.1);color:#2563EB;border-radius:99px;padding:7px 12px;font-weight:700;font-size:13px}
+.ostep{display:flex;gap:12px;margin-bottom:12px;line-height:1.45;font-size:15px}.ostep i{width:28px;height:28px;border-radius:50%;background:linear-gradient(90deg,#3B82F6,#1D4ED8);color:#fff;font-style:normal;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}.ostep span{padding-top:3px}
+.onote{background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:16px;padding:13px;margin-bottom:8px;font-size:13.5px;line-height:1.4}.onote b{color:var(--c)}
+.exnav .obig{font-size:20px;white-space:nowrap;flex:1;width:auto}.exnav{position:sticky;bottom:calc(10px + var(--safe-b));display:flex;gap:10px;align-items:center;margin-top:16px}.exnav .nv{width:54px;height:54px;border-radius:50%;background:var(--card-2);font-size:30px;flex:none;box-shadow:var(--shadow)}.exnav .nv:disabled{opacity:.35}
+#olaPlay .full-body{display:flex;flex-direction:column;padding:0;overflow:hidden}
+#olaPlay.dark{background:linear-gradient(135deg,#0F172A,#1E3A8A)}#olaPlay.dark .pltop{color:#fff}
+.pltop{display:flex;align-items:center;padding:calc(6px + env(safe-area-inset-top,0px)) 6px 2px}.pltop b{flex:1;text-align:center;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pltop button{width:44px;height:44px;border-radius:50%;font-size:20px;display:grid;place-items:center;flex:none}
+.plseg{display:flex;gap:3px;padding:0 14px}.plseg i{flex:1;height:5px;border-radius:9px;background:rgba(37,99,235,.14)}.plseg i.on{background:#2563EB}.plseg i.cur{background:rgba(37,99,235,.45)}
+#olaPlay.dark .plseg i{background:rgba(255,255,255,.14)}#olaPlay.dark .plseg i.on{background:#fff}
+.plmeta{display:flex;justify-content:space-between;padding:7px 16px 0;font-size:15px;color:var(--muted);letter-spacing:.06em}#olaPlay.dark .plmeta{color:rgba(255,255,255,.7)}
+.plfig{position:relative;flex:1 1 0;min-height:180px;margin:10px 16px 0;border-radius:28px;background:linear-gradient(var(--figA),var(--figB));padding:32px 8px 4px;display:flex}
+.plfig .fig{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}.plfig .fig svg{max-height:100%;max-width:100%;width:auto;height:100%}
+.plfig .tag{position:absolute;left:14px;top:12px;background:linear-gradient(90deg,#E11D48,#F97316);color:#fff;border-radius:99px;padding:5px 12px;font-size:16px;letter-spacing:.08em}
+.plfig .how{position:absolute;right:10px;top:8px;color:#2563EB;font-weight:800;font-size:13px;padding:4px 8px;z-index:1}
+.plfig .pz{position:absolute;inset:0;border-radius:28px;background:rgba(0,0,0,.35);color:#fff;display:grid;place-items:center;font-size:44px;letter-spacing:.1em}
+.plname{text-align:center;font-size:32px;margin:14px 20px 0}.plname.sm{font-size:24px}
+.plbig{text-align:center;font-size:84px;letter-spacing:.02em}.plbig.or{color:#F97316}
+.plsub{text-align:center;color:var(--muted);font-size:13px;line-height:1.35;margin:0 24px;min-height:36px}
+.plctl{display:flex;justify-content:space-between;align-items:center;padding:8px 24px calc(16px + var(--safe-b))}
+.plctl .sm{width:60px;height:60px;border-radius:50%;background:var(--card-2);font-size:22px}
+.plctl .main{width:92px;height:92px;border-radius:50%;color:#fff;font-size:36px;font-weight:800;background:linear-gradient(90deg,#3B82F6,#1D4ED8);box-shadow:0 12px 24px -10px rgba(37,99,235,.7)}.plctl .main.ok{background:linear-gradient(90deg,#22C55E,#15803D);box-shadow:0 12px 24px -10px rgba(22,163,74,.7)}
+.plrest{flex:1;display:flex;flex-direction:column;color:#fff;text-align:center;min-height:0}
+.plrest h2{font-size:34px;color:rgba(255,255,255,.7);letter-spacing:.14em;margin:auto 0 0}.plrest .t{font-size:96px;letter-spacing:.03em}
+.plrest .bt{display:flex;gap:12px;justify-content:center;margin:14px 0 auto}.plrest .bt button{height:52px;border-radius:99px;font-size:20px;padding:0 26px;letter-spacing:.05em}.plrest .bt .o{border:1.5px solid rgba(255,255,255,.55);color:#fff}.plrest .bt .w{background:#fff;color:#0F172A}
+.plnext{background:var(--card);color:var(--ink);border-radius:30px 30px 0 0;padding:16px 18px calc(20px + var(--safe-b));text-align:left;margin-top:24px}
+.plnext .lb{font-size:17px;color:var(--muted);letter-spacing:.08em}.plnext .r{display:flex;gap:14px;align-items:center;margin-top:10px}.plnext .ftile{width:140px;flex:none}.plnext h3{font-size:26px;margin:0}.plnext em{display:block;font-style:normal;color:#2563EB;font-size:22px;margin:4px 0}.plnext small{color:var(--muted);font-size:12.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pldone{color:#fff;padding:40px 22px 24px;text-align:center;overflow:auto}.pldone h2{font-size:44px;margin:8px 0 6px}.pldone p{color:rgba(255,255,255,.7)}
+.opsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 16px}.opsum div{background:rgba(255,255,255,.1);border-radius:18px;padding:16px 6px}.opsum b{display:block;font-size:36px}.opsum small{color:rgba(255,255,255,.7);font-size:11.5px}
+.pldone .note{background:rgba(255,255,255,.08);border-radius:18px;padding:14px;text-align:left;color:rgba(255,255,255,.75);line-height:1.4;margin-bottom:22px}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap">
 </head>
 <body>
 <div class="app" id="app">
@@ -1246,7 +1300,8 @@ details.doa summary span{font-size:24px} details.doa .lat{color:#059669;font-sty
 <div class="full" id="mtool"><div class="full-head"><button class="icon-btn" data-close="#mtool" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="mtTitle">—</h2></div><div class="full-body" id="mtBody"></div></div>
 <div class="full" id="ola"><div class="full-head"><button class="icon-btn" data-close="#ola" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Olahraga</h2></div><div class="full-body" id="olaBody"></div></div>
 <div class="full" id="olaP"><div class="full-head"><button class="icon-btn" data-close="#olaP" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPTitle">Program</h2></div><div class="full-body" id="olaPBody"></div></div>
-<div class="full" id="olaPlay"><div class="full-head"><button class="icon-btn" onclick="plClose()" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPlayTitle">Latihan</h2><button class="icon-btn" id="olaVoice" style="margin-left:auto" onclick="state.ola.voice=!state.ola.voice;save();drawPlayer()" aria-label="Suara pemandu">🔊</button></div><div class="full-body" id="olaPlayBody"></div></div>
+<div class="full" id="olaPlay"><div class="full-body" id="olaPlayBody"></div></div>
+<div class="full" id="olaEx"><div class="full-head"><button class="icon-btn" onclick="exClose()" aria-label="Kembali"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaExTitle">Cara melakukan</h2></div><div class="full-body" id="olaExBody"></div></div>
 <div class="full" id="kal"><div class="full-head"><button class="icon-btn" data-close="#kal" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kalori &amp; Diet</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="kalBody"></div></div>
 <div class="full" id="bscan"><div class="full-head"><button class="icon-btn" data-close="#bscan" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Pindai barcode</h2></div><div class="full-body">
   <div class="bsbox"><video id="bsVideo" playsinline muted></video><i></i></div><p class="muted-c" id="bsMsg" style="margin:12px 0"></p><input type="hidden" id="bsMeal">
@@ -2509,11 +2564,165 @@ async function scanFoodChat(photoKey){
 
 const EX_AREAS = {"perut": "Perut & core", "kardio": "Kardio", "kaki": "Kaki & bokong", "lengan": "Lengan, dada & punggung", "stretch": "Peregangan"};
 // [id, nama, emoji, area, timed, jumlah, MET, level, langkah[], tips, kesalahan, hati2]
-const EXERCISES = [["crunch", "Crunch", "🙇", "perut", false, 15, 3.8, 1, ["Berbaring telentang, lutut ditekuk, telapak kaki menapak lantai.", "Letakkan ujung jari di samping telinga (jangan menarik kepala).", "Angkat bahu dari lantai dengan mengencangkan perut, buang napas.", "Tahan 1 detik, lalu turunkan perlahan sambil tarik napas."], "Bayangkan pusar ditarik ke arah tulang belakang.", "Menarik leher dengan tangan dan mengangkat badan terlalu tinggi.", ""], ["bicycle", "Bicycle crunch", "🚴", "perut", true, 30, 4.0, 2, ["Berbaring telentang, tangan di samping kepala, kaki diangkat 45°.", "Tekuk lutut kanan ke dada sambil memutar badan, siku kiri menuju lutut kanan.", "Ganti sisi: lutut kiri ke dada, siku kanan menuju lutut kiri.", "Lakukan bergantian seperti mengayuh sepeda dengan tempo terkontrol."], "Pelan tapi terkontrol lebih efektif daripada cepat.", "Punggung bawah terangkat dari lantai.", ""], ["plank", "Plank", "🧱", "perut", true, 30, 3.8, 1, ["Tumpukan badan pada lengan bawah dan ujung kaki.", "Siku tepat di bawah bahu.", "Badan lurus dari kepala sampai tumit, kencangkan perut & bokong.", "Tahan posisi sambil bernapas normal."], "Pandangan ke lantai sedikit di depan tangan agar leher netral.", "Pinggul turun (melengkung) atau terlalu tinggi.", "Hentikan bila punggung bawah terasa sakit."], ["side_plank", "Side plank", "📐", "perut", true, 20, 3.8, 2, ["Berbaring miring, tumpu pada satu lengan bawah, siku di bawah bahu.", "Angkat pinggul hingga badan lurus dari kepala ke kaki.", "Tahan, lalu ganti sisi pada set berikutnya."], "Pemula: tekuk lutut bawah untuk menopang.", "Pinggul turun ke lantai.", ""], ["leg_raise", "Leg raise", "🦵", "perut", false, 12, 3.8, 2, ["Berbaring telentang, tangan di samping badan atau di bawah bokong.", "Luruskan kaki dan rapatkan.", "Angkat kedua kaki hingga tegak lurus lantai.", "Turunkan perlahan tanpa menyentuh lantai, lalu ulangi."], "Semakin pelan saat turun, semakin terasa di perut bawah.", "Punggung bawah melengkung terangkat.", "Tekuk sedikit lutut bila punggung bawah terasa tertarik."], ["mountain", "Mountain climber", "⛰️", "perut", true, 30, 8.0, 2, ["Mulai dari posisi push-up, tangan di bawah bahu.", "Tarik lutut kanan ke arah dada.", "Kembalikan, lalu tarik lutut kiri.", "Lakukan bergantian dengan cepat seperti berlari di tempat."], "Jaga pinggul tetap sejajar dengan bahu.", "Pinggul terlalu tinggi atau bokong naik turun.", ""], ["russian", "Russian twist", "🔄", "perut", true, 30, 4.0, 2, ["Duduk, lutut ditekuk, condongkan badan ke belakang ±45°.", "Rapatkan kedua tangan di depan dada.", "Putar badan ke kanan lalu ke kiri, sentuhkan tangan ke lantai di samping pinggul.", "Angkat kaki dari lantai untuk versi lebih berat."], "Putar dari badan, bukan hanya tangan.", "Punggung membungkuk.", ""], ["flutter", "Flutter kick", "🏊", "perut", true, 30, 3.8, 2, ["Berbaring telentang, tangan di bawah bokong.", "Angkat kaki sekitar 15 cm dari lantai.", "Gerakkan kaki naik-turun bergantian dengan cepat dan kecil."], "Tempelkan punggung bawah ke lantai.", "Mengangkat kaki terlalu tinggi.", ""], ["dead_bug", "Dead bug", "🪲", "perut", false, 12, 3.0, 1, ["Berbaring telentang, angkat tangan lurus ke atas dan lutut ditekuk 90°.", "Luruskan tangan kanan ke belakang kepala dan kaki kiri ke depan bersamaan.", "Kembali ke tengah, lalu ganti sisi.", "Gerakan pelan dan terkontrol."], "Gerakan paling aman untuk perut pemula & punggung sensitif.", "Punggung bawah terangkat dari lantai.", ""], ["heel_touch", "Heel touch", "👣", "perut", true, 30, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki agak lebar.", "Angkat bahu sedikit dari lantai.", "Raih tumit kanan dengan tangan kanan, lalu tumit kiri dengan tangan kiri."], "Bahu tetap terangkat selama gerakan.", "Menarik leher.", ""], ["reverse_crunch", "Reverse crunch", "🔃", "perut", false, 12, 3.8, 2, ["Berbaring telentang, lutut ditekuk 90° dan kaki diangkat.", "Tarik lutut ke dada sambil mengangkat pinggul sedikit dari lantai.", "Turunkan perlahan ke posisi awal."], "Gunakan perut, bukan ayunan kaki.", "Mengayun kaki terlalu cepat.", ""], ["plank_tap", "Plank shoulder tap", "👋", "perut", true, 30, 4.5, 2, ["Posisi high plank (tangan lurus).", "Sentuh bahu kiri dengan tangan kanan.", "Kembalikan, lalu sentuh bahu kanan dengan tangan kiri."], "Lebarkan kaki agar pinggul tidak bergoyang.", "Pinggul berayun ke kiri-kanan.", ""], ["vacuum", "Stomach vacuum", "🫁", "perut", true, 20, 1.5, 1, ["Berdiri tegak atau merangkak.", "Buang napas sepenuhnya.", "Tarik perut ke dalam sedalam mungkin seolah pusar menyentuh tulang belakang.", "Tahan, lalu lepaskan dan bernapas normal."], "Melatih otot perut dalam (transversus) yang membuat perut tampak rata.", "Menahan napas terlalu lama sampai pusing.", "Jangan dilakukan saat hamil atau setelah makan."], ["jumping_jack", "Jumping jack", "🤸", "kardio", true, 30, 8.0, 1, ["Berdiri tegak, kaki rapat, tangan di samping badan.", "Lompat sambil membuka kaki selebar bahu dan mengangkat tangan ke atas.", "Lompat lagi kembali ke posisi awal.", "Ulangi dengan ritme stabil."], "Mendarat dengan ujung kaki, lutut sedikit ditekuk.", "Mendarat keras dengan tumit.", "Versi tanpa lompat: langkahkan kaki ke samping bergantian."], ["high_knees", "High knees", "🏃", "kardio", true, 30, 8.0, 2, ["Berdiri tegak.", "Lari di tempat sambil mengangkat lutut setinggi pinggul.", "Ayunkan tangan seperti berlari."], "Badan tegak, perut dikencangkan.", "Badan condong ke belakang.", ""], ["butt_kick", "Butt kick", "🦶", "kardio", true, 30, 7.0, 1, ["Lari di tempat.", "Tendang tumit ke arah bokong setiap langkah.", "Tangan diayun santai."], "Mendarat ringan dengan ujung kaki.", "Membungkuk ke depan.", ""], ["burpee", "Burpee", "💥", "kardio", false, 8, 8.0, 3, ["Berdiri, lalu jongkok dan letakkan tangan di lantai.", "Lompatkan kaki ke belakang ke posisi push-up.", "Lompatkan kaki kembali ke dekat tangan.", "Lompat ke atas sambil mengangkat tangan."], "Pemula: langkahkan kaki ke belakang tanpa lompat dan tanpa push-up.", "Punggung melengkung saat posisi push-up.", "Hentikan bila sesak berlebihan atau pusing."], ["skater", "Skater jump", "⛸️", "kardio", true, 30, 7.0, 2, ["Lompat ke samping kanan, mendarat dengan kaki kanan.", "Kaki kiri menyilang ke belakang, tangan diayun.", "Lompat ke kiri dan ulangi bergantian."], "Tekuk lutut saat mendarat.", "Lutut lurus kaku saat mendarat.", ""], ["march", "Jalan di tempat", "🚶", "kardio", true, 60, 3.5, 1, ["Berdiri tegak.", "Angkat lutut bergantian seperti berjalan di tempat.", "Ayunkan tangan berlawanan dengan kaki."], "Cocok untuk pemanasan atau pemula.", "Membungkuk.", ""], ["jump_rope", "Lompat tali (tanpa tali)", "🪢", "kardio", true, 30, 8.8, 1, ["Berdiri, tangan seolah memegang tali.", "Putar pergelangan tangan sambil melompat kecil dengan ujung kaki.", "Jaga lompatan rendah dan ringan."], "Lompatan kecil 2–3 cm sudah cukup.", "Lompat terlalu tinggi.", ""], ["squat", "Squat", "🏋️", "kaki", false, 15, 5.0, 1, ["Berdiri, kaki selebar bahu, ujung kaki sedikit ke luar.", "Dorong pinggul ke belakang dan tekuk lutut seperti mau duduk.", "Turun sampai paha sejajar lantai (atau semampunya).", "Dorong lewat tumit untuk berdiri."], "Dada tegak, lutut searah ujung kaki.", "Lutut masuk ke dalam atau tumit terangkat.", ""], ["lunge", "Lunge", "🚶‍♂️", "kaki", false, 12, 4.0, 2, ["Berdiri tegak.", "Langkahkan kaki kanan ke depan.", "Turunkan badan hingga kedua lutut menekuk 90°.", "Dorong kembali ke posisi awal, ganti kaki."], "Lutut depan tidak melewati ujung jari kaki.", "Badan condong ke depan.", ""], ["glute_bridge", "Glute bridge", "🌉", "kaki", false, 15, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki menapak.", "Angkat pinggul hingga badan lurus dari bahu ke lutut.", "Remas bokong 1 detik di atas.", "Turunkan perlahan."], "Dorong lewat tumit.", "Punggung terlalu melengkung di atas.", ""], ["wall_sit", "Wall sit", "🪑", "kaki", true, 30, 3.0, 2, ["Sandarkan punggung ke dinding.", "Turunkan badan sampai lutut 90° seperti duduk di kursi.", "Tahan posisi."], "Lutut tepat di atas pergelangan kaki.", "Lutut melewati ujung kaki.", ""], ["calf_raise", "Calf raise", "🦿", "kaki", false, 20, 2.8, 1, ["Berdiri tegak, bisa berpegangan ke dinding.", "Jinjit setinggi mungkin.", "Turunkan tumit perlahan."], "Tahan 1 detik di atas.", "Terlalu cepat.", ""], ["side_leg", "Side leg raise", "🦵", "kaki", false, 15, 3.0, 1, ["Berbaring miring, kepala ditopang tangan.", "Angkat kaki atas lurus ke atas.", "Turunkan perlahan, ganti sisi pada set berikutnya."], "Ujung kaki menghadap depan.", "Badan berguling ke belakang.", ""], ["donkey_kick", "Donkey kick", "🐴", "kaki", false, 15, 3.5, 1, ["Posisi merangkak, tangan di bawah bahu, lutut di bawah pinggul.", "Tendang satu kaki ke atas dengan lutut tetap ditekuk 90°.", "Turunkan, ulangi, lalu ganti kaki."], "Remas bokong saat kaki di atas.", "Punggung melengkung.", ""], ["pushup", "Push-up", "💪", "lengan", false, 10, 8.0, 2, ["Tangan sedikit lebih lebar dari bahu, badan lurus.", "Turunkan dada mendekati lantai dengan siku ±45° dari badan.", "Dorong kembali ke atas."], "Pemula: lakukan dengan lutut di lantai.", "Pinggul turun atau siku terbuka lebar.", ""], ["knee_pushup", "Push-up lutut", "🙌", "lengan", false, 10, 4.0, 1, ["Seperti push-up, tapi lutut bertumpu di lantai.", "Badan lurus dari kepala ke lutut.", "Turunkan dada, lalu dorong ke atas."], "Langkah awal sebelum push-up penuh.", "Bokong terangkat.", ""], ["tricep_dip", "Tricep dip (kursi)", "🪑", "lengan", false, 12, 4.0, 2, ["Duduk di tepi kursi yang kokoh, tangan di samping pinggul.", "Geser bokong ke depan dari kursi.", "Turunkan badan dengan menekuk siku ke belakang.", "Dorong kembali ke atas."], "Siku mengarah ke belakang, bukan ke samping.", "Bahu naik ke telinga.", "Pastikan kursi tidak bisa bergeser."], ["arm_circle", "Putar lengan", "🌀", "lengan", true, 30, 2.8, 1, ["Berdiri, rentangkan tangan ke samping sejajar bahu.", "Putar lengan membentuk lingkaran kecil ke depan.", "Setelah setengah waktu, putar ke belakang."], "Lingkaran kecil terasa lebih berat.", "Bahu terangkat.", ""], ["superman", "Superman", "🦸", "lengan", false, 12, 3.0, 1, ["Berbaring tengkurap, tangan lurus ke depan.", "Angkat tangan, dada, dan kaki bersamaan dari lantai.", "Tahan 2 detik, lalu turunkan."], "Menguatkan punggung bawah — penyeimbang latihan perut.", "Mendongakkan kepala terlalu tinggi.", ""], ["inchworm", "Inchworm", "🐛", "lengan", false, 6, 4.0, 2, ["Berdiri, bungkukkan badan dan letakkan tangan di lantai.", "Jalankan tangan ke depan sampai posisi push-up.", "Jalankan tangan kembali ke kaki, lalu berdiri."], "Tekuk lutut bila hamstring kaku.", "Punggung melengkung.", ""], ["cobra", "Cobra stretch", "🐍", "stretch", true, 30, 2.3, 1, ["Berbaring tengkurap, tangan di bawah bahu.", "Dorong dada ke atas perlahan, pinggul tetap di lantai.", "Rasakan peregangan di perut, tahan."], "Bahu rileks menjauhi telinga.", "Memaksa punggung melengkung terlalu jauh.", ""], ["child_pose", "Child’s pose", "🧘", "stretch", true, 30, 2.3, 1, ["Berlutut, duduk di atas tumit.", "Bungkukkan badan ke depan, tangan lurus di lantai.", "Dahi menyentuh lantai, bernapas dalam."], "Napas panjang lewat hidung.", "Menahan napas.", ""], ["cat_cow", "Cat-cow", "🐈", "stretch", true, 40, 2.3, 1, ["Posisi merangkak.", "Tarik napas: lengkungkan punggung ke bawah, angkat kepala (cow).", "Buang napas: bulatkan punggung ke atas, tundukkan kepala (cat).", "Ulangi mengikuti napas."], "Gerakan pelan mengikuti napas.", "Terlalu cepat.", ""], ["side_stretch", "Peregangan samping", "🌿", "stretch", true, 30, 2.3, 1, ["Berdiri, angkat tangan kanan ke atas.", "Condongkan badan ke kiri, tahan.", "Ganti sisi di setengah waktu."], "Pinggul tetap lurus.", "Badan condong ke depan.", ""], ["knee_hug", "Peluk lutut", "🤗", "stretch", true, 30, 2.3, 1, ["Berbaring telentang.", "Peluk kedua lutut ke dada.", "Goyangkan pelan ke kiri-kanan untuk memijat punggung bawah."], "Bagus untuk punggung setelah latihan perut.", "Mengangkat kepala.", ""], ["hamstring", "Peregangan paha belakang", "🙆", "stretch", true, 30, 2.3, 1, ["Duduk, luruskan kedua kaki.", "Raih ujung kaki dengan punggung lurus.", "Tahan tanpa menghentak."], "Tekuk lutut sedikit bila belum lentur.", "Menghentak-hentakkan badan.", ""]];
+const EXERCISES = [["crunch", "Crunch", "🙇", "perut", false, 15, 3.8, 1, ["Berbaring telentang, lutut ditekuk, telapak kaki menapak lantai.", "Letakkan ujung jari di samping telinga (jangan menarik kepala).", "Angkat bahu dari lantai dengan mengencangkan perut, buang napas.", "Tahan 1 detik, lalu turunkan perlahan sambil tarik napas."], "Bayangkan pusar ditarik ke arah tulang belakang.", "Menarik leher dengan tangan dan mengangkat badan terlalu tinggi.", "", ["Perut depan"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["bicycle", "Bicycle crunch", "🚴", "perut", true, 30, 4.0, 2, ["Berbaring telentang, tangan di samping kepala, kaki diangkat 45°.", "Tekuk lutut kanan ke dada sambil memutar badan, siku kiri menuju lutut kanan.", "Ganti sisi: lutut kiri ke dada, siku kanan menuju lutut kiri.", "Lakukan bergantian seperti mengayuh sepeda dengan tempo terkontrol."], "Pelan tapi terkontrol lebih efektif daripada cepat.", "Punggung bawah terangkat dari lantai.", "", ["Perut depan", "Perut samping"], "Buang napas setiap kali memutar badan."], ["plank", "Plank", "🧱", "perut", true, 30, 3.8, 1, ["Tumpukan badan pada lengan bawah dan ujung kaki.", "Siku tepat di bawah bahu.", "Badan lurus dari kepala sampai tumit, kencangkan perut & bokong.", "Tahan posisi sambil bernapas normal."], "Pandangan ke lantai sedikit di depan tangan agar leher netral.", "Pinggul turun (melengkung) atau terlalu tinggi.", "Hentikan bila punggung bawah terasa sakit.", ["Perut depan", "Perut dalam", "Bahu", "Punggung"], "Bernapas normal dan teratur, jangan menahan napas."], ["side_plank", "Side plank", "📐", "perut", true, 20, 3.8, 2, ["Berbaring miring, tumpu pada satu lengan bawah, siku di bawah bahu.", "Angkat pinggul hingga badan lurus dari kepala ke kaki.", "Tahan, lalu ganti sisi pada set berikutnya."], "Pemula: tekuk lutut bawah untuk menopang.", "Pinggul turun ke lantai.", "", ["Perut samping", "Bahu", "Pinggul"], "Bernapas normal dan teratur, jangan menahan napas."], ["leg_raise", "Leg raise", "🦵", "perut", false, 12, 3.8, 2, ["Berbaring telentang, tangan di samping badan atau di bawah bokong.", "Luruskan kaki dan rapatkan.", "Angkat kedua kaki hingga tegak lurus lantai.", "Turunkan perlahan tanpa menyentuh lantai, lalu ulangi."], "Semakin pelan saat turun, semakin terasa di perut bawah.", "Punggung bawah melengkung terangkat.", "Tekuk sedikit lutut bila punggung bawah terasa tertarik.", ["Perut bawah", "Pinggul"], "Buang napas saat kaki naik, tarik napas saat turun."], ["mountain", "Mountain climber", "⛰️", "perut", true, 30, 8.0, 2, ["Mulai dari posisi push-up, tangan di bawah bahu.", "Tarik lutut kanan ke arah dada.", "Kembalikan, lalu tarik lutut kiri.", "Lakukan bergantian dengan cepat seperti berlari di tempat."], "Jaga pinggul tetap sejajar dengan bahu.", "Pinggul terlalu tinggi atau bokong naik turun.", "", ["Perut", "Bahu", "Paha", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["russian", "Russian twist", "🔄", "perut", true, 30, 4.0, 2, ["Duduk, lutut ditekuk, condongkan badan ke belakang ±45°.", "Rapatkan kedua tangan di depan dada.", "Putar badan ke kanan lalu ke kiri, sentuhkan tangan ke lantai di samping pinggul.", "Angkat kaki dari lantai untuk versi lebih berat."], "Putar dari badan, bukan hanya tangan.", "Punggung membungkuk.", "", ["Perut samping", "Perut depan"], "Buang napas setiap kali memutar."], ["flutter", "Flutter kick", "🏊", "perut", true, 30, 3.8, 2, ["Berbaring telentang, tangan di bawah bokong.", "Angkat kaki sekitar 15 cm dari lantai.", "Gerakkan kaki naik-turun bergantian dengan cepat dan kecil."], "Tempelkan punggung bawah ke lantai.", "Mengangkat kaki terlalu tinggi.", "", ["Perut bawah", "Paha depan"], "Bernapas normal dan teratur, jangan menahan napas."], ["dead_bug", "Dead bug", "🪲", "perut", false, 12, 3.0, 1, ["Berbaring telentang, angkat tangan lurus ke atas dan lutut ditekuk 90°.", "Luruskan tangan kanan ke belakang kepala dan kaki kiri ke depan bersamaan.", "Kembali ke tengah, lalu ganti sisi.", "Gerakan pelan dan terkontrol."], "Gerakan paling aman untuk perut pemula & punggung sensitif.", "Punggung bawah terangkat dari lantai.", "", ["Perut dalam", "Perut depan"], "Buang napas saat tangan & kaki menjulur."], ["heel_touch", "Heel touch", "👣", "perut", true, 30, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki agak lebar.", "Angkat bahu sedikit dari lantai.", "Raih tumit kanan dengan tangan kanan, lalu tumit kiri dengan tangan kiri."], "Bahu tetap terangkat selama gerakan.", "Menarik leher.", "", ["Perut samping"], "Bernapas normal dan teratur, jangan menahan napas."], ["reverse_crunch", "Reverse crunch", "🔃", "perut", false, 12, 3.8, 2, ["Berbaring telentang, lutut ditekuk 90° dan kaki diangkat.", "Tarik lutut ke dada sambil mengangkat pinggul sedikit dari lantai.", "Turunkan perlahan ke posisi awal."], "Gunakan perut, bukan ayunan kaki.", "Mengayun kaki terlalu cepat.", "", ["Perut bawah"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["plank_tap", "Plank shoulder tap", "👋", "perut", true, 30, 4.5, 2, ["Posisi high plank (tangan lurus).", "Sentuh bahu kiri dengan tangan kanan.", "Kembalikan, lalu sentuh bahu kanan dengan tangan kiri."], "Lebarkan kaki agar pinggul tidak bergoyang.", "Pinggul berayun ke kiri-kanan.", "", ["Perut", "Bahu", "Lengan"], "Bernapas normal dan teratur, jangan menahan napas."], ["vacuum", "Stomach vacuum", "🫁", "perut", true, 20, 1.5, 1, ["Berdiri tegak atau merangkak.", "Buang napas sepenuhnya.", "Tarik perut ke dalam sedalam mungkin seolah pusar menyentuh tulang belakang.", "Tahan, lalu lepaskan dan bernapas normal."], "Melatih otot perut dalam (transversus) yang membuat perut tampak rata.", "Menahan napas terlalu lama sampai pusing.", "Jangan dilakukan saat hamil atau setelah makan.", ["Perut dalam (transversus)"], "Buang napas sampai habis, lalu tahan perut ke dalam tanpa menarik napas."], ["jumping_jack", "Jumping jack", "🤸", "kardio", true, 30, 8.0, 1, ["Berdiri tegak, kaki rapat, tangan di samping badan.", "Lompat sambil membuka kaki selebar bahu dan mengangkat tangan ke atas.", "Lompat lagi kembali ke posisi awal.", "Ulangi dengan ritme stabil."], "Mendarat dengan ujung kaki, lutut sedikit ditekuk.", "Mendarat keras dengan tumit.", "Versi tanpa lompat: langkahkan kaki ke samping bergantian.", ["Seluruh tubuh", "Jantung & paru", "Betis"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["high_knees", "High knees", "🏃", "kardio", true, 30, 8.0, 2, ["Berdiri tegak.", "Lari di tempat sambil mengangkat lutut setinggi pinggul.", "Ayunkan tangan seperti berlari."], "Badan tegak, perut dikencangkan.", "Badan condong ke belakang.", "", ["Paha depan", "Perut", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["butt_kick", "Butt kick", "🦶", "kardio", true, 30, 7.0, 1, ["Lari di tempat.", "Tendang tumit ke arah bokong setiap langkah.", "Tangan diayun santai."], "Mendarat ringan dengan ujung kaki.", "Membungkuk ke depan.", "", ["Paha belakang", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["burpee", "Burpee", "💥", "kardio", false, 8, 8.0, 3, ["Berdiri, lalu jongkok dan letakkan tangan di lantai.", "Lompatkan kaki ke belakang ke posisi push-up.", "Lompatkan kaki kembali ke dekat tangan.", "Lompat ke atas sambil mengangkat tangan."], "Pemula: langkahkan kaki ke belakang tanpa lompat dan tanpa push-up.", "Punggung melengkung saat posisi push-up.", "Hentikan bila sesak berlebihan atau pusing.", ["Seluruh tubuh", "Dada", "Paha", "Jantung & paru"], "Buang napas saat melompat, jangan menahan napas."], ["skater", "Skater jump", "⛸️", "kardio", true, 30, 7.0, 2, ["Lompat ke samping kanan, mendarat dengan kaki kanan.", "Kaki kiri menyilang ke belakang, tangan diayun.", "Lompat ke kiri dan ulangi bergantian."], "Tekuk lutut saat mendarat.", "Lutut lurus kaku saat mendarat.", "", ["Paha", "Bokong", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["march", "Jalan di tempat", "🚶", "kardio", true, 60, 3.5, 1, ["Berdiri tegak.", "Angkat lutut bergantian seperti berjalan di tempat.", "Ayunkan tangan berlawanan dengan kaki."], "Cocok untuk pemanasan atau pemula.", "Membungkuk.", "", ["Paha", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["jump_rope", "Lompat tali (tanpa tali)", "🪢", "kardio", true, 30, 8.8, 1, ["Berdiri, tangan seolah memegang tali.", "Putar pergelangan tangan sambil melompat kecil dengan ujung kaki.", "Jaga lompatan rendah dan ringan."], "Lompatan kecil 2–3 cm sudah cukup.", "Lompat terlalu tinggi.", "", ["Betis", "Bahu", "Jantung & paru"], "Bernapas ritmis lewat hidung & mulut, sesuaikan dengan tempo."], ["squat", "Squat", "🏋️", "kaki", false, 15, 5.0, 1, ["Berdiri, kaki selebar bahu, ujung kaki sedikit ke luar.", "Dorong pinggul ke belakang dan tekuk lutut seperti mau duduk.", "Turun sampai paha sejajar lantai (atau semampunya).", "Dorong lewat tumit untuk berdiri."], "Dada tegak, lutut searah ujung kaki.", "Lutut masuk ke dalam atau tumit terangkat.", "", ["Paha depan", "Bokong", "Paha belakang"], "Tarik napas saat turun, buang napas saat berdiri."], ["lunge", "Lunge", "🚶‍♂️", "kaki", false, 12, 4.0, 2, ["Berdiri tegak.", "Langkahkan kaki kanan ke depan.", "Turunkan badan hingga kedua lutut menekuk 90°.", "Dorong kembali ke posisi awal, ganti kaki."], "Lutut depan tidak melewati ujung jari kaki.", "Badan condong ke depan.", "", ["Paha depan", "Bokong", "Keseimbangan"], "Tarik napas saat turun, buang napas saat naik."], ["glute_bridge", "Glute bridge", "🌉", "kaki", false, 15, 3.5, 1, ["Berbaring telentang, lutut ditekuk, kaki menapak.", "Angkat pinggul hingga badan lurus dari bahu ke lutut.", "Remas bokong 1 detik di atas.", "Turunkan perlahan."], "Dorong lewat tumit.", "Punggung terlalu melengkung di atas.", "", ["Bokong", "Paha belakang", "Punggung bawah"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["wall_sit", "Wall sit", "🪑", "kaki", true, 30, 3.0, 2, ["Sandarkan punggung ke dinding.", "Turunkan badan sampai lutut 90° seperti duduk di kursi.", "Tahan posisi."], "Lutut tepat di atas pergelangan kaki.", "Lutut melewati ujung kaki.", "", ["Paha depan", "Bokong"], "Bernapas normal dan teratur, jangan menahan napas."], ["calf_raise", "Calf raise", "🦿", "kaki", false, 20, 2.8, 1, ["Berdiri tegak, bisa berpegangan ke dinding.", "Jinjit setinggi mungkin.", "Turunkan tumit perlahan."], "Tahan 1 detik di atas.", "Terlalu cepat.", "", ["Betis"], "Buang napas saat jinjit, tarik napas saat turun."], ["side_leg", "Side leg raise", "🦵", "kaki", false, 15, 3.0, 1, ["Berbaring miring, kepala ditopang tangan.", "Angkat kaki atas lurus ke atas.", "Turunkan perlahan, ganti sisi pada set berikutnya."], "Ujung kaki menghadap depan.", "Badan berguling ke belakang.", "", ["Pinggul luar", "Bokong samping"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["donkey_kick", "Donkey kick", "🐴", "kaki", false, 15, 3.5, 1, ["Posisi merangkak, tangan di bawah bahu, lutut di bawah pinggul.", "Tendang satu kaki ke atas dengan lutut tetap ditekuk 90°.", "Turunkan, ulangi, lalu ganti kaki."], "Remas bokong saat kaki di atas.", "Punggung melengkung.", "", ["Bokong", "Paha belakang"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["pushup", "Push-up", "💪", "lengan", false, 10, 8.0, 2, ["Tangan sedikit lebih lebar dari bahu, badan lurus.", "Turunkan dada mendekati lantai dengan siku ±45° dari badan.", "Dorong kembali ke atas."], "Pemula: lakukan dengan lutut di lantai.", "Pinggul turun atau siku terbuka lebar.", "", ["Dada", "Lengan belakang", "Bahu", "Perut"], "Tarik napas saat turun, buang napas saat mendorong."], ["knee_pushup", "Push-up lutut", "🙌", "lengan", false, 10, 4.0, 1, ["Seperti push-up, tapi lutut bertumpu di lantai.", "Badan lurus dari kepala ke lutut.", "Turunkan dada, lalu dorong ke atas."], "Langkah awal sebelum push-up penuh.", "Bokong terangkat.", "", ["Dada", "Lengan belakang", "Bahu"], "Tarik napas saat turun, buang napas saat mendorong."], ["tricep_dip", "Tricep dip (kursi)", "🪑", "lengan", false, 12, 4.0, 2, ["Duduk di tepi kursi yang kokoh, tangan di samping pinggul.", "Geser bokong ke depan dari kursi.", "Turunkan badan dengan menekuk siku ke belakang.", "Dorong kembali ke atas."], "Siku mengarah ke belakang, bukan ke samping.", "Bahu naik ke telinga.", "Pastikan kursi tidak bisa bergeser.", ["Lengan belakang", "Bahu", "Dada"], "Tarik napas saat turun, buang napas saat mendorong naik."], ["arm_circle", "Putar lengan", "🌀", "lengan", true, 30, 2.8, 1, ["Berdiri, rentangkan tangan ke samping sejajar bahu.", "Putar lengan membentuk lingkaran kecil ke depan.", "Setelah setengah waktu, putar ke belakang."], "Lingkaran kecil terasa lebih berat.", "Bahu terangkat.", "", ["Bahu", "Lengan"], "Bernapas normal dan teratur, jangan menahan napas."], ["superman", "Superman", "🦸", "lengan", false, 12, 3.0, 1, ["Berbaring tengkurap, tangan lurus ke depan.", "Angkat tangan, dada, dan kaki bersamaan dari lantai.", "Tahan 2 detik, lalu turunkan."], "Menguatkan punggung bawah — penyeimbang latihan perut.", "Mendongakkan kepala terlalu tinggi.", "", ["Punggung bawah", "Bokong", "Bahu"], "Buang napas saat mengangkat/mendorong, tarik napas saat kembali."], ["inchworm", "Inchworm", "🐛", "lengan", false, 6, 4.0, 2, ["Berdiri, bungkukkan badan dan letakkan tangan di lantai.", "Jalankan tangan ke depan sampai posisi push-up.", "Jalankan tangan kembali ke kaki, lalu berdiri."], "Tekuk lutut bila hamstring kaku.", "Punggung melengkung.", "", ["Paha belakang", "Bahu", "Perut"], "Bernapas normal dan teratur, jangan menahan napas."], ["cobra", "Cobra stretch", "🐍", "stretch", true, 30, 2.3, 1, ["Berbaring tengkurap, tangan di bawah bahu.", "Dorong dada ke atas perlahan, pinggul tetap di lantai.", "Rasakan peregangan di perut, tahan."], "Bahu rileks menjauhi telinga.", "Memaksa punggung melengkung terlalu jauh.", "", ["Perut (peregangan)", "Punggung"], "Tarik napas panjang lewat hidung, buang perlahan lewat mulut."], ["child_pose", "Child’s pose", "🧘", "stretch", true, 30, 2.3, 1, ["Berlutut, duduk di atas tumit.", "Bungkukkan badan ke depan, tangan lurus di lantai.", "Dahi menyentuh lantai, bernapas dalam."], "Napas panjang lewat hidung.", "Menahan napas.", "", ["Punggung", "Pinggul", "Bahu"], "Tarik napas panjang lewat hidung, buang perlahan lewat mulut."], ["cat_cow", "Cat-cow", "🐈", "stretch", true, 40, 2.3, 1, ["Posisi merangkak.", "Tarik napas: lengkungkan punggung ke bawah, angkat kepala (cow).", "Buang napas: bulatkan punggung ke atas, tundukkan kepala (cat).", "Ulangi mengikuti napas."], "Gerakan pelan mengikuti napas.", "Terlalu cepat.", "", ["Punggung", "Perut", "Leher"], "Tarik napas saat punggung melengkung ke bawah, buang saat membulat ke atas."], ["side_stretch", "Peregangan samping", "🌿", "stretch", true, 30, 2.3, 1, ["Berdiri, angkat tangan kanan ke atas.", "Condongkan badan ke kiri, tahan.", "Ganti sisi di setengah waktu."], "Pinggul tetap lurus.", "Badan condong ke depan.", "", ["Perut samping", "Punggung samping"], "Tarik napas panjang lewat hidung, buang perlahan lewat mulut."], ["knee_hug", "Peluk lutut", "🤗", "stretch", true, 30, 2.3, 1, ["Berbaring telentang.", "Peluk kedua lutut ke dada.", "Goyangkan pelan ke kiri-kanan untuk memijat punggung bawah."], "Bagus untuk punggung setelah latihan perut.", "Mengangkat kepala.", "", ["Punggung bawah", "Bokong"], "Tarik napas panjang lewat hidung, buang perlahan lewat mulut."], ["hamstring", "Peregangan paha belakang", "🙆", "stretch", true, 30, 2.3, 1, ["Duduk, luruskan kedua kaki.", "Raih ujung kaki dengan punggung lurus.", "Tahan tanpa menghentak."], "Tekuk lutut sedikit bila belum lentur.", "Menghentak-hentakkan badan.", "", ["Paha belakang", "Punggung bawah"], "Tarik napas panjang lewat hidung, buang perlahan lewat mulut."]];
 // [id, nama, emoji, warna, level, deskripsi, istirahat, ronde, [[id, jumlah]]]
 const PROGRAMS = [["perut_pemula", "Perut rata — pemula", "🔥", "#F97316", 1, "Tanpa alat, gerakan ramah pemula. Mulai dari sini kalau baru mulai olahraga.", 20, 2, [["march", 60], ["crunch", 12], ["dead_bug", 10], ["heel_touch", 30], ["glute_bridge", 12], ["plank", 20], ["vacuum", 20], ["cobra", 30]]], ["perut_menengah", "Perut & core — menengah", "⚡", "#EF4444", 2, "Kombinasi kardio + perut untuk membakar lemak dan mengencangkan core.", 15, 3, [["jumping_jack", 40], ["bicycle", 40], ["mountain", 30], ["leg_raise", 12], ["russian", 30], ["plank", 40], ["side_plank", 25], ["flutter", 30]]], ["perut_lanjut", "Perut six-pack — lanjut", "🏆", "#7C3AED", 3, "Untuk yang sudah terbiasa. Intens dan melelahkan.", 10, 3, [["burpee", 10], ["mountain", 45], ["reverse_crunch", 15], ["bicycle", 45], ["plank_tap", 40], ["leg_raise", 15], ["russian", 45], ["plank", 60]]], ["kardio", "Kardio bakar lemak", "🏃", "#0EA5E9", 2, "HIIT tanpa alat — paling efektif membakar kalori dalam waktu singkat.", 15, 3, [["jumping_jack", 40], ["high_knees", 30], ["butt_kick", 30], ["skater", 30], ["jump_rope", 40], ["burpee", 8], ["mountain", 30]]], ["fullbody", "Full body tanpa alat", "💪", "#10B981", 2, "Melatih seluruh tubuh: kaki, dada, lengan, punggung dan perut.", 15, 2, [["jumping_jack", 30], ["squat", 15], ["pushup", 10], ["lunge", 12], ["superman", 12], ["glute_bridge", 15], ["plank", 30], ["mountain", 30], ["inchworm", 6]]], ["kaki", "Kaki & bokong", "🍑", "#EC4899", 1, "Mengencangkan paha dan bokong.", 15, 3, [["squat", 15], ["lunge", 12], ["glute_bridge", 15], ["donkey_kick", 15], ["side_leg", 15], ["wall_sit", 30], ["calf_raise", 20]]], ["lengan", "Lengan & dada", "🦾", "#6366F1", 1, "Mengencangkan lengan, dada dan punggung tanpa alat.", 20, 3, [["arm_circle", 30], ["knee_pushup", 10], ["tricep_dip", 12], ["superman", 12], ["pushup", 8], ["plank_tap", 30], ["inchworm", 6]]], ["stretch_pagi", "Peregangan pagi", "🌅", "#14B8A6", 1, "5 menit untuk melemaskan badan setelah bangun tidur.", 5, 1, [["march", 60], ["side_stretch", 30], ["cat_cow", 40], ["cobra", 30], ["hamstring", 30], ["child_pose", 40]]], ["stretch_malam", "Peregangan sebelum tidur", "🌙", "#8B5CF6", 1, "Rileks, meredakan pegal dan membantu tidur lebih nyenyak.", 5, 1, [["knee_hug", 40], ["cat_cow", 40], ["child_pose", 45], ["hamstring", 40], ["cobra", 30]]]];
+const FIGS = {"crunch": ["s", "hip", 0, 2.4, ["mat"], [[270, 274, 330, 190, 322, 196, 42, 150, 46, 152, 90, 90, 0, 0], [302, 306, 362, 222, 354, 228, 42, 150, 46, 152, 90, 90, 0, 0], [302, 306, 362, 222, 354, 228, 42, 150, 46, 152, 90, 90, 0, 0]]], "bicycle": ["s", "hip", 0, 1.8, ["mat"], [[298, 302, 358, 218, 350, 224, 8, 105, 62, 70, null, null, 0, 0], [298, 302, 358, 218, 350, 224, 62, 70, 8, 105, null, null, 0, 0]]], "plank": ["s", "toe1", 0, 3, ["mat"], [[82, 86, 180, 90, 182, 92, 262, 262, 262, 262, null, null, 0, 0], [80, 84, 180, 90, 182, 92, 260, 260, 260, 260, null, null, 0, 0]]], "side_plank": ["s", "toe1", 0, 2.6, ["mat"], [[76, 78, 180, 90, 150, 120, 256, 256, 258, 258, null, null, 0, 0], [66, 66, 180, 90, 8, 4, 246, 246, 248, 248, null, null, 0, 0], [66, 66, 180, 90, 8, 4, 246, 246, 248, 248, null, null, 0, 0]]], "leg_raise": ["s", "hip", 0, 2.6, ["mat"], [[270, 274, 92, 92, 94, 94, 82, 82, 84, 84, null, null, 0, 0], [270, 274, 92, 92, 94, 94, 4, 4, 6, 6, null, null, 0, 0]]], "mountain": ["s", "hand1", 0, 0.9, ["mat"], [[66, 70, 178, 178, 182, 182, 140, 225, 246, 246, null, null, 0, 0], [66, 70, 178, 178, 182, 182, 246, 246, 140, 225, null, null, 0, 0]]], "russian": ["s", "hip", 0, 1.6, ["mat"], [[330, 350, 150, 95, 150, 95, 62, 128, 64, 130, null, null, 0, 0], [330, 345, 205, 250, 200, 245, 62, 128, 64, 130, null, null, 0, 0]]], "flutter": ["s", "hip", 0, 0.7, ["mat"], [[270, 274, 92, 92, 94, 94, 66, 66, 80, 80, null, null, 0, 0], [270, 274, 92, 92, 94, 94, 80, 80, 66, 66, null, null, 0, 0]]], "dead_bug": ["s", "hip", 0, 2.6, ["mat"], [[270, 274, 0, 0, 4, 4, 0, 90, 4, 94, null, null, 0, 0], [270, 274, 262, 264, 4, 4, 0, 90, 72, 74, null, null, 0, 0], [270, 274, 0, 0, 4, 4, 0, 90, 4, 94, null, null, 0, 0], [270, 274, 0, 0, 262, 264, 72, 74, 4, 94, null, null, 0, 0]]], "heel_touch": ["s", "hip", 0, 1.4, ["mat"], [[292, 300, 112, 104, 88, 80, 36, 148, 40, 150, 90, 90, 0, 0], [292, 300, 88, 80, 112, 104, 36, 148, 40, 150, 90, 90, 0, 0]]], "reverse_crunch": ["s", "shoulder", 0, 2.4, ["mat"], [[270, 274, 92, 92, 94, 94, 2, 92, 6, 96, null, null, 0, 0], [262, 274, 92, 92, 94, 94, 318, 58, 322, 62, null, null, 0, 0]]], "plank_tap": ["s", "toe1", 0, 1.6, ["mat"], [[66, 70, 150, 330, 182, 182, 246, 246, 246, 246, null, null, 0, 0], [66, 70, 178, 178, 182, 182, 246, 246, 246, 246, null, null, 0, 0], [66, 70, 178, 178, 150, 330, 246, 246, 246, 246, null, null, 0, 0], [66, 70, 178, 178, 182, 182, 246, 246, 246, 246, null, null, 0, 0]]], "vacuum": ["s", "ankle1", 0, 4, [], [[0, 0, 196, 110, 200, 114, 180, 180, 180, 180, null, null, 0, 0], [2, 0, 196, 110, 200, 114, 180, 180, 180, 180, null, null, -3, 0], [2, 0, 196, 110, 200, 114, 180, 180, 180, 180, null, null, -3, 0]]], "jumping_jack": ["f", "hip", 1, 0.9, [], [[0, 0, 168, 172, 192, 188, 178, 180, 182, 180, null, null, 0, 0], [0, 0, 24, 14, 336, 346, 158, 164, 202, 196, null, null, 0, 10]]], "high_knees": ["s", "hip", 1, 0.6, [], [[4, 0, 215, 150, 130, 60, 84, 182, 184, 186, null, null, 0, 5], [4, 0, 130, 60, 215, 150, 184, 186, 84, 182, null, null, 0, 5]]], "butt_kick": ["s", "hip", 1, 0.7, [], [[6, 0, 205, 140, 145, 75, 196, 338, 176, 184, null, null, 0, 4], [6, 0, 145, 75, 205, 140, 176, 184, 196, 338, null, null, 0, 4]]], "burpee": ["s", "hand1", 1, 3.6, ["mat"], [[0, 0, 172, 176, 188, 184, 180, 180, 180, 180, null, null, 0, 0], [58, 70, 176, 178, 180, 182, 72, 196, 74, 198, null, null, 0, 0], [66, 70, 178, 178, 182, 182, 246, 246, 246, 246, null, null, 0, 0], [58, 70, 176, 178, 180, 182, 72, 196, 74, 198, null, null, 0, 0], [0, 0, 6, 4, 356, 354, 180, 180, 180, 180, 160, 160, 0, 14]]], "skater": ["f", "hip", 1, 1.2, [], [[10, 8, 226, 232, 212, 222, 170, 192, 150, 136, null, null, 0, 2], [350, 352, 148, 138, 134, 128, 210, 224, 190, 168, null, null, 0, 2]]], "march": ["s", "hip", 0, 1.3, [], [[0, 0, 210, 170, 150, 120, 118, 184, 182, 182, null, null, 0, 0], [0, 0, 150, 120, 210, 170, 182, 182, 118, 184, null, null, 0, 0]]], "jump_rope": ["s", "hip", 1, 0.55, [], [[0, 0, 176, 120, 184, 126, 178, 184, 180, 186, null, null, 0, 0], [0, 0, 176, 128, 184, 134, 180, 180, 182, 182, 158, 160, 0, 7]]], "squat": ["s", "toe1", 0, 2.6, [], [[0, 0, 110, 95, 114, 98, 180, 180, 180, 180, null, null, 0, 0], [34, 20, 92, 90, 95, 92, 96, 204, 98, 206, null, null, 0, 0]]], "lunge": ["s", "toe2", 0, 2.8, [], [[0, 0, 200, 120, 204, 124, 180, 180, 180, 180, null, null, 0, 0], [0, 0, 200, 120, 204, 124, 96, 182, 196, 270, null, 200, 0, 0], [0, 0, 200, 120, 204, 124, 96, 182, 196, 270, null, 200, 0, 0]]], "glute_bridge": ["s", "shoulder", 0, 2.6, ["mat"], [[270, 274, 92, 92, 94, 94, 42, 150, 46, 152, 90, 90, 0, 0], [254, 262, 92, 92, 94, 94, 70, 168, 74, 170, 90, 90, 0, 0], [254, 262, 92, 92, 94, 94, 70, 168, 74, 170, 90, 90, 0, 0]]], "wall_sit": ["s", "hip", 0, 3, ["wall"], [[0, 0, 150, 110, 154, 112, 90, 180, 92, 182, 90, 90, 0, 0], [-2, 0, 148, 106, 152, 108, 90, 180, 92, 182, 90, 90, 0, 0]]], "calf_raise": ["s", "toe1", 0, 2, [], [[0, 0, 172, 176, 188, 184, 180, 180, 180, 180, 90, 90, 0, 0], [0, 0, 172, 176, 188, 184, 180, 180, 180, 180, 152, 152, 0, 0], [0, 0, 172, 176, 188, 184, 180, 180, 180, 180, 152, 152, 0, 0]]], "side_leg": ["s", "hip", 0, 2.4, ["mat"], [[272, 300, 262, 22, 150, 150, 88, 88, 86, 86, null, null, 0, 0], [272, 300, 262, 22, 150, 150, 88, 88, 46, 46, null, null, 0, 0]]], "donkey_kick": ["s", "hand1", 0, 2, ["mat"], [[68, 80, 180, 180, 182, 182, 180, 270, 182, 270, 270, 270, 0, 0], [68, 80, 180, 180, 182, 182, 276, 6, 182, 270, 96, 270, 0, 0], [68, 80, 180, 180, 182, 182, 276, 6, 182, 270, 96, 270, 0, 0]]], "pushup": ["s", "toe1", 0, 2.2, ["mat"], [[66, 70, 178, 178, 182, 182, 246, 246, 246, 246, null, null, 0, 0], [82, 84, 225, 110, 228, 112, 262, 262, 262, 262, null, null, 0, 0]]], "knee_pushup": ["s", "knee1", 0, 2.2, ["mat"], [[52, 58, 178, 178, 182, 182, 232, 300, 232, 304, null, null, 0, 0], [74, 78, 225, 110, 228, 112, 254, 310, 254, 314, null, null, 0, 0]]], "tricep_dip": ["s", "hand1", 0, 2.4, ["chair"], [[0, 4, 196, 178, 198, 180, 92, 168, 94, 170, 90, 90, 0, 0], [4, 8, 246, 160, 248, 162, 68, 160, 70, 162, 90, 90, 0, 0]]], "arm_circle": ["f", "hip", 0, 1.0, [], [[0, 0, 84, 80, 276, 280, 180, 180, 180, 180, null, null, 0, 0], [0, 0, 92, 104, 268, 256, 180, 180, 180, 180, null, null, 0, 0], [0, 0, 98, 96, 262, 264, 180, 180, 180, 180, null, null, 0, 0], [0, 0, 88, 72, 272, 288, 180, 180, 180, 180, null, null, 0, 0]]], "superman": ["s", "hip", 0, 2.6, ["mat"], [[90, 92, 90, 90, 92, 92, 270, 270, 270, 270, null, null, 0, 0], [76, 72, 72, 70, 74, 72, 284, 284, 282, 282, null, null, 0, 0], [76, 72, 72, 70, 74, 72, 284, 284, 282, 282, null, null, 0, 0]]], "inchworm": ["s", "toe1", 0, 4.2, ["mat"], [[0, 0, 172, 176, 188, 184, 180, 180, 180, 180, null, null, 0, 0], [124, 150, 180, 180, 182, 182, 180, 180, 182, 182, null, null, 0, 0], [66, 70, 178, 178, 182, 182, 246, 246, 246, 246, null, null, 0, 0], [124, 150, 180, 180, 182, 182, 180, 180, 182, 182, null, null, 0, 0]]], "cobra": ["s", "hip", 0, 3.2, ["mat"], [[90, 92, 210, 96, 212, 98, 270, 270, 270, 270, null, null, 0, 0], [46, 30, 174, 176, 176, 178, 270, 270, 270, 270, null, null, -5, 0], [46, 30, 174, 176, 176, 178, 270, 270, 270, 270, null, null, -5, 0]]], "child_pose": ["s", "knee1", 0, 4, ["mat"], [[104, 112, 96, 92, 98, 94, 125, 270, 127, 270, 270, 270, 5, 0], [100, 110, 94, 91, 96, 93, 125, 270, 127, 270, 270, 270, 8, 0]]], "cat_cow": ["s", "hand1", 0, 4, ["mat"], [[68, 40, 180, 180, 182, 182, 180, 270, 182, 270, 270, 270, -7, 0], [68, 40, 180, 180, 182, 182, 180, 270, 182, 270, 270, 270, -7, 0], [68, 150, 180, 180, 182, 182, 180, 270, 182, 270, 270, 270, 9, 0], [68, 150, 180, 180, 182, 182, 180, 270, 182, 270, 270, 270, 9, 0]]], "side_stretch": ["f", "ankle1", 0, 3.2, [], [[0, 0, 168, 172, 192, 188, 176, 180, 184, 180, null, null, 0, 0], [340, 336, 318, 300, 210, 140, 176, 180, 184, 180, null, null, 0, 0], [340, 336, 318, 300, 210, 140, 176, 180, 184, 180, null, null, 0, 0]]], "knee_hug": ["s", "hip", 0, 3, ["mat"], [[266, 290, 32, 110, 36, 114, 330, 76, 334, 80, null, null, 0, 0], [272, 290, 38, 116, 42, 120, 338, 84, 342, 88, null, null, 0, 0]]], "hamstring": ["s", "hip", 0, 3.4, ["mat"], [[4, 14, 120, 110, 124, 114, 90, 90, 92, 92, 2, 4, 0, 0], [56, 80, 96, 94, 98, 96, 90, 90, 92, 92, 2, 4, 5, 0], [56, 80, 96, 94, 98, 96, 90, 90, 92, 92, 2, 4, 5, 0]]]};
 const BELLY_CHALLENGE = [["perut_pemula", 1.0], ["perut_pemula", 1.3], ["perut_menengah", 1.0], ["perut_menengah", 1.25]];
 const FREE_ACTIVITIES = [[["jalan kaki", "jalan santai", "jalan pagi", "jalan sore", "jalan"], "Jalan kaki", 3.5], [["jalan cepat", "power walk"], "Jalan cepat", 4.3], [["jogging", "joging", "lari pagi", "lari santai"], "Jogging", 7.0], [["lari"], "Lari", 9.8], [["bersepeda", "sepedaan", "gowes", "sepeda"], "Bersepeda", 6.8], [["renang", "berenang"], "Renang", 6.0], [["senam aerobik", "aerobik", "zumba", "senam"], "Senam", 6.5], [["yoga", "pilates"], "Yoga", 2.5], [["badminton", "bulu tangkis", "bulutangkis"], "Badminton", 5.5], [["futsal", "sepak bola", "main bola"], "Futsal/sepak bola", 7.0], [["basket"], "Basket", 6.5], [["tenis meja", "pingpong", "ping pong"], "Tenis meja", 4.0], [["angkat beban", "gym", "nge-gym", "ngegym", "fitness"], "Angkat beban/gym", 5.0], [["skipping", "lompat tali"], "Lompat tali", 11.0], [["hiking", "naik gunung", "mendaki"], "Hiking", 6.0], [["bersih bersih rumah", "bersih-bersih", "nyapu", "ngepel"], "Bersih-bersih rumah", 3.3]];
+// ===== Figur animasi gerakan olahraga (mesin yang sama dengan lib/presentation/screens/workout/exercise_figure.dart)
+const FIG_LEN = {torso: 46, neck: 7, head: 9.5, ua: 25, fa: 23, th: 31, sh: 30, foot: 9};
+const FIG_R = {hip: 7.5, sh: 7.5, el: 4, hand: 3.6, kn: 5, an: 4.2, toe: 3, head: 9.5};
+const FIG_VW = 200, FIG_VH = 150, FIG_GROUND = 140;
+const FIG_COL = {skin: '#F2C29B', skin2: '#D9A27A', shirt: '#2563EB', shirt2: '#1D4ED8', shorts: '#1E293B', shorts2: '#3B4A63', shoe: '#F97316', shoe2: '#C2410C', hair: '#1F2937', mat: '#C7D7F5', mat2: '#A9C0EC', prop: '#94A3B8'};
+
+function figDir(a) { const r = a * Math.PI / 180; return [Math.sin(r), -Math.cos(r)]; }
+function figAdd(p, a, len) { const d = figDir(a); return [p[0] + d[0] * len, p[1] + d[1] * len]; }
+
+// pose array: [t,h,a1,f1,a2,f2,l1,s1,l2,s2,k1,k2,b,y]
+function figJoints(p, front) {
+  const L = FIG_LEN, [t, h, a1, f1, a2, f2, l1, s1, l2, s2, k1, k2] = p;
+  const J = {};
+  const hip = [0, 0], sh = figAdd(hip, t, L.torso);
+  J.hip = hip; J.shoulder = sh;
+  const off = (pt, w, sign) => { const d = figDir(t + 90); return [pt[0] + d[0] * w * sign, pt[1] + d[1] * w * sign]; };
+  const sh1 = front ? off(sh, 11, 1) : sh, sh2 = front ? off(sh, 11, -1) : sh;
+  const hp1 = front ? off(hip, 6.5, 1) : hip, hp2 = front ? off(hip, 6.5, -1) : hip;
+  J.sh1 = sh1; J.sh2 = sh2; J.hp1 = hp1; J.hp2 = hp2;
+  J.neck = figAdd(sh, h, L.neck); J.head = figAdd(sh, h, L.neck + L.head);
+  J.el1 = figAdd(sh1, a1, L.ua); J.hand1 = figAdd(J.el1, f1, L.fa);
+  J.el2 = figAdd(sh2, a2, L.ua); J.hand2 = figAdd(J.el2, f2, L.fa);
+  J.knee1 = figAdd(hp1, l1, L.th); J.ankle1 = figAdd(J.knee1, s1, L.sh);
+  J.knee2 = figAdd(hp2, l2, L.th); J.ankle2 = figAdd(J.knee2, s2, L.sh);
+  const fa1 = k1 == null ? (front ? 180 : s1 - 90) : k1, fa2 = k2 == null ? (front ? 180 : s2 - 90) : k2;
+  J.toe1 = figAdd(J.ankle1, fa1, front ? 3 : L.foot); J.toe2 = figAdd(J.ankle2, fa2, front ? 3 : L.foot);
+  return J;
+}
+const FIG_RAD = {hip: 7.5, shoulder: 7.5, sh1: 4, sh2: 4, hp1: 5, hp2: 5, neck: 3, head: 9.5, el1: 4, el2: 4, hand1: 3.6, hand2: 3.6, knee1: 5, knee2: 5, ankle1: 4.2, ankle2: 4.2, toe1: 2.8, toe2: 2.8};
+function figLowest(J) { let m = -1e9; for (const k in J) m = Math.max(m, J[k][1] + (FIG_RAD[k] || 3)); return m; }
+
+const _figCache = {};
+// Hitung kerangka: offset tiap keyframe + skala agar muat di kotak.
+function figPrep(id) {
+  if (_figCache[id]) return _figCache[id];
+  const f = FIGS[id]; if (!f) return null;
+  const [view, anchor, free, dur, props, keys] = f, front = view === 'f';
+  const off = [];
+  let a0 = null;
+  keys.forEach((p, i) => {
+    const J = figJoints(p, front), lift = p[13] || 0;
+    if (i === 0) { const oy = -figLowest(J) - lift; off.push([0, oy]); a0 = [J[anchor][0], J[anchor][1] + oy]; return; }
+    const ox = a0[0] - J[anchor][0];
+    const oy = free ? -figLowest(J) - lift : a0[1] - J[anchor][1];
+    off.push([ox, oy]);
+  });
+  let minX = 1e9, maxX = -1e9, minY = 1e9;
+  keys.forEach((p, i) => { const J = figJoints(p, front); for (const k in J) { const r = FIG_RAD[k] || 3, x = J[k][0] + off[i][0], y = J[k][1] + off[i][1]; minX = Math.min(minX, x - r); maxX = Math.max(maxX, x + r); minY = Math.min(minY, y - r); } });
+  if (props.includes('chair')) minX -= 34;
+  if (props.includes('wall')) minX -= 14;
+  const s = Math.min(1.25, (FIG_GROUND - 8) / -minY, (FIG_VW - 20) / (maxX - minX));
+  const tx = FIG_VW / 2 - (minX + maxX) / 2 * s;
+  return (_figCache[id] = {f, front, keys, off, s, tx, a0, minX, maxX, props, dur});
+}
+
+function figLerpA(a, b, u) { if (a == null || b == null) return u < .5 ? a : b; const d = ((b - a + 540) % 360) - 180; return a + d * u; }
+// pose & offset pada waktu fase 0..1
+function figAt(P, phase) {
+  const n = P.keys.length;
+  if (n === 1) return [P.keys[0], P.off[0]];
+  const x = ((phase % 1) + 1) % 1 * n, i = Math.floor(x), j = (i + 1) % n;
+  const u = (1 - Math.cos((x - i) * Math.PI)) / 2;
+  const A = P.keys[i], B = P.keys[j];
+  const ft = (Q, k) => Q[k] != null ? Q[k] : (P.front ? 180 : Q[k - 3] - 90);
+  const p = A.map((v, k) => k >= 12 ? (v || 0) + ((B[k] || 0) - (v || 0)) * u
+    : (k === 10 || k === 11) ? (v == null && B[k] == null ? null : figLerpA(ft(A, k), ft(B, k), u)) : figLerpA(v, B[k], u));
+  return [p, [P.off[i][0] + (P.off[j][0] - P.off[i][0]) * u, P.off[i][1] + (P.off[j][1] - P.off[i][1]) * u]];
+}
+
+// SVG lengkap (string) untuk gerakan pada fase tertentu
+function figSVG(id, phase, opt) {
+  const P = figPrep(id); if (!P) return '';
+  opt = opt || {};
+  const [p, o] = figAt(P, phase || 0), J = figJoints(p, P.front), s = P.s;
+  const X = pt => +(P.tx + (pt[0] + o[0]) * s).toFixed(1), Y = pt => +(FIG_GROUND + (pt[1] + o[1]) * s).toFixed(1);
+  const C = FIG_COL;
+  const ln = (a, b, w, c) => `<line x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke="${c}" stroke-width="${(w * s).toFixed(1)}" stroke-linecap="round"/>`;
+  const mid = (a, b, u) => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
+  let g = '';
+  // alas
+  if (P.props.includes('mat')) {
+    const x1 = P.tx + (P.minX - 6) * s, x2 = P.tx + (P.maxX + 6) * s;
+    g += `<rect x="${x1.toFixed(1)}" y="${FIG_GROUND}" width="${(x2 - x1).toFixed(1)}" height="5" rx="2.5" fill="${opt.mat || C.mat}"/>`;
+  } else {
+    g += `<ellipse cx="${FIG_VW / 2}" cy="${FIG_GROUND + 2}" rx="${(34 * s).toFixed(1)}" ry="3.5" fill="#0F172A" opacity=".10"/>`;
+  }
+  if (P.props.includes('chair')) {
+    const h0 = figJoints(P.keys[0], P.front).hand1, hx = P.tx + (h0[0] + P.off[0][0]) * s, hy = FIG_GROUND + (h0[1] + P.off[0][1]) * s + 3.6 * s;
+    g += `<g fill="${C.prop}"><rect x="${(hx - 34 * s).toFixed(1)}" y="${hy.toFixed(1)}" width="${(40 * s).toFixed(1)}" height="${(5 * s).toFixed(1)}" rx="2"/>` +
+      `<rect x="${(hx - 32 * s).toFixed(1)}" y="${hy.toFixed(1)}" width="${(3.5 * s).toFixed(1)}" height="${(FIG_GROUND - hy).toFixed(1)}"/>` +
+      `<rect x="${(hx + 1 * s).toFixed(1)}" y="${hy.toFixed(1)}" width="${(3.5 * s).toFixed(1)}" height="${(FIG_GROUND - hy).toFixed(1)}"/>` +
+      `<rect x="${(hx - 34 * s).toFixed(1)}" y="${(hy - 34 * s).toFixed(1)}" width="${(4 * s).toFixed(1)}" height="${(34 * s).toFixed(1)}" rx="2"/></g>`;
+  }
+  if (P.props.includes('wall')) {
+    const b0 = figJoints(P.keys[0], P.front), wx = P.tx + (Math.min(b0.hip[0], b0.shoulder[0]) + P.off[0][0] - 8.5) * s;
+    g += `<rect x="${(wx - 10).toFixed(1)}" y="6" width="10" height="${FIG_GROUND - 6 + 5}" rx="2" fill="${C.prop}" opacity=".55"/>`;
+  }
+  const leg = (n, far) => {
+    const hp = J['hp' + n] || J.hip, kn = J['knee' + n], an = J['ankle' + n], to = J['toe' + n];
+    const sk = far ? C.skin2 : C.skin, sr = far ? C.shorts2 : C.shorts, so = far ? C.shoe2 : C.shoe;
+    return ln(kn, an, 8, sk) + ln(hp, kn, 9.5, sk) + ln(hp, mid(hp, kn, .62), 11, sr) + ln(an, to, 5.5, so) + ln(an, an, 6.5, so);
+  };
+  const arm = (n, far) => {
+    const shp = J['sh' + n], el = J['el' + n], hd = J['hand' + n], sk = far ? C.skin2 : C.skin;
+    return ln(shp, el, 7.5, sk) + ln(el, hd, 6.5, sk) + ln(hd, hd, 7.4, sk) + ln(shp, mid(shp, el, .35), 8.5, far ? C.shirt2 : C.shirt);
+  };
+  const torso = () => {
+    const hp = J.hip, sh = J.shoulder, b = p[12] || 0;
+    const m = mid(hp, sh, .5), d = figDir(p[0] - 90), c = [m[0] + d[0] * b * 2, m[1] + d[1] * b * 2];
+    const w = (P.front ? 21 : 15) * s;
+    let t = `<path d="M${X(hp)} ${Y(hp)} Q${X(c)} ${Y(c)} ${X(sh)} ${Y(sh)}" stroke="${C.shirt}" stroke-width="${w.toFixed(1)}" stroke-linecap="round" fill="none"/>`;
+    t += ln(J.shoulder, J.neck, 5.5, C.skin);
+    if (P.front) t += ln(J.sh1, J.sh2, 9, C.shirt) + ln(J.hp1, J.hp2, 12, C.shorts);
+    else t += `<circle cx="${X(hp)}" cy="${Y(hp)}" r="${(8.2 * s).toFixed(1)}" fill="${C.shorts}"/>`;
+    return t;
+  };
+  const head = () => {
+    const c = J.head, r = FIG_LEN.head * s, cx = X(c), cy = Y(c), hd = p[1];
+    const arc = (a1, a2) => { const p1 = figDir(a1), p2 = figDir(a2), R = r + .6 * s; return `<path d="M${(cx + p1[0] * R).toFixed(1)} ${(cy + p1[1] * R).toFixed(1)} A${R.toFixed(1)} ${R.toFixed(1)} 0 ${((a2 - a1 + 360) % 360) > 180 ? 1 : 0} 1 ${(cx + p2[0] * R).toFixed(1)} ${(cy + p2[1] * R).toFixed(1)} Z" fill="${C.hair}"/>`; };
+    let t = `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" fill="${C.skin}"/>`;
+    t += P.front ? arc(hd - 78, hd + 78) : arc(hd - 150, hd + 48);
+    if (!P.front) { const e = figDir(hd + 70), ex = cx + e[0] * r * .55, ey = cy + e[1] * r * .55; t += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="${(1.3 * s).toFixed(1)}" fill="#1F2937"/>`; }
+    return t;
+  };
+  if (P.front) g += leg(1) + leg(2) + torso() + arm(1) + arm(2) + head();
+  else g += arm(2, true) + leg(2, true) + torso() + leg(1) + head() + arm(1);
+  return `<svg viewBox="0 0 ${FIG_VW} ${FIG_VH}" xmlns="http://www.w3.org/2000/svg"${opt.cls ? ` class="${opt.cls}"` : ''}>${g}</svg>`;
+}
+
+// Animasi: semua elemen [data-fig][data-anim] yang terlihat diperbarui tiap frame
+let _figRaf = 0;
+function figAnimate() {
+  if (_figRaf) return;
+  const loop = ts => {
+    let n = 0;
+    document.querySelectorAll('[data-fig][data-anim]').forEach(el => {
+      const full = el.closest('.full'); if (full && !full.classList.contains('show')) return;
+      if (!el.isConnected || el.dataset.paused === '1') { n++; return; }
+      const id = el.dataset.fig, P = figPrep(id); if (!P) return;
+      n++;
+      const sp = +(el.dataset.speed || 1);
+      el._t = (el._t || 0) + (el._last ? Math.min(.1, (ts - el._last) / 1000) : 0) * sp / P.dur; el._last = ts;
+      el.innerHTML = figSVG(id, el._t, {mat: el.dataset.mat});
+    });
+    _figRaf = n ? requestAnimationFrame(loop) : 0;
+  };
+  _figRaf = requestAnimationFrame(loop);
+}
+function figHTML(id, anim, cls, mat) {
+  const P = figPrep(id); if (!P) return '';
+  return `<div class="fig ${cls || ''}" data-fig="${id}"${anim ? ' data-anim="1"' : ''}${mat ? ` data-mat="${mat}"` : ''}>${figSVG(id, anim ? 0 : (P.keys.length > 1 ? 1 / P.keys.length : 0), {mat})}</div>`;
+}
+
 /* ===== Logika olahraga (sinkron dengan lib/services/workout_logic.dart) ===== */
 const SEC_PER_REP = 3;
 const exById = id => EXERCISES.find(e => e[0] === id);
@@ -2563,6 +2772,11 @@ function askWorkout(text){
 
 /* ================= OLAHRAGA (UI web) ================= */
 const LEVEL = ['', 'Pemula', 'Menengah', 'Lanjut'], LEVEL_C = ['#94A3B8', '#10B981', '#F59E0B', '#E11D48'];
+const PROG_FIG = {perut_pemula: 'crunch', perut_menengah: 'bicycle', perut_lanjut: 'leg_raise', kardio: 'jumping_jack', fullbody: 'pushup', kaki: 'lunge', lengan: 'tricep_dip', stretch_pagi: 'side_stretch', stretch_malam: 'child_pose'};
+const progFig = p => PROG_FIG[p[0]] || p[8][0][0];
+const fmtClock = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+const amountLabel = (e, a) => e[4] ? fmtClock(a) : `${a} kali`;
+const darkC = (hex, k) => { const n = parseInt(hex.slice(1), 16), f = v => Math.round(v * (1 - k)); return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`; };
 const olaS = () => state.ola;
 const olaKg = () => state.kal && state.kal.profile ? state.kal.profile.kg : null;
 function olaOn(d){ return olaS().logs.filter(l => sameDay(new Date(l.at), d)); }
@@ -2578,40 +2792,55 @@ function openOla(focus){ renderOla(); openFull('#ola'); if(focus){ const p = pro
 let olaArea = 'perut';
 function renderOla(){
   const box = $('#olaBody'); if(!box) return;
-  const s = olaS(), wk = olaWeekMin(), goal = s.goal, kg = olaKg(), R = 44, C = 2 * Math.PI * R;
+  const s = olaS(), wk = olaWeekMin(), goal = s.goal, kg = olaKg();
   const day = chDay(), done = chDone(), started = !!s.cs, finished = started && !day && done.size >= 20;
   const week = day ? Math.floor((day - 1) / 7) : 0, [cpid, cmult] = BELLY_CHALLENGE[Math.min(3, week)], cp = progById(cpid);
-  const tag = (t, c) => `<span class="otag" style="color:${c};background:${c}1f">${t}</span>`;
-  box.innerHTML = `<div class="ohero"><svg viewBox="0 0 104 104" class="oring"><circle cx="52" cy="52" r="${R}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="10"/><circle cx="52" cy="52" r="${R}" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - Math.min(1, wk / goal))}" transform="rotate(-90 52 52)"/><text x="52" y="52" text-anchor="middle" font-size="24" font-weight="800" fill="#fff">${wk}</text><text x="52" y="68" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">/ ${goal} mnt</text></svg>
-      <div><small>Minggu ini</small><b>${wk >= goal ? 'Target tercapai! 🏆' : `Sisa ${goal - wk} menit lagi`}</b><span>🔥 ${Math.round(olaKcalOn(new Date()))} kkal hari ini</span><span>⚡ ${olaStreak() ? olaStreak() + ' hari berturut-turut' : 'Mulai streak hari ini'}</span></div></div>
-    <details class="card oinfo"><summary>💡 <b>Cara benar mengecilkan perut</b></summary>
-      <p>1. Sit-up saja tidak membakar lemak perut. Lemak berkurang dari seluruh tubuh saat kalori yang keluar lebih banyak dari yang masuk.</p><p>2. Atur makan: sedikit di bawah kebutuhan (lihat target di fitur Kalori), kurangi gula & gorengan, perbanyak protein dan sayur.</p><p>3. Kardio 3–5× seminggu (jalan cepat, jogging, program "Kardio bakar lemak") untuk membakar kalori.</p><p>4. Latihan perut & kekuatan 3× seminggu supaya otot perut kencang dan postur tegak — perut tampak lebih rata.</p><p>5. Tidur 7–8 jam & kelola stres: kurang tidur membuat lemak perut lebih sulit turun.</p><p>6. Sabar & konsisten: turun 0,5 kg per minggu itu sehat. Hasil terlihat dalam 4–8 minggu.</p>
+  const list = EXERCISES.filter(e => e[3] === olaArea);
+  box.innerHTML = `<div class="ohero">
+      <div class="ohtop"><button data-close="#ola" aria-label="Kembali">←</button><b>Olahraga</b><button data-oact="rem" aria-label="Pengingat">${s.rh != null ? '🔔' : '🔕'}</button></div>
+      <div class="ohmain"><div><h1 class="odisp">Olahraga<br>di rumah</h1><div class="oribbon odisp"><i>✓</i>Tanpa alat</div></div>${figHTML('jumping_jack', true, 'ohfig')}</div>
+      <div class="ohstats"><div><b class="odisp">${wk}</b><small>/ ${goal} menit<br>minggu ini</small></div><div><b class="odisp">${Math.round(olaKcalOn(new Date()))}</b><small>kkal terbakar<br>hari ini</small></div><div><b class="odisp">${olaStreak()}</b><small>hari<br>berturut-turut</small></div></div>
+      <div class="ohbar"><b style="width:${Math.min(100, wk / goal * 100)}%"></b></div>
+      <p class="ohnote">${wk >= goal ? 'Target mingguan tercapai! 🏆' : `Target WHO: ${goal} menit seminggu · sisa ${goal - wk} menit`}</p>
+    </div>
+    <div class="owrap">
+    <div class="och">${figHTML('crunch', true, '', 'rgba(255,255,255,.25)')}
+      <div class="lbl odisp">Tantangan 28 hari</div>
+      <h3 class="odisp">${!started ? 'Perut<br>rata' : finished ? 'Selesai!<br>🏆' : `Hari<br>ke-${day || 28}`}</h3>
+      <p>${!started ? '6 hari latihan + 1 hari istirahat<br>tiap minggu, makin berat bertahap' : `${done.size} hari selesai · minggu ${week + 1}: ${cp[1].split(' — ')[0]}`}</p>
+      <div class="odays">${Array.from({length: 28}, (_, k) => k + 1).map(d => `<span class="${done.has(d) ? 'on' : ''}${d === day ? ' now' : ''}${d % 7 === 0 ? ' rest' : ''}">${done.has(d) ? '✓' : d % 7 === 0 ? '😴' : d}</span>`).join('')}</div>
+      ${!started || finished ? `<button class="obig white odisp" data-oact="chstart">${finished ? 'Ulangi tantangan' : 'Mulai tantangan'}</button>`
+        : day % 7 === 0 ? '<div class="orest">😴 Hari ini istirahat — otot tumbuh saat beristirahat. Boleh jalan santai atau peregangan.</div>'
+        : `<button class="obig white odisp" data-oact="chgo">${done.has(day) ? 'Sudah ✓ · ulangi' : `Mulai · ${Math.round(workoutSeconds(cp, cmult) / 60)} menit`}</button>`}
+      ${started ? '<button class="ochstop" data-oact="chstop">Hentikan</button>' : ''}</div>
+    <details class="card oinfo"><summary><i>💡</i><div><b>Cara benar mengecilkan perut</b><small>Baca dulu sebelum mulai</small></div><span>⌄</span></summary>
+      ${[['🔥', 'Sit-up saja tidak membakar lemak perut. Lemak berkurang dari seluruh tubuh saat kalori yang keluar lebih banyak dari yang masuk.'], ['🍽️', 'Atur makan: sedikit di bawah kebutuhan (lihat target di fitur Kalori), kurangi gula & gorengan, perbanyak protein dan sayur.'], ['🏃', 'Kardio 3–5× seminggu (jalan cepat, jogging, program "Kardio bakar lemak") untuk membakar kalori.'], ['💪', 'Latihan perut & kekuatan 3× seminggu supaya otot perut kencang dan postur tegak — perut tampak lebih rata.'], ['😴', 'Tidur 7–8 jam & kelola stres: kurang tidur membuat lemak perut lebih sulit turun.'], ['📅', 'Sabar & konsisten: turun 0,5 kg per minggu itu sehat. Hasil terlihat dalam 4–8 minggu.']].map(([e, t]) => `<p><i>${e}</i>${t}</p>`).join('')}
       <button class="link" onclick="openKal()">🥗 Atur target kalori</button></details>
-    <div class="section-h"><h2>Tantangan 4 minggu perut</h2></div>
-    <div class="card och"><div class="och-h"><i>🔥</i><div><b>${!started ? '28 hari perut lebih rata' : finished ? 'Tantangan selesai! 🏆' : `Hari ke-${day || 28} dari 28`}</b><small>${!started ? 'Latihan bertahap, 6 hari seminggu + 1 hari istirahat' : `${done.size} hari selesai · minggu ${week + 1}: ${cp[1].split(' — ')[0]}`}</small></div></div>
-      <div class="odays">${Array.from({length: 28}, (_, k) => k + 1).map(d => `<span class="${done.has(d) ? 'on' : ''}${d === day ? ' now' : ''}${d % 7 === 0 ? ' rest' : ''}">${d % 7 === 0 ? '😴' : d}</span>`).join('')}</div>
-      ${!started || finished ? `<button class="btn btn-block obtn" data-oact="chstart">▶ ${finished ? 'Ulangi tantangan' : 'Mulai tantangan'}</button>`
-        : day % 7 === 0 ? '<p class="muted-c" style="text-align:left">😴 Hari ini istirahat — otot tumbuh saat beristirahat. Boleh jalan santai atau peregangan.</p>'
-        : `<button class="btn btn-block obtn" data-oact="chgo">▶ ${done.has(day) ? 'Hari ini sudah ✓ — ulangi?' : `Mulai hari ke-${day} (${Math.round(workoutSeconds(cp, cmult) / 60)} menit)`}</button>`}
-      ${started ? '<button class="link" data-oact="chstop" style="float:right;color:var(--muted)">Hentikan</button>' : ''}</div>
-    <div class="section-h"><h2>Program latihan</h2></div>
-    ${PROGRAMS.map(p => `<button class="card oprog" data-prog="${p[0]}"><i style="background:linear-gradient(135deg,${p[3]}dd,${p[3]})">${p[2]}</i><div><b>${p[1]}</b><small>${esc(p[5])}</small><div>${tag('⏱ ' + Math.round(workoutSeconds(p) / 60) + ' mnt', '#64748B')}${tag('🔥 ' + Math.round(workoutKcal(p, kg)) + ' kkal', '#64748B')}${tag(LEVEL[p[4]], LEVEL_C[p[4]])}</div></div></button>`).join('')}
-    <div class="section-h"><h2>Cara gerakan</h2></div>
-    <div class="kmchips">${Object.entries(EX_AREAS).map(([k, v]) => `<button data-oarea="${k}" class="${k === olaArea ? 'on' : ''}">${v}</button>`).join('')}</div>
-    <div class="card" style="padding:4px 14px;margin-top:10px">${EXERCISES.filter(e => e[3] === olaArea).map(e => `<button class="oex" data-ex="${e[0]}"><i>${e[2]}</i><div><b>${e[1]}</b><small>${amountText(e, e[5])} · ${LEVEL[e[7]]}</small></div>›</button>`).join('')}</div>
-    <div class="section-h"><h2>Riwayat</h2><button class="link" data-oact="log">+ Catat aktivitas</button></div>
+    <div class="osec"><div><h2 class="odisp">Program latihan</h2></div></div>
+    ${PROGRAMS.map(p => { const pr = p[1].split(' — '); return `<button class="opcard" data-prog="${p[0]}" style="background:linear-gradient(135deg,${darkC(p[3], .45)},${p[3]})">${figHTML(progFig(p), false, '', 'rgba(255,255,255,.3)')}
+      <span class="lv">${p[2]} ${(pr[1] || LEVEL[p[4]]).toUpperCase()}</span><h3 class="odisp">${esc(pr[0])}</h3><span class="meta">${Math.round(workoutSeconds(p) / 60)} MENIT · ${p[8].length} GERAKAN · ${Math.round(workoutKcal(p, kg))} KKAL</span></button>`; }).join('')}
+    <div class="osec"><div><h2 class="odisp">Semua gerakan</h2><small>Ketuk untuk melihat cara lengkapnya</small></div></div>
+    <div class="kmchips ochips">${Object.entries(EX_AREAS).map(([k, v]) => `<button data-oarea="${k}" class="${k === olaArea ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <div class="ogrid">${list.map((e, i) => `<button data-exi="${i}"><div class="ftile">${figHTML(e[0], false)}</div><b>${e[1]}</b><small>${amountLabel(e, e[5])} · ${LEVEL[e[7]]}</small></button>`).join('')}</div>
+    <div class="osec"><div><h2 class="odisp">Riwayat</h2></div><button class="link" data-oact="log">+ Catat aktivitas</button></div>
     ${s.logs.length ? `<div class="card" style="padding:4px 14px">${s.logs.slice(0, 12).map(l => `<div class="olog"><i>${l.e}</i><div><b>${esc(l.n)}</b><small>${sameDay(new Date(l.at), new Date()) ? 'Hari ini' : fmtDateShort(new Date(l.at))} · ${fmtTime(new Date(l.at))} · ${Math.round(l.s / 60)} menit</small></div><em>${Math.round(l.k)} kkal</em><button class="ib" data-odel="${l.id}" aria-label="Hapus">🗑️</button></div>`).join('')}</div>`
       : '<div class="card"><p class="muted-c" style="text-align:left;margin:0">Belum ada catatan. Mulai satu program di atas, atau catat jalan kaki, lari, renang dll. lewat "+ Catat aktivitas" — bisa juga lewat chat: "tadi jogging 30 menit".</p></div>'}
-    <div class="section-h"><h2>Pengingat</h2></div>
-    <div class="card orem"><div><b>Ingatkan olahraga tiap hari</b><small>Saat halaman ini terbuka</small></div><input type="time" id="olaRem" value="${s.rh != null ? pad(s.rh) + ':' + pad(s.rm || 0) : ''}"></div>
-    <p class="mnote">Hentikan latihan bila terasa nyeri, pusing atau sesak. Sedang hamil, punya penyakit jantung, tekanan darah tinggi atau cedera? Konsultasikan dulu dengan dokter.</p>`;
-  $('#olaRem').onchange = e => { const v = e.target.value; if(v){ const [h, m] = v.split(':').map(Number); s.rh = h; s.rm = m; toast(`Diingatkan olahraga tiap hari jam ${v.replace(':', '.')} 🏃`); } else { s.rh = null; toast('Pengingat olahraga dimatikan'); } save(); };
+    <p class="mnote">Hentikan latihan bila terasa nyeri, pusing atau sesak. Sedang hamil, punya penyakit jantung, tekanan darah tinggi atau cedera? Konsultasikan dulu dengan dokter.</p></div>`;
+  figAnimate();
+}
+function olaReminderSheet(){
+  const s = olaS();
+  showSheet(`<h3 class="odisp" style="font-size:26px;margin:4px 0 6px">Pengingat olahraga</h3><p class="muted-c" style="text-align:left;margin:0 0 12px">Diingatkan tiap hari saat aplikasi/halaman ini terbuka.</p>
+    <input type="time" id="olaRemT" value="${s.rh != null ? pad(s.rh) + ':' + pad(s.rm || 0) : '06:00'}" style="font:inherit;font-size:28px;font-weight:800;width:100%;text-align:center;padding:10px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink)">
+    <button class="obig odisp" id="olaRemOk" style="margin-top:14px">Simpan</button>${s.rh != null ? '<button class="btn btn-block btn-soft" id="olaRemOff" style="margin-top:8px;color:#E11D48">Matikan pengingat</button>' : ''}`);
+  $('#olaRemOk').onclick = () => { const v = $('#olaRemT').value; if(!v) return; const [h, m] = v.split(':').map(Number); s.rh = h; s.rm = m; save(); closeSheet(); renderOla(); toast(`Diingatkan olahraga tiap hari jam ${v.replace(':', '.')} 🏃`); };
+  if($('#olaRemOff')) $('#olaRemOff').onclick = () => { s.rh = null; save(); closeSheet(); renderOla(); toast('Pengingat olahraga dimatikan'); };
 }
 document.addEventListener('click', e => {
-  const b = e.target.closest('#olaBody [data-oact], #olaBody [data-prog], #olaBody [data-oarea], #olaBody [data-ex], #olaBody [data-odel]'); if(!b) return;
+  const b = e.target.closest('#olaBody [data-oact], #olaBody [data-prog], #olaBody [data-oarea], #olaBody [data-exi], #olaBody [data-odel]'); if(!b) return;
   if(b.dataset.prog) return openProg(progById(b.dataset.prog));
   if(b.dataset.oarea){ olaArea = b.dataset.oarea; renderOla(); return; }
-  if(b.dataset.ex) return exSheet(exById(b.dataset.ex));
+  if(b.dataset.exi) return openEx(EXERCISES.filter(x => x[3] === olaArea), +b.dataset.exi);
   if(b.dataset.odel){ olaS().logs = olaS().logs.filter(l => l.id !== b.dataset.odel); save(); renderOla(); renderFeatures(); return; }
   const s = olaS(), day = chDay();
   switch(b.dataset.oact){
@@ -2619,6 +2848,7 @@ document.addEventListener('click', e => {
     case 'chgo': { const [pid, m] = BELLY_CHALLENGE[Math.min(3, Math.floor((day - 1) / 7))]; openProg(progById(pid), m, 'tantangan_' + day, `Tantangan hari ke-${day}`); break; }
     case 'chstop': confirmDlg({title: 'Hentikan tantangan?', text: 'Progres tantangan akan diulang dari awal.', ok: 'Hentikan', danger: true}).then(ok => { if(ok){ s.cs = null; save(); renderOla(); } }); break;
     case 'log': olaLogSheet(); break;
+    case 'rem': olaReminderSheet(); break;
   }
 });
 
@@ -2626,36 +2856,63 @@ document.addEventListener('click', e => {
 let olaCur = null;
 function openProg(p, mult = 1, logp = null, title = null){
   olaCur = {p, mult, logp: logp || p[0], title: title || p[1]};
-  const kg = olaKg();
-  $('#olaPTitle').textContent = olaCur.title;
-  $('#olaPBody').innerHTML = `<div class="ophero" style="background:linear-gradient(135deg,${p[3]}d9,${p[3]})"><div style="font-size:38px">${p[2]}</div><p>${esc(p[5])}</p>
-      <div class="opst"><div><b>${Math.round(workoutSeconds(p, mult) / 60)}</b><small>menit</small></div><div><b>${Math.round(workoutKcal(p, kg, mult))}</b><small>kkal</small></div><div><b>${p[8].length}</b><small>gerakan</small></div><div><b>${p[7]}</b><small>ronde</small></div></div></div>
-    <p class="muted-c" style="text-align:left;font-weight:600;margin:14px 4px 8px">Ulangi ${p[7]} ronde · istirahat ${p[6]} detik antar gerakan</p>
-    <div class="card" style="padding:4px 14px">${p[8].map(([id, a], i) => { const e = exById(id); return `<button class="oex" data-pex="${id}"><i style="background:${p[3]}1f">${e[2]}</i><div><b>${i + 1}. ${e[1]}</b><small>${esc(e[8][0])}</small></div><em style="color:${p[3]}">${amountText(e, Math.round((a || e[5]) * mult))}</em></button>`; }).join('')}</div>
-    <p class="mnote">Ketuk gerakan untuk melihat cara melakukannya.</p>
-    <button class="btn btn-block obtn" id="olaStart" style="position:sticky;bottom:12px;margin-top:14px">▶ Mulai latihan</button>`;
-  $('#olaPBody').onclick = e => { const b = e.target.closest('[data-pex]'); if(b) exSheet(exById(b.dataset.pex)); };
+  const kg = olaKg(), dm = /hari ke-(\d+)/.exec(title || '');
+  const items = p[8].map(([id, a]) => { const e = exById(id); return [e, Math.max(1, Math.round((a || e[5]) * mult))]; });
+  olaCur.items = items;
+  $('#olaPBody').innerHTML = `<div class="ophero" style="--pc:${darkC(p[3], .35)}">
+      <div class="ohtop"><button data-close="#olaP" aria-label="Kembali">←</button><b>${esc(olaCur.title)}</b></div>
+      ${figHTML(progFig(p), true, '', 'rgba(255,255,255,.25)')}
+      <div class="sm odisp">${dm ? 'Tantangan perut 28 hari' : `${LEVEL[p[4]]} · ${p[7]} ronde`}</div>
+      <h1 class="odisp">${dm ? `Hari ke-${dm[1]}` : esc(p[1].split(' — ')[0])}</h1>
+      <div class="opst"><div><b class="odisp">${Math.round(workoutSeconds(p, mult) / 60)}</b><small>menit</small></div><div><b class="odisp">${Math.round(workoutKcal(p, kg, mult))}</b><small>kkal</small></div><div><b class="odisp">${p[8].length}</b><small>gerakan</small></div><div><b class="odisp">${p[7]}</b><small>ronde</small></div></div>
+    </div>
+    <div class="oplist"><p class="muted-c" style="text-align:left;margin:0 4px 10px;line-height:1.4">${esc(p[5])}</p>
+      <div class="oprh"><b class="odisp">${p[8].length} gerakan</b><small>Ulangi ${p[7]}× · istirahat ${p[6]} dtk</small></div>
+      ${items.map(([e, a], i) => `<button class="oprow" data-pex="${i}"><div class="ftile">${figHTML(e[0], false)}</div><div style="flex:1;min-width:0"><b>${e[1]}</b><em class="odisp">${amountLabel(e, a)}</em><small>${e[12].slice(0, 2).join(' · ')}</small></div><span class="oi">ⓘ</span></button>`).join('')}
+      <p class="mnote" style="text-align:center">Ketuk gerakan untuk melihat animasi & cara lengkapnya.</p></div>
+    <div class="opgo"><button class="obig odisp" id="olaStart" style="height:60px;font-size:26px">▶ Mulai</button></div>`;
+  $('#olaPBody').onclick = e => { const b = e.target.closest('[data-pex]'); if(b) openEx(items.map(x => x[0]), +b.dataset.pex, items.map(x => x[1])); };
   $('#olaStart').onclick = () => startPlayer(olaCur);
-  openFull('#olaP');
+  $('#olaPBody').scrollTop = 0;
+  openFull('#olaP'); figAnimate();
 }
 
-/* --- cara gerakan --- */
-function exSheet(e){
-  showSheet(`<div style="text-align:center"><div class="bounce" style="font-size:64px">${e[2]}</div><h3 style="margin:6px 0 2px;font-size:21px">${e[1]}</h3><p class="muted-c" style="margin:0 0 14px">${EX_AREAS[e[3]]} · ${LEVEL[e[7]]} · ${amountText(e, e[5])}</p></div>
-    <b style="display:block;margin-bottom:8px">Cara melakukan</b>${e[8].map((t, i) => `<div class="ostep"><i>${i + 1}</i><span>${esc(t)}</span></div>`).join('')}
+/* --- cara gerakan (bisa digeser ke gerakan lain) --- */
+let exCur = null;
+function openEx(list, i = 0, amounts = null){ exCur = {list, i, amounts, slow: false}; drawEx(); openFull('#olaEx'); figAnimate(); }
+function drawEx(){
+  const {list, i, amounts} = exCur, e = list[i], a = amounts ? amounts[i] : e[5], n = list.length, kg = olaKg();
+  $('#olaExTitle').textContent = n > 1 ? `Gerakan ${i + 1} dari ${n}` : 'Cara melakukan';
+  const chip = (ic, t, c) => `<span style="--c:${c}">${ic} ${t}</span>`;
+  $('#olaExBody').innerHTML = `<div class="exfig"><span class="area">${EX_AREAS[e[3]].toUpperCase()}</span><button class="slow" id="exSlow">${exCur.slow ? '⏩ Normal' : '🐢 Pelan'}</button>${figHTML(e[0], true)}</div>
+    <h2 class="exname odisp">${e[1]}</h2>
+    <div class="exchips">${chip(e[4] ? '⏱' : '🔁', e[4] ? amountLabel(e, a) : a + ' kali', '#2563EB')}${chip('📶', LEVEL[e[7]], LEVEL_C[e[7]])}${chip('🔥', '±' + kcalBurn(e[6], kg, 60).toFixed(1).replace('.', ',') + ' kkal/menit', '#F97316')}</div>
+    <h3 class="exh odisp">Otot yang dilatih</h3><div class="exmus">${e[12].map(m => `<span>${m}</span>`).join('')}</div>
+    <h3 class="exh odisp">Cara melakukan</h3>${e[8].map((t, k) => `<div class="ostep"><i>${k + 1}</i><span>${esc(t)}</span></div>`).join('')}
+    <div class="onote" style="--c:#0EA5E9;margin-top:6px">💨 <b>Pernapasan:</b> ${esc(e[13])}</div>
     <div class="onote" style="--c:#10B981">✅ <b>Tips:</b> ${esc(e[9])}</div><div class="onote" style="--c:#F59E0B">⚠️ <b>Kesalahan umum:</b> ${esc(e[10])}</div>${e[11] ? `<div class="onote" style="--c:#E11D48">🩺 <b>Perhatian:</b> ${esc(e[11])}</div>` : ''}
-    <button class="btn btn-block obtn" id="exTry" style="margin-top:8px">▶ Latih gerakan ini</button>`);
-  $('#exTry').onclick = () => { closeSheet(); startPlayer({p: ['single_' + e[0], e[1], e[2], '#F97316', e[7], '', 20, 3, [[e[0], 0]]], mult: 1, logp: 'single', title: e[1]}); };
+    <div class="exnav">${n > 1 ? `<button class="nv" id="exPrev" ${i ? '' : 'disabled'}>‹</button>` : ''}<button class="obig odisp" id="exTry">▶ Latih gerakan</button>${n > 1 ? `<button class="nv" id="exNext" ${i < n - 1 ? '' : 'disabled'}>›</button>` : ''}</div>`;
+  const fg = $('#olaExBody .exfig .fig'); if(fg && exCur.slow) fg.dataset.speed = '.45';
+  $('#exSlow').onclick = () => { exCur.slow = !exCur.slow; drawEx(); };
+  if($('#exPrev')) $('#exPrev').onclick = () => { exCur.i--; drawEx(); $('#olaExBody').scrollTop = 0; };
+  if($('#exNext')) $('#exNext').onclick = () => { exCur.i++; drawEx(); $('#olaExBody').scrollTop = 0; };
+  $('#exTry').onclick = () => { closeFull('#olaEx'); if(pl) plStop(); startPlayer({p: ['single_' + e[0], e[1], e[2], '#2563EB', e[7], '', 20, 3, [[e[0], amounts ? a : 0]]], mult: 1, logp: 'single', title: e[1]}); };
+  // geser kiri/kanan untuk pindah gerakan
+  const body = $('#olaExBody'); let x0 = null;
+  body.ontouchstart = ev => { x0 = ev.touches[0].clientX; };
+  body.ontouchend = ev => { if(x0 == null) return; const dx = ev.changedTouches[0].clientX - x0; x0 = null; if(Math.abs(dx) > 70){ if(dx < 0 && exCur.i < n - 1){ exCur.i++; drawEx(); } else if(dx > 0 && exCur.i > 0){ exCur.i--; drawEx(); } } };
+  figAnimate();
 }
+function exClose(){ closeFull('#olaEx'); if(pl && pl.phase !== 'done' && pl.exPause){ pl.exPause = false; pl.paused = false; drawPlayer(); } }
 
 /* --- catat aktivitas --- */
 function olaLogSheet(name, minutes = 30){
   let sel = Math.max(0, FREE_ACTIVITIES.findIndex(a => a[1] === name)), min = minutes;
   const draw = () => {
     const a = FREE_ACTIVITIES[sel], k = kcalBurn(a[2], olaKg(), min * 60);
-    showSheet(`<h3 style="margin:4px 0 12px">Catat aktivitas</h3><div class="kmchips" style="flex-wrap:wrap">${FREE_ACTIVITIES.map((x, i) => `<button data-act="${i}" class="${i === sel ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
-      <div class="kstep"><button id="oaM">−</button><div><b>${min} menit</b></div><button id="oaP">+</button></div>
-      <div class="kbig">🔥 ±${Math.round(k)} kkal</div><button class="btn btn-block obtn" id="oaOk">Simpan</button>`);
+    showSheet(`<h3 class="odisp" style="font-size:26px;margin:4px 0 12px">Catat aktivitas</h3><div class="kmchips ochips" style="flex-wrap:wrap">${FREE_ACTIVITIES.map((x, i) => `<button data-act="${i}" class="${i === sel ? 'on' : ''}">${x[1]}</button>`).join('')}</div>
+      <div class="kstep"><button id="oaM">−</button><div><b class="odisp" style="font-size:34px">${min} menit</b></div><button id="oaP">+</button></div>
+      <div class="kbig">🔥 ±${Math.round(k)} kkal</div><button class="obig odisp" id="oaOk">Simpan</button>`);
     $('#sheetBody').querySelectorAll('[data-act]').forEach(b => b.onclick = () => { sel = +b.dataset.act; draw(); });
     $('#oaM').onclick = () => { min = Math.max(5, min - 5); draw(); }; $('#oaP').onclick = () => { min = Math.min(600, min + 5); draw(); };
     $('#oaOk').onclick = () => { olaAdd(a[1], min * 60, k, null, '🏅'); closeSheet(); toast(`${a[1]} ${min} menit dicatat · 🔥 ${Math.round(k)} kkal`); };
@@ -2672,8 +2929,7 @@ function startPlayer(cfg){
   try{ navigator.wakeLock && navigator.wakeLock.request('screen').then(w => olaWake = w).catch(() => {}); }catch(_){}
   olaSay('Bersiap. Gerakan pertama: ' + steps[0].ex[1]);
   clearInterval(pl.tm); pl.tm = setInterval(plTick, 1000);
-  $('#olaPlayTitle').textContent = cfg.title;
-  openFull('#olaPlay'); drawPlayer();
+  openFull('#olaPlay'); drawPlayer(true);
 }
 function plCur(){ return pl.steps[pl.i]; }
 function plTick(){
@@ -2688,53 +2944,68 @@ function plTick(){
 }
 function plWork(){ const s = plCur(); pl.phase = 'work'; pl.left = s.secs; pl.rep = 0; try{ navigator.vibrate && navigator.vibrate(80); }catch(_){} olaSay(s.ex[4] ? `${s.ex[1]}, ${amountText(s.ex, s.amount)}` : `${s.ex[1]}, ${s.amount} kali`); }
 function plNext(){
-  if(pl.phase === 'ready' || pl.phase === 'rest'){ plWork(); return drawPlayer(); }
+  if(pl.phase === 'ready' || pl.phase === 'rest'){ plWork(); return drawPlayer(true); }
   if(pl.i >= pl.steps.length - 1) return plFinish();
   pl.i++;
   if(pl.cfg.p[6] > 0){ pl.phase = 'rest'; pl.left = pl.cfg.p[6]; olaSay('Istirahat. Berikutnya ' + plCur().ex[1]); } else plWork();
-  drawPlayer();
+  drawPlayer(true);
 }
-function plPrev(){ if(!((pl.phase === 'work' && pl.left < plCur().secs - 2) || pl.i === 0)) pl.i = Math.max(0, pl.i - 1); plWork(); drawPlayer(); }
+function plPrev(){ if(!((pl.phase === 'work' && pl.left < plCur().secs - 2) || pl.i === 0)) pl.i = Math.max(0, pl.i - 1); plWork(); drawPlayer(true); }
 function plSave(){ if(pl.saved || pl.work < 30) return; pl.saved = true; const tot = Math.round((Date.now() - pl.t0) / 1000); olaAdd(pl.cfg.title, Math.max(pl.work, Math.min(tot, pl.work * 2)), pl.kcal, pl.cfg.logp, pl.cfg.p[2]); }
-function plFinish(){ pl.phase = 'done'; clearInterval(pl.tm); try{ navigator.vibrate && navigator.vibrate([80, 60, 160]); }catch(_){} olaSay('Latihan selesai. Kerja bagus!'); plSave(); drawPlayer(); }
+function plFinish(){ pl.phase = 'done'; clearInterval(pl.tm); try{ navigator.vibrate && navigator.vibrate([80, 60, 160]); }catch(_){} olaSay('Latihan selesai. Kerja bagus!'); plSave(); drawPlayer(true); }
 function plClose(){
   if(!pl) return closeFull('#olaPlay');
   if(pl.phase === 'done' || pl.work < 10){ plStop(); return; }
   pl.paused = true; drawPlayer();
-  showSheet(`<h3 style="margin:4px 0 6px">Berhenti latihan?</h3><p class="muted-c" style="text-align:left">Sudah ${Math.round(pl.work / 60)} menit bergerak. Simpan yang sudah dikerjakan?</p>
-    <div style="display:flex;flex-direction:column;gap:8px"><button class="btn obtn" id="plSave">Simpan & keluar</button><button class="btn btn-soft" id="plGo">Lanjut latihan</button><button class="btn btn-soft" id="plOut" style="color:#E11D48">Keluar tanpa menyimpan</button></div>`);
+  showSheet(`<h3 class="odisp" style="font-size:26px;margin:4px 0 6px">Berhenti latihan?</h3><p class="muted-c" style="text-align:left">Sudah ${Math.round(pl.work / 60)} menit bergerak. Simpan yang sudah dikerjakan?</p>
+    <div style="display:flex;flex-direction:column;gap:8px"><button class="obig odisp" id="plSave">Simpan & keluar</button><button class="btn btn-soft" id="plGo">Lanjut latihan</button><button class="btn btn-soft" id="plOut" style="color:#E11D48">Keluar tanpa menyimpan</button></div>`);
   $('#plSave').onclick = () => { closeSheet(); plSave(); plStop(); };
   $('#plGo').onclick = () => { closeSheet(); pl.paused = false; drawPlayer(); };
   $('#plOut').onclick = () => { closeSheet(); plStop(); };
 }
 function plStop(){ clearInterval(pl && pl.tm); pl = null; try{ olaWake && olaWake.release(); }catch(_){} olaWake = null; try{ speechSynthesis.cancel(); }catch(_){} closeFull('#olaPlay'); }
-function drawPlayer(){
+function plSteps(){ pl.paused = true; pl.exPause = true; drawPlayer(); openEx(pl.steps.map(x => x.ex), pl.i, pl.steps.map(x => x.amount)); }
+// full = susun ulang seluruh tampilan (gerakan berganti); kalau tidak, cukup perbarui angka
+function drawPlayer(full){
   const box = $('#olaPlayBody'); if(!box || !pl) return;
-  const c = pl.cfg.p[3];
-  $('#olaPlay').classList.toggle('rest', pl.phase === 'rest');
-  $('#olaVoice').textContent = olaS().voice ? '🔊' : '🔇';
-  if(pl.phase === 'done'){
-    box.innerHTML = `<div style="text-align:center;padding-top:20px"><div class="bounce" style="font-size:84px">🏆</div><h2 style="margin:8px 0 4px">Latihan selesai!</h2><p class="muted-c">${['Kerja bagus! Satu langkah lebih dekat ke perut rata 💪', 'Konsisten itu kuncinya. Sampai besok! 🔥', 'Badan berterima kasih padamu hari ini 🙌'][pl.work % 3]}</p></div>
-      <div class="opsum">${[['⏱', (pl.work / 60).toFixed(1).replace('.', ','), 'menit bergerak'], ['🔥', Math.round(pl.kcal), 'kkal terbakar'], ['⚡', olaStreak(), 'hari streak']].map(([e, v, l]) => `<div style="background:${c}1a"><i>${e}</i><b>${v}</b><small>${l}</small></div>`).join('')}</div>
-      <div class="card"><p class="muted-c" style="text-align:left;margin:0">Kalori yang terbakar otomatis menambah sisa kalori makan hari ini di fitur Kalori. Minum air putih yang cukup ya 💧</p></div>
-      <button class="btn btn-block obtn" style="margin-top:16px" onclick="plStop()">Selesai</button>`;
+  const root = $('#olaPlay'), rest = pl.phase === 'rest', done = pl.phase === 'done';
+  root.classList.toggle('dark', rest || done);
+  if(done){
+    box.innerHTML = `<div class="pldone"><div style="font-size:86px">🏆</div><h2 class="odisp">Latihan selesai!</h2><p>${['Kerja bagus! Satu langkah lebih dekat ke perut rata 💪', 'Konsisten itu kuncinya. Sampai besok! 🔥', 'Badan berterima kasih padamu hari ini 🙌'][pl.work % 3]}</p>
+      <div class="opsum">${[[(pl.work / 60).toFixed(1).replace('.', ','), 'menit<br>bergerak'], [Math.round(pl.kcal), 'kkal<br>terbakar'], [olaStreak(), 'hari<br>streak']].map(([v, l]) => `<div><b class="odisp">${v}</b><small>${l}</small></div>`).join('')}</div>
+      <div class="note">Kalori yang terbakar otomatis menambah sisa kalori makan hari ini di fitur Kalori. Minum air putih yang cukup ya 💧</div>
+      <button class="obig odisp" onclick="plStop()">✓ Selesai</button></div>`;
     return;
   }
-  const s = plCur(), rest = pl.phase === 'rest', ready = pl.phase === 'ready', reps = pl.phase === 'work' && !s.ex[4];
-  const total = ready ? 10 : rest ? pl.cfg.p[6] : s.secs, frac = reps ? 1 : Math.max(0, Math.min(1, pl.left / Math.max(1, total)));
-  const prog = (pl.i + (pl.phase === 'work' ? 1 - pl.left / Math.max(1, s.secs) : 0)) / pl.steps.length, R = 100, C = 2 * Math.PI * R;
-  const col = rest ? '#fff' : c;
-  box.innerHTML = `<div class="opbar"><p><b style="width:${Math.min(100, prog * 100)}%;background:${col}"></b></p><span>${pl.i + 1}/${pl.steps.length}</span></div>
-    ${pl.cfg.p[7] > 1 ? `<p class="opround">Ronde ${s.round} dari ${pl.cfg.p[7]}</p>` : ''}
-    <p class="opph" style="color:${rest ? 'rgba(255,255,255,.75)' : c}">${ready ? 'BERSIAP' : rest ? 'ISTIRAHAT' : 'GERAKAN'}</p>
-    <h2 class="opname">${rest || ready ? 'Berikutnya: ' + s.ex[1] : s.ex[1]}</h2>
-    <div class="opring"><svg viewBox="0 0 230 230"><circle cx="115" cy="115" r="${R}" fill="none" stroke="${col}" stroke-opacity=".15" stroke-width="12"/><circle cx="115" cy="115" r="${R}" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - frac)}" transform="rotate(-90 115 115)" style="transition:stroke-dashoffset 1s linear"/></svg>
-      <div><span class="bounce${rest ? ' slow' : ''}" style="font-size:58px">${s.ex[2]}</span><b>${reps ? s.amount + '×' : pl.left}</b>${reps ? `<small>${pl.rep}s · ketuk Selesai</small>` : ''}</div></div>
-    <div class="ophow">${s.ex[8].map((t, k) => `<p>${k + 1}. ${esc(t)}</p>`).join('')}<p class="tip">💡 ${esc(s.ex[9])}</p></div>
-    <div class="opctl"><button id="plPrev">⏮</button><button class="main" id="plMain" style="background:${rest ? '#fff' : c};color:${rest ? '#0F766E' : '#fff'}">${reps ? '✓ Selesai' : rest || ready ? '▶ Mulai sekarang' : pl.paused ? '▶ Lanjut' : '⏸ Jeda'}</button><button id="plNext">⏭</button></div>`;
-  $('#plPrev').onclick = plPrev; $('#plNext').onclick = plNext;
-  $('#plMain').onclick = () => { if(reps || rest || ready) plNext(); else { pl.paused = !pl.paused; drawPlayer(); } };
+  const s = plCur(), ready = pl.phase === 'ready', reps = pl.phase === 'work' && !s.ex[4], n = pl.steps.length;
+  const top = `<div class="pltop"><button onclick="plClose()" aria-label="Tutup">✕</button><b>${esc(pl.cfg.title)}</b><button onclick="state.ola.voice=!state.ola.voice;save();drawPlayer(true)" aria-label="Suara">${olaS().voice ? '🔊' : '🔇'}</button></div>
+    <div class="plseg">${pl.steps.map((_, k) => `<i class="${k < pl.i ? 'on' : k === pl.i && !rest ? 'cur' : ''}"></i>`).join('')}</div>
+    <div class="plmeta odisp"><span>Gerakan ${pl.i + 1}/${n}</span>${pl.cfg.p[7] > 1 ? `<span>Ronde ${s.round}/${pl.cfg.p[7]}</span>` : ''}</div>`;
+  const key = pl.phase + pl.i + (pl.paused ? 'p' : '') + olaS().voice;
+  if(full || box.dataset.key !== key){
+    box.dataset.key = key;
+    if(rest){
+      box.innerHTML = top + `<div class="plrest"><h2 class="odisp">Istirahat</h2><div class="t odisp" id="plT">${fmtClock(pl.left)}</div>
+        <div class="bt"><button class="o odisp" id="plAdd">+20 dtk</button><button class="w odisp" id="plSkip">Lewati</button></div>
+        <div class="plnext"><div class="lb odisp">Berikutnya ${pl.i + 1}/${n}</div><div class="r"><div class="ftile">${figHTML(s.ex[0], true)}</div><div style="min-width:0"><h3 class="odisp">${s.ex[1]}</h3><em class="odisp">${amountLabel(s.ex, s.amount)}</em><small>${esc(s.ex[8][0])}</small></div></div></div></div>`;
+      $('#plAdd').onclick = () => { pl.left += 20; drawPlayer(); };
+      $('#plSkip').onclick = plNext;
+    } else {
+      box.innerHTML = top + `<div class="plfig">${ready ? '<span class="tag odisp">Bersiap</span>' : ''}<button class="how" onclick="plSteps()">📖 Cara</button>${figHTML(s.ex[0], true)}${pl.paused ? '<div class="pz odisp">Jeda</div>' : ''}</div>
+        <h2 class="plname odisp${ready ? ' sm' : ''}">${ready ? 'Berikutnya: ' + s.ex[1] : s.ex[1]}</h2>
+        <div class="plbig odisp${ready ? ' or' : ''}" id="plT"></div><p class="plsub" id="plSub"></p>
+        <div class="plctl"><button class="sm" id="plPrev" aria-label="Sebelumnya">⏮</button><button class="main${reps ? ' ok' : ''}" id="plMain">${reps ? '✓' : ready || pl.paused ? '▶' : '❚❚'}</button><button class="sm" id="plNext" aria-label="Lewati">⏭</button></div>`;
+      $('#plPrev').onclick = plPrev; $('#plNext').onclick = plNext;
+      $('#plMain').onclick = () => { if(reps || ready) plNext(); else { pl.paused = !pl.paused; drawPlayer(); } };
+      const f = box.querySelector('.plfig .fig'); if(f && pl.paused) f.dataset.paused = '1';
+    }
+    figAnimate();
+  }
+  if(rest){ $('#plT').textContent = fmtClock(pl.left); return; }
+  $('#plT').textContent = ready ? pl.left : reps ? 'x' + s.amount : fmtClock(pl.left);
+  $('#plSub').textContent = ready ? `Ambil posisi — ${amountLabel(s.ex, s.amount)}` : reps ? `Ketuk ✓ kalau sudah ${s.amount} kali · ${pl.rep}s` : '💡 ' + s.ex[9];
 }
+document.addEventListener('click', e => { const b = e.target.closest('#ola [data-close], #olaP [data-close]'); if(b) closeFull(b.dataset.close); });
 
 /* --- chat --- */
 function answerWorkout(text){
@@ -6273,9 +6544,9 @@ addEventListener('popstate', () => {
   if($('#scanner').classList.contains('show')){ stopScan(null); history.pushState({app:1}, ''); return; }
   if($('#ticketView').classList.contains('show')){ $('#tvClose').click(); history.pushState({app:1}, ''); return; }
   if($('#lightbox').classList.contains('show')){ $('#lightbox').classList.remove('show'); history.pushState({app:1}, ''); return; }
-  const open = ['#alarm','#dialog','#sheet','#olaPlay','#olaP','#ola','#bscan','#kal','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
+  const open = ['#alarm','#dialog','#sheet','#olaEx','#olaPlay','#olaP','#ola','#bscan','#kal','#mtool','#muslim','#form','#tests','#journal','#focus','#breathe','#habits','#calm','#notes','#cycle','#ai'].find(s => $(s).classList.contains('show'));
   if(open){
-    if(open==='#sheet') closeSheet(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
+    if(open==='#sheet') closeSheet(); else if(open==='#olaEx') exClose(); else if(open==='#olaPlay') plClose(); else if(open!=='#alarm' && open!=='#dialog') $(open).classList.remove('show');
     history.pushState({app:1}, '');
   }
 });
