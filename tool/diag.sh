@@ -7,7 +7,8 @@ snap(){ adb exec-out screencap -p > $D/$1.png; }
 tap(){
   adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
   adb pull /sdcard/ui.xml $D/ui_$2.xml >/dev/null 2>&1
-  b=$(python3 tool/find_bounds.py $D/ui_$2.xml "$1")
+  b=$(python3 tool/find_bounds.py $D/ui_$2.xml "$1" exact)
+  [ -z "$b" ] && b=$(python3 tool/find_bounds.py $D/ui_$2.xml "$1")
   echo "TAP '$1' -> $b" | tee -a $D/steps.txt
   if [ -n "$b" ]; then adb shell input tap $b; fi
 }
@@ -25,18 +26,29 @@ sleep 5
 T0=$(date +%s)
 adb shell am start -W -n $PKG/.MainActivity | tee -a $D/steps.txt
 sleep 20; snap 01_home; anr
-tap "Muslim" muslim; sleep 6; snap 02_muslim; anr
-adb shell input swipe 540 1900 540 900 500; sleep 2; snap 03_scroll
-tap "Suara waktu sholat" suara; sleep 3; snap 04_sheet; anr
-tap "Coba" coba; sleep 6; snap 05_notif
-adb shell cmd notification list 2>/dev/null | head -20 >> $D/steps.txt
-echo "--- channels" >> $D/steps.txt
-adb shell dumpsys notification --noredact | grep -E "sholat_[a-z]+_v1|mSound=|android.resource.*adzan" | head -30 >> $D/steps.txt
-echo "--- audio" >> $D/steps.txt
-adb shell dumpsys audio | grep -E "state:started" | head -10 >> $D/steps.txt
-adb logcat -d | grep -E "RingtonePlayer|NotificationPlayer" | tail -8 >> $D/steps.txt
-adb shell cmd statusbar expand-notifications; sleep 2; snap 06_shade
-adb shell cmd statusbar collapse; sleep 1
+adb shell input swipe 540 1900 540 700 500; sleep 2; snap 02_home_scroll
+adb shell input swipe 540 700 540 1900 500; sleep 2
+tap "ID" lang; sleep 4; snap 03_home_en; anr
+tap "Translate" trans; sleep 4; snap 04_trans
+adb shell input tap 540 900; sleep 1
+adb shell input text "Selamat%spagi,%sapa%skabar%shari%sini?"; sleep 2
+adb shell input keyevent KEYCODE_BACK; sleep 1
+tap "Translate" go; sleep 1
+adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb pull /sdcard/ui.xml $D/ui_tr.xml >/dev/null 2>&1
+b=$(python3 tool/find_bounds.py $D/ui_tr.xml "Translate" last); echo "go $b" >> $D/steps.txt; [ -n "$b" ] && adb shell input tap $b
+sleep 8; snap 05_trans_result; anr
+adb shell input keyevent KEYCODE_BACK; sleep 2
+tap "Profile" prof; sleep 3; snap 06_profile_en
+adb shell input swipe 540 1700 540 900 500; sleep 2; snap 07_profile_scroll
+tap "Workout" ola; sleep 2
+adb shell input keyevent KEYCODE_BACK; sleep 1
+tap "Home" home; sleep 2
+tap "Workout" ola2; sleep 5; snap 08_workout_en
+adb shell input keyevent KEYCODE_BACK; sleep 2
+tap "Muslim" mus; sleep 5; snap 09_muslim_en
+adb shell input keyevent KEYCODE_BACK; sleep 2
+adb shell input tap 540 2260; sleep 4; snap 10_ai_en
+adb shell input keyevent KEYCODE_BACK; sleep 2
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
