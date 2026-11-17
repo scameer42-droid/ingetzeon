@@ -33,7 +33,8 @@ adb shell cmd notification list 2>/dev/null | head -20 >> $D/steps.txt
 echo "--- channels" >> $D/steps.txt
 adb shell dumpsys notification --noredact | grep -E "sholat_[a-z]+_v1|mSound=|android.resource.*adzan" | head -30 >> $D/steps.txt
 echo "--- audio" >> $D/steps.txt
-adb shell dumpsys audio | grep -iE "USAGE_ALARM|state:started|AudioPlaybackConfiguration" | head -20 >> $D/steps.txt
+adb shell dumpsys audio | grep -E "state:started" | head -10 >> $D/steps.txt
+adb logcat -d | grep -E "RingtonePlayer|NotificationPlayer" | tail -8 >> $D/steps.txt
 adb shell cmd statusbar expand-notifications; sleep 2; snap 06_shade
 adb shell cmd statusbar collapse; sleep 1
 PID=$(adb shell pidof $PKG | tr -d '\r')
