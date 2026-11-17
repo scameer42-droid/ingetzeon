@@ -1,0 +1,26 @@
+name: fetch-adhan
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unduh rekaman adzan (Internet Archive, Public Domain) + metadata lisensi
+        run: |
+          mkdir out && cd out
+          ID=adhan.recordings.from.doha.qatar
+          curl -sL "https://archive.org/metadata/$ID" -o metadata.json
+          python3 -c "import json;m=json.load(open('metadata.json'));print(json.dumps(m.get('metadata'),indent=1,ensure_ascii=False));[print(f['name'],f.get('length'),f.get('size'),f.get('format')) for f in m.get('files',[])]" | tee info.txt
+          for f in Adhan_Doha_Qatar_01_Fajr_Adhan.mp3 Adhan_Doha_Qatar_02_Dhuhr_Adhan.mp3 Adhan_Doha_Qatar_04_Maghrib_Adhan.mp3; do
+            curl -sL --fail "https://archive.org/download/$ID/$f" -o "$f" || echo "gagal $f" >> info.txt
+          done
+          ls -la >> info.txt
+      - name: Simpan ke cabang adhan-src
+        run: |
+          cd out
+          git init -q -b adhan-src
+          git config user.name ci; git config user.email ci@example.com
+          git add -A; git commit -qm "sumber adzan"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" adhan-src
