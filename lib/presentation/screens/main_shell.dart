@@ -174,9 +174,12 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
           decoration: BoxDecoration(
             color: context.card,
-            border: Border(top: BorderSide(color: context.line)),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(color: context.isDark ? context.line : Colors.white),
+            boxShadow: [BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: context.isDark ? .4 : .18), blurRadius: 30, offset: const Offset(0, 12), spreadRadius: -10)],
           ),
           child: SizedBox(
             height: 64,
@@ -226,8 +229,8 @@ class _NavItem extends StatelessWidget {
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-              decoration: BoxDecoration(color: active ? AppColors.primary.withValues(alpha: context.isDark ? .2 : .08) : null, borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: color, size: 22),
+              decoration: BoxDecoration(gradient: active ? AppColors.gradient : null, borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: active ? Colors.white : color, size: 22),
             ),
             const SizedBox(height: 2),
             Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: active ? FontWeight.w600 : FontWeight.w500)),
@@ -248,10 +251,10 @@ class _GradientFab extends StatelessWidget {
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: context.bg, width: 4),
-        boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: .3), blurRadius: 14, offset: const Offset(0, 6), spreadRadius: -6)],
+        gradient: AppColors.aurora,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.white.withValues(alpha: .9), width: 3),
+        boxShadow: [BoxShadow(color: AppColors.violetMid.withValues(alpha: .5), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: -6)],
       ),
       child: Material(
         type: MaterialType.transparency,

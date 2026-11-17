@@ -72,12 +72,18 @@ class SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(2, 26, 2, 10),
       child: Row(
         children: [
+          Container(
+            width: 4,
+            height: 18,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(gradient: AppColors.aurora, borderRadius: BorderRadius.circular(4)),
+          ),
           Expanded(
-            child: Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -.3, color: context.ink)),
+            child: Text(title, style: TextStyle(fontSize: 17.5, fontWeight: FontWeight.w800, letterSpacing: -.3, color: context.ink)),
           ),
           if (action != null)
             Material(
-              color: Colors.transparent,
+              color: AppColors.primary.withValues(alpha: context.isDark ? .2 : .09),
               borderRadius: BorderRadius.circular(99),
               child: InkWell(
                 borderRadius: BorderRadius.circular(99),
@@ -108,20 +114,20 @@ class GradientButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         gradient: onPressed == null ? LinearGradient(colors: [context.faint, context.faint]) : AppColors.gradient,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: null,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: onPressed == null ? null : [BoxShadow(color: AppColors.primary.withValues(alpha: .45), blurRadius: 22, offset: const Offset(0, 12), spreadRadius: -12)],
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           onTap: onPressed,
           child: Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[Icon(icon, color: Colors.white, size: 20), const SizedBox(width: 8)],
-                Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15))),
+                Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15))),
               ],
             ),
           ),
@@ -290,18 +296,39 @@ TextStyle accentFont({double size = 24, Color? color, FontWeight weight = FontWe
     ? GoogleFonts.plusJakartaSans(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5)
     : TextStyle(fontSize: size, fontWeight: weight, color: color, height: 1.2, letterSpacing: -.5);
 
-/// Latar polos putih bersih.
+/// Latar dengan cahaya "aurora" lembut di bagian atas.
 class AestheticBackground extends StatelessWidget {
   const AestheticBackground({super.key, required this.child});
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(color: context.bg, child: child);
+  Widget build(BuildContext context) {
+    final dark = context.isDark;
+    Widget glow(Color c, double size, double a) => IgnorePointer(
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(colors: [c.withValues(alpha: a), c.withValues(alpha: 0)]),
+            ),
+          ),
+        );
+    return ColoredBox(
+      color: context.bg,
+      child: Stack(children: [
+        Positioned(top: -140, left: -120, child: glow(AppColors.primary, 380, dark ? .22 : .13)),
+        Positioned(top: -80, right: -140, child: glow(AppColors.magenta, 340, dark ? .16 : .10)),
+        Positioned(top: 160, left: 80, child: glow(AppColors.sky, 260, dark ? .08 : .06)),
+        Positioned.fill(child: child),
+      ]),
+    );
+  }
 }
 
 /// Kartu utama bergradasi nila → ungu dengan ornamen lingkaran halus.
 class MeshCard extends StatelessWidget {
-  const MeshCard({super.key, required this.child, this.radius = 22, this.padding = const EdgeInsets.all(20)});
+  const MeshCard({super.key, required this.child, this.radius = 24, this.padding = const EdgeInsets.all(20)});
   final Widget child;
   final double radius;
   final EdgeInsetsGeometry padding;
@@ -313,11 +340,38 @@ class MeshCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppColors.aurora,
         borderRadius: BorderRadius.circular(radius),
-        border: context.isDark ? Border.all(color: context.line) : null,
-        boxShadow: context.isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)],
+        boxShadow: [BoxShadow(color: AppColors.violetMid.withValues(alpha: .45), blurRadius: 34, offset: const Offset(0, 18), spreadRadius: -14)],
       ),
-      padding: padding,
-      child: child,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(children: [
+        Positioned(
+          right: -70,
+          top: -90,
+          child: Container(
+            width: 220,
+            height: 220,
+            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white.withValues(alpha: .09), width: 34)),
+          ),
+        ),
+        Positioned(
+          left: -60,
+          bottom: -80,
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(colors: [const Color(0xFF38BDF8).withValues(alpha: .35), const Color(0xFF38BDF8).withValues(alpha: 0)]),
+            ),
+          ),
+        ),
+        Positioned(
+          right: 30,
+          bottom: -60,
+          child: Container(width: 120, height: 120, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .07))),
+        ),
+        Padding(padding: padding, child: child),
+      ]),
     );
   }
 }

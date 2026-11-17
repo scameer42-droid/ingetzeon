@@ -10,6 +10,7 @@ import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 
 const kTrColor = Color(0xFF0EA5E9);
+const kTrGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF0EA5E9), Color(0xFF6366F1)]);
 
 String _ln(String l) => l == 'id' ? tl('Indonesia', 'Indonesian') : tl('Inggris', 'English');
 const _flag = {'id': '🇮🇩', 'en': '🇬🇧'};
@@ -322,33 +323,32 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: context.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: context.line),
-        boxShadow: context.softShadow,
+        gradient: kTrGradient,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [BoxShadow(color: kTrColor.withValues(alpha: .35), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -12)],
       ),
       padding: const EdgeInsets.fromLTRB(16, 14, 10, 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('${_flag[_to]}  ${_ln(_to)}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: kTrColor)),
+          Text('${_flag[_to]}  ${_ln(_to)}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Colors.white)),
           const Spacer(),
           if (_engine.isNotEmpty)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(20)),
               child: Text(_engine == 'gemini' ? 'Gemini AI' : (_engine == 'offline' ? 'Offline' : 'MyMemory'),
-                  translate: false, style: TextStyle(color: context.muted, fontSize: 10.5, fontWeight: FontWeight.w700)),
+                  translate: false, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w700)),
             ),
         ]),
         const SizedBox(height: 8),
-        SelectableText(_out, style: TextStyle(color: context.ink, fontSize: 19, height: 1.45, fontWeight: FontWeight.w600)),
+        SelectableText(_out, style: const TextStyle(color: Colors.white, fontSize: 19, height: 1.45, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Row(children: [
-          _RoundIcon(icon: Icons.volume_up_rounded, color: kTrColor, tooltip: 'Dengarkan', onTap: () => VoiceService.instance.speakIn(_out, _to)),
+          _RoundIcon(icon: Icons.volume_up_rounded, color: Colors.white, onGradient: true, tooltip: 'Dengarkan', onTap: () => VoiceService.instance.speakIn(_out, _to)),
           const SizedBox(width: 6),
-          _RoundIcon(icon: Icons.copy_rounded, color: kTrColor, tooltip: 'Salin', onTap: () => _copy(_out)),
+          _RoundIcon(icon: Icons.copy_rounded, color: Colors.white, onGradient: true, tooltip: 'Salin', onTap: () => _copy(_out)),
           const SizedBox(width: 6),
-          _RoundIcon(icon: Icons.swap_vert_rounded, color: kTrColor, tooltip: 'Balik', onTap: _swap),
+          _RoundIcon(icon: Icons.swap_vert_rounded, color: Colors.white, onGradient: true, tooltip: 'Balik', onTap: _swap),
         ]),
       ]),
     );
@@ -400,32 +400,33 @@ class _LangBar extends StatelessWidget {
           child: Container(
             height: 54,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(14)),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(16)),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text('${_flag[l]}  ${_ln(l)}', style: TextStyle(color: context.ink, fontWeight: FontWeight.w700, fontSize: 15)),
+              child: Text('${_flag[l]}  ${_ln(l)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15.5)),
             ),
           ),
         );
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: context.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: context.line),
-        boxShadow: context.softShadow,
+        gradient: kTrGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: kTrColor.withValues(alpha: .4), blurRadius: 26, offset: const Offset(0, 14), spreadRadius: -14)],
       ),
       child: Row(children: [
         pill(from),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Material(
-            color: AppColors.primary,
+            color: Colors.white,
             shape: const CircleBorder(),
+            elevation: 3,
+            shadowColor: Colors.black26,
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: onSwap,
-              child: const SizedBox(width: 44, height: 44, child: Icon(Icons.swap_horiz_rounded, color: Colors.white, size: 24)),
+              child: const SizedBox(width: 46, height: 46, child: Icon(Icons.swap_horiz_rounded, color: Color(0xFF4F46E5), size: 26)),
             ),
           ),
         ),
@@ -436,17 +437,18 @@ class _LangBar extends StatelessWidget {
 }
 
 class _RoundIcon extends StatelessWidget {
-  const _RoundIcon({required this.icon, required this.color, required this.onTap, this.tooltip, this.filled = false});
+  const _RoundIcon({required this.icon, required this.color, required this.onTap, this.tooltip, this.filled = false, this.onGradient = false});
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
   final String? tooltip;
   final bool filled;
+  final bool onGradient;
 
   @override
   Widget build(BuildContext context) {
-    final bg = filled ? color : color.withValues(alpha: context.isDark ? .2 : .1);
-    final fg = filled ? Colors.white : color;
+    final bg = onGradient ? Colors.white.withValues(alpha: .18) : (filled ? color : color.withValues(alpha: context.isDark ? .2 : .1));
+    final fg = filled && !onGradient ? Colors.white : color;
     return Tooltip(
       message: tr(tooltip ?? ''),
       child: Material(

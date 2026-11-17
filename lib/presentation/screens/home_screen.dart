@@ -85,7 +85,10 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   Text('${greeting(now)},', style: accentFont(size: 26, color: context.ink)),
-                  Text('${name.isEmpty ? tr('Kamu') : name} 👋', translate: false, style: accentFont(size: 26, color: context.muted)),
+                  ShaderMask(
+                    shaderCallback: (r) => AppColors.aurora.createShader(r),
+                    child: Text('${name.isEmpty ? tr('Kamu') : name} 👋', translate: false, style: accentFont(size: 26, color: Colors.white)),
+                  ),
                 ]),
               ),
               Column(children: [
@@ -93,7 +96,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () => onGoTo(3),
                   child: Container(
                     padding: const EdgeInsets.all(2.5),
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: context.line),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, gradient: AppColors.aurora),
                     child: Container(
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(shape: BoxShape.circle, color: context.bg),
@@ -254,10 +257,14 @@ class _AskBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1.6),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(19),
-        color: context.line,
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(colors: [
+          AppColors.primary.withValues(alpha: .55),
+          AppColors.magenta.withValues(alpha: .45),
+          AppColors.sky.withValues(alpha: .45),
+        ]),
         boxShadow: context.softShadow,
       ),
       child: Material(
@@ -269,13 +276,16 @@ class _AskBar extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
             child: Row(children: [
-              Icon(Icons.auto_awesome_rounded, color: context.muted, size: 21),
+              ShaderMask(
+                shaderCallback: (r) => AppColors.aurora.createShader(r),
+                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
+              ),
               const SizedBox(width: 12),
               Expanded(child: Text('Ketik atau ucapkan pengingat…', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 14))),
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(gradient: AppColors.aurora, borderRadius: BorderRadius.circular(13), boxShadow: context.colorShadow(AppColors.violetMid)),
                 child: const Icon(Icons.mic_rounded, color: Colors.white, size: 21),
               ),
             ]),
@@ -319,27 +329,51 @@ class _TranslateBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SoftCard(
-      radius: 20,
-      padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-      onTap: () => openTranslate(context),
-      child: Row(children: [
-        Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(color: kTrColor.withValues(alpha: .1), borderRadius: BorderRadius.circular(14)),
-          child: const Icon(Icons.translate_rounded, color: kTrColor, size: 24),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Terjemah', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 2),
-            Text('🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 12.5)),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: kTrGradient,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: context.colorShadow(kTrColor, strength: .4),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => openTranslate(context),
+          child: Stack(children: [
+            Positioned(
+              right: -30,
+              top: -40,
+              child: Container(width: 130, height: 130, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .1))),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+              child: Row(children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(15)),
+                  child: const Icon(Icons.translate_rounded, color: Colors.white, size: 26),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('Terjemah', style: TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.w800)),
+                    SizedBox(height: 2),
+                    Text('🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w500)),
+                  ]),
+                ),
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  child: const Icon(Icons.arrow_forward_rounded, color: kTrColor, size: 19),
+                ),
+              ]),
+            ),
           ]),
         ),
-        Icon(Icons.chevron_right_rounded, color: context.faint),
-      ]),
+      ),
     );
   }
 }
@@ -492,8 +526,8 @@ class _MenuCard extends ConsumerWidget {
                   Container(
                     width: 52,
                     height: 52,
-                    decoration: BoxDecoration(color: m.color.withValues(alpha: context.isDark ? .16 : .08), borderRadius: BorderRadius.circular(16)),
-                    child: Icon(m.icon, color: m.color, size: 24),
+                    decoration: BoxDecoration(gradient: AppColors.tint(m.color), borderRadius: BorderRadius.circular(17), boxShadow: context.colorShadow(m.color, strength: .4)),
+                    child: Icon(m.icon, color: Colors.white, size: 25),
                   ),
                   if (m.badge > 0)
                     Positioned(
@@ -508,7 +542,7 @@ class _MenuCard extends ConsumerWidget {
                     ),
                 ]),
                 const SizedBox(height: 8),
-                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, height: 1.2)),
+                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.2)),
               ]),
             ),
         ],
@@ -688,13 +722,14 @@ class _SumCard extends StatelessWidget {
         radius: 22,
         padding: const EdgeInsets.all(14),
         onTap: onTap,
+        color: Color.alphaBlend(color.withValues(alpha: context.isDark ? .12 : .06), context.card),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Container(
               width: 28,
               height: 28,
-              decoration: BoxDecoration(color: color.withValues(alpha: .1), borderRadius: BorderRadius.circular(9)),
-              child: Icon(icon, size: 16, color: color),
+              decoration: BoxDecoration(gradient: AppColors.tint(color), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, size: 16, color: Colors.white),
             ),
             const SizedBox(width: 7),
             Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted))),

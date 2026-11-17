@@ -10,33 +10,42 @@ class AppColors {
   static const pink = Color(0xFFE5484D); // merah untuk hapus / terlewat
   static const peach = Color(0xFFD97706);
 
-  static const bgLight = Color(0xFFF7F7F8);
-  static const bgDark = Color(0xFF0F0F11);
+  static const bgLight = Color(0xFFF5F5FB);
+  static const bgDark = Color(0xFF0C0D1A);
   static const cardLight = Colors.white;
-  static const cardDark = Color(0xFF18181B);
-  static const card2Light = Color(0xFFF2F2F4);
-  static const card2Dark = Color(0xFF222226);
-  static const lineLight = Color(0xFFE7E7EB);
-  static const lineDark = Color(0xFF2A2A2F);
-  static const inkLight = Color(0xFF111114);
-  static const inkDark = Color(0xFFF4F4F5);
-  static const mutedLight = Color(0xFF6B6B76);
-  static const mutedDark = Color(0xFFA1A1AA);
-  static const faintLight = Color(0xFFA1A1AA);
-  static const faintDark = Color(0xFF6B6B74);
+  static const cardDark = Color(0xFF181A2E);
+  static const card2Light = Color(0xFFF1F2F8);
+  static const card2Dark = Color(0xFF22243A);
+  static const lineLight = Color(0xFFE8E9F2);
+  static const lineDark = Color(0xFF2B2D45);
+  static const inkLight = Color(0xFF14142B);
+  static const inkDark = Color(0xFFF1F1FA);
+  static const mutedLight = Color(0xFF6E6F86);
+  static const mutedDark = Color(0xFFA4A6C0);
+  static const faintLight = Color(0xFFA3A4B8);
+  static const faintDark = Color(0xFF686A86);
 
   static const magenta = Color(0xFFC026D3);
   static const sky = Color(0xFF0EA5E9);
 
-  /// Gaya minimalis: warna aksen polos (tanpa gradasi mencolok).
-  static const gradient = LinearGradient(colors: [primary, primary]);
+  /// Gradasi nila → ungu untuk elemen utama.
+  static const gradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [primary, violetMid]);
 
-  /// Kartu utama: gelap polos yang tenang.
-  static const aurora = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF18181B), Color(0xFF27272A)]);
+  /// Gradasi "aurora" untuk kartu utama: nila → ungu → magenta.
+  static const aurora = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF4338CA), Color(0xFF6D28D9), Color(0xFFA21CAF)],
+    stops: [0, .55, 1],
+  );
   static const meshBase = aurora;
 
-  /// Latar ikon: warna sangat lembut.
-  static LinearGradient tint(Color c) => LinearGradient(colors: [c.withValues(alpha: .1), c.withValues(alpha: .1)]);
+  /// Gradasi lembut dari satu warna (untuk ikon menu berwarna).
+  static LinearGradient tint(Color c) => LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color.lerp(c, Colors.white, .18)!, Color.lerp(c, Colors.black, .12)!],
+      );
 }
 
 /// Akses cepat warna sesuai tema terang/gelap.
@@ -50,15 +59,20 @@ extension ThemeX on BuildContext {
   Color get line => isDark ? AppColors.lineDark : AppColors.lineLight;
   Color get bg => isDark ? AppColors.bgDark : AppColors.bgLight;
   Color get glass => card;
-  Color get glassLine => line;
+  Color get glassLine => isDark ? line : Colors.transparent;
 
   List<BoxShadow> get softShadow => isDark
       ? const []
-      : [BoxShadow(color: const Color(0xFF111114).withValues(alpha: .04), blurRadius: 10, offset: const Offset(0, 2))];
+      : [
+          BoxShadow(color: const Color(0xFF14143C).withValues(alpha: .035), blurRadius: 2, offset: const Offset(0, 1)),
+          BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: .14), blurRadius: 24, offset: const Offset(0, 10), spreadRadius: -12),
+        ];
 
-  /// Bayangan berwarna dimatikan di gaya minimalis.
-  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => const [];
+  /// Bayangan berwarna untuk kartu/ikon bergradasi.
+  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => isDark
+      ? const []
+      : [BoxShadow(color: c.withValues(alpha: strength), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
 
   List<BoxShadow> get glowShadow =>
-      [BoxShadow(color: AppColors.primary.withValues(alpha: .18), blurRadius: 12, offset: const Offset(0, 4), spreadRadius: -6)];
+      [BoxShadow(color: AppColors.primary.withValues(alpha: .35), blurRadius: 18, offset: const Offset(0, 8), spreadRadius: -8)];
 }
