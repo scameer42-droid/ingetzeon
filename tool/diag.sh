@@ -25,27 +25,17 @@ sleep 5
 T0=$(date +%s)
 adb shell am start -W -n $PKG/.MainActivity | tee -a $D/steps.txt
 sleep 20; snap 01_home; anr
-tap "Olahraga" olahraga; sleep 7; snap 02_olahraga; anr
-adb shell input swipe 540 1900 540 600 500; sleep 2
-adb shell input swipe 540 1900 540 900 500; sleep 2; snap 03_weightempty
-echo "TAP profil 540 250" >> $D/steps.txt; adb shell input tap 540 250; sleep 4; snap 04_profil
-tap "Tinggi" tinggi; adb shell input text 165; sleep 1
-tap "Umur" umur; adb shell input text 30; sleep 1
-tap "Berat" berat; adb shell input text 82; sleep 1
-adb shell input keyevent KEYCODE_BACK; sleep 2; snap 05_isi
-adb shell input swipe 540 2000 540 700 400; sleep 1; adb shell input swipe 540 2000 540 700 400; sleep 2
-tap "Simpan" simpan; sleep 3; snap 06_card; anr
-tap "Catat berat" catat; sleep 3
-tap "−1" min1; sleep 1; tap "−1" min1b; sleep 1; snap 07_sheet
-tap "Simpan" simpan2; sleep 3; snap 08_card2; anr
-tap "Grafik" grafik; sleep 4; snap 09_weight; anr
-adb shell input swipe 540 1900 540 700 500; sleep 2; snap 10_weight2
-adb shell input swipe 540 1900 540 700 500; sleep 2; snap 11_weight3
-adb shell input keyevent KEYCODE_BACK; sleep 3
-adb shell input swipe 540 1900 540 900 500; sleep 2; snap 12_reco
-tap "Ringan & lansia" ringan; sleep 2; snap 13_cat
-tap "SENAM RINGAN" senam; sleep 5; snap 14_prog; anr
-tap "Duduk-berdiri" duduk; sleep 5; snap 15_ex; anr
+tap "Muslim" muslim; sleep 6; snap 02_muslim; anr
+adb shell input swipe 540 1900 540 900 500; sleep 2; snap 03_scroll
+tap "Suara waktu sholat" suara; sleep 3; snap 04_sheet; anr
+tap "Coba" coba; sleep 6; snap 05_notif
+adb shell cmd notification list 2>/dev/null | head -20 >> $D/steps.txt
+echo "--- channels" >> $D/steps.txt
+adb shell dumpsys notification --noredact | grep -E "sholat_[a-z]+_v1|mSound=|android.resource.*adzan" | head -30 >> $D/steps.txt
+echo "--- audio" >> $D/steps.txt
+adb shell dumpsys audio | grep -iE "USAGE_ALARM|state:started|AudioPlaybackConfiguration" | head -20 >> $D/steps.txt
+adb shell cmd statusbar expand-notifications; sleep 2; snap 06_shade
+adb shell cmd statusbar collapse; sleep 1
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
