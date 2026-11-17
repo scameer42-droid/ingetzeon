@@ -358,7 +358,7 @@ class _TranslateBanner extends StatelessWidget {
                 const SizedBox(width: 14),
                 const Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Terjemah', style: TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.w800)),
+                    Text('Terjemahkan', style: TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.w800)),
                     SizedBox(height: 2),
                     Text('🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w500)),
                   ]),
@@ -560,7 +560,7 @@ class _MenuCard extends ConsumerWidget {
       (icon: Icons.water_drop_rounded, title: 'Siklus haid', sub: cycleOn ? 'Pengingat & perkiraan haid' : 'Aktifkan pengingat haid', color: kHaid, onTap: () => push(const CycleScreen())),
       (icon: Icons.calendar_month_rounded, title: 'Kalender', sub: 'Semua jadwal per tanggal', color: const Color(0xFF6366F1), onTap: () => onGoTo(1)),
       (icon: Icons.bar_chart_rounded, title: 'Statistik', sub: 'Progres & kebiasaanmu', color: const Color(0xFF0EA5E9), onTap: () => push(const _StatsPage())),
-      (icon: Icons.translate_rounded, title: 'Terjemah', sub: 'Indonesia ⇄ Inggris', color: kTrColor, onTap: () => openTranslate(context)),
+      (icon: Icons.translate_rounded, title: 'Terjemahkan', sub: 'Indonesia ⇄ Inggris', color: kTrColor, onTap: () => openTranslate(context)),
       (icon: Icons.auto_awesome_rounded, title: 'Asisten AI', sub: 'Tanya atau suruh apa saja', color: const Color(0xFF8B5CF6), onTap: onOpenAi),
       (icon: Icons.settings_rounded, title: 'Profil & pengaturan', sub: 'Tema, suara, cadangan data', color: const Color(0xFF64748B), onTap: () => onGoTo(3)),
     ];

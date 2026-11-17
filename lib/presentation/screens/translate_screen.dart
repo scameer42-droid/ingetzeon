@@ -98,25 +98,22 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
     final text = _input.text.trim();
     if (text.isEmpty || _busy) return;
     _focus.unfocus();
-    // bahasa yang diketik beda dengan arah yang dipilih → balik otomatis
-    final det = TranslateService.detect(text);
-    String? note;
-    if (det != null && det != _from) {
-      _from = det;
-      _to = det == 'id' ? 'en' : 'id';
-      note = det == 'en' ? 'Terdeteksi Bahasa Inggris — diterjemahkan ke Indonesia' : 'Terdeteksi Bahasa Indonesia — diterjemahkan ke Inggris';
-      ref.read(settingsRepositoryProvider).set('trDir', _from);
-    }
     setState(() {
       _busy = true;
       _error = null;
-      _note = note;
+      _note = null;
     });
     final s = ref.read(settingsProvider);
     try {
-      final r = await TranslateService.instance.translate(text, from: _from, to: _to, apiKey: s.apiKey, model: s.model);
+      final r = await TranslateService.instance.translate(text, from: _from, apiKey: s.apiKey, model: s.model);
       if (!mounted) return;
       setState(() {
+        if (r.from != _from) {
+          _note = r.from == 'en' ? 'Terdeteksi Bahasa Inggris — diterjemahkan ke Indonesia' : 'Terdeteksi Bahasa Indonesia — diterjemahkan ke Inggris';
+          _from = r.from;
+          _to = r.to;
+          ref.read(settingsRepositoryProvider).set('trDir', _from);
+        }
         _out = r.text;
         _engine = r.engine;
       });
@@ -183,7 +180,7 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
   Widget build(BuildContext context) {
     final hasKey = ref.watch(settingsProvider.select((s) => s.hasAi));
     return Scaffold(
-      appBar: AppBar(title: const Text('Terjemah'), centerTitle: false),
+      appBar: AppBar(title: const Text('Terjemahkan'), centerTitle: false),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
         children: [

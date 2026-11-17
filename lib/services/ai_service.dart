@@ -378,6 +378,31 @@ Contoh Output:
     return out.trim();
   }
 
+  /// Terjemah dengan tebak bahasa otomatis. Balasan JSON: {"src":"id|en","out":"..."}.
+  Future<String> translateAuto(String text, {required String apiKey, required String model}) async {
+    const system = 'You are a professional, natural-sounding translator between Indonesian and English. '
+        'First decide whether the user text is Indonesian or English (single words count too, e.g. "singa" is Indonesian, "lion" is English). '
+        'If it is Indonesian, translate it to English; if it is English, translate it to Indonesian. '
+        'Keep the meaning, tone, names, numbers, emoji and line breaks. '
+        'Reply ONLY with JSON: {"src":"id" or "en","out":"the translation"}';
+    return _generate(
+      apiKey: apiKey,
+      model: model,
+      system: system,
+      contents: [
+        {
+          'role': 'user',
+          'parts': [
+            {'text': text}
+          ]
+        }
+      ],
+      json: true,
+      timeout: const Duration(seconds: 25),
+      fast: true,
+    );
+  }
+
   /// Penjelasan error pindai foto yang mudah dipahami.
   static String scanErrorText(Object e) {
     if (e is AiException) {

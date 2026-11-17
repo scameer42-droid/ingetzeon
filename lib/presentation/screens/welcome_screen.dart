@@ -128,7 +128,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
           chip('⏰ Pengingat pintar'),
           chip('🕌 Muslim harian'),
           chip('🥗 Kalori & olahraga'),
-          chip('🌐 Terjemah'),
+          chip('🌐 Terjemahkan'),
         ]),
       ]),
     );

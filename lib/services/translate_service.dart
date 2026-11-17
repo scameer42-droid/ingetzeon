@@ -6,13 +6,19 @@ import 'package:http/http.dart' as http;
 import '../core/i18n/en_dict.dart';
 import 'ai_service.dart';
 
-/// Hasil terjemahan beserta mesin yang dipakai.
+/// Hasil terjemahan beserta mesin & arah yang dipakai.
 class TranslateResult {
-  const TranslateResult(this.text, this.engine);
+  const TranslateResult(this.text, this.engine, {this.from = 'id'});
   final String text;
 
   /// 'gemini', 'mymemory', atau 'offline'.
   final String engine;
+
+  /// Bahasa sumber yang benar-benar dipakai ('id' / 'en') — bisa beda dari pilihan
+  /// pengguna bila teksnya ternyata bahasa lain.
+  final String from;
+
+  String get to => from == 'id' ? 'en' : 'id';
 }
 
 class TranslateException implements Exception {
@@ -24,9 +30,9 @@ class TranslateException implements Exception {
 
 /// Terjemah Indonesia ⇄ Inggris.
 ///
-/// Memakai Gemini bila kunci API sudah diisi (paling natural), kalau tidak memakai
-/// layanan gratis MyMemory. Teks yang sudah ada di kamus aplikasi bisa diterjemahkan
-/// tanpa internet.
+/// Bahasa teks ditebak otomatis. Memakai Gemini bila kunci API sudah diisi (paling
+/// natural); kalau tidak memakai layanan gratis MyMemory. Bila bahasanya masih ragu
+/// (mis. satu kata "singa"), kedua arah dicoba lalu dipilih hasil yang paling cocok.
 class TranslateService {
   TranslateService._();
   static final TranslateService instance = TranslateService._();
@@ -40,55 +46,127 @@ class TranslateService {
     'tapi', 'atau', 'sangat', 'banget', 'lagi', 'dong', 'sih', 'kok', 'nya', 'kita', 'kami', 'mereka', 'dia', 'besok',
     'hari', 'malam', 'pagi', 'siang', 'sore', 'terima', 'kasih', 'selamat', 'tolong', 'bagaimana', 'kenapa', 'mengapa',
     'siapa', 'kapan', 'dimana', 'berapa', 'harga', 'beli', 'jual', 'barang', 'sama', 'buat', 'lebih', 'masih', 'baru',
+    'singa', 'kambing', 'kucing', 'anjing', 'ayam', 'sapi', 'ikan', 'burung', 'gajah', 'harimau', 'kuda', 'monyet', 'ular',
+    'rumah', 'mobil', 'motor', 'jalan', 'makan', 'minum', 'tidur', 'kerja', 'sekolah', 'buku', 'meja', 'kursi', 'pintu',
+    'air', 'nasi', 'roti', 'susu', 'kopi', 'teh', 'gula', 'garam', 'merah', 'biru', 'hijau', 'kuning', 'hitam', 'putih',
+    'besar', 'kecil', 'cantik', 'ganteng', 'senang', 'sedih', 'marah', 'takut', 'sakit', 'sehat', 'cinta', 'sayang',
+    'teman', 'ibu', 'bapak', 'ayah', 'adik', 'kakak', 'anak', 'orang', 'uang', 'waktu', 'tahun', 'bulan', 'minggu',
+    'pergi', 'datang', 'pulang', 'lihat', 'dengar', 'bicara', 'tulis', 'baca', 'belajar', 'main', 'enak',
   };
   static const _enWords = {
     'the', 'and', 'is', 'are', 'was', 'were', 'to', 'of', 'in', 'on', 'for', 'with', 'this', 'that', 'it', 'you', 'i',
     'me', 'my', 'your', 'we', 'they', 'he', 'she', 'not', 'do', 'does', 'did', 'have', 'has', 'be', 'will', 'can', 'what',
     'how', 'why', 'when', 'where', 'who', 'please', 'thank', 'thanks', 'hello', 'good', 'morning', 'night', 'tomorrow',
     'today', 'a', 'an', 'at', 'from', 'by', 'about', 'would', 'could', 'should', 'there', 'here', 'very', 'price', 'buy',
+    'lion', 'goat', 'cat', 'dog', 'chicken', 'cow', 'fish', 'bird', 'elephant', 'tiger', 'horse', 'monkey', 'snake',
+    'house', 'car', 'eat', 'drink', 'sleep', 'work', 'school', 'book', 'table', 'chair', 'door', 'water', 'rice', 'bread',
+    'milk', 'coffee', 'tea', 'red', 'blue', 'green', 'yellow', 'black', 'white', 'big', 'small', 'beautiful', 'happy',
+    'sad', 'love', 'friend', 'mother', 'father', 'child', 'people', 'money', 'time', 'year', 'month', 'week', 'go', 'come',
   };
+
+  static Set<String>? _idVocab, _enVocab;
+
+  /// Kosakata tambahan dari kamus aplikasi (kunci = Indonesia, nilai = Inggris).
+  static void _buildVocab() {
+    if (_idVocab != null) return;
+    final idv = <String>{}, env = <String>{};
+    final re = RegExp(r'[a-z]{3,}');
+    kEnDict.forEach((k, v) {
+      for (final m in re.allMatches(k.toLowerCase())) {
+        idv.add(m.group(0)!);
+      }
+      for (final m in re.allMatches(v.toLowerCase())) {
+        env.add(m.group(0)!);
+      }
+    });
+    final both = idv.intersection(env);
+    _idVocab = idv.difference(both);
+    _enVocab = env.difference(both);
+  }
 
   /// Tebak bahasa teks: 'id', 'en', atau null bila ragu.
   static String? detect(String text) {
+    _buildVocab();
     final words = RegExp(r"[a-zA-Z']+").allMatches(text.toLowerCase()).map((m) => m.group(0)!).toList();
     if (words.isEmpty) return null;
-    var id = 0, en = 0;
+    double id = 0, en = 0;
     for (final w in words) {
-      if (_idWords.contains(w) || w.endsWith('nya') || w.startsWith('meng') || w.startsWith('ber')) id++;
-      if (_enWords.contains(w) || w.endsWith('ing') || w.endsWith("n't")) en++;
+      if (_idWords.contains(w)) {
+        id += 2;
+      } else if (_enWords.contains(w)) {
+        en += 2;
+      } else if (_idVocab!.contains(w)) {
+        id += 1;
+      } else if (_enVocab!.contains(w)) {
+        en += 1;
+      } else {
+        if (w.endsWith('nya') || w.endsWith('kan') || RegExp(r'^(meng|meny|mem|ber|ter|per)').hasMatch(w)) id += .6;
+        if (w.endsWith("n't") || w.endsWith('tion') || w.endsWith('ly') || RegExp(r'(th|sh|ph|ck|wh|ee|oo)').hasMatch(w)) en += .6;
+      }
     }
-    if (id == en) return null;
+    if ((id - en).abs() < .5) return null;
     return id > en ? 'id' : 'en';
   }
 
-  Future<TranslateResult> translate(String text, {required String from, required String to, String apiKey = '', String model = ''}) async {
+  /// Terjemahkan. [from] = arah pilihan pengguna; bila teksnya ternyata bahasa lain,
+  /// arah dibalik otomatis (lihat [TranslateResult.from]).
+  Future<TranslateResult> translate(String text, {required String from, String apiKey = '', String model = ''}) async {
     final src = text.trim();
-    if (src.isEmpty) return const TranslateResult('', 'offline');
-    if (from == to) return TranslateResult(src, 'offline');
+    if (src.isEmpty) return TranslateResult('', 'offline', from: from);
+    final det = detect(src);
+    final f = det ?? from;
+    final t = f == 'id' ? 'en' : 'id';
 
-    // 1) kalimat yang sudah dikenal aplikasi (tanpa internet)
-    final known = _offline(src, from, to);
-
-    // 2) Gemini (kalau kunci sudah diisi)
+    // 1) Gemini (kalau kunci sudah diisi) — sekaligus menebak bahasanya
     if (apiKey.trim().isNotEmpty) {
       try {
-        final out = await _ai.translate(src, from: from, to: to, apiKey: apiKey, model: model);
-        if (out.isNotEmpty) return TranslateResult(out, 'gemini');
+        final r = await _gemini(src, det, apiKey, model);
+        if (r != null) return r;
       } catch (_) {
         // lanjut ke layanan gratis
       }
     }
 
-    // 3) MyMemory (gratis, tanpa kunci)
+    // 2) MyMemory (gratis, tanpa kunci)
     try {
-      final out = await _myMemory(src, from, to);
-      if (out.isNotEmpty) return TranslateResult(out, 'mymemory');
+      if (det == null && src.length <= 60) {
+        // bahasa masih ragu → coba dua arah, ambil yang paling cocok
+        final a = await _myMemory(src, f, t);
+        ({String text, double match}) b = (text: '', match: 0.0);
+        try {
+          b = await _myMemory(src, t, f);
+        } catch (_) {}
+        bool same(String x) => x.trim().toLowerCase() == src.toLowerCase();
+        final aOk = a.text.isNotEmpty && !same(a.text), bOk = b.text.isNotEmpty && !same(b.text);
+        if (bOk && (!aOk || b.match > a.match + .05)) return TranslateResult(b.text, 'mymemory', from: t);
+        if (a.text.isNotEmpty) return TranslateResult(a.text, 'mymemory', from: f);
+      } else {
+        final a = await _myMemory(src, f, t);
+        if (a.text.isNotEmpty) return TranslateResult(a.text, 'mymemory', from: f);
+      }
     } on TranslateException {
-      if (known != null) return TranslateResult(known, 'offline');
+      final known = _offline(src, f, t);
+      if (known != null) return TranslateResult(known, 'offline', from: f);
       rethrow;
     }
-    if (known != null) return TranslateResult(known, 'offline');
+    final known = _offline(src, f, t);
+    if (known != null) return TranslateResult(known, 'offline', from: f);
     throw TranslateException('Terjemahan belum berhasil. Coba lagi sebentar lagi.');
+  }
+
+  Future<TranslateResult?> _gemini(String src, String? det, String apiKey, String model) async {
+    if (det != null) {
+      final out = await _ai.translate(src, from: det, to: det == 'id' ? 'en' : 'id', apiKey: apiKey, model: model);
+      return out.isEmpty ? null : TranslateResult(out, 'gemini', from: det);
+    }
+    final raw = await _ai.translateAuto(src, apiKey: apiKey, model: model);
+    try {
+      final m = jsonDecode(raw.replaceAll(RegExp(r'^```(json)?|```$'), '').trim());
+      if (m is Map && '${m['out'] ?? ''}'.trim().isNotEmpty) {
+        return TranslateResult('${m['out']}'.trim(), 'gemini', from: m['src'] == 'en' ? 'en' : 'id');
+      }
+    } catch (_) {}
+    return null;
   }
 
   String? _offline(String s, String from, String to) {
@@ -127,10 +205,11 @@ class TranslateService {
     return out;
   }
 
-  Future<String> _myMemory(String s, String from, String to) async {
+  Future<({String text, double match})> _myMemory(String s, String from, String to) async {
     final pieces = <String>[];
+    var match = 1.0;
     for (final c in _chunks(s)) {
-      final uri = Uri.https('api.mymemory.translated.net', '/get', {'q': c, 'langpair': '$from|$to'});
+      final uri = Uri.https('api.mymemory.translated.net', '/get', {'q': c, 'langpair': '$from|$to', 'mt': '1'});
       http.Response res;
       try {
         res = await _client.get(uri).timeout(const Duration(seconds: 20));
@@ -142,14 +221,27 @@ class TranslateService {
       if (res.statusCode == 429) throw TranslateException('Batas terjemahan gratis hari ini habis. Isi kunci Gemini di Profil supaya bisa terus menerjemahkan.');
       if (res.statusCode != 200) throw TranslateException('Layanan terjemahan sedang sibuk (kode ${res.statusCode}).');
       final data = jsonDecode(utf8.decode(res.bodyBytes));
-      final t = data is Map && data['responseData'] is Map ? '${data['responseData']['translatedText'] ?? ''}' : '';
+      final rd = data is Map && data['responseData'] is Map ? data['responseData'] as Map : const {};
+      var t = '${rd['translatedText'] ?? ''}';
       final status = data is Map ? '${data['responseStatus']}' : '';
       if (status != '200' && t.toUpperCase().contains('MYMEMORY WARNING')) {
         throw TranslateException('Batas terjemahan gratis hari ini habis. Isi kunci Gemini di Profil supaya bisa terus menerjemahkan.');
       }
+      final m = rd['match'];
+      final mv = m is num ? m.toDouble() : double.tryParse('$m') ?? 0;
+      // hasil memori yang tidak nyambung (cocok rendah) → pakai terjemahan mesin bila ada
+      if (mv < .5 && data is Map && data['matches'] is List) {
+        for (final x in (data['matches'] as List).whereType<Map>()) {
+          if ('${x['created-by']}' == 'MT!' && '${x['translation'] ?? ''}'.trim().isNotEmpty) {
+            t = '${x['translation']}';
+            break;
+          }
+        }
+      }
+      if (mv < match) match = mv;
       pieces.add(_unescape(t));
     }
-    return pieces.join(' ').trim();
+    return (text: pieces.join(' ').trim(), match: match);
   }
 
   static String _unescape(String s) => s

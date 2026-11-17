@@ -3207,6 +3207,7 @@ const Map<String, String> kEnDict = {
   '🇮🇩 Indonesia ⇄ Inggris 🇬🇧 · ketik atau ucapkan': '🇮🇩 Indonesian ⇄ English 🇬🇧 · type or speak',
   '🌈 Semua tes psikologi': '🌈 All psychological tests',
   '🌐 Terjemah': '🌐 Translate',
+  '🌐 Terjemahkan': '🌐 Translate',
   '🌬️ Latihan napas': '🌬️ Breathing exercise',
   '🌸 Haid 2 hari lagi': '🌸 Period in 2 days',
   '🌸 Haid diperkirakan hari ini': '🌸 Period expected today',

@@ -87,6 +87,9 @@ void main() {
     test('deteksi bahasa untuk fitur Terjemah', () {
       expect(TranslateService.detect('aku mau beli baju yang ini'), 'id');
       expect(TranslateService.detect('where is the nearest station?'), 'en');
+      expect(TranslateService.detect('singa'), 'id');
+      expect(TranslateService.detect('kambing'), 'id');
+      expect(TranslateService.detect('lion'), 'en');
     });
   });
 
