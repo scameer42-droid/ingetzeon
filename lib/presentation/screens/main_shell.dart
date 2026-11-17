@@ -171,18 +171,17 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       body: AestheticBackground(child: IndexedStack(index: _index, children: screens)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(padding: const EdgeInsets.only(top: 24), child: _GradientFab(onTap: _openAi)),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-          decoration: BoxDecoration(
-            color: context.card,
-            borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: context.isDark ? context.line : Colors.white),
-            boxShadow: [BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: context.isDark ? .4 : .18), blurRadius: 30, offset: const Offset(0, 12), spreadRadius: -10)],
-          ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: context.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: context.isDark ? Border(top: BorderSide(color: context.line)) : null,
+          boxShadow: [BoxShadow(color: const Color(0xFF3B2F8F).withValues(alpha: context.isDark ? .4 : .14), blurRadius: 28, offset: const Offset(0, -6), spreadRadius: -8)],
+        ),
+        child: SafeArea(
+          top: false,
           child: SizedBox(
-            height: 64,
+            height: 66,
             child: Row(
               children: [
                 _NavItem(icon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => setState(() => _index = 0)),

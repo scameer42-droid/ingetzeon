@@ -1187,6 +1187,12 @@ body{background:
 .scard .sh,.scard b small,.scard>small{color:rgba(255,255,255,.85)}
 .scard::after{content:"";position:absolute;right:-26px;top:-30px;width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.14)}
 .scard .sbar{background:rgba(255,255,255,.25)}
+
+/* navigasi bawah menempel penuh sampai bawah layar */
+.nav{bottom:0}
+.nav-in{width:100%;max-width:480px;border-radius:28px 28px 0 0;height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);border:0;box-shadow:0 -8px 28px -10px rgba(59,47,143,.2)}
+[data-theme="dark"] .nav-in{border-top:1px solid var(--line)}
+.avatar{border-radius:50%}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap">

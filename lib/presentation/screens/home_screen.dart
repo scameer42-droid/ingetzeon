@@ -100,7 +100,7 @@ class HomeScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(shape: BoxShape.circle, color: context.bg),
-                      child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46),
+                      child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 46, radius: 23),
                     ),
                   ),
                 ),
@@ -509,13 +509,14 @@ class _MenuCard extends ConsumerWidget {
     ];
     return SoftCard(
       radius: 24,
-      padding: const EdgeInsets.fromLTRB(6, 18, 6, 8),
+      padding: const EdgeInsets.fromLTRB(6, 16, 6, 6),
       child: GridView.count(
         crossAxisCount: 4,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: .82,
+        mainAxisSpacing: 4,
+        childAspectRatio: .92,
         children: [
           for (final m in menu)
             InkWell(
@@ -542,7 +543,7 @@ class _MenuCard extends ConsumerWidget {
                     ),
                 ]),
                 const SizedBox(height: 8),
-                Text(m.label, maxLines: 2, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.2)),
+                Text(m.label, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.2)),
               ]),
             ),
         ],
@@ -693,7 +694,7 @@ class _SummaryRow extends ConsumerWidget {
         ),
     ];
     return SizedBox(
-      height: 132,
+      height: 140,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
