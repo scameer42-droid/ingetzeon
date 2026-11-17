@@ -101,6 +101,7 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
   Future<void> _onNotification(NotificationResponse r) async {
     final id = r.payload;
     if (id == null) return;
+    if (r.actionId == 'stop_adzan' || id == 'adzan_test') return;
     if (id == 'cycle') {
       if (!mounted) return;
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen()));

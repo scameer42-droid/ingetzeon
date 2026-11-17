@@ -13,6 +13,7 @@ class MuslimSettings {
     this.tz = 7,
     this.auto = false,
     this.adzan = true,
+    this.adzanSound = 'penuh',
     this.muted = const {},
     this.done = const {},
     this.tasbih = 0,
@@ -24,6 +25,7 @@ class MuslimSettings {
   final double tz;
   final bool auto; // dari GPS
   final bool adzan;
+  final String adzanSound; // penuh | pendek | notif | getar
   final Set<String> muted; // waktu sholat yang notifikasinya dimatikan
   final Map<String, List<String>> done; // dayKey → sholat yang sudah ditandai
   final int tasbih; // total hitungan tasbih
@@ -37,6 +39,7 @@ class MuslimSettings {
     double? tz,
     bool? auto,
     bool? adzan,
+    String? adzanSound,
     Set<String>? muted,
     Map<String, List<String>>? done,
     int? tasbih,
@@ -50,6 +53,7 @@ class MuslimSettings {
         tz: tz ?? this.tz,
         auto: auto ?? this.auto,
         adzan: adzan ?? this.adzan,
+        adzanSound: adzanSound ?? this.adzanSound,
         muted: muted ?? this.muted,
         done: done ?? this.done,
         tasbih: tasbih ?? this.tasbih,
@@ -64,6 +68,7 @@ class MuslimSettings {
         'tz': tz,
         'auto': auto,
         'adzan': adzan,
+        'snd': adzanSound,
         'muted': muted.toList(),
         'done': done,
         'tasbih': tasbih,
@@ -78,6 +83,7 @@ class MuslimSettings {
         tz: ((m['tz'] as num?) ?? 7).toDouble(),
         auto: m['auto'] == true,
         adzan: m['adzan'] != false,
+        adzanSound: const ['penuh', 'pendek', 'notif', 'getar'].contains(m['snd']) ? m['snd'] as String : 'penuh',
         muted: {for (final x in (m['muted'] as List? ?? const [])) x.toString()},
         done: {
           for (final e in ((m['done'] as Map?) ?? const {}).entries) e.key.toString(): [for (final x in (e.value as List? ?? const [])) x.toString()],
@@ -120,6 +126,7 @@ class MuslimNotifier extends Notifier<MuslimSettings> {
       _save(state.copyWith(city: city, lat: lat, lng: lng, tz: tz, auto: auto));
 
   Future<void> setAdzan(bool v) => _save(state.copyWith(adzan: v));
+  Future<void> setAdzanSound(String v) => _save(state.copyWith(adzanSound: v, adzan: true));
 
   Future<void> toggleMute(String key) {
     final m = {...state.muted};
@@ -159,7 +166,7 @@ class MuslimNotifier extends Notifier<MuslimSettings> {
   /// Jadwalkan notifikasi adzan 7 hari ke depan.
   Future<void> reschedule() async {
     final s = state;
-    final items = <({int id, DateTime at, String title, String body})>[];
+    final items = <({int id, String key, DateTime at, String title, String body})>[];
     if (s.adzan) {
       final now = DateTime.now();
       var i = 0;
@@ -171,6 +178,7 @@ class MuslimNotifier extends Notifier<MuslimSettings> {
           if (!s.muted.contains(k) && at.isAfter(now)) {
             items.add((
               id: i,
+              key: k,
               at: at,
               title: '🕌 Waktunya sholat ${prayerNames[k]}',
               body: '${prayerNames[k]} ${PrayerCalc.hm(t[k]!)} · ${s.city}. Yuk ambil wudhu, semoga Allah menerima ibadahmu 🤲',
@@ -180,7 +188,7 @@ class MuslimNotifier extends Notifier<MuslimSettings> {
         }
       }
     }
-    await NotificationService.instance.schedulePrayers(items);
+    await NotificationService.instance.schedulePrayers(items, sound: s.adzanSound);
   }
 }
 

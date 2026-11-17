@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../providers/muslim_provider.dart';
+import '../../../services/notification_service.dart';
 import '../../../providers/reminder_provider.dart';
 import '../../../services/islam_logic.dart';
 import '../../widgets/common.dart';
@@ -204,6 +205,8 @@ class MuslimScreen extends ConsumerWidget {
               ),
           ]),
         ),
+        const SizedBox(height: 10),
+        const _AdzanSoundCard(),
         const SizedBox(height: 8),
         Text('Metode Kemenag RI (Subuh 20°, Isya 18°). Bisa beda 1–2 menit dengan jadwal masjid setempat.', style: TextStyle(fontSize: 11.5, color: context.faint)),
         // ---- tracker
@@ -246,6 +249,104 @@ class MuslimScreen extends ConsumerWidget {
   }
 
   static void _push(BuildContext context, Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
+}
+
+/// Kartu pilihan suara pengingat sholat (adzan / notifikasi / getar).
+class _AdzanSoundCard extends ConsumerWidget {
+  const _AdzanSoundCard();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(muslimProvider);
+    final mode = NotificationService.adzanModes.firstWhere((m) => m.$1 == s.adzanSound, orElse: () => NotificationService.adzanModes.first);
+    final on = s.adzan;
+    return SoftCard(
+      radius: 20,
+      onTap: () => showAdzanSoundSheet(context, ref),
+      child: Row(children: [
+        Container(
+          width: 46,
+          height: 46,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(gradient: on ? const LinearGradient(colors: [Color(0xFF059669), Color(0xFF0D9488)]) : null, color: on ? null : context.line, borderRadius: BorderRadius.circular(14)),
+          child: Text(!on ? '🔕' : s.adzanSound == 'getar' ? '📳' : s.adzanSound == 'notif' ? '🔔' : '🕌', style: const TextStyle(fontSize: 22)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Suara waktu sholat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            Text(on ? mode.$2 : 'Pengingat sholat mati', style: TextStyle(color: on ? const Color(0xFF059669) : context.muted, fontWeight: FontWeight.w700, fontSize: 13)),
+          ]),
+        ),
+        Text('Ubah', style: TextStyle(color: context.muted, fontWeight: FontWeight.w700)),
+        Icon(Icons.chevron_right_rounded, color: context.muted),
+      ]),
+    );
+  }
+}
+
+Future<void> showAdzanSoundSheet(BuildContext context, WidgetRef ref) async {
+  await showAppSheet(
+    context: context,
+    builder: (ctx) => Consumer(builder: (ctx, ref, _) {
+      final s = ref.watch(muslimProvider);
+      final n = ref.read(muslimProvider.notifier);
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          const SheetTitle('Suara waktu sholat', subtitle: 'Dibunyikan saat masuk waktu Subuh, Dzuhur, Ashar, Maghrib & Isya'),
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+            value: s.adzan,
+            activeThumbColor: const Color(0xFF059669),
+            title: const Text('Pengingat waktu sholat', style: TextStyle(fontWeight: FontWeight.w700)),
+            onChanged: (v) => n.setAdzan(v),
+          ),
+          const SizedBox(height: 4),
+          for (final m in NotificationService.adzanModes)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Material(
+                color: s.adzan && s.adzanSound == m.$1 ? const Color(0xFF059669).withValues(alpha: .1) : ctx.isDark ? Colors.white10 : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(16),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => n.setAdzanSound(m.$1),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 6, 10),
+                    child: Row(children: [
+                      Icon(s.adzan && s.adzanSound == m.$1 ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                          color: s.adzan && s.adzanSound == m.$1 ? const Color(0xFF059669) : ctx.muted),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(m.$2, style: const TextStyle(fontWeight: FontWeight.w800)),
+                          Text(m.$3, style: TextStyle(color: ctx.muted, fontSize: 12.5)),
+                        ]),
+                      ),
+                      if (m.$1 != 'getar')
+                        TextButton.icon(
+                          onPressed: () => NotificationService.instance.testAdzan(m.$1),
+                          icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                          label: const Text('Coba'),
+                        ),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: const Color(0xFFFEF3C7), borderRadius: BorderRadius.circular(14)),
+            child: const Text(
+                '💡 Adzan memakai volume ALARM HP, jadi tetap terdengar walau HP mode getar. Untuk menghentikan: ketuk "Matikan adzan" atau geser notifikasinya. Waktu tertentu bisa dibisukan lewat ikon lonceng di jadwal.',
+                style: TextStyle(color: Color(0xFF92400E), fontSize: 12.5, height: 1.4)),
+          ),
+          TextButton(onPressed: () => NotificationService.instance.stopAdzanTest(), child: const Text('Hentikan suara tes')),
+        ]),
+      );
+    }),
+  );
 }
 
 Future<void> showIslamicDays(BuildContext context) async {

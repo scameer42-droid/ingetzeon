@@ -1,6 +1,6 @@
 // Service worker IngetZeon: offline + notifikasi
-const CACHE = 'ingetzeon-v21';
-const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './alarm.mp3', './lib/qrcode.js', './lib/JsBarcode.all.min.js', './lib/jsQR.js'];
+const CACHE = 'ingetzeon-v22';
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './alarm.mp3', './adzan.mp3', './adzan_subuh.mp3', './lib/qrcode.js', './lib/JsBarcode.all.min.js', './lib/jsQR.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

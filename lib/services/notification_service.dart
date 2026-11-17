@@ -81,6 +81,8 @@ class NotificationService {
       ));
     }
 
+    await _createPrayerChannels();
+
     final launch = await _plugin.getNotificationAppLaunchDetails();
     if (launch?.didNotificationLaunchApp ?? false) _launchResponse = launch!.notificationResponse;
     _loadSigs();
@@ -465,10 +467,80 @@ class NotificationService {
   // ---------- Adzan ----------
   static const _prayerBase = 850000;
 
+  /// Pilihan suara notifikasi sholat: (kode, nama, keterangan).
+  static const adzanModes = <(String, String, String)>[
+    ('penuh', 'Adzan lengkap', 'Suara adzan muadzin ±2–3 menit (Subuh pakai adzan Subuh)'),
+    ('pendek', 'Adzan singkat', 'Takbir pembuka saja ±20 detik'),
+    ('notif', 'Bunyi notifikasi', 'Suara notifikasi biasa HP'),
+    ('getar', 'Getar saja', 'Tanpa suara'),
+  ];
+
+  // Channel Android tidak bisa diubah bunyinya setelah dibuat → tiap suara punya channel sendiri.
+  static String _prayerChannel(String mode, bool subuh) => switch (mode) {
+        'penuh' => subuh ? 'sholat_subuh_v1' : 'sholat_adzan_v1',
+        'pendek' => 'sholat_pendek_v1',
+        'notif' => 'sholat_notif_v1',
+        _ => 'sholat_getar_v1',
+      };
+
+  static AndroidNotificationSound? _adzanSound(String mode, bool subuh) => switch (mode) {
+        'penuh' => RawResourceAndroidNotificationSound(subuh ? 'adzan_subuh' : 'adzan'),
+        'pendek' => const RawResourceAndroidNotificationSound('adzan_pendek'),
+        _ => null,
+      };
+
+  static String _prayerChannelName(String mode, bool subuh) => switch (mode) {
+        'penuh' => subuh ? 'Sholat · Adzan Subuh' : 'Sholat · Adzan',
+        'pendek' => 'Sholat · Adzan singkat',
+        'notif' => 'Sholat · Bunyi notifikasi',
+        _ => 'Sholat · Getar saja',
+      };
+
+  Future<void> _createPrayerChannels() async {
+    for (final (mode, subuh) in const [('penuh', false), ('penuh', true), ('pendek', false), ('notif', false), ('getar', false)]) {
+      final adzan = mode == 'penuh' || mode == 'pendek';
+      await _android?.createNotificationChannel(AndroidNotificationChannel(
+        _prayerChannel(mode, subuh),
+        _prayerChannelName(mode, subuh),
+        description: 'Pengingat masuk waktu sholat',
+        importance: Importance.max,
+        playSound: mode != 'getar',
+        sound: _adzanSound(mode, subuh),
+        enableVibration: true,
+        vibrationPattern: Int64List.fromList([0, 500, 300, 500]),
+        // adzan memakai jalur suara alarm supaya tetap terdengar walau HP mode getar
+        audioAttributesUsage: adzan ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
+      ));
+    }
+  }
+
+  NotificationDetails _prayerDetails(String body, String mode, bool subuh) {
+    final adzan = mode == 'penuh' || mode == 'pendek';
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        _prayerChannel(mode, subuh),
+        _prayerChannelName(mode, subuh),
+        channelDescription: 'Pengingat masuk waktu sholat',
+        importance: Importance.max,
+        priority: Priority.max,
+        icon: 'ic_notification',
+        color: const Color(0xFF059669),
+        category: AndroidNotificationCategory.reminder,
+        playSound: mode != 'getar',
+        sound: _adzanSound(mode, subuh),
+        audioAttributesUsage: adzan ? AudioAttributesUsage.alarm : AudioAttributesUsage.notification,
+        enableVibration: true,
+        vibrationPattern: Int64List.fromList([0, 500, 300, 500]),
+        styleInformation: BigTextStyleInformation(body),
+        actions: adzan ? const [AndroidNotificationAction('stop_adzan', '🔇 Matikan adzan', cancelNotification: true)] : null,
+      ),
+    );
+  }
+
   /// Notifikasi waktu sholat (maks. 40 slot, dijadwalkan ulang tiap aplikasi dibuka).
-  Future<void> schedulePrayers(List<({int id, DateTime at, String title, String body})> items) async {
+  Future<void> schedulePrayers(List<({int id, String key, DateTime at, String title, String body})> items, {String sound = 'penuh'}) async {
     final mode = await _modeSoft();
-    final keep = <int, ({int id, DateTime at, String title, String body})>{
+    final keep = <int, ({int id, String key, DateTime at, String title, String body})>{
       for (final it in items)
         if (it.id < 40 && it.at.isAfter(DateTime.now())) _prayerBase + it.id: it,
     };
@@ -477,11 +549,11 @@ class NotificationService {
     }
     for (final e in keep.entries) {
       final it = e.value;
-      final sig = '${it.at.toIso8601String()}|${it.body}|${mode.name}';
+      final sig = '${it.at.toIso8601String()}|${it.body}|${mode.name}|$sound';
       if (_same(e.key, sig)) continue;
       try {
         await _breathe();
-        await _plugin.zonedSchedule(e.key, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _simple(it.body, const Color(0xFF059669)),
+        await _plugin.zonedSchedule(e.key, it.title, it.body, tz.TZDateTime.from(it.at, tz.local), _prayerDetails(it.body, sound, it.key == 'subuh'),
             androidScheduleMode: mode, payload: 'muslim');
         await _mark(e.key, sig);
       } catch (e) {
@@ -489,6 +561,17 @@ class NotificationService {
       }
     }
   }
+
+  /// Bunyikan contoh suara sholat sekarang juga.
+  Future<void> testAdzan(String sound, {bool subuh = false}) async {
+    await _plugin.cancel(999997);
+    final label = adzanModes.firstWhere((m) => m.$1 == sound, orElse: () => adzanModes.first).$2;
+    await _plugin.show(999997, '🕌 Tes suara sholat · $label', 'Beginilah bunyinya saat masuk waktu sholat. Ketuk "Matikan adzan" atau geser notifikasi untuk berhenti.',
+        _prayerDetails('Beginilah bunyinya saat masuk waktu sholat. Ketuk "Matikan adzan" atau geser notifikasi untuk berhenti.', sound, subuh),
+        payload: 'adzan_test');
+  }
+
+  Future<void> stopAdzanTest() => _plugin.cancel(999997);
 
   Future<void> cancelParkingHourly() async {
     for (var h = 1; h <= 12; h++) {
