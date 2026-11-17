@@ -1,0 +1,10 @@
+pakai versi baru
+Starting: Intent { cmp=com.zeon.ingetzeon/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.zeon.ingetzeon/.MainActivity
+TotalTime: 5917
+WaitTime: 6020
+Complete
+PID=5053
+selesai 34s
