@@ -169,7 +169,7 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           Text('Semua fitur', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -.4, color: context.ink)),
