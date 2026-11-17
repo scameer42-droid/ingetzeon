@@ -16,6 +16,7 @@ class AppSettings {
     this.alarmSound = AlarmSound.melodi,
     this.avatarPath = '',
     this.lang = 'id',
+    this.welcomed = true,
   });
 
   final String name;
@@ -31,9 +32,12 @@ class AppSettings {
   /// Bahasa tampilan: 'id' atau 'en'.
   final String lang;
 
+  /// Sudah melewati layar sambutan (isi nama) saat pertama buka.
+  final bool welcomed;
+
   bool get hasAi => apiKey.trim().isNotEmpty;
 
-  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound, String? avatarPath, String? lang}) =>
+  AppSettings copyWith({String? name, ThemeMode? themeMode, String? apiKey, String? model, bool? voice, AlarmSound? alarmSound, String? avatarPath, String? lang, bool? welcomed}) =>
       AppSettings(
         name: name ?? this.name,
         themeMode: themeMode ?? this.themeMode,
@@ -43,6 +47,7 @@ class AppSettings {
         alarmSound: alarmSound ?? this.alarmSound,
         avatarPath: avatarPath ?? this.avatarPath,
         lang: lang ?? this.lang,
+        welcomed: welcomed ?? this.welcomed,
       );
 }
 
@@ -64,7 +69,15 @@ class SettingsNotifier extends Notifier<AppSettings> {
       alarmSound: AlarmSound.fromName(repo.get<String>('alarmSound', 'melodi')),
       avatarPath: repo.get<String>('avatar', ''),
       lang: I18n.lang,
+      welcomed: repo.get<bool>('welcomed', false) || repo.get<String>('name', '').trim().isNotEmpty,
     );
+  }
+
+  /// Selesai layar sambutan: simpan nama lalu masuk ke beranda.
+  Future<void> finishWelcome(String name) async {
+    await setName(name);
+    state = state.copyWith(welcomed: true);
+    await _repo.set('welcomed', true);
   }
 
   Future<void> setName(String v) async {

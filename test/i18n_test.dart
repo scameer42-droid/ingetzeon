@@ -9,6 +9,7 @@ import 'package:ingetzeon/core/i18n/i18n.dart';
 import 'package:ingetzeon/core/utils/date_utils.dart';
 import 'package:ingetzeon/presentation/screens/calorie/weight_screen.dart';
 import 'package:ingetzeon/presentation/screens/translate_screen.dart';
+import 'package:ingetzeon/presentation/screens/welcome_screen.dart';
 import 'package:ingetzeon/presentation/screens/workout/workout_screen.dart';
 import 'package:ingetzeon/presentation/widgets/common.dart';
 import 'package:ingetzeon/providers/calorie_provider.dart';
@@ -136,6 +137,28 @@ void main() {
         await t.pump();
         await _scrollAll(t);
         await t.pumpWidget(const SizedBox());
+      }
+      await t.binding.setSurfaceSize(null);
+    });
+
+    testWidgets('layar sambutan isi nama (ID & EN, layar kecil)', (t) async {
+      await t.runAsync(() async {
+        if (!Hive.isBoxOpen('settings')) {
+          Hive.init(Directory.systemTemp.createTempSync('hive2').path);
+          await Hive.openBox('settings');
+        }
+      });
+      for (final size in const [Size(360, 640), Size(412, 900)]) {
+        for (final lang in ['id', 'en']) {
+          I18n.setLang(lang);
+          await t.binding.setSurfaceSize(size);
+          await t.pumpWidget(_app(const WelcomeScreen()));
+          await t.pump(const Duration(milliseconds: 300));
+          expect(find.text(lang == 'en' ? 'Welcome 👋' : 'Selamat datang 👋'), findsOneWidget);
+          await t.enterText(find.byType(TextField), 'Vano');
+          await t.pump();
+          await t.pumpWidget(const SizedBox());
+        }
       }
       await t.binding.setSurfaceSize(null);
     });

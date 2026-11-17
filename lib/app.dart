@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/i18n/i18n.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/screens/main_shell.dart';
+import 'presentation/screens/welcome_screen.dart';
 import 'providers/settings_provider.dart';
 
 class IngetZeonApp extends ConsumerWidget {
@@ -14,6 +15,7 @@ class IngetZeonApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     final lang = ref.watch(settingsProvider.select((s) => s.lang));
+    final welcomed = ref.watch(settingsProvider.select((s) => s.welcomed));
     if (I18n.lang != lang) I18n.setLang(lang);
     return MaterialApp(
       title: 'IngetZeon',
@@ -28,7 +30,7 @@ class IngetZeonApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: MainShell(key: ValueKey('shell-$lang')),
+      home: welcomed ? MainShell(key: ValueKey('shell-$lang')) : WelcomeScreen(key: ValueKey('welcome-$lang')),
     );
   }
 }
