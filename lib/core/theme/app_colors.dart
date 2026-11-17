@@ -35,7 +35,7 @@ class AppColors {
   static const aurora = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF4338CA), Color(0xFF6D28D9), Color(0xFFA21CAF)],
+    colors: [Color(0xFF4F46E5), Color(0xFFC026D3), Color(0xFFFB7185)],
     stops: [0, .55, 1],
   );
   static const meshBase = aurora;

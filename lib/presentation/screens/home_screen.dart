@@ -716,42 +716,59 @@ class _SumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    const w70 = Color(0xD9FFFFFF);
+    return Container(
       width: 156,
-      child: SoftCard(
-        radius: 22,
-        padding: const EdgeInsets.all(14),
-        onTap: onTap,
-        color: Color.alphaBlend(color.withValues(alpha: context.isDark ? .12 : .06), context.card),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(gradient: AppColors.tint(color), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, size: 16, color: Colors.white),
+      decoration: BoxDecoration(
+        gradient: AppColors.tint(color),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: context.colorShadow(color, strength: .45),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          child: Stack(children: [
+            Positioned(
+              right: -26,
+              top: -30,
+              child: Container(width: 86, height: 86, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: .14))),
             ),
-            const SizedBox(width: 7),
-            Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted))),
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .22), borderRadius: BorderRadius.circular(10)),
+                    child: Icon(icon, size: 16, color: Colors.white),
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(child: Text(head, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: w70))),
+                ]),
+                const SizedBox(height: 8),
+                Text.rich(
+                  TextSpan(children: [
+                    TextSpan(text: big, style: TextStyle(fontSize: small ? 15 : 21, fontWeight: FontWeight.w800, letterSpacing: -.3, color: Colors.white)),
+                    if (unit.isNotEmpty) TextSpan(text: ' $unit', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: w70)),
+                  ]),
+                  maxLines: small ? 2 : 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: w70)),
+                const Spacer(),
+                if (progress != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(99),
+                    child: LinearProgressIndicator(value: progress!.clamp(0, 1).toDouble(), minHeight: 5, color: Colors.white, backgroundColor: Colors.white.withValues(alpha: .25)),
+                  ),
+              ]),
+            ),
           ]),
-          const SizedBox(height: 8),
-          Text.rich(
-            TextSpan(children: [
-              TextSpan(text: big, style: TextStyle(fontSize: small ? 15 : 21, fontWeight: FontWeight.w800, letterSpacing: -.3)),
-              if (unit.isNotEmpty) TextSpan(text: ' $unit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.muted)),
-            ]),
-            maxLines: small ? 2 : 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.muted)),
-          const Spacer(),
-          if (progress != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(99),
-              child: LinearProgressIndicator(value: progress!.clamp(0, 1).toDouble(), minHeight: 5, color: color, backgroundColor: color.withValues(alpha: .12)),
-            ),
-        ]),
+        ),
       ),
     );
   }

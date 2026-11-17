@@ -1180,6 +1180,13 @@ body{background:
 .trfoot{display:flex;gap:6px;align-items:flex-start;margin-top:14px;font-size:12px;color:var(--faint)}
 .seg.two{grid-template-columns:1fr 1fr}
 
+
+/* versi berwarna: kartu ringkasan penuh warna */
+:root{--aurora:linear-gradient(135deg,#4F46E5 0%,#C026D3 55%,#FB7185 100%)}
+.scard{color:#fff;border:0;box-shadow:0 14px 24px -14px var(--sc)}
+.scard .sh,.scard b small,.scard>small{color:rgba(255,255,255,.85)}
+.scard::after{content:"";position:absolute;right:-26px;top:-30px;width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.14)}
+.scard .sbar{background:rgba(255,255,255,.25)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap">
@@ -4206,7 +4213,7 @@ function renderFeatures(){
 function renderSummary(){
   const row = $('#sumRow'); if(!row) return;
   const now = new Date(), nx = nextPrayer(now), t = kalTarget(), eat = kalSum(kalOn(now)).k - olaKcalOn(now), wkm = olaWeekMin(), md = todayMood();
-  const card = (id, ic, c, head, big, sub, bar, txt) => `<button class="scard" data-feat="${id}" style="--sc:${c}"><div class="sh"><i style="background:linear-gradient(135deg,color-mix(in srgb,${c} 78%,#fff),color-mix(in srgb,${c} 88%,#000))">${icon(ic)}</i>${head}</div><b class="${txt ? 't' : ''}">${big}</b><small>${sub}</small>${bar != null ? `<div class="sbar"><em style="width:${Math.min(100, bar * 100)}%;background:${c}"></em></div>` : ''}</button>`;
+  const card = (id, ic, c, head, big, sub, bar, txt) => `<button class="scard" data-feat="${id}" style="--sc:${c};background:linear-gradient(135deg,color-mix(in srgb,${c} 80%,#fff),color-mix(in srgb,${c} 90%,#000))"><div class="sh"><i style="background:rgba(255,255,255,.22)">${icon(ic)}</i>${head}</div><b class="${txt ? 't' : ''}">${big}</b><small>${sub}</small>${bar != null ? `<div class="sbar"><em style="width:${Math.min(100, bar * 100)}%;background:#fff"></em></div>` : ''}</button>`;
   const cards = [
     card('muslim', 'i-mosque', '#059669', 'Sholat', `${PRAYER_NAMES[nx.key]} <small>${fmtTime(nx.at)}</small>`, cdText(nx.at - now)),
     card('kal', 'i-bowl', '#F97316', 'Kalori', `${fmtK(kalSum(kalOn(now)).k)} <small>kkal</small>`, t ? (t.target - eat >= 0 ? `sisa ${fmtK(t.target - eat)} dari ${fmtK(t.target)}` : `lebih ${fmtK(eat - t.target)} kkal`) : 'Atur target diet', t ? eat / t.target : null),
