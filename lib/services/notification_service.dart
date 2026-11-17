@@ -217,7 +217,7 @@ class NotificationService {
                 hideExpandedLargeIcon: true,
               )
             : BigTextStyleInformation(_t(body)),
-        actions: const [
+        actions: [
           AndroidNotificationAction(actionDone, tr('Selesai'), showsUserInterface: true, cancelNotification: true),
           AndroidNotificationAction(actionSnooze, tr('Tunda 10 menit'), showsUserInterface: true, cancelNotification: true),
         ],

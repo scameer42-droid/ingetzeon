@@ -38,6 +38,8 @@ class I18n {
 
   static final _edgeWs = RegExp(r'^(\s*)([\s\S]*?)(\s*)$');
   static final _letters = RegExp(r'[A-Za-z]');
+  static final _leadSym = RegExp(r'^([^A-Za-z]*?\s)([A-Za-z][\s\S]*)$');
+  static final _trailPunct = RegExp(r'^([\s\S]*?[A-Za-z)])([,:;.!?…]+)$');
 
   static String _translate(String s, int depth) {
     final exact = kEnDict[s];
@@ -47,6 +49,16 @@ class I18n {
     if (core.isEmpty || !_letters.hasMatch(core)) return s;
     String? out = core != s ? kEnDict[core] : null;
     out ??= depth < 3 ? _template(core, depth) : null;
+    if (out == null) {
+      final lm = _leadSym.firstMatch(core);
+      final base = lm == null ? null : kEnDict[lm.group(2)!];
+      if (base != null) out = '${lm!.group(1)}$base';
+    }
+    if (out == null) {
+      final pm = _trailPunct.firstMatch(core);
+      final base = pm == null ? null : kEnDict[pm.group(1)!];
+      if (base != null) out = '$base${pm!.group(2)}';
+    }
     if (out == null && core.contains('\n')) {
       final lines = core.split('\n');
       var changed = false;
