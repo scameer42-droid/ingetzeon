@@ -37,6 +37,13 @@ tap "Semua" semua; sleep 6; snap 05_semua; anr
 adb shell input keyevent KEYCODE_BACK; sleep 2; adb shell input keyevent KEYCODE_BACK; sleep 3
 tap "Profil" profil; sleep 6; snap 06_profil; anr
 tap "Kalori" kalori; sleep 6; snap 07_kalori; anr
+adb shell input keyevent KEYCODE_BACK; sleep 2; adb shell input keyevent KEYCODE_BACK; sleep 2
+adb shell am start -n $PKG/.MainActivity; sleep 4
+tap "Beranda" beranda; sleep 3
+tap "Olahraga" olahraga; sleep 6; snap 08_olahraga; anr
+adb shell input swipe 540 1800 540 500 300; sleep 2
+tap "Perut rata" perut; sleep 5; snap 09_program; anr
+tap "Mulai latihan" mulai; sleep 14; snap 10_player; anr
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
