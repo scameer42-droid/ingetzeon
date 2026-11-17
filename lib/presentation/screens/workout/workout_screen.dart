@@ -8,7 +8,9 @@ import '../../../providers/calorie_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../services/workout_logic.dart';
 import '../../widgets/common.dart';
+import '../../../services/calorie_logic.dart';
 import '../calorie/calorie_screen.dart';
+import '../calorie/weight_screen.dart';
 import 'exercise_figure.dart';
 import 'workout_player.dart';
 
@@ -22,11 +24,6 @@ const kBlue = Color(0xFF2563EB);
 const levelNames = ['', 'Pemula', 'Menengah', 'Lanjut'];
 const levelColors = [Color(0xFF94A3B8), Color(0xFF10B981), Color(0xFFF59E0B), Color(0xFFE11D48)];
 
-/// Gerakan yang jadi gambar sampul tiap program.
-const programFigure = <String, String>{
-  'perut_pemula': 'crunch', 'perut_menengah': 'bicycle', 'perut_lanjut': 'leg_raise', 'kardio': 'jumping_jack', 'fullbody': 'pushup',
-  'kaki': 'lunge', 'lengan': 'tricep_dip', 'stretch_pagi': 'side_stretch', 'stretch_malam': 'child_pose',
-};
 String figureOf(WorkoutProgram p) => programFigure[p.id] ?? p.items.first.$1;
 
 /// Huruf tebal sempit untuk judul besar.
@@ -148,6 +145,7 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   String _area = 'perut';
+  String _cat = 'perut';
 
   @override
   void initState() {
@@ -177,8 +175,36 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
               _ChallengeCard(kg: kg),
               const SizedBox(height: 12),
               _BellyInfo(onCalorie: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CalorieScreen()))),
-              _title(context, 'Program latihan'),
-              for (final p in workoutPrograms) _ProgramCard(p, kg: kg),
+              _title(context, 'Berat badan', sub: 'Pantau hasil latihan & dietmu'),
+              const WeightProgressCard(),
+              _title(context, 'Disarankan untukmu', sub: _recoWhy(ref)),
+              SizedBox(
+                height: 132,
+                child: ListView(scrollDirection: Axis.horizontal, clipBehavior: Clip.none, children: [
+                  for (final id in _reco(ref)) Padding(padding: const EdgeInsets.only(right: 10), child: _MiniProgram(programById(id)!, kg: kg)),
+                ]),
+              ),
+              _title(context, 'Program latihan', sub: '${workoutPrograms.length} program · ${exercises.length} gerakan, semua tanpa alat'),
+              SizedBox(
+                height: 40,
+                child: ListView(scrollDirection: Axis.horizontal, children: [
+                  for (final c in [...programCategories, ('semua', 'Semua')])
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(c.$2),
+                        selected: _cat == c.$1,
+                        showCheckmark: false,
+                        selectedColor: kNavy,
+                        labelStyle: TextStyle(fontWeight: FontWeight.w700, color: _cat == c.$1 ? Colors.white : context.ink),
+                        onSelected: (_) => setState(() => _cat = c.$1),
+                      ),
+                    ),
+                ]),
+              ),
+              const SizedBox(height: 12),
+              for (final p in workoutPrograms)
+                if (_cat == 'semua' || programCategory[p.id] == _cat) _ProgramCard(p, kg: kg),
               _title(context, 'Semua gerakan', sub: 'Ketuk untuk melihat cara lengkapnya'),
               SizedBox(
                 height: 40,
@@ -258,6 +284,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
         ),
       ]),
     );
+  }
+
+  List<String> _reco(WidgetRef ref) {
+    final p = ref.read(calorieProvider).profile;
+    return Workout.recommend(kg: p?.kg, cm: p?.cm, age: p?.age, goal: p?.goal, weekMinutes: ref.read(workoutProvider).weekMinutes, hour: DateTime.now().hour);
+  }
+
+  String _recoWhy(WidgetRef ref) {
+    final p = ref.read(calorieProvider).profile;
+    if (p == null) return 'Isi profil tubuh di Kalori agar saran lebih pas';
+    if (p.age >= 60) return 'Sesuai usiamu — aman & ringan';
+    if (Body.bmi(p.kg, p.cm) > 27) return 'Ramah lutut, tanpa lompat — cocok untuk mulai menurunkan berat';
+    if (p.goal == 'turun') return 'Untuk menurunkan berat badan';
+    if (p.goal == 'naik') return 'Untuk menambah massa otot';
+    return 'Sesuai profil & waktu sekarang';
   }
 
   Widget _title(BuildContext context, String t, {String? sub, String? action, VoidCallback? onAction}) => Padding(
@@ -551,6 +592,40 @@ class _ProgramCard extends StatelessWidget {
               ),
             ]),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniProgram extends StatelessWidget {
+  const _MiniProgram(this.p, {required this.kg});
+  final WorkoutProgram p;
+  final double? kg;
+  @override
+  Widget build(BuildContext context) {
+    final c = Color(p.color);
+    return Material(
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: Ink(
+        width: 230,
+        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color.lerp(c, Colors.black, .4)!, c])),
+        child: InkWell(
+          onTap: () => openProgram(context, p),
+          child: Stack(children: [
+            Positioned(right: 0, bottom: 4, width: 112, child: ExerciseFigure(figureOf(p), animate: false, matColor: Colors.white.withValues(alpha: .3))),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 12, 96, 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(levelNames[p.level].toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: .8)),
+                const SizedBox(height: 4),
+                Text(p.name.split(' — ').first.toUpperCase(), maxLines: 3, overflow: TextOverflow.ellipsis, style: olaDisplay(20)),
+                const Spacer(),
+                Text('${(Workout.seconds(p) / 60).round()} MNT · ${fmtNum(Workout.kcal(p, kg))} KKAL', style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
+              ]),
+            ),
+          ]),
         ),
       ),
     );

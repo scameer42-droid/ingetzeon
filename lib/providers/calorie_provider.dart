@@ -119,6 +119,9 @@ class CalorieNotifier extends Notifier<CalorieState> {
     await _save(s);
   }
 
+  /// Ubah profil tanpa menambah catatan berat (mis. ganti target).
+  Future<void> updateProfile(BodyProfile p) => _save(state.copyWith(profile: p));
+
   CalorieState _withWeight(CalorieState s, double kg) {
     final today = dayKey(DateTime.now());
     final w = [...s.weights.where((x) => x.day != today), (day: today, kg: kg)]..sort((a, b) => a.day.compareTo(b.day));
@@ -131,6 +134,23 @@ class CalorieNotifier extends Notifier<CalorieState> {
   Future<void> logWeight(double kg) async {
     var s = _withWeight(state, kg);
     if (s.profile != null) s = s.copyWith(profile: s.profile!.withWeight(kg));
+    await _save(s);
+  }
+
+  /// Catat/ubah berat pada tanggal tertentu (untuk berat awal atau catatan lama).
+  /// Berat terbaru otomatis menjadi berat profil.
+  Future<void> setWeightOn(String day, double kg) async {
+    final w = [...state.weights.where((x) => x.day != day), (day: day, kg: kg)]..sort((a, b) => a.day.compareTo(b.day));
+    var s = state.copyWith(weights: w);
+    if (s.profile != null) s = s.copyWith(profile: s.profile!.withWeight(w.last.kg));
+    await _save(s);
+  }
+
+  Future<void> removeWeight(String day) async {
+    final w = [...state.weights.where((x) => x.day != day)];
+    if (w.isEmpty) return; // minimal satu catatan
+    var s = state.copyWith(weights: w);
+    if (s.profile != null) s = s.copyWith(profile: s.profile!.withWeight(w.last.kg));
     await _save(s);
   }
 

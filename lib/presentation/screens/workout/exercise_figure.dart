@@ -98,6 +98,9 @@ class FigurePrep {
     }
     if (props.contains('chair')) minX -= 34;
     if (props.contains('wall')) minX -= 14;
+    if (props.contains('wallR')) maxX += 14;
+    if (props.contains('bench')) maxX += 22;
+    if (props.contains('seat')) minX -= 6;
     final s = [1.25, (_ground - 8) / -minY, (figW - 20) / (maxX - minX)].reduce(math.min);
     final tx = figW / 2 - (minX + maxX) / 2 * s;
     return _cache[id] = FigurePrep._(front, keys, off, s, tx, minX, maxX, props, dur);
@@ -179,6 +182,26 @@ class FigurePainter extends CustomPainter {
       canvas.drawRect(Rect.fromLTWH(hx - 32 * s, hy, 3.5 * s, _ground - hy), fill);
       canvas.drawRect(Rect.fromLTWH(hx + 1 * s, hy, 3.5 * s, _ground - hy), fill);
       canvas.drawRRect(RRect.fromLTRBR(hx - 34 * s, hy - 34 * s, hx - 30 * s, hy, const Radius.circular(2)), fill);
+    }
+    final k0 = _joints(P.keys[0], P.front);
+    Offset at0(String n) => Offset(P.tx + (k0[n]!.dx + P.off[0].dx) * s, _ground + (k0[n]!.dy + P.off[0].dy) * s);
+    void box(double x, double y, double w, double h) => canvas.drawRRect(RRect.fromLTRBR(x, y, x + w, y + math.max(0, h), const Radius.circular(2)), fill..color = _prop);
+    if (P.props.contains('seat')) {
+      final h = at0('hip'), hy = h.dy + 8.2 * s;
+      box(h.dx - 18 * s, hy, 34 * s, 5 * s);
+      box(h.dx - 16 * s, hy, 3.5 * s, _ground - hy);
+      box(h.dx + 12 * s, hy, 3.5 * s, _ground - hy);
+      box(h.dx - 18 * s, hy - 38 * s, 4 * s, 38 * s);
+    }
+    if (P.props.contains('bench')) {
+      final h = at0('hand1'), hy = h.dy + 3.6 * s;
+      box(h.dx - 14 * s, hy, 36 * s, 5 * s);
+      box(h.dx - 12 * s, hy, 3.5 * s, _ground - hy);
+      box(h.dx + 17 * s, hy, 3.5 * s, _ground - hy);
+    }
+    if (P.props.contains('wallR')) {
+      final h = at0('hand1');
+      canvas.drawRRect(RRect.fromLTRBR(h.dx + 3.8 * s, 6, h.dx + 3.8 * s + 10, _ground + 5, const Radius.circular(2)), fill..color = _prop.withValues(alpha: .55));
     }
     if (P.props.contains('wall')) {
       final b0 = _joints(P.keys[0], P.front);

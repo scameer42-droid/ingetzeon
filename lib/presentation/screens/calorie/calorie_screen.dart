@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +12,7 @@ import '../../widgets/common.dart';
 import 'calorie_add.dart';
 import '../../../providers/workout_provider.dart';
 import 'food_detail.dart';
+import 'weight_screen.dart';
 
 const kKal = Color(0xFFF97316);
 const kKalGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFF97316), Color(0xFFF43F5E)]);
@@ -133,7 +133,7 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
         _NutritionCard(day: _day),
         // ---- berat badan
         const SectionHeader('Berat badan'),
-        const _WeightCard(),
+        const WeightProgressCard(),
         const SizedBox(height: 10),
         Text('Angka kalori adalah perkiraan. Untuk diet khusus atau kondisi medis, konsultasikan dengan dokter atau ahli gizi.',
             style: TextStyle(fontSize: 11.5, color: context.faint)),
@@ -390,137 +390,7 @@ class QtyStepper extends StatelessWidget {
 }
 
 /// ---------- Berat badan ----------
-class _WeightCard extends ConsumerWidget {
-  const _WeightCard();
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final s = ref.watch(calorieProvider);
-    final p = s.profile;
-    if (p == null) {
-      return SoftCard(
-        child: Column(children: [
-          const Text('⚖️', style: TextStyle(fontSize: 34)),
-          const SizedBox(height: 6),
-          const Text('Isi berat & tinggi badan', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-          const SizedBox(height: 4),
-          Text('Supaya target kalori harianmu dihitung otomatis sesuai tujuan diet.', textAlign: TextAlign.center, style: TextStyle(color: context.muted)),
-          const SizedBox(height: 12),
-          GradientButton(label: 'Atur profil tubuh', icon: Icons.tune_rounded, onPressed: () => editBodyProfile(context, ref)),
-        ]),
-      );
-    }
-    final bmi = Body.bmi(p.kg, p.cm);
-    final (label, color) = Body.bmiLabel(bmi);
-    final (lo, hi) = Body.healthyRange(p.cm);
-    final w = s.weights.length > 30 ? s.weights.sublist(s.weights.length - 30) : s.weights;
-    final first = s.weights.isEmpty ? p.kg : s.weights.first.kg;
-    final diff = p.kg - first;
-    final weeks = Body.weeksToTarget(p.kg, p.targetKg);
-    return SoftCard(
-      radius: 20,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(fmtQty(p.kg), style: accentFont(size: 38)),
-          const Padding(padding: EdgeInsets.only(bottom: 6, left: 4), child: Text('kg', style: TextStyle(fontWeight: FontWeight.w700))),
-          const SizedBox(width: 10),
-          if (s.weights.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text('${diff > 0 ? '▲' : diff < 0 ? '▼' : '•'} ${fmtQty(double.parse(diff.abs().toStringAsFixed(1)))} kg',
-                  style: TextStyle(fontWeight: FontWeight.w700, color: context.muted, fontSize: 13)),
-            ),
-          const Spacer(),
-          FilledButton.tonalIcon(onPressed: () => logWeightDialog(context, ref), icon: const Icon(Icons.monitor_weight_outlined, size: 18), label: const Text('Catat')),
-        ]),
-        const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 8, children: [
-          _chip('BMI ${bmi.toStringAsFixed(1)} · $label', Color(color)),
-          _chip('Ideal ${fmtQty(lo)}–${fmtQty(hi)} kg', const Color(0xFF10B981)),
-          _chip('Tinggi ${fmtQty(p.cm)} cm', const Color(0xFF6366F1)),
-          if (p.targetKg != null) _chip('Target ${fmtQty(p.targetKg!)} kg${weeks > 0 ? ' · ±$weeks minggu' : ' ✓'}', kKal),
-        ]),
-        if (w.length >= 2) ...[
-          const SizedBox(height: 16),
-          SizedBox(height: 150, child: _WeightChart(w, target: p.targetKg)),
-        ] else ...[
-          const SizedBox(height: 10),
-          Text('Catat berat badan rutin (mis. seminggu sekali di pagi hari) untuk melihat grafik perkembanganmu.', style: TextStyle(color: context.muted, fontSize: 12.5)),
-        ],
-      ]),
-    );
-  }
-
-  Widget _chip(String t, Color c) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: c.withValues(alpha: .12), borderRadius: BorderRadius.circular(99)),
-        child: Text(t, style: TextStyle(color: c, fontWeight: FontWeight.w700, fontSize: 12)),
-      );
-}
-
-class _WeightChart extends StatelessWidget {
-  const _WeightChart(this.w, {this.target});
-  final List<({String day, double kg})> w;
-  final double? target;
-  @override
-  Widget build(BuildContext context) {
-    final spots = [for (var i = 0; i < w.length; i++) FlSpot(i.toDouble(), w[i].kg)];
-    final vals = [...w.map((x) => x.kg), if (target != null) target!];
-    final lo = vals.reduce(math.min) - 1, hi = vals.reduce(math.max) + 1;
-    return LineChart(LineChartData(
-      minY: lo.floorToDouble(),
-      maxY: hi.ceilToDouble(),
-      gridData: const FlGridData(show: false),
-      borderData: FlBorderData(show: false),
-      lineTouchData: const LineTouchData(enabled: false),
-      extraLinesData: target == null
-          ? null
-          : ExtraLinesData(horizontalLines: [HorizontalLine(y: target!, color: kKal.withValues(alpha: .6), strokeWidth: 1.5, dashArray: [6, 4])]),
-      titlesData: FlTitlesData(
-        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 32,
-            getTitlesWidget: (v, meta) => v == meta.min || v == meta.max ? Text(v.toStringAsFixed(0), style: TextStyle(fontSize: 11, color: context.muted)) : const SizedBox.shrink(),
-          ),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: 1,
-            getTitlesWidget: (v, _) {
-              final i = v.toInt();
-              if (v % 1 != 0 || i < 0 || i >= w.length || (i != 0 && i != w.length - 1)) return const SizedBox.shrink();
-              final d = DateTime.tryParse(w[i].day);
-              return Text(d == null ? '' : '${d.day}/${d.month}', style: TextStyle(fontSize: 11, color: context.muted));
-            },
-          ),
-        ),
-      ),
-      lineBarsData: [
-        LineChartBarData(spots: spots, isCurved: true, color: kKal, barWidth: 4, dotData: const FlDotData(show: true), belowBarData: BarAreaData(show: true, color: kKal.withValues(alpha: .1))),
-      ],
-    ));
-  }
-}
-
-Future<void> logWeightDialog(BuildContext context, WidgetRef ref) async {
-  final cur = ref.read(calorieProvider).profile?.kg;
-  final v = await inputDialog(context, title: 'Berat badan hari ini (kg)', initial: cur == null ? '' : fmtQty(cur), hint: 'mis. 65,5');
-  if (v == null) return;
-  final kg = double.tryParse(v.replaceAll(',', '.').trim());
-  if (kg == null || kg < 25 || kg > 300) {
-    if (context.mounted) showToast(context, 'Masukkan berat 25–300 kg');
-    return;
-  }
-  if (ref.read(calorieProvider).profile == null) {
-    if (context.mounted) await editBodyProfile(context, ref, kg: kg);
-    return;
-  }
-  await ref.read(calorieProvider.notifier).logWeight(kg);
-  if (context.mounted) showToast(context, 'Berat ${fmtQty(kg)} kg dicatat ⚖️');
-}
+Future<void> logWeightDialog(BuildContext context, WidgetRef ref) => logWeightSheet(context, ref);
 
 /// ---------- Profil tubuh ----------
 Future<void> editBodyProfile(BuildContext context, WidgetRef ref, {double? kg}) async {

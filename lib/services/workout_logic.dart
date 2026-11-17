@@ -73,22 +73,74 @@ class Workout {
   /// Pertanyaan/ajakan olahraga → id program yang cocok, 'hub', atau null.
   static String? ask(String text) {
     final t = text.toLowerCase();
-    if (!RegExp(r'\b(olahraga|olah raga|latihan|workout|senam|gerakan|kecilin|kecilkan|mengecilkan|mengencangkan|six ?pack|sixpack|peregangan|stretching|kardio|cardio|push ?up|sit ?up|plank|squat)\b')
+    if (!RegExp(r'\b(olahraga|olah raga|latihan|workout|senam|gerakan|kecilin|kecilkan|mengecilkan|mengencangkan|six ?pack|sixpack|peregangan|stretching|kardio|cardio|push ?up|sit ?up|plank|squat|yoga|pemanasan|hiit)\b')
         .hasMatch(t)) {
       return null;
     }
+    if (RegExp(r'\b(lansia|orang tua|manula|kakek|nenek|kursi)\b').hasMatch(t)) return 'lansia';
+    if (RegExp(r'\b(tanpa lompat|gak lompat|ga lompat|tidak lompat|ramah lutut|lutut sakit)\b').hasMatch(t)) return 'low_impact';
+    if (RegExp(r'sakit pinggang|pinggang sakit|sakit punggung|punggung sakit').hasMatch(t)) return 'punggung';
     if (RegExp(r'\b(perut|buncit|begah|sixpack|six pack|six-pack|core|pinggang|lemak perut)\b').hasMatch(t)) {
+      if (RegExp(r'pinggang|samping|ramping').hasMatch(t)) return 'pinggang';
+      if (RegExp(r'berdiri|tanpa rebahan|gemuk|obesitas').hasMatch(t)) return 'perut_berdiri';
       return RegExp(r'lanjut|berat|six ?-?pack').hasMatch(t)
           ? 'perut_lanjut'
           : RegExp(r'menengah|sedang').hasMatch(t)
               ? 'perut_menengah'
               : 'perut_pemula';
     }
-    if (RegExp(r'\b(kardio|cardio|bakar lemak|bakar kalori|hiit)\b').hasMatch(t)) return 'kardio';
-    if (RegExp(r'\b(kaki|paha|bokong|pantat|betis)\b').hasMatch(t)) return 'kaki';
-    if (RegExp(r'\b(lengan|tangan|dada|push ?up|punggung)\b').hasMatch(t)) return 'lengan';
+    if (RegExp(r'(7|tujuh) ?menit|\bhiit\b').hasMatch(t)) return 'hiit7';
+    if (RegExp(r'\b(kardio|cardio|bakar lemak|bakar kalori)\b').hasMatch(t)) return 'kardio';
+    if (RegExp(r'\byoga\b').hasMatch(t)) return 'yoga';
+    if (RegExp(r'\bpemanasan\b').hasMatch(t)) return 'pemanasan';
+    if (RegExp(r'\b(punggung|postur|bungkuk|pinggang sakit|sakit pinggang)\b').hasMatch(t)) return 'punggung';
+    if (RegExp(r'\b(bokong|pantat)\b').hasMatch(t)) return 'bokong';
+    if (RegExp(r'\b(kaki|paha|betis)\b').hasMatch(t)) return 'kaki';
+    if (RegExp(r'\b(dada|bahu)\b').hasMatch(t)) return RegExp(r'lanjut|berat').hasMatch(t) ? 'atas_lanjut' : 'dada_bahu';
+    if (RegExp(r'\b(lengan|tangan|push ?up)\b').hasMatch(t)) return 'lengan';
     if (RegExp(r'\b(peregangan|stretching|lentur|pegal|kaku)\b').hasMatch(t)) return RegExp(r'malam|tidur').hasMatch(t) ? 'stretch_malam' : 'stretch_pagi';
     if (RegExp(r'\b(full ?body|seluruh badan|semua badan)\b').hasMatch(t)) return 'fullbody';
     return 'hub';
+  }
+
+  /// Program yang disarankan sesuai profil & jam (maks 4).
+  static List<String> recommend({double? kg, double? cm, int? age, String? goal, int weekMinutes = 0, int hour = 12}) {
+    final r = <String>[];
+    void add(String id) {
+      if (!r.contains(id)) r.add(id);
+    }
+
+    final bmi = kg != null && cm != null && cm > 0 ? kg / ((cm / 100) * (cm / 100)) : null;
+    if (age != null && age >= 60) {
+      add('lansia');
+      add('punggung');
+      add('yoga');
+    }
+    if (bmi != null && bmi > 27) {
+      add('low_impact');
+      add('perut_berdiri');
+    }
+    if (goal == 'turun') {
+      if (weekMinutes >= 90 && (bmi == null || bmi <= 27)) {
+        add('hiit7');
+        add('kardio');
+      } else {
+        add('low_impact');
+        add('perut_pemula');
+      }
+    }
+    if (goal == 'naik') {
+      add('fullbody');
+      add('dada_bahu');
+    }
+    if (hour < 9) {
+      add('stretch_pagi');
+    } else if (hour >= 20) {
+      add('stretch_malam');
+    }
+    add('perut_pemula');
+    add('fullbody');
+    add('punggung');
+    return r.take(4).toList();
   }
 }
