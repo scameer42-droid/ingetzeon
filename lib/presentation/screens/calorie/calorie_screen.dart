@@ -11,6 +11,7 @@ import '../../../providers/calorie_provider.dart';
 import '../../../services/calorie_logic.dart';
 import '../../widgets/common.dart';
 import 'calorie_add.dart';
+import '../../../providers/workout_provider.dart';
 import 'food_detail.dart';
 
 const kKal = Color(0xFFF97316);
@@ -40,7 +41,8 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
     final t = s.target;
     final eaten = s.kcalOn(_day);
     final goal = t?.target ?? 2000;
-    final left = goal - eaten;
+    final burned = ref.watch(workoutProvider).kcalOn(_day);
+    final left = goal - eaten + burned;
     final mac = s.macrosOn(_day);
     final isToday = sameDay(_day, DateTime.now());
     return Scaffold(
@@ -90,7 +92,7 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   _stat('🎯 Target', '${fmtKcal(goal)} kkal'),
-                  _stat('🍽️ Dimakan', '${fmtKcal(eaten)} kkal'),
+                  _stat('🍽️ Dimakan', '${fmtKcal(eaten)} kkal${burned >= 1 ? '  ·  🔥 +${fmtKcal(burned)}' : ''}'),
                   _stat(t == null ? '⚙️ Profil' : '${goals.firstWhere((g) => g.key == t.goal).emoji} Tujuan',
                       t == null ? 'belum diatur' : goals.firstWhere((g) => g.key == t.goal).name),
                 ]),

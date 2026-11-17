@@ -20,6 +20,8 @@ import 'cycle_screen.dart';
 import 'home_screen.dart';
 import 'muslim/muslim_screen.dart';
 import 'notif_health.dart';
+import 'workout/workout_screen.dart';
+import '../../providers/workout_provider.dart';
 import '../../providers/settings_provider.dart';
 import 'profile_screen.dart';
 import 'stats_screen.dart';
@@ -78,6 +80,7 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
       await ref.read(cycleProvider.notifier).reschedule();
       await ref.read(calmSettingsProvider.notifier).reschedule();
       await ref.read(habitsProvider.notifier).reschedule();
+      await ref.read(workoutProvider.notifier).reschedule();
       _lastRefresh = DateTime.now();
     } catch (e) {
       debugPrint('Gagal menyegarkan jadwal: $e');
@@ -101,6 +104,11 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     if (id == 'cycle') {
       if (!mounted) return;
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CycleScreen()));
+      return;
+    }
+    if (id == 'olahraga') {
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WorkoutScreen()));
       return;
     }
     if (id == 'muslim') {

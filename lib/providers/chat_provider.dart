@@ -14,6 +14,8 @@ import '../services/voice_service.dart';
 import 'cycle_provider.dart';
 import 'muslim_provider.dart';
 import 'calorie_provider.dart';
+import 'workout_provider.dart';
+import '../services/workout_logic.dart';
 import '../services/calorie_logic.dart';
 import '../services/islam_logic.dart';
 import 'notes_provider.dart';
@@ -132,6 +134,37 @@ class ChatNotifier extends Notifier<ChatState> {
     if (t == null) return 'Total hari ini **${fmtKcal(eaten)} kkal**. Atur berat & tinggi badan di menu Kalori supaya target harianmu dihitung otomatis.';
     final left = t.target - eaten;
     return 'Total hari ini **${fmtKcal(eaten)} / ${fmtKcal(t.target)} kkal** — ${left >= 0 ? 'sisa ${fmtKcal(left)} kkal 💪' : 'lebih ${fmtKcal(-left)} kkal, besok seimbangkan lagi ya 🙂'}';
+  }
+
+  /// Catat olahraga ("tadi jogging 30 menit") & ajakan latihan ("olahraga kecilin perut").
+  Future<bool> _answerWorkout(String text) async {
+    final a = Workout.parseActivity(text);
+    final kg = ref.read(calorieProvider).profile?.kg;
+    if (a != null) {
+      final kcal = Workout.burn(a.met, kg, a.minutes * 60);
+      await ref.read(workoutProvider.notifier).add(name: a.name, secs: a.minutes * 60, kcal: kcal, emoji: '🏅');
+      final w = ref.read(workoutProvider);
+      _bot('🏅 **${a.name} ${a.minutes} menit** dicatat — sekitar **${kcal.round()} kkal** terbakar 🔥\nMinggu ini ${w.weekMinutes}/${w.weeklyGoal} menit olahraga.${kg == null ? '\n\n_Isi berat badan di menu Kalori supaya hitungan kalori lebih pas._' : ''}',
+          tools: const ['olahraga'], speech: '${a.name} ${a.minutes} menit dicatat. Sekitar ${kcal.round()} kilo kalori terbakar.');
+      return true;
+    }
+    final id = Workout.ask(text);
+    if (id == null) return false;
+    final lower = text.toLowerCase();
+    final belly = RegExp(r'perut|buncit|sixpack|six pack|pinggang').hasMatch(lower);
+    if (id == 'hub') {
+      _bot('🏃 Ayo gerak! Di menu **Olahraga** ada program perut (pemula–lanjut), kardio bakar lemak, full body, kaki, lengan, dan peregangan — lengkap dengan cara tiap gerakan, timer & suara pemandu.',
+          tools: const ['olahraga', 'olahraga:perut_pemula']);
+      return true;
+    }
+    final p = programById(id)!;
+    final list = [for (final (eid, _) in p.items) exerciseById(eid)].map((e) => '• ${e.emoji} ${e.name}').toSet().join('\n');
+    final tip = belly
+        ? '\n\n💡 Penting: lemak perut turun lewat **defisit kalori + kardio**, bukan sit-up saja. Latihan perut mengencangkan ototnya. Kombinasikan dengan program **Kardio bakar lemak** 3× seminggu dan target kalori di menu Kalori.'
+        : '';
+    _bot('${p.emoji} **${p.name}** (±${(Workout.seconds(p) / 60).round()} menit, ${p.rounds} ronde):\n$list$tip', tools: ['olahraga:${p.id}', 'olahraga'],
+        speech: 'Coba program ${p.name}, sekitar ${(Workout.seconds(p) / 60).round()} menit.');
+    return true;
   }
 
   /// Catat makan, tanya kalori, catat berat badan — tanpa internet.
@@ -275,6 +308,7 @@ class ChatNotifier extends Notifier<ChatState> {
       if (photoPath == null && !RegExp(r'^(?:tolong\s+|tlg\s+)?(?:ingatkan|ingetin|ingatin|ingetkan|alarm|catat|catet|setel|bangunkan)').hasMatch(lower) && _answerIslam(text)) {
         return;
       }
+      if (photoPath == null && await _answerWorkout(text)) return;
       if (photoPath == null && await _answerCalorie(text)) return;
       if (photoPath != null && RegExp(r'kalori|kkal|makan|makanan|gizi|diet').hasMatch(lower)) {
         await _scanFoodChat(photoPath);

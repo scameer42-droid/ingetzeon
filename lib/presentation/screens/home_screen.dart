@@ -18,6 +18,8 @@ import '../../providers/cycle_provider.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
 import 'calorie/calorie_screen.dart';
+import 'workout/workout_screen.dart';
+import '../../providers/workout_provider.dart';
 import '../../providers/calorie_provider.dart';
 import 'calm/calm_tools.dart';
 import 'cycle_screen.dart';
@@ -373,7 +375,7 @@ class _MenuCard extends ConsumerWidget {
       (icon: Icons.sticky_note_2_rounded, label: 'Catatan', color: const Color(0xFF8B5CF6), onTap: () => push(const NotesScreen()), badge: 0),
       (icon: Icons.mosque_rounded, label: 'Muslim', color: const Color(0xFF059669), onTap: () => push(const MuslimScreen()), badge: 0),
       (icon: Icons.restaurant_rounded, label: 'Kalori', color: kKal, onTap: () => push(const CalorieScreen()), badge: 0),
-      (icon: Icons.spa_rounded, label: 'Ruang Tenang', color: const Color(0xFF14B8A6), onTap: () => push(CalmScreen(onOpenChat: onOpenAi)), badge: 0),
+      (icon: Icons.directions_run_rounded, label: 'Olahraga', color: const Color(0xFFE11D48), onTap: () => push(const WorkoutScreen()), badge: 0),
       (icon: Icons.apps_rounded, label: 'Lainnya', color: const Color(0xFF64748B), onTap: () => _moreMenu(context, ref), badge: 0),
     ];
     return SoftCard(
@@ -423,6 +425,7 @@ class _MenuCard extends ConsumerWidget {
     final cycleOn = ref.read(cycleProvider).enabled;
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
     final rows = <({IconData icon, String title, String sub, Color color, VoidCallback onTap})>[
+      (icon: Icons.spa_rounded, title: 'Ruang Tenang', sub: 'Mood, kebiasaan, fokus, jurnal', color: const Color(0xFF14B8A6), onTap: () => push(CalmScreen(onOpenChat: onOpenAi))),
       (icon: Icons.psychology_rounded, title: 'Tes psikologi', sub: 'Kenali kondisi dirimu', color: const Color(0xFFEC4899), onTap: () => push(const TestsScreen())),
       (icon: Icons.water_drop_rounded, title: 'Siklus haid', sub: cycleOn ? 'Pengingat & perkiraan haid' : 'Aktifkan pengingat haid', color: kHaid, onTap: () => push(const CycleScreen())),
       (icon: Icons.calendar_month_rounded, title: 'Kalender', sub: 'Semua jadwal per tanggal', color: const Color(0xFF6366F1), onTap: () => onGoTo(1)),
@@ -490,7 +493,8 @@ class _SummaryRow extends ConsumerWidget {
     final nx = ref.watch(muslimProvider).next(now);
     final kal = ref.watch(calorieProvider);
     final t = kal.target;
-    final eaten = kal.kcalOn(now);
+    final eaten = kal.kcalOn(now) - ref.watch(workoutProvider).kcalOn(now);
+    final wk = ref.watch(workoutProvider);
     ref.watch(moodProvider);
     final mood = ref.read(moodProvider.notifier).today;
     final cycle = ref.watch(cycleProvider);
@@ -511,11 +515,21 @@ class _SummaryRow extends ConsumerWidget {
         icon: Icons.restaurant_rounded,
         color: kKal,
         head: 'Kalori',
-        big: fmtKcal(eaten),
+        big: fmtKcal(kal.kcalOn(now)),
         unit: 'kkal',
         sub: t == null ? 'Atur target diet' : (t.target - eaten >= 0 ? 'sisa ${fmtKcal(t.target - eaten)} dari ${fmtKcal(t.target)}' : 'lebih ${fmtKcal(eaten - t.target)} kkal'),
         progress: t == null ? null : eaten / t.target,
         onTap: () => push(const CalorieScreen()),
+      ),
+      _SumCard(
+        icon: Icons.directions_run_rounded,
+        color: const Color(0xFFE11D48),
+        head: 'Olahraga',
+        big: '${wk.weekMinutes}',
+        unit: '/ ${wk.weeklyGoal} mnt',
+        sub: wk.minutesOn(now) > 0 ? 'Hari ini ${wk.minutesOn(now)} menit 🔥' : 'Minggu ini · ayo gerak!',
+        progress: wk.weekMinutes / wk.weeklyGoal,
+        onTap: () => push(const WorkoutScreen()),
       ),
       _SumCard(
         icon: Icons.spa_rounded,

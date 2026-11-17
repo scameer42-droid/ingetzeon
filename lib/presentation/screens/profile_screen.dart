@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../providers/muslim_provider.dart';
 import 'muslim/muslim_screen.dart';
 import 'notif_health.dart';
+import 'workout/workout_screen.dart';
+import '../../providers/workout_provider.dart';
 import 'calorie/calorie_screen.dart';
 import '../../services/calorie_logic.dart';
 import '../../providers/calorie_provider.dart';
@@ -303,6 +305,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ]),
           _groupTitle('Kesehatan'),
           _Group(children: [
+            _Row(
+              icon: Icons.directions_run_rounded,
+              color: const Color(0xFFE11D48),
+              title: 'Olahraga',
+              subtitle: 'Program perut, kardio, full body · ${ref.watch(workoutProvider).weekMinutes} menit minggu ini',
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const WorkoutScreen())),
+            ),
             _Row(
               icon: Icons.restaurant_rounded,
               color: kKal,

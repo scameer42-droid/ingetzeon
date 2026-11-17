@@ -418,6 +418,15 @@ class NotificationService {
   }
 
   /// Pengingat harian cek mood (pagi) & jurnal (malam). null = matikan.
+  /// Pengingat olahraga harian (null = mati).
+  Future<void> scheduleWorkout({int? hour, int minute = 0}) async {
+    if (hour == null) {
+      await _cancelId(_calmBase + 3);
+      return;
+    }
+    await _daily(_calmBase + 3, hour, minute, '🏃 Waktunya olahraga!', 'Cukup 10–15 menit. Badan sehat, perut makin rata 💪', 'olahraga', const Color(0xFFF97316));
+  }
+
   Future<void> scheduleCalm({int? checkinHour, int? journalHour}) async {
     if (checkinHour == null) await _cancelId(_calmBase + 1);
     if (journalHour == null) await _cancelId(_calmBase + 2);
