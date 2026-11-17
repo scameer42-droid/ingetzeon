@@ -25,6 +25,7 @@ sleep 5
 T0=$(date +%s)
 adb shell am start -W -n $PKG/.MainActivity | tee -a $D/steps.txt
 sleep 20; snap 01_home; anr
+adb shell input keyevent KEYCODE_BACK; sleep 3
 tap "Lainnya" lainnya; sleep 6; snap 02_lainnya; anr
 adb shell input keyevent KEYCODE_BACK; sleep 3
 tap "Barang" barang; sleep 6; snap 03_barang; anr
