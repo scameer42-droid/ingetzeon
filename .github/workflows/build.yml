@@ -48,9 +48,16 @@ jobs:
 
       - name: Tes
         run: |
-          set -o pipefail
           echo "=== test ===" >> ci.log
-          flutter test 2>&1 | tail -40 | tee -a ci.log
+          set +e
+          flutter test > test.log 2>&1
+          rc=$?
+          tail -40 test.log | tee -a ci.log
+          if [ $rc -ne 0 ]; then
+            echo "===== RINCIAN GAGAL ====="
+            grep -v "^#[0-9]" test.log | grep -B3 -A22 "EXCEPTION CAUGHT BY\|Expected:\|overflowed" | grep -v "WIDGET INSPECTOR" | head -400
+          fi
+          exit $rc
 
       - name: Build APK
         run: |
