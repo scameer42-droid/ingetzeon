@@ -80,8 +80,13 @@ void main() {
       await _scrollAll(t);
       await t.tap(find.text('Catat berat hari ini'));
       await t.pump(const Duration(milliseconds: 600));
+      await t.pump(const Duration(milliseconds: 600));
       expect(find.text('Catat berat badan'), findsOneWidget);
-      await t.tap(find.text('+1'));
+      expect(find.text('76,4'), findsWidgets);
+      final plus = find.widgetWithText(OutlinedButton, '+1');
+      await t.ensureVisible(plus);
+      await t.pump(const Duration(milliseconds: 300));
+      (t.widget<OutlinedButton>(plus).onPressed!)();
       await t.pump();
       expect(find.text('77,4'), findsWidgets);
       await t.binding.setSurfaceSize(null);
