@@ -26,13 +26,7 @@ sleep 5
 T0=$(date +%s)
 adb shell am start -W -n $PKG/.MainActivity | tee -a $D/steps.txt
 sleep 20; snap 01_home; anr
-adb shell input swipe 540 1900 540 800 400; sleep 2; snap 02_home_scroll
-adb shell input swipe 540 800 540 1900 400; sleep 2
-tap "ID" lang; sleep 5; snap 03_home_en; anr
-tap "Translate" trans; sleep 5; snap 04_trans
-adb shell input keyevent KEYCODE_BACK; sleep 2
-tap "Profile" prof; sleep 3; snap 05_profile_en
-adb shell input swipe 540 1700 540 800 400; sleep 2; snap 06_profile_scroll
+adb shell input swipe 540 1900 540 900 400; sleep 2; snap 02_home_scroll
 PID=$(adb shell pidof $PKG | tr -d '\r')
 echo "PID=$PID" >> $D/steps.txt
 if [ -n "$PID" ]; then adb shell kill -3 $PID; sleep 4; fi
