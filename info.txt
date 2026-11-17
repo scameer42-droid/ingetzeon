@@ -1,0 +1,74 @@
+{
+ "identifier": "adhan.recordings.from.doha.qatar",
+ "mediatype": "audio",
+ "collection": [
+  "cratediggers",
+  "folksoundomy"
+ ],
+ "creator": "Doha, Qatar",
+ "description": "Recorded between 2013 and 2014.",
+ "language": "ara",
+ "licenseurl": "http://creativecommons.org/publicdomain/mark/1.0/",
+ "scanner": "Internet Archive HTML5 Uploader 1.6.3",
+ "subject": [
+  "Adhan",
+  "Islam"
+ ],
+ "title": "Adhan Recordings from Doha, Qatar",
+ "publicdate": "2015-12-22 18:39:23",
+ "uploader": "abd.al.rahman@hushmail.com",
+ "addeddate": "2015-12-22 18:39:23",
+ "curation": "[curator]validator@archive.org[/curator][date]20151222183954[/date][comment]checked for malware[/comment]",
+ "backup_location": "ia905507_7",
+ "external_metadata_update": "2019-04-14T08:44:09Z"
+}
+Adhan_Doha_Qatar.jpg None 96436 JPEG
+Adhan_Doha_Qatar_01_Fajr_Adhan.afpk None 39840 Columbia Peaks
+Adhan_Doha_Qatar_01_Fajr_Adhan.mp3 217.21 2901706 VBR MP3
+Adhan_Doha_Qatar_01_Fajr_Adhan.ogg 217.18 2185699 Ogg Vorbis
+Adhan_Doha_Qatar_01_Fajr_Adhan.png None 6745 PNG
+Adhan_Doha_Qatar_01_Fajr_Adhan_esshigh.json.gz None 1897 Essentia High GZ
+Adhan_Doha_Qatar_01_Fajr_Adhan_esslow.json.gz None 23987 Essentia Low GZ
+Adhan_Doha_Qatar_01_Fajr_Adhan_spectrogram.png None 320528 Spectrogram
+Adhan_Doha_Qatar_02_Dhuhr_Adhan.afpk None 33600 Columbia Peaks
+Adhan_Doha_Qatar_02_Dhuhr_Adhan.mp3 178.86 2419879 VBR MP3
+Adhan_Doha_Qatar_02_Dhuhr_Adhan.ogg 178.84 1754488 Ogg Vorbis
+Adhan_Doha_Qatar_02_Dhuhr_Adhan.png None 7521 PNG
+Adhan_Doha_Qatar_02_Dhuhr_Adhan_esshigh.json.gz None 1904 Essentia High GZ
+Adhan_Doha_Qatar_02_Dhuhr_Adhan_esslow.json.gz None 23526 Essentia Low GZ
+Adhan_Doha_Qatar_02_Dhuhr_Adhan_spectrogram.png None 305247 Spectrogram
+Adhan_Doha_Qatar_03_Asr_Adhan.afpk None 34376 Columbia Peaks
+Adhan_Doha_Qatar_03_Asr_Adhan.mp3 187.45 2521361 VBR MP3
+Adhan_Doha_Qatar_03_Asr_Adhan.ogg 187.43 1831291 Ogg Vorbis
+Adhan_Doha_Qatar_03_Asr_Adhan.png None 8547 PNG
+Adhan_Doha_Qatar_03_Asr_Adhan_esshigh.json.gz None 1888 Essentia High GZ
+Adhan_Doha_Qatar_03_Asr_Adhan_esslow.json.gz None 23427 Essentia Low GZ
+Adhan_Doha_Qatar_03_Asr_Adhan_spectrogram.png None 297573 Spectrogram
+Adhan_Doha_Qatar_04_Maghrib_Adhan.afpk None 35560 Columbia Peaks
+Adhan_Doha_Qatar_04_Maghrib_Adhan.mp3 198.71 2693329 VBR MP3
+Adhan_Doha_Qatar_04_Maghrib_Adhan.ogg 198.69 1929957 Ogg Vorbis
+Adhan_Doha_Qatar_04_Maghrib_Adhan.png None 8539 PNG
+Adhan_Doha_Qatar_04_Maghrib_Adhan_esshigh.json.gz None 1889 Essentia High GZ
+Adhan_Doha_Qatar_04_Maghrib_Adhan_esslow.json.gz None 23697 Essentia Low GZ
+Adhan_Doha_Qatar_04_Maghrib_Adhan_spectrogram.png None 299297 Spectrogram
+Adhan_Doha_Qatar_05_Isha_Adhan.afpk None 33648 Columbia Peaks
+Adhan_Doha_Qatar_05_Isha_Adhan.mp3 181 2438980 VBR MP3
+Adhan_Doha_Qatar_05_Isha_Adhan.ogg 180.98 1831748 Ogg Vorbis
+Adhan_Doha_Qatar_05_Isha_Adhan.png None 5755 PNG
+Adhan_Doha_Qatar_05_Isha_Adhan_esshigh.json.gz None 1887 Essentia High GZ
+Adhan_Doha_Qatar_05_Isha_Adhan_esslow.json.gz None 23201 Essentia Low GZ
+Adhan_Doha_Qatar_05_Isha_Adhan_spectrogram.png None 320551 Spectrogram
+Adhan_Doha_Qatar_thumb.jpg None 3751 JPEG Thumb
+__ia_thumb.jpg None 5966 Item Tile
+adhan.recordings.from.doha.qatar_archive.torrent None 9866 Archive BitTorrent
+adhan.recordings.from.doha.qatar_files.xml None None Metadata
+adhan.recordings.from.doha.qatar_meta.sqlite None 17408 Metadata
+adhan.recordings.from.doha.qatar_meta.xml None 990 Metadata
+total 7860
+drwxr-xr-x 2 runner runner    4096 Nov 17 10:54 .
+drwxr-xr-x 3 runner runner    4096 Nov 17 10:54 ..
+-rw-r--r-- 1 runner runner 2901706 Nov 17 10:54 Adhan_Doha_Qatar_01_Fajr_Adhan.mp3
+-rw-r--r-- 1 runner runner 2419879 Nov 17 10:54 Adhan_Doha_Qatar_02_Dhuhr_Adhan.mp3
+-rw-r--r-- 1 runner runner 2693329 Nov 17 10:54 Adhan_Doha_Qatar_04_Maghrib_Adhan.mp3
+-rw-r--r-- 1 runner runner    3408 Nov 17 10:54 info.txt
+-rw-r--r-- 1 runner runner   14575 Nov 17 10:54 metadata.json
