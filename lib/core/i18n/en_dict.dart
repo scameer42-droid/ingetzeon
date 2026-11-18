@@ -3408,4 +3408,5 @@ const Map<String, String> kEnDict = {
   'Target hari ini tercapai! Mau latihan lagi?': 'Today\'s goal reached! Want to practice more?',
   'Ayo lanjut ke {}. 5 menit saja!': 'Let\'s continue to {}. Just 5 minutes!',
   'Halo! Aku Zeo. Yuk belajar bahasa Inggris 5 menit sehari.': 'Hi! I\'m Zeo. Let\'s learn English 5 minutes a day.',
+  'Agenda berikutnya': 'Next up',
 };

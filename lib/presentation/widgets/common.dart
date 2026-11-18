@@ -52,8 +52,8 @@ class CategoryIcon extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(gradient: AppColors.tint(category.color), borderRadius: BorderRadius.circular(size * .33)),
-        child: Icon(category.icon, color: Colors.white, size: size * .48),
+        decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(size * .3), border: Border.all(color: context.line)),
+        child: Icon(category.icon, color: category.color, size: size * .48),
       ),
     );
   }
@@ -154,8 +154,8 @@ class AppListRow extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(gradient: AppColors.tint(c), borderRadius: BorderRadius.circular(13), boxShadow: context.colorShadow(c, strength: .2)),
-              child: Icon(icon, color: Colors.white, size: 20),
+              decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.line)),
+              child: Icon(icon, color: c, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -196,7 +196,7 @@ class GradientButton extends StatelessWidget {
     return SizedBox(
       height: height,
       child: DecoratedBox(
-        decoration: BoxDecoration(gradient: onPressed == null ? null : AppColors.gradient, borderRadius: BorderRadius.circular(14)),
+        decoration: BoxDecoration(color: onPressed == null ? null : AppColors.primary, borderRadius: BorderRadius.circular(12)),
         child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
@@ -390,29 +390,17 @@ class AestheticBackground extends StatelessWidget {
 
 /// Kartu utama bergradasi biru laut dengan hiasan cincin halus.
 class MeshCard extends StatelessWidget {
-  const MeshCard({super.key, required this.child, this.radius = 28, this.padding = const EdgeInsets.all(20)});
+  const MeshCard({super.key, required this.child, this.radius = 22, this.padding = const EdgeInsets.all(20)});
   final Widget child;
   final double radius;
   final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
-    Widget ring(double size, double width, double alpha) => Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white.withValues(alpha: alpha), width: width)),
-        );
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(radius), boxShadow: context.glowShadow),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: Stack(children: [
-          Positioned(right: -70, top: -70, child: IgnorePointer(child: ring(230, 34, .09))),
-          Positioned(right: 30, top: 90, child: IgnorePointer(child: ring(120, 20, .07))),
-          Padding(padding: padding, child: child),
-        ]),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(radius)),
+      child: Padding(padding: padding, child: child),
     );
   }
 }

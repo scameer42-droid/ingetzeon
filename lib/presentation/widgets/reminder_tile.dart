@@ -33,8 +33,7 @@ class ReminderTile extends ConsumerWidget {
         child: Row(
           children: [
             Container(width: 4, height: 34, margin: const EdgeInsets.only(right: 10), decoration: BoxDecoration(color: r.category.color, borderRadius: BorderRadius.circular(4))),
-            CategoryIcon(r.category, faded: item.done, size: 38),
-            const SizedBox(width: 12),
+            const SizedBox(width: 2),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +43,7 @@ class ReminderTile extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       fontSize: 15,
                       color: item.done ? context.faint : null,
                       decoration: item.done ? TextDecoration.lineThrough : null,

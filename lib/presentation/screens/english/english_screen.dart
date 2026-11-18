@@ -34,54 +34,41 @@ class EnglishHomeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = ref.watch(engProvider).normalized(DateTime.now());
-    const fg = Colors.white;
     final sub = p.dayXp >= engGoal
         ? 'Target hari ini tercapai 🎉'
         : p.xp > 0
             ? 'Lanjut: ${p.nextTopic.title} ${p.nextTopic.emoji}'
             : '5 menit sehari bersama Zeo';
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(colors: [Color(0xFFF97316), Color(0xFFF43F5E)]),
-        boxShadow: context.colorShadow(const Color(0xFFF43F5E), strength: .4),
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: () => openEnglish(context),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 16, 14),
-            child: Row(children: [
-              const Zeo(size: 58),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Belajar Inggris', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: fg)),
-                  const SizedBox(height: 2),
-                  Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: fg.withValues(alpha: .88))),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(99),
-                    child: LinearProgressIndicator(value: (p.dayXp / engGoal).clamp(0, 1).toDouble(), minHeight: 6, color: Colors.white, backgroundColor: Colors.white.withValues(alpha: .25)),
-                  ),
-                ]),
-              ),
-              const SizedBox(width: 12),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Text('🔥 ${p.streak}', translate: false, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: fg)),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                  child: Text(p.xp > 0 ? 'Lanjut' : 'Mulai', style: const TextStyle(color: Color(0xFFE11D48), fontWeight: FontWeight.w800, fontSize: 13.5)),
-                ),
-              ]),
-            ]),
-          ),
+    return SoftCard(
+      radius: 18,
+      padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+      onTap: () => openEnglish(context),
+      child: Row(children: [
+        const Zeo(size: 46, bob: false),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Belajar Inggris', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 2),
+            Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: context.muted)),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(99),
+              child: LinearProgressIndicator(value: (p.dayXp / engGoal).clamp(0, 1).toDouble(), minHeight: 5, color: _amber, backgroundColor: context.card2),
+            ),
+          ]),
         ),
-      ),
+        const SizedBox(width: 12),
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('🔥 ${p.streak}', translate: false, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: context.muted)),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(10), border: Border.all(color: context.line)),
+            child: Text(p.xp > 0 ? 'Lanjut' : 'Mulai', style: TextStyle(color: context.accent, fontWeight: FontWeight.w600, fontSize: 13)),
+          ),
+        ]),
+      ]),
     );
   }
 }

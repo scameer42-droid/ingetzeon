@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const primary = Color(0xFF3B82F6);
-  static const primaryDeep = Color(0xFF2563EB);
-  static const primarySoft = Color(0xFFE8F0FF);
-  static const primarySoftDark = Color(0xFF1B2550);
-  static const primaryOnDark = Color(0xFF60A5FA);
+  static const primary = Color(0xFF2563EB);
+  static const primaryDeep = Color(0xFF1D4ED8);
+  static const primarySoft = Color(0xFFEAF0FF);
+  static const primarySoftDark = Color(0xFF1A2250);
+  static const primaryOnDark = Color(0xFF7FB2FF);
 
   static const success = Color(0xFF10B981);
   static const warning = Color(0xFFF59E0B);
@@ -22,27 +22,27 @@ class AppColors {
   static const magenta = primary;
   static const sky = Color(0xFF0E8BD8);
 
-  static const bgLight = Color(0xFFF3F5FB);
-  static const bgDark = Color(0xFF0A0C18);
+  static const bgLight = Color(0xFFF4F6FB);
+  static const bgDark = Color(0xFF0B0D19);
   static const cardLight = Colors.white;
-  static const cardDark = Color(0xFF141730);
+  static const cardDark = Color(0xFF141831);
   static const card2Light = Color(0xFFEEF1F8);
-  static const card2Dark = Color(0xFF1C2042);
-  static const lineLight = Color(0xFFE2E6F0);
-  static const lineDark = Color(0xFF23284D);
-  static const inkLight = Color(0xFF121633);
-  static const inkDark = Color(0xFFF1F3FF);
-  static const mutedLight = Color(0xFF5D6487);
-  static const mutedDark = Color(0xFF9CA3C7);
+  static const card2Dark = Color(0xFF1B2040);
+  static const lineLight = Color(0xFFE1E5EF);
+  static const lineDark = Color(0xFF20254A);
+  static const inkLight = Color(0xFF111633);
+  static const inkDark = Color(0xFFEEF1FF);
+  static const mutedLight = Color(0xFF5E6487);
+  static const mutedDark = Color(0xFF8C93B8);
   static const faintLight = Color(0xFF9AA0BC);
-  static const faintDark = Color(0xFF646B92);
+  static const faintDark = Color(0xFF5F668C);
 
   /// Gradasi utama "biru laut": nila → biru → biru langit.
   static const gradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF4338CA), Color(0xFF2563EB), Color(0xFF0EA5E9)],
-    stops: [0, .48, 1],
+    colors: [Color(0xFF3730A3), Color(0xFF2563EB), Color(0xFF0EA5E9)],
+    stops: [0, .55, 1],
   );
   static const aurora = gradient;
   static const meshBase = gradient;
@@ -78,17 +78,14 @@ extension ThemeX on BuildContext {
   /// Latar lembut untuk status aktif & ikon.
   Color get accentSoft => isDark ? AppColors.primarySoftDark : AppColors.primarySoft;
 
-  List<BoxShadow> get softShadow => isDark
-      ? const []
-      : [
-          BoxShadow(color: const Color(0xFF121633).withValues(alpha: .05), blurRadius: 2, offset: const Offset(0, 1)),
-          BoxShadow(color: const Color(0xFF121633).withValues(alpha: .10), blurRadius: 20, offset: const Offset(0, 8), spreadRadius: -12),
-        ];
+  List<BoxShadow> get softShadow =>
+      isDark ? const [] : [BoxShadow(color: const Color(0xFF111633).withValues(alpha: .05), blurRadius: 2, offset: const Offset(0, 1))];
 
-  /// Bayangan berwarna lembut di bawah ikon/kartu bergradasi.
-  List<BoxShadow> colorShadow(Color c, {double strength = .35}) =>
-      [BoxShadow(color: c.withValues(alpha: strength + .2), blurRadius: 16, offset: const Offset(0, 8), spreadRadius: -10)];
+  /// Latar kotak ikon (ikon garis berwarna di atasnya).
+  Color get iconBox => isDark ? const Color(0xFF161A33) : const Color(0xFFEEF2FF);
 
-  List<BoxShadow> get glowShadow =>
-      [BoxShadow(color: const Color(0xFF2563EB).withValues(alpha: isDark ? .55 : .45), blurRadius: 36, offset: const Offset(0, 18), spreadRadius: -20)];
+  /// Tidak ada bayangan berwarna/berpendar — tampilan kalem.
+  List<BoxShadow> colorShadow(Color c, {double strength = .35}) => const [];
+
+  List<BoxShadow> get glowShadow => const [];
 }
