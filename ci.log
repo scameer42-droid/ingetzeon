@@ -1,0 +1,64 @@
+=== analyze ===
+analyze rc=0
+warning • The declaration '_LangChip' isn't referenced. Try removing the declaration of '_LangChip' • lib/presentation/screens/home_screen.dart:206:7 • unused_element
+warning • A value for optional parameter 'photo' isn't ever given. Try removing the unused parameter • lib/presentation/screens/parking_sheet.dart:28:28 • unused_element_parameter
+warning • Unused import: '../../widgets/common.dart'. Try removing the import directive • lib/presentation/screens/workout/workout_player.dart:15:8 • unused_import
+=== test ===
+test rc=0
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Parkir catatan parkir tanpa jam → tanpa alarm
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Parkir parkir dengan jam → alarm
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Ingat barang kalimat penyimpanan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Ingat barang pertanyaan di mana
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Reminder kemunculan & jadwal berikutnya (harian)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Reminder mingguan & bulanan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Reminder simpan & baca ulang
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Pengingat haid perkiraan dari riwayat
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Pengingat haid perintah chat (banyak kosakata)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Suara teks untuk dibacakan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Suara hasil dengar
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Ruang Tenang deteksi perasaan & krisis
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Ruang Tenang skor tes
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Catatan simpan catatan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/widget_test.dart: Catatan tanya catatan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/i18n_test.dart: tampilan bahasa Inggris tidak meluber berat & olahraga EN (lebar 412.0)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/i18n_test.dart: tampilan bahasa Inggris tidak meluber layar Terjemah (ID & EN)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/i18n_test.dart: tampilan bahasa Inggris tidak meluber layar sambutan isi nama (ID & EN, layar kecil)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/calorie_test.dart: Kalori memahami kalimat makan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/calorie_test.dart: Kalori pertanyaan & berat badan
+✅ /home/runner/work/ingetzeon/ingetzeon/test/calorie_test.dart: Kalori target kalori aman
+✅ /home/runner/work/ingetzeon/ingetzeon/test/calorie_test.dart: Kalori produk Open Food Facts
+✅ /home/runner/work/ingetzeon/ingetzeon/test/weight_screen_test.dart: halaman berat badan (lebar 360.0)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/weight_screen_test.dart: kartu berat & hub olahraga (lebar 360.0)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/weight_screen_test.dart: halaman berat badan (lebar 412.0)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/weight_screen_test.dart: kartu berat & hub olahraga (lebar 412.0)
+✅ /home/runner/work/ingetzeon/ingetzeon/test/weight_screen_test.dart: semua program baru & detail gerakan tampil
+::endgroup::
+
+🎉 58 tests passed.
+=== build ===
+build rc=0
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 27368 bytes (98.3% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Caught exception: Already watching path: /opt/hostedtoolcache/flutter/stable-3.50.0-x64/flutter/packages/flutter_tools/gradle
+Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
+License for package CMake 3.22.1 accepted.
+Preparing "Install CMake 3.22.1 v.3.22.1".
+"Install CMake 3.22.1 v.3.22.1" ready.
+Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
+"Install CMake 3.22.1 v.3.22.1" complete.
+"Install CMake 3.22.1 v.3.22.1" finished.
+Running Gradle task 'assembleRelease'...                          380.0s
+✓ Built build/app/outputs/flutter-apk/app-release.apk (87.8MB)
