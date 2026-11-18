@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>IngetZeon</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -1598,6 +1598,174 @@ textarea.input{height:auto;min-height:88px;padding:12px 16px;line-height:1.5}
 .fc-no{background:color-mix(in srgb,#F04438 12%,var(--card));color:#B42318}
 .fc-yes{background:#16B364;color:#fff}
 [data-theme="dark"] .fc-no{color:#FDA29B}
+
+
+/* ================= DESAIN v7 — CERIA =================
+   Huruf bulat Nunito, warna cerah, kartu "timbul" (garis bawah tebal), ikon berwarna penuh. */
+:root{
+  --primary:#6D5DFC; --primary-deep:#4C3FD1; --primary-soft:#EEEBFF; --brand:#6D5DFC; --brand-shade:#4C3FD1;
+  --grad:linear-gradient(var(--brand),var(--brand)); --aurora:var(--grad);
+  --c-green:#22C55E; --c-green-d:#15A34A; --c-yellow:#FFC23C; --c-yellow-d:#E09E00; --c-orange:#FF8A3D; --c-orange-d:#E0661A;
+  --c-pink:#FF4F8B; --c-pink-d:#D9326B; --c-sky:#1CB0F6; --c-sky-d:#0A8FD0; --c-teal:#14C2A3; --c-teal-d:#0A9B81; --c-red:#FF4B4B; --c-red-d:#D93636;
+  --bg:#F6F7FC; --card:#FFFFFF; --card-2:#F1F3FA; --line:#E4E7F2; --line-d:#D5DAEA;
+  --ink:#1F2340; --muted:#6B7092; --faint:#A0A5C0;
+  --success:#22C55E; --warning:#FF8A3D; --error:#FF4B4B; --danger:#FF4B4B;
+  --shadow:0 4px 0 var(--line-d); --shadow-lg:0 6px 0 var(--brand-shade);
+  --R:22px;
+}
+[data-theme="dark"]{
+  --primary:#9D93FF; --primary-soft:#2A2752; --brand:#6D5DFC; --brand-shade:#3E32B8;
+  --bg:#12142A; --card:#1C1F3A; --card-2:#252948; --line:#2E3357; --line-d:#232745;
+  --ink:#F3F4FF; --muted:#A3A8CC; --faint:#6E7399;
+  --shadow:0 4px 0 var(--line-d);
+}
+html,body{font-family:'Nunito','Plus Jakarta Sans',system-ui,-apple-system,sans-serif;letter-spacing:0}
+body,[data-theme="dark"] body{background:var(--bg)}
+button,input,textarea,select{font-family:inherit}
+
+/* permukaan timbul */
+.item,.cal,.card,.group,.stat,.items,.progress-mini,.empty-state,.soon-h,.park,.daycard,.eng-goal,.eng-tile,.eng-bubble{
+  background:var(--card);border:2px solid var(--line)!important;box-shadow:var(--shadow);border-radius:var(--R)}
+.item{border-radius:18px}
+.list{gap:10px}
+
+/* judul */
+.top h1{font-size:28px;font-weight:900;letter-spacing:-.01em}
+.eyebrow,[data-theme="dark"] .eyebrow{font-size:14px;font-weight:700;color:var(--muted)}
+.section-h{margin:28px 2px 12px}
+.section-h h2{font-size:19px;font-weight:900;letter-spacing:-.005em}
+.section-h .link,[data-theme="dark"] .section-h .link{font-size:14px;font-weight:800;color:var(--primary);text-transform:none}
+.group-t{font-size:14px!important;font-weight:800!important}
+
+/* tombol timbul */
+.btn{height:52px;border-radius:16px;font-size:16px;font-weight:800;letter-spacing:.01em;transition:transform .1s,box-shadow .1s}
+.btn-primary,[data-theme="dark"] .btn-primary{background:var(--brand);color:#fff;box-shadow:0 4px 0 var(--brand-shade)}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--brand-shade)}
+.btn-soft{background:var(--card);color:var(--primary);border:2px solid var(--line);box-shadow:0 4px 0 var(--line-d)}
+.btn-soft:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line-d)}
+.btn-danger{box-shadow:0 4px 0 color-mix(in srgb,var(--error) 30%,var(--line))}
+.icon-btn{border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d);border-radius:14px}
+.icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line-d)}
+.input{border:2px solid var(--line);border-radius:14px;font-weight:600}
+.input:focus{border-color:var(--primary);box-shadow:none}
+.chip{border:2px solid var(--line);border-radius:14px;font-weight:700;box-shadow:0 3px 0 var(--line-d)}
+.chip.on,[data-theme="dark"] .chip.on{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);box-shadow:0 3px 0 var(--primary)}
+
+/* ---------- BERANDA ---------- */
+.greet h1{font-size:24px;font-weight:900;letter-spacing:-.01em}
+#todayLabel{font-size:14px;font-weight:700}
+.avatar{width:46px;height:46px;font-size:18px;font-weight:900;background:var(--c-orange);box-shadow:0 3px 0 var(--c-orange-d)}
+.langchip{height:38px;border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d);font-weight:900;color:var(--ink)}
+
+.hero{background:var(--brand);border-radius:26px;padding:20px 20px 20px;box-shadow:0 6px 0 var(--brand-shade);overflow:hidden}
+.hero .h-deco{display:none}
+.hero .h-zeo{position:absolute;right:-6px;top:30px;width:96px;z-index:0;transform:rotate(-8deg)}
+.hero .h-zeo .zeo{width:100%;animation:zbob 2.6s ease-in-out infinite}
+.hero.empty .h-zeo{top:auto;bottom:66px}
+.hero .h-top{font-size:14px;font-weight:800;color:rgba(255,255,255,.9);padding-right:84px}
+.hero .h-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-right:70px}
+.hero .h-top>span:first-child::before{content:"⏰ "}
+.hero .h-cat{background:rgba(255,255,255,.2);font-weight:800;font-size:13px;padding:7px 12px 7px 10px;border-radius:12px}
+.hero .h-top .h-cat{position:static}
+.hero h3{font-size:24px;font-weight:900;letter-spacing:-.01em;margin:12px 0 12px;padding-right:84px;line-height:1.2}
+.hero .h-when{display:inline-flex;align-items:center;gap:6px;background:var(--c-yellow);color:#3A2A00;padding:7px 12px;border-radius:12px;font-size:14.5px;font-weight:800;box-shadow:0 3px 0 var(--c-yellow-d)}
+.hero .h-when b{color:#3A2A00;font-weight:900;font-size:16px}
+.hero .h-when span{color:#5C4500}
+.hero .h-when svg{color:#3A2A00}
+.hero .h-cd{margin-top:10px;font-size:14px;font-weight:700;color:rgba(255,255,255,.85)}
+.hero .h-act{margin-top:18px;gap:10px}
+.hero .h-btn{height:50px;border-radius:16px;font-size:15px;font-weight:800;background:rgba(255,255,255,.18);box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .1s,box-shadow .1s}
+.hero .h-btn.pri{background:#fff;color:var(--brand);box-shadow:0 4px 0 rgba(0,0,0,.22)}
+.hero .h-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.hero.empty h3{padding-right:84px}
+.hero.empty p{padding-right:84px;font-weight:600}
+
+/* akses cepat: ubin warna penuh */
+.mgrid{gap:10px}
+.mitem,[data-theme="dark"] .mitem{gap:8px;font-size:13px;font-weight:800;color:var(--ink)}
+.mitem .mic2,[data-theme="dark"] .mitem .mic2{width:100%;max-width:72px;aspect-ratio:1/1;height:auto;border-radius:22px;background:var(--qc)!important;color:#fff!important;
+  box-shadow:0 5px 0 color-mix(in srgb,var(--qc) 72%,#000)!important;transition:transform .1s,box-shadow .1s}
+.mitem .mic2 .i{width:30px;height:30px;stroke-width:2.3}
+.mitem:active .mic2{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--qc) 72%,#000)!important}
+
+/* kartu belajar */
+.engcard,[data-theme="dark"] .engcard{background:var(--c-yellow);border:0;color:#3A2A00;box-shadow:0 5px 0 var(--c-yellow-d);border-radius:24px;margin-top:16px}
+.engcard .tx b{font-size:17px;font-weight:900}
+.engcard .tx small{font-weight:700;opacity:.85}
+.engcard .ecbar{background:rgba(58,42,0,.15);height:8px}
+.engcard .ecbar i{background:#fff}
+.engcard .ec-go{background:#fff;color:#B87700;box-shadow:0 3px 0 rgba(0,0,0,.15);font-weight:900}
+.engcard .ec-st{font-weight:900}
+.engcard:active{transform:translateY(3px);box-shadow:0 2px 0 var(--c-yellow-d)}
+
+/* parkir */
+.park{padding:16px}
+.park .ph{background:var(--c-sky);color:#fff;box-shadow:0 3px 0 var(--c-sky-d)}
+.park .lb{font-weight:700}
+.park b{font-weight:900;font-size:17px}
+.park .ptimer{font-weight:700}
+.park .tk-btn,[data-theme="dark"] .park .tk-btn{background:var(--card);border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d);font-weight:800}
+.park .got{background:var(--c-sky);color:#fff;box-shadow:0 3px 0 var(--c-sky-d);font-weight:800}
+
+/* daftar jadwal */
+.item{padding:14px}
+.item::before{display:none}
+.item .cat{background:var(--item-c)!important;color:#fff!important;border-radius:14px;box-shadow:0 3px 0 color-mix(in srgb,var(--item-c) 70%,#000)}
+.item .cat svg{stroke-width:2.2}
+.item .t{font-weight:800}
+.item .m{font-weight:600}
+.item .tx b,.item b{font-weight:800}
+.progress-mini .bar i{background:var(--c-green)}
+.progress-mini b{font-weight:800}
+.empty-state b{font-weight:900}
+.empty-state .ill{background:var(--c-sky);color:#fff;box-shadow:0 4px 0 var(--c-sky-d)}
+
+/* ringkasan: ubin 2 kolom */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dtile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px;border-radius:22px;text-align:left;min-height:132px;
+  background:var(--card);border:2px solid var(--line);box-shadow:var(--shadow);color:var(--ink);transition:transform .1s,box-shadow .1s}
+.dtile:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line-d)}
+.dtile .dt-ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--dc);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--dc) 72%,#000);margin-bottom:6px}
+.dtile .dt-ic svg{width:22px;height:22px;stroke-width:2.3}
+.dtile b{font-size:15px;font-weight:900}
+.dtile small{font-size:13px;font-weight:700;color:var(--muted);line-height:1.35}
+.dtile .dt-v{font-size:20px;font-weight:900;color:var(--dc);line-height:1.1}
+.dtile .dt-bar{width:100%;height:8px;border-radius:99px;background:var(--card-2);margin-top:auto;overflow:hidden}
+.dtile .dt-bar i{display:block;height:100%;border-radius:99px;background:var(--dc)}
+.dtile .dt-act{margin-top:auto;font-size:13px;font-weight:900;color:var(--dc)}
+
+/* ---------- SEMUA FITUR ---------- */
+.fsearch{border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d);border-radius:16px;height:52px}
+.fsearch:focus-within{border-color:var(--primary);box-shadow:0 3px 0 var(--primary)}
+.fgroup h2{font-size:15px;font-weight:900;color:var(--ink)}
+.frow .fic{width:44px;height:44px;border-radius:14px;color:#fff!important;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.frow .tx b{font-weight:800}
+.frow .tx small{font-weight:600}
+
+/* ---------- AGENDA / PROFIL ---------- */
+.day{font-weight:800}
+.day.sel,.day.today.sel{background:var(--brand);box-shadow:0 3px 0 var(--brand-shade)}
+.day.today{color:var(--primary);box-shadow:inset 0 0 0 2px var(--primary)}
+.profile-card,[data-theme="dark"] .profile-card{background:var(--brand);color:#fff;border:0!important;box-shadow:0 6px 0 var(--brand-shade)}
+.profile-card .av{background:var(--c-orange);box-shadow:0 3px 0 var(--c-orange-d)}
+.profile-card p{color:rgba(255,255,255,.85)}
+.profile-card .icon-btn,.profile-card button:last-child{background:rgba(255,255,255,.2);border:0;color:#fff;box-shadow:none}
+.row-s .ic{border-radius:12px}
+.switch.on{background:var(--c-green)}
+
+/* ---------- ASISTEN ---------- */
+.msg{font-weight:600}
+.msg.me,[data-theme="dark"] .msg.me{background:var(--brand);box-shadow:0 3px 0 var(--brand-shade)}
+.msg.bot{border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d)}
+.suggest .sg{border:2px solid var(--line);box-shadow:0 3px 0 var(--line-d);font-weight:700}
+.composer .send-b,[data-theme="dark"] .composer .send-b{box-shadow:0 3px 0 var(--brand-shade)}
+
+/* ---------- NAVIGASI ---------- */
+.nav-in,[data-theme="dark"] .nav-in{border-top:2px solid var(--line)}
+.nav-b{font-weight:800;font-size:11.5px;color:var(--faint)}
+.nav-b svg,.nav-b:not(.active) svg{width:58px;height:34px;padding:5px 17px;stroke-width:2.2}
+.nav-b.active,.nav-b.active span{color:var(--primary);font-weight:900}
+.nav-b.active svg{background:var(--primary-soft);color:var(--primary);width:58px;height:34px;padding:5px 17px;border-radius:12px;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--primary) 45%,transparent)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
@@ -4976,17 +5144,17 @@ function renderHome(){
   if(nx){
     const cat = nx.r.category || 'lainnya', cic = document.getElementById('c-' + cat) ? 'c-' + cat : 'c-lainnya';
     const today = dayKey(nx.at) === dayKey(now);
-    $('#heroWrap').innerHTML = `<div class="hero"><span class="h-deco"></span>
-      <div class="h-top"><span>Agenda terdekat</span><span class="h-cat">${icon(cic)}${esc((CATS[cat] || CATS.lainnya || {label:'Lainnya'}).label)}</span></div>
+    $('#heroWrap').innerHTML = `<div class="hero"><span class="h-zeo">${ZEO_SVG}</span>
+      <div class="h-top"><span>Agenda terdekat</span></div>
       <h3>${esc(nx.r.title)}</h3>
-      <div class="h-when">${icon('i-clock')}<b>${fmtTime(nx.at)}</b><span>· ${dayLabel(nx.at)}${nx.r.repeat!=='once' ? ' · ' + esc(repeatLabel(nx.r)) : ''}</span></div>
-      <div class="h-cd">${countdown(nx.at)}</div>
+      <div class="h-meta"><div class="h-when">${icon('i-clock')}<b>${fmtTime(nx.at)}</b><span>· ${dayLabel(nx.at)}</span></div><span class="h-cat">${icon(cic)}${esc((CATS[cat] || CATS.lainnya || {label:'Lainnya'}).label)}</span></div>
+      <div class="h-cd">${countdown(nx.at)}${nx.r.repeat!=='once' ? ' · ' + esc(repeatLabel(nx.r)) : ''}</div>
       <div class="h-act">${today ? `<button class="h-btn pri" id="heroDone">${icon('i-check')}Tandai selesai</button>` : ''}<button class="h-btn${today ? '' : ' pri'}" id="heroOpen">Lihat detail</button></div>
     </div>`;
     $('#heroOpen').onclick = () => openDetail(nx.r, nx.at);
     if($('#heroDone')) $('#heroDone').onclick = () => completeReminder(nx.r, nx.at);
   }else{
-    $('#heroWrap').innerHTML = `<div class="hero empty"><span class="h-deco"></span>
+    $('#heroWrap').innerHTML = `<div class="hero empty"><span class="h-zeo">${ZEO_SVG}</span>
       <div class="h-top"><span>Agenda terdekat</span></div>
       <h3>Belum ada agenda berikutnya.</h3>
       <p>Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.</p>
@@ -5045,10 +5213,10 @@ $('#homeAdd').onclick = () => openForm();
 
 /* --- beranda: satu kotak per fitur, isi lengkap dibuka saat diketuk --- */
 const MENU = [
-  ['new', 'i-plus', 'Tambah pengingat', '#5B5CE2'],
-  ['notes', 'i-note', 'Catatan', '#DC6803'],
-  ['park', 'c-parkir', 'Simpan parkir', '#0E9384'],
-  ['focus', 'i-target', 'Fokus', '#E31B54'],
+  ['new', 'i-plus', 'Tambah pengingat', '#6D5DFC'],
+  ['notes', 'i-note', 'Catatan', '#FF8A3D'],
+  ['park', 'c-parkir', 'Simpan parkir', '#1CB0F6'],
+  ['focus', 'i-target', 'Fokus', '#FF4F8B'],
 ];
 function renderFeatures(){
   const box = $('#featGrid'); if(!box) return;
@@ -5060,29 +5228,30 @@ function renderSummary(){
   const row = $('#sumRow'); if(!row) return;
   const now = new Date(), md = todayMood(), hs = state.habits || [], hd = hs.filter(h => (h.d || []).includes(dayKey(now))).length;
   const nx = nextPrayer(now), t = kalTarget(), wkm = olaWeekMin();
-  const r = (id, ic, c, title, sub, val, bar) => `<button class="drow" data-feat="${id}"><span class="dic" style="background:color-mix(in srgb,${c} 13%,var(--card));color:${c}">${icon(ic)}</span><span class="tx"><b>${title}</b><small>${sub}</small>${bar != null ? `<span class="dbar"><i style="width:${Math.round(Math.min(1, bar) * 100)}%"></i></span>` : ''}</span>${val ? `<span class="dv">${val}</span>` : ''}</button>`;
+  const r = (id, ic, c, title, sub, val, bar) => `<button class="dtile" data-feat="${id}" style="--dc:${c}"><span class="dt-ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small>${bar != null ? `<span class="dt-bar"><i style="width:${Math.round(Math.min(1, Math.max(0, bar)) * 100)}%"></i></span>` : val ? `<span class="dt-act">${val}</span>` : ''}</button>`;
   const rows = [
-    md ? r('mood', 'i-leaf', '#16856B', 'Mood', `${MOOD_EMOJI[md.m - 1]} ${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')} · tercatat hari ini`, '')
-       : r('mood', 'i-leaf', '#16856B', 'Mood', 'Belum dicatat hari ini', 'Catat'),
-    hs.length ? r('habits', 'i-check', '#5B5CE2', 'Kebiasaan', `${hd} dari ${hs.length} selesai`, '', hs.length ? hd / hs.length : 0)
-              : r('habits', 'i-check', '#5B5CE2', 'Kebiasaan', 'Belum ada kebiasaan', 'Buat'),
-    r('muslim', 'i-mosque', '#0F766E', 'Sholat berikutnya', `${PRAYER_NAMES[nx.key]} ${fmtTime(nx.at)} · ${cdText(nx.at - now)}`, ''),
+    md ? r('mood', 'i-leaf', '#22C55E', 'Mood', `${MOOD_EMOJI[md.m - 1]} ${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')}`, '')
+       : r('mood', 'i-leaf', '#22C55E', 'Mood', 'Belum dicatat hari ini', 'Catat'),
+    hs.length ? r('habits', 'i-check', '#6D5DFC', 'Kebiasaan', `${hd} dari ${hs.length} selesai`, '', hd / hs.length)
+              : r('habits', 'i-check', '#6D5DFC', 'Kebiasaan', 'Belum ada kebiasaan', 'Buat'),
+    r('muslim', 'i-mosque', '#14C2A3', `Sholat ${PRAYER_NAMES[nx.key]}`, `${fmtTime(nx.at)} · ${cdText(nx.at - now)}`, ''),
   ];
-  if(t){ const eat = kalSum(kalOn(now)).k - olaKcalOn(now); rows.push(r('kal', 'i-bowl', '#B76A09', 'Kalori', t.target - eat >= 0 ? `Sisa ${fmtK(t.target - eat)} dari ${fmtK(t.target)} kkal` : `Lebih ${fmtK(eat - t.target)} kkal dari target`, '', eat / t.target)); }
-  if(wkm) rows.push(r('ola', 'i-run', '#D92D20', 'Olahraga', `${wkm} dari ${olaS().goal} menit minggu ini`, '', wkm / olaS().goal));
-  if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); rows.push(r('cycle', 'i-drop', '#C11574', 'Siklus haid', esc(st.title), '')); } }
+  if(t){ const eat = kalSum(kalOn(now)).k - olaKcalOn(now); rows.push(r('kal', 'i-bowl', '#FF8A3D', 'Kalori', t.target - eat >= 0 ? `Sisa ${fmtK(t.target - eat)} kkal` : `Lebih ${fmtK(eat - t.target)} kkal`, '', eat / t.target)); }
+  if(wkm) rows.push(r('ola', 'i-run', '#FF4B4B', 'Olahraga', `${wkm}/${olaS().goal} menit minggu ini`, '', wkm / olaS().goal));
+  if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); rows.push(r('cycle', 'i-drop', '#FF4F8B', 'Siklus haid', esc(st.title), '')); } }
   const its = activeItems();
-  if(its.length) rows.push(r('items', 'c-barang', '#B76A09', 'Barang disimpan', `${its.length} barang · ${esc(its[0].title || '')}`, ''));
-  row.innerHTML = `<div class="daycard">${rows.join('')}</div>`;
+  if(its.length) rows.push(r('items', 'c-barang', '#1CB0F6', 'Barang', `${its.length} disimpan · ${esc(its[0].title || '')}`, ''));
+  if(rows.length % 2) rows.push(r('eng', 'i-bulb', '#FF8A3D', 'Belajar Inggris', `🔥 ${engToday().streak} hari · ⭐ ${state.eng.xp} XP`, 'Mulai'));
+  row.innerHTML = `<div class="dgrid">${rows.join('')}</div>`;
 }
 
 /* --- halaman Semua Fitur: dikelompokkan, bisa dicari --- */
 const FEAT_GROUPS = [
-  ['Belajar', '#F79009', [
+  ['Belajar', '#FF8A3D', [
     ['eng', 'i-bulb', 'Belajar Inggris', 'Pelajaran seru 5 menit dengan Zeo'],
     ['engcards', 'i-note', 'Kartu kosakata', 'Hafalkan kata dengan kartu bolak-balik'],
   ]],
-  ['Produktivitas', '#5B5CE2', [
+  ['Produktivitas', '#6D5DFC', [
     ['new', 'i-alarm', 'Pengingat', 'Buat pengingat dengan alarm berlagu'],
     ['notes', 'i-note', 'Catatan & rahasia', 'Simpan catatan, kata sandi terkunci'],
     ['habits', 'i-check', 'Kebiasaan', 'Centang kebiasaan baik tiap hari'],
@@ -5090,26 +5259,26 @@ const FEAT_GROUPS = [
     ['calendar', 'i-calendar', 'Agenda', 'Semua jadwal per tanggal'],
     ['stats', 'i-chart', 'Statistik', 'Progres pengingat 7 hari terakhir'],
   ]],
-  ['Aktivitas harian', '#0E7490', [
+  ['Aktivitas harian', '#1CB0F6', [
     ['park', 'c-parkir', 'Lokasi parkir', 'Foto lokasi & pindai tiket parkir'],
     ['ticket', 'i-qr', 'Tiket parkir', 'Tampilkan tiket parkir yang tersimpan'],
     ['items', 'c-barang', 'Barang', 'Ingat di mana barangmu disimpan'],
     ['trans', 'i-globe', 'Terjemahkan', 'Indonesia ⇄ Inggris, ketik atau ucapkan'],
   ]],
-  ['Kesejahteraan', '#16856B', [
+  ['Kesejahteraan', '#22C55E', [
     ['mood', 'i-leaf', 'Cek mood', 'Catat mood & energi hari ini'],
     ['journal', 'i-edit', 'Jurnal malam', 'Tulis refleksi sebelum tidur'],
     ['breathe', 'i-heart', 'Latihan tenang', 'Latihan napas pelan-pelan'],
     ['support', 'i-chat', 'Teman cerita', 'Ceritakan perasaanmu ke Asisten'],
     ['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu'],
   ]],
-  ['Kesehatan', '#B76A09', [
+  ['Kesehatan', '#FF4F8B', [
     ['ola', 'i-run', 'Olahraga', 'Program latihan & catatan aktivitas'],
     ['kal', 'i-bowl', 'Kalori & diet', 'Hitung kalori makanan'],
     ['weight', 'i-target', 'Berat badan', 'Catat berat & target'],
     ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid'],
   ]],
-  ['Ibadah', '#0F766E', [
+  ['Ibadah', '#14C2A3', [
     ['muslim', 'i-mosque', 'Jadwal sholat', 'Waktu sholat & adzan di kotamu'],
     ['qibla', 'i-target', 'Arah kiblat', 'Kompas arah kiblat'],
     ['quran', 'i-note', "Al-Qur'an", 'Baca surah & ayat'],
@@ -5125,7 +5294,7 @@ function renderFeaturesPage(){
     const list = items.filter(([id]) => id !== 'ticket' || (pk && pk.ticket))
       .filter(([, , t, d]) => !q || tr(t).toLowerCase().includes(q) || tr(d).toLowerCase().includes(q) || t.toLowerCase().includes(q) || d.toLowerCase().includes(q));
     if(!list.length) return '';
-    return `<div class="fgroup"><h2>${g}</h2><div class="group">${list.map(([id, ic, t, d]) => `<button class="frow" data-feat="${id}"><span class="fic" style="background:color-mix(in srgb,${c} 12%,var(--card));color:${c}">${icon(ic)}</span><span class="tx"><b>${t}</b><small>${d}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>`).join('')}</div></div>`;
+    return `<div class="fgroup"><h2>${g}</h2><div class="group">${list.map(([id, ic, t, d]) => `<button class="frow" data-feat="${id}"><span class="fic" style="background:${c}">${icon(ic)}</span><span class="tx"><b>${t}</b><small>${d}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>`).join('')}</div></div>`;
   }).join('');
   box.innerHTML = html || `<div class="fempty">Fitur "${esc(q)}" tidak ditemukan. Coba kata lain, misalnya "parkir" atau "sholat".</div>`;
 }
