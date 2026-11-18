@@ -173,12 +173,37 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 72,
+            height: 74,
             child: Row(
               children: [
                 _NavItem(icon: Icons.home_outlined, activeIcon: Icons.home_rounded, label: 'Beranda', active: _index == 0, onTap: () => goTo(0)),
                 _NavItem(icon: Icons.calendar_month_outlined, activeIcon: Icons.calendar_month_rounded, label: 'Agenda', active: _index == 1, onTap: () => goTo(1)),
-                _NavItem(icon: Icons.auto_awesome_outlined, activeIcon: Icons.auto_awesome_rounded, label: 'Asisten', active: false, onTap: _openAi),
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    label: tr('Asisten'),
+                    excludeSemantics: true,
+                    child: Center(
+                      child: Transform.translate(
+                        offset: const Offset(0, -16),
+                        child: GestureDetector(
+                          onTap: _openAi,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.gradient,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: context.bg, width: 5),
+                              boxShadow: context.glowShadow,
+                            ),
+                            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 24),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 _NavItem(icon: Icons.grid_view_outlined, activeIcon: Icons.grid_view_rounded, label: 'Fitur', active: _index == 2, onTap: () => goTo(2)),
                 _NavItem(icon: Icons.person_outline_rounded, activeIcon: Icons.person_rounded, label: 'Profil', active: _index == 3, onTap: () => goTo(3)),
               ],
@@ -229,8 +254,8 @@ class _NavItem extends StatelessWidget {
                 curve: Curves.easeOut,
                 width: 56,
                 height: 32,
-                decoration: BoxDecoration(color: active ? context.accentSoft : Colors.transparent, borderRadius: BorderRadius.circular(99)),
-                child: Icon(active ? activeIcon : icon, color: color, size: 22),
+                decoration: BoxDecoration(gradient: active ? AppColors.gradient : null, borderRadius: BorderRadius.circular(12)),
+                child: Icon(active ? activeIcon : icon, color: active ? Colors.white : color, size: 22),
               ),
               const SizedBox(height: 4),
               Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11.5, color: color, fontWeight: active ? FontWeight.w700 : FontWeight.w500)),
