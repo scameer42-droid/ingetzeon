@@ -64,44 +64,69 @@ class HomeScreen extends ConsumerWidget {
         children: [
           // A. header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 2),
-                  Text('${tr(greeting(now))}, ${name.isEmpty ? tr('Kamu') : name}',
-                      translate: false, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -.3, height: 1.3, color: context.ink)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(color: context.card, borderRadius: BorderRadius.circular(99), border: Border.all(color: context.line)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(Icons.calendar_today_rounded, size: 15, color: context.accent),
+                      const SizedBox(width: 8),
+                      Flexible(child: Text(fmtDateLong(now), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w600))),
+                    ]),
+                  ),
+                  const SizedBox(height: 12),
+                  Text('${tr(greeting(now))},', translate: false, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, letterSpacing: -1, height: 1.15, color: context.ink)),
+                  Row(children: [
+                    Flexible(
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (r) => (context.isDark ? AppColors.nameDark : AppColors.nameLight).createShader(r),
+                        child: Text(name.isEmpty ? tr('Kamu') : name,
+                            translate: false, maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w800, letterSpacing: -1, height: 1.2, color: Colors.white)),
+                      ),
+                    ),
+                    const Text(' 👋', translate: false, style: TextStyle(fontSize: 28)),
+                  ]),
                 ]),
               ),
               const SizedBox(width: 12),
-              const _LangChip(),
-              const SizedBox(width: 8),
-              Semantics(
-                button: true,
-                label: tr('Profil'),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () => onGoTo(3),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 44, radius: 22),
+              Column(children: [
+                const _LangChip(),
+                const SizedBox(height: 10),
+                Semantics(
+                  button: true,
+                  label: tr('Profil'),
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () => onGoTo(3),
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFF6366F1), width: 2)),
+                      child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 50, radius: 25),
+                    ),
                   ),
                 ),
-              ),
+              ]),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 22),
           // B. agenda terdekat
           _NextCard(next: next, now: now, onNew: () => _openForm(context), onOpenAi: onOpenAi),
+          const SizedBox(height: 14),
+          _AskBar(onTap: onOpenAi),
+          const SizedBox(height: 14),
+          // C. menu cepat
+          _QuickAccess(onNew: () => _openForm(context), onAll: () => onGoTo(2)),
+          const SizedBox(height: 14),
+          const EnglishHomeCard(),
           if (parking != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             _ParkingCard(parking: parking),
           ],
-          // C. akses cepat
-          SectionHeader('Akses cepat', action: 'Semua fitur', onAction: () => onGoTo(2)),
-          _QuickAccess(onNew: () => _openForm(context)),
-          const SizedBox(height: 12),
-          const EnglishHomeCard(),
           // D. jadwal hari ini
           SectionHeader('Jadwal hari ini', action: 'Tambah', onAction: () => _openForm(context)),
           _TodaySection(
@@ -255,8 +280,9 @@ class _NextCard extends ConsumerWidget {
             child: FilledButton(
               onPressed: onTap,
               style: FilledButton.styleFrom(
-                backgroundColor: primary ? Colors.white : Colors.white.withValues(alpha: .16),
-                foregroundColor: primary ? AppColors.primary : Colors.white,
+                backgroundColor: primary ? Colors.white : Colors.white.withValues(alpha: .14),
+                foregroundColor: primary ? const Color(0xFF1D4ED8) : Colors.white,
+                side: primary ? null : BorderSide(color: Colors.white.withValues(alpha: .4), width: 1.5),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -288,36 +314,43 @@ class _NextCard extends ConsumerWidget {
 
     final r = n.reminder;
     final isToday = dateOnly(n.at) == dateOnly(now);
+    Widget pill(Widget child, {Color? bg}) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+          decoration: BoxDecoration(color: bg ?? Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(10)),
+          child: child,
+        );
     return MeshCard(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Expanded(child: Text('Agenda terdekat', style: TextStyle(color: dim, fontSize: 13, fontWeight: FontWeight.w600))),
-          Container(
-            padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(99)),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(r.category.icon, size: 14, color: onCard),
-              const SizedBox(width: 5),
-              Text(r.category.label, style: const TextStyle(color: onCard, fontSize: 12, fontWeight: FontWeight.w600)),
-            ]),
-          ),
-        ]),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+          decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(99)),
+          child: const Text('⏰ Agenda terdekat', style: TextStyle(color: onCard, fontSize: 13, fontWeight: FontWeight.w700)),
+        ),
         const SizedBox(height: 14),
         Text(r.title, translate: false, maxLines: 3, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: onCard, fontSize: 20, fontWeight: FontWeight.w700, height: 1.3, letterSpacing: -.2)),
-        const SizedBox(height: 8),
-        Row(children: [
-          const Icon(Icons.schedule_rounded, size: 16, color: onCard),
-          const SizedBox(width: 6),
-          Text(fmtTime(n.at), translate: false, style: const TextStyle(color: onCard, fontSize: 14, fontWeight: FontWeight.w700, fontFeatures: [FontFeature.tabularFigures()])),
-          Flexible(
-            child: Text(' · ${tr(dayLabel(n.at, now))}${r.repeat != RepeatType.once ? ' · ${tr(r.repeatLabel)}' : ''}',
-                translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: dim, fontSize: 14)),
-          ),
+            style: const TextStyle(color: onCard, fontSize: 26, fontWeight: FontWeight.w800, height: 1.2, letterSpacing: -.6)),
+        const SizedBox(height: 10),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          pill(Row(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.schedule_rounded, size: 16, color: onCard),
+            const SizedBox(width: 6),
+            Text(fmtTime(n.at), translate: false, style: const TextStyle(color: onCard, fontSize: 14, fontWeight: FontWeight.w800, fontFeatures: [FontFeature.tabularFigures()])),
+            Text(' · ${tr(dayLabel(n.at, now))}', translate: false, style: TextStyle(color: dim, fontSize: 14)),
+          ])),
+          pill(Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(r.category.icon, size: 15, color: onCard),
+            const SizedBox(width: 5),
+            Text(r.category.label, style: const TextStyle(color: onCard, fontSize: 13, fontWeight: FontWeight.w700)),
+          ])),
         ]),
-        const SizedBox(height: 2),
-        Text(countdown(n.at, now), style: TextStyle(color: dim, fontSize: 13)),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(99)),
+          child: Text('${countdown(n.at, now)}${r.repeat != RepeatType.once ? ' · ${tr(r.repeatLabel)}' : ''}',
+              translate: false, style: const TextStyle(color: Color(0xFF1D4ED8), fontSize: 14, fontWeight: FontWeight.w800)),
+        ),
+        const SizedBox(height: 16),
         Row(children: [
           if (isToday) ...[
             btn('Tandai selesai', () => completeWithUndo(ScaffoldMessenger.of(context), ref, r, n.at), icon: Icons.check_rounded, primary: true),
@@ -326,6 +359,46 @@ class _NextCard extends ConsumerWidget {
           btn('Lihat detail', () => showReminderDetail(context, ref, r, n.at), primary: !isToday),
         ]),
       ]),
+    );
+  }
+}
+
+/// Kolom "Ketik atau ucapkan" dengan bingkai bergradasi.
+class _AskBar extends StatelessWidget {
+  const _AskBar({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(1.5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF8B5CF6), Color(0xFF06B6D4)]),
+        boxShadow: context.softShadow,
+      ),
+      child: Material(
+        color: context.card,
+        borderRadius: BorderRadius.circular(20.5),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20.5),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+            child: Row(children: [
+              const Icon(Icons.auto_awesome_rounded, color: Color(0xFF8B5CF6), size: 22),
+              const SizedBox(width: 12),
+              Expanded(child: Text('Ketik atau ucapkan pengingat…', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 15, color: context.muted))),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(16)),
+                child: const Icon(Icons.mic_rounded, color: Colors.white, size: 22),
+              ),
+            ]),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -381,7 +454,7 @@ class _ParkingCard extends ConsumerWidget {
                 onPressed: () => completeWithUndo(ScaffoldMessenger.of(context), ref, parking, parking.scheduledAt),
                 icon: const Icon(Icons.check_rounded, size: 18),
                 label: const Text('Sudah diambil', maxLines: 1, overflow: TextOverflow.ellipsis),
-                style: TextButton.styleFrom(foregroundColor: context.accent, backgroundColor: context.accentSoft, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                style: TextButton.styleFrom(foregroundColor: Colors.white, backgroundColor: AppColors.primaryDeep, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
               ),
             ),
           ),
@@ -391,50 +464,56 @@ class _ParkingCard extends ConsumerWidget {
   }
 }
 
-/// C. Empat fitur yang paling sering dipakai.
+/// C. Delapan menu cepat dengan ikon bergradasi.
 class _QuickAccess extends ConsumerWidget {
-  const _QuickAccess({required this.onNew});
-  final VoidCallback onNew;
+  const _QuickAccess({required this.onNew, required this.onAll});
+  final VoidCallback onNew, onAll;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
     final menu = <({IconData icon, String label, Color color, VoidCallback onTap})>[
-      (icon: Icons.add_alarm_rounded, label: 'Tambah pengingat', color: AppColors.primary, onTap: onNew),
-      (icon: Icons.sticky_note_2_outlined, label: 'Catatan', color: const Color(0xFFDC6803), onTap: () => push(const NotesScreen())),
-      (icon: Icons.local_parking_rounded, label: 'Simpan parkir', color: const Color(0xFF0E9384), onTap: () => startParkingFlow(context, ref)),
-      (icon: Icons.timer_outlined, label: 'Fokus', color: const Color(0xFFE31B54), onTap: () => push(const FocusScreen())),
+      (icon: Icons.alarm_add_rounded, label: 'Pengingat', color: const Color(0xFF6366F1), onTap: onNew),
+      (icon: Icons.local_parking_rounded, label: 'Parkir', color: const Color(0xFF0EA5E9), onTap: () => startParkingFlow(context, ref)),
+      (icon: Icons.sticky_note_2_rounded, label: 'Catatan', color: const Color(0xFFF59E0B), onTap: () => push(const NotesScreen())),
+      (icon: Icons.school_rounded, label: 'Inggris', color: const Color(0xFF10B981), onTap: () => openEnglish(context)),
+      (icon: Icons.mosque_rounded, label: 'Muslim', color: const Color(0xFF14B8A6), onTap: () => push(const MuslimScreen())),
+      (icon: Icons.restaurant_rounded, label: 'Kalori', color: const Color(0xFFF97316), onTap: () => push(const CalorieScreen())),
+      (icon: Icons.directions_run_rounded, label: 'Olahraga', color: const Color(0xFFF43F5E), onTap: () => push(const WorkoutScreen())),
+      (icon: Icons.grid_view_rounded, label: 'Semua', color: const Color(0xFF8B5CF6), onTap: onAll),
     ];
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final m in menu)
-          Expanded(
-            child: Semantics(
-              button: true,
-              label: tr(m.label),
-              excludeSemantics: true,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: m.onTap,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-                  child: Column(children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(color: m.color.withValues(alpha: context.isDark ? .22 : .13), borderRadius: BorderRadius.circular(18)),
-                      child: Icon(m.icon, color: context.isDark ? Color.lerp(m.color, Colors.white, .25) : m.color, size: 24),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(m.label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, height: 1.3, color: context.ink)),
-                  ]),
-                ),
+    Widget item(({IconData icon, String label, Color color, VoidCallback onTap}) m) => Expanded(
+          child: Semantics(
+            button: true,
+            label: tr(m.label),
+            excludeSemantics: true,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: m.onTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Column(children: [
+                  Container(
+                    width: 58,
+                    height: 58,
+                    decoration: BoxDecoration(gradient: AppColors.tint(m.color), borderRadius: BorderRadius.circular(19), boxShadow: context.colorShadow(m.color)),
+                    child: Icon(m.icon, color: Colors.white, size: 27),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(m.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.ink)),
+                ]),
               ),
             ),
           ),
-      ],
+        );
+    return SoftCard(
+      radius: 26,
+      padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
+      child: Column(children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [for (final m in menu.take(4)) item(m)]),
+        const SizedBox(height: 6),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [for (final m in menu.skip(4)) item(m)]),
+      ]),
     );
   }
 }
@@ -459,72 +538,121 @@ class _DailySummary extends ConsumerWidget {
     final ci = cycle.enabled ? CycleInfo.from(cycle) : null;
     final items = activeItems(ref.watch(remindersProvider));
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
-    Widget action(String s) => Text(s, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.accent));
 
-    return ListGroup(children: [
-      AppListRow(
+    final tiles = <Widget>[
+      _Tile(
         icon: Icons.sentiment_satisfied_alt_rounded,
-        color: AppColors.success,
+        color: const Color(0xFF10B981),
         title: 'Mood',
-        subtitle: mood == null
-            ? 'Belum dicatat hari ini'
-            : '${MoodAdvice.moodEmoji[mood.mood - 1]} ${tr(MoodAdvice.moodLabel[mood.mood - 1])} · ${tr('tercatat hari ini')}',
-        trailing: mood == null ? action(tr('Catat')) : null,
+        sub: mood == null ? 'Belum dicatat hari ini' : '${MoodAdvice.moodEmoji[mood.mood - 1]} ${tr(MoodAdvice.moodLabel[mood.mood - 1])}',
+        action: mood == null ? 'Catat' : null,
         onTap: () => showMoodCheckin(context, ref),
       ),
-      AppListRow(
+      _Tile(
         icon: Icons.task_alt_rounded,
-        color: AppColors.primary,
+        color: const Color(0xFF6366F1),
         title: 'Kebiasaan',
-        subtitle: habits.isEmpty ? 'Belum ada kebiasaan' : '$habitsDone dari ${habits.length} selesai',
+        sub: habits.isEmpty ? 'Belum ada kebiasaan' : '$habitsDone dari ${habits.length} selesai',
         progress: habits.isEmpty ? null : habitsDone / habits.length,
-        trailing: habits.isEmpty ? action(tr('Buat')) : null,
+        action: habits.isEmpty ? 'Buat' : null,
         onTap: () => push(const HabitsScreen()),
       ),
-      AppListRow(
-        icon: Icons.mosque_outlined,
-        color: const Color(0xFF0F766E),
-        title: 'Sholat berikutnya',
-        subtitle: '${tr(prayerNames[nx.key]!)} ${fmtTime(nx.at)} · ${tr(countdownText(nx.at.difference(now)))}',
+      _Tile(
+        icon: Icons.mosque_rounded,
+        color: const Color(0xFF14B8A6),
+        title: '${tr('Sholat')} ${tr(prayerNames[nx.key]!)}',
+        sub: '${fmtTime(nx.at)} · ${tr(countdownText(nx.at.difference(now)))}',
         onTap: () => push(const MuslimScreen()),
       ),
       if (t != null)
-        AppListRow(
+        _Tile(
           icon: Icons.restaurant_rounded,
-          color: AppColors.warning,
+          color: const Color(0xFFF97316),
           title: 'Kalori',
-          subtitle: t.target - eaten >= 0
-              ? 'Sisa ${fmtKcal(t.target - eaten)} dari ${fmtKcal(t.target)} kkal'
-              : 'Lebih ${fmtKcal(eaten - t.target)} kkal dari target',
+          sub: t.target - eaten >= 0 ? 'Sisa ${fmtKcal(t.target - eaten)} kkal' : 'Lebih ${fmtKcal(eaten - t.target)} kkal',
           progress: eaten / t.target,
           onTap: () => push(const CalorieScreen()),
         ),
       if (wk.weekMinutes > 0)
-        AppListRow(
+        _Tile(
           icon: Icons.directions_run_rounded,
-          color: AppColors.error,
+          color: const Color(0xFFF43F5E),
           title: 'Olahraga',
-          subtitle: '${wk.weekMinutes} dari ${wk.weeklyGoal} menit minggu ini',
+          sub: '${wk.weekMinutes}/${wk.weeklyGoal} menit minggu ini',
           progress: wk.weekMinutes / wk.weeklyGoal,
           onTap: () => push(const WorkoutScreen()),
         ),
       if (ci != null)
-        AppListRow(
-          icon: Icons.water_drop_outlined,
-          color: kHaid,
-          title: 'Siklus haid',
-          subtitle: ci.status().title,
-          onTap: () => push(const CycleScreen()),
-        ),
+        _Tile(icon: Icons.water_drop_rounded, color: const Color(0xFFEC4899), title: 'Siklus haid', sub: ci.status().title, onTap: () => push(const CycleScreen())),
       if (items.isNotEmpty)
-        AppListRow(
+        _Tile(
           icon: ReminderCategory.barang.icon,
-          color: ReminderCategory.barang.color,
-          title: 'Barang disimpan',
-          subtitle: '${items.length} barang · ${items.first.title}',
+          color: const Color(0xFF0EA5E9),
+          title: 'Barang',
+          sub: '${items.length} disimpan · ${items.first.title}',
           onTap: () => showItemsSheet(context),
         ),
+    ];
+    if (tiles.length.isOdd) {
+      tiles.add(_Tile(icon: Icons.school_rounded, color: const Color(0xFFF97316), title: 'Belajar Inggris', sub: '5 menit sehari bersama Zeo', action: 'Mulai', onTap: () => openEnglish(context)));
+    }
+    return Column(children: [
+      for (var i = 0; i < tiles.length; i += 2) ...[
+        if (i > 0) const SizedBox(height: 10),
+        IntrinsicHeight(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Expanded(child: tiles[i]),
+            const SizedBox(width: 10),
+            Expanded(child: tiles[i + 1]),
+          ]),
+        ),
+      ],
     ]);
+  }
+}
+
+class _Tile extends StatelessWidget {
+  const _Tile({required this.icon, required this.color, required this.title, required this.sub, this.progress, this.action, required this.onTap});
+  final IconData icon;
+  final Color color;
+  final String title, sub;
+  final double? progress;
+  final String? action;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SoftCard(
+      radius: 22,
+      padding: const EdgeInsets.all(14),
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 100),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(gradient: AppColors.tint(color), borderRadius: BorderRadius.circular(14), boxShadow: context.colorShadow(color, strength: .2)),
+            child: Icon(icon, color: Colors.white, size: 21),
+          ),
+          const SizedBox(height: 10),
+          Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 2),
+          Text(sub, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, color: context.muted, height: 1.4)),
+          const Spacer(),
+          if (progress != null) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(99),
+              child: LinearProgressIndicator(value: progress!.clamp(0, 1).toDouble(), minHeight: 6, color: color, backgroundColor: context.card2),
+            ),
+          ] else if (action != null) ...[
+            const SizedBox(height: 8),
+            Text(action!, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: color)),
+          ],
+        ]),
+      ),
+    );
   }
 }
 
