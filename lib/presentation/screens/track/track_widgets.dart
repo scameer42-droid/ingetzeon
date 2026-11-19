@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart' hide Text;
 import 'package:flutter/material.dart' as m show Text;
 import 'package:flutter_map/flutter_map.dart' hide Path;
-import 'package:latlong2/latlong.dart';
+import 'package:latlong2/latlong.dart' hide Path;
 
 import '../../../core/i18n/tr_text.dart';
 import '../../../core/theme/app_colors.dart';
