@@ -28,6 +28,8 @@ import 'parking_sheet.dart';
 import 'ticket_screens.dart';
 import 'reminder_form_screen.dart';
 import 'english/english_screen.dart';
+import 'vital_screen.dart';
+import '../../providers/vital_provider.dart';
 import '../../services/islam_logic.dart';
 import '../../services/calorie_logic.dart';
 
@@ -440,6 +442,7 @@ class _DailySummary extends ConsumerWidget {
     final cycle = ref.watch(cycleProvider);
     final ci = cycle.enabled ? CycleInfo.from(cycle) : null;
     final items = activeItems(ref.watch(remindersProvider));
+    final vit = ref.watch(vitalProvider);
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
 
     final tiles = <Widget>[
@@ -487,6 +490,17 @@ class _DailySummary extends ConsumerWidget {
         ),
       if (ci != null)
         _Tile(icon: Icons.water_drop_rounded, color: FeatureColors.cycle, title: 'Siklus haid', sub: ci.status().title, onTap: () => push(const CycleScreen())),
+      if (vit.lastBp != null || vit.lastGlu != null)
+        _Tile(
+          icon: Icons.monitor_heart_outlined,
+          color: FeatureColors.vital,
+          title: 'Tensi & gula',
+          sub: [
+            if (vit.lastBp != null) '${vit.lastBp!.sys}/${vit.lastBp!.dia} · ${tr(vit.lastBp!.level.label)}',
+            if (vit.lastGlu != null) '${tr('Gula')} ${gluStr(vit.lastGlu!.kind, vit.lastGlu!.value)} · ${tr(vit.lastGlu!.level.label)}',
+          ].join('\n'),
+          onTap: () => push(VitalScreen(glucose: vit.lastBp == null)),
+        ),
       if (items.isNotEmpty)
         _Tile(
           icon: ReminderCategory.barang.icon,

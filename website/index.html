@@ -1867,6 +1867,45 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 .fhero::after{content:""!important;display:block!important;position:absolute;left:0;right:0;bottom:0;height:46px;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 46' preserveAspectRatio='none'%3E%3Cellipse cx='90' cy='62' rx='230' ry='50' fill='%23000' fill-opacity='.10'/%3E%3Cellipse cx='330' cy='68' rx='220' ry='46' fill='%23000' fill-opacity='.14'/%3E%3C/svg%3E") bottom/100% 100% no-repeat}
 .itile,[data-theme="dark"] .itile{background:var(--fx,#2563EB)!important;color:#fff!important;border-radius:50%!important}
 .itile svg{width:20px;height:20px}
+
+/* ===== Tensi & gula darah ===== */
+.fx-vital{--fx:#DC2626}
+.vhero h3{font-size:20px;margin:0 0 12px;color:#fff}
+.vstats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vstat{background:rgba(255,255,255,.14);border-radius:14px;padding:12px;min-width:0}
+.vstat small{display:block;font-size:12px;font-weight:600;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vstat b{display:block;font-size:28px;font-weight:700;line-height:1.15;margin-top:4px}
+.vstat b i{font-style:normal;font-size:12px;font-weight:500;opacity:.8;margin-left:4px}
+.vstat span{display:block;font-size:12.5px;font-weight:600;margin-top:4px}
+.vstat em{display:block;font-style:normal;font-size:11.5px;opacity:.72}
+.vhero .row2{display:flex;gap:8px;margin-top:14px}
+.vhero .wbtn{flex:1!important;height:44px;border-radius:12px;background:#fff!important;color:#DC2626!important;font-weight:600;padding:0 10px}
+.vhero .wbtn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)}
+.vtabs{display:flex;background:var(--card-2);border-radius:16px;padding:4px;margin-top:18px}
+.vtabs button{flex:1;height:44px;border-radius:12px;font-weight:600;color:var(--ink)}
+.vtabs button.on{background:var(--fx);color:#fff}
+.vkinds{margin-top:14px}.vkinds .tchip.on{background:color-mix(in srgb,var(--fx) 14%,transparent);color:var(--fx);border-color:var(--fx)}
+.vcard{padding:12px 12px 10px}
+.vchart{width:100%;height:170px;display:block}
+.vchart .vg{stroke:var(--line);stroke-width:1}.vchart .vt{font-size:9.5px;fill:var(--muted)}
+.vleg{display:flex;gap:16px;font-size:12px;color:var(--muted);margin:6px 4px 0}
+.vleg span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;background:var(--lc);vertical-align:middle;margin-right:6px}
+.vrow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 16px;border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:0}
+.vrow>i{width:12px;height:12px;border-radius:50%;flex:none}
+.vrow span{flex:1;min-width:0}.vrow b{display:block;font-size:15px;font-weight:600}.vrow small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.vguide{padding:8px 16px 12px}.vguide p{font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.45}.vguide p b{color:var(--ink);font-weight:600}
+.vgr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.vgr i{width:10px;height:10px;border-radius:50%;flex:none}.vgr b{flex:1;font-weight:600}.vgr span{color:var(--muted);font-size:13px;text-align:right}
+.vtab{width:100%;border-collapse:collapse;font-size:12.5px}.vtab th{text-align:left;font-size:12px;padding:8px 4px}.vtab td{padding:8px 4px;border-top:1px solid var(--line)}
+.vlevel{display:flex;gap:10px;align-items:flex-start;padding:14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--lc) 35%,transparent);background:color-mix(in srgb,var(--lc) 9%,transparent);margin-top:12px}
+.vlevel svg{width:22px;height:22px;color:var(--lc);flex:none}.vlevel b{color:var(--lc);font-size:15px}.vlevel p{margin:3px 0 0;font-size:13px;line-height:1.45;color:var(--ink)}
+.vnum{font-size:24px!important;font-weight:700;text-align:center}
+.vsave{margin-top:14px;background:#DC2626!important;box-shadow:none!important}.vsave:disabled{opacity:.45}
+.vbig{font-size:44px;font-weight:700;letter-spacing:-1px;line-height:1.1}.vbig small{font-size:15px;color:var(--muted);font-weight:600;margin-left:6px;letter-spacing:0}
+.vdel{margin-top:16px;color:#E11D48!important;background:none!important;box-shadow:none!important}
+.vsw{cursor:pointer}.vchk{width:22px;height:22px;accent-color:#DC2626;flex:none}
+.vnote{font-size:12px;color:var(--muted);line-height:1.45;margin:16px 2px 0}
 </style>
 
 
@@ -2184,6 +2223,7 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 <div class="full fx-workout" id="olaP"><div class="full-head"><button class="icon-btn" data-close="#olaP" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPTitle">Program</h2></div><div class="full-body" id="olaPBody"></div></div>
 <div class="full fx-workout" id="olaPlay"><div class="full-body" id="olaPlayBody"></div></div>
 <div class="full fx-workout" id="olaEx"><div class="full-head"><button class="icon-btn" onclick="exClose()" aria-label="Kembali"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaExTitle">Cara melakukan</h2></div><div class="full-body" id="olaExBody"></div></div>
+<div class="full fx-vital" id="vital"><div class="full-head"><button class="icon-btn" data-close="#vital" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Tensi &amp; Gula Darah</h2></div><div class="full-body" id="vitalBody"></div></div>
 <div class="full fx-calorie" id="berat"><div class="full-head"><button class="icon-btn" data-close="#berat" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Berat badan</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="beratBody"></div></div>
 <div class="full fx-calorie" id="kal"><div class="full-head"><button class="icon-btn" data-close="#kal" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kalori &amp; Diet</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="kalBody"></div></div>
 <div class="full fx-calorie" id="bscan"><div class="full-head"><button class="icon-btn" data-close="#bscan" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Pindai barcode</h2></div><div class="full-body">
@@ -2777,6 +2817,7 @@ Object.assign(EN_DICT,{"Agenda terdekat": "Next up", "Akses cepat": "Quick acces
 Object.assign(EN_DICT,{"Jadwal berikutnya": "Next up"});
 Object.assign(EN_DICT,{"Asisten AI": "AI Assistant", "Pilih asisten AI": "Choose AI assistant", "Semua gratis. Pilih satu, lalu tempel kuncinya.": "All free. Pick one, then paste its key.", "Disarankan": "Recommended", "Sangat cepat · daftar pakai akun Google": "Very fast · sign up with a Google account", "Banyak model gratis · bisa baca foto": "Many free models · can read photos", "Google · bisa cari info terbaru": "Google · can search the latest info", "Matikan AI (mode offline)": "Turn off AI (offline mode)", "Simpan & pakai": "Save & use", "Aku belum bisa menjawab itu tanpa asisten AI.": "I can't answer that without the AI assistant yet.", "Diterjemahkan dengan AI — hasil lebih natural.": "Translated with AI — more natural results.", "Memakai layanan terjemahan gratis. Pilih asisten AI di Profil untuk hasil yang lebih natural.": "Using a free translation service. Choose an AI assistant in Profile for more natural results.", "Buat pengingat": "Create reminder", "Sudah diambil": "Picked up"});
 Object.assign(EN_DICT,{"Fitur favorit": "Favorite features", "Pengingat berikutnya": "Next reminder", "Muslim": "Muslim", "Tenang": "Calm"});
+Object.assign(EN_DICT,{"Tensi & Gula Darah": "Blood Pressure & Sugar", "Tensi & gula darah": "Blood pressure & sugar", "Tensi & gula": "BP & sugar", "Catat & lihat golongannya sesuai acuan Kemenkes": "Log readings and see their category (Indonesian MoH guidelines)", "Acuan Kemenkes RI": "Indonesian MoH guidelines", "Pantau tensi & gula darah": "Track blood pressure & sugar", "Tensi terakhir": "Last blood pressure", "Gula darah terakhir": "Last blood sugar", "Catat tensi": "Log blood pressure", "Catat gula": "Log sugar", "Catat gula darah": "Log blood sugar", "Saya penyandang diabetes": "I have diabetes", "Tampilkan target kendali gula darah dari dokter": "Show blood sugar control targets", "Ingatkan cek setiap hari": "Remind me to check daily", "Pengingat harian jam 07.00, bisa diubah": "Daily reminder at 07:00, can be changed", "Fitur ini untuk memantau, bukan untuk diagnosis. Diagnosis hipertensi dan diabetes ditegakkan dokter dari beberapa kali pemeriksaan.": "This feature is for tracking, not diagnosis. Hypertension and diabetes are diagnosed by a doctor from several measurements.", "Acuan: PNPK Hipertensi Dewasa & PNPK Diabetes Melitus Tipe 2 Dewasa (Kemenkes RI).": "Reference: Indonesian MoH national clinical guidelines for adult hypertension and adult type 2 diabetes.", "Cek tensi & gula darah": "Check blood pressure & sugar", "Pengingat harian jam 07.00 dibuat ⏰": "Daily 07:00 reminder created ⏰", "Grafik tensi": "Blood pressure chart", "Grafik {}": "{} chart", "Sistolik (atas)": "Systolic (top)", "Diastolik (bawah)": "Diastolic (bottom)", "Riwayat tensi": "Blood pressure history", "Riwayat gula darah": "Blood sugar history", "Catat": "Log", "Belum ada catatan tensi.": "No blood pressure readings yet.", "Ukur dalam posisi duduk setelah istirahat 5 menit, lalu catat di sini.": "Measure while seated after resting 5 minutes, then log it here.", "Belum ada catatan gula darah.": "No blood sugar readings yet.", "Pilih jenis pemeriksaan (puasa, 2 jam setelah makan, sewaktu, atau HbA1c), lalu catat hasilnya.": "Choose the test type (fasting, 2 hours after eating, random, or HbA1c), then log the result.", "nadi": "pulse", "Nadi": "Pulse", "kali/menit": "beats/min", "sistolik terisolasi": "isolated systolic", "Golongan tekanan darah": "Blood pressure categories", "Golongan gula darah (mg/dL)": "Blood sugar categories (mg/dL)", "sesuai target": "on target", "di atas target": "above target", "di bawah target": "below target", "Hipertensi sistolik terisolasi: sistolik ≥ 140 dengan diastolik < 90.": "Isolated systolic hypertension: systolic ≥ 140 with diastolic < 90.", "Batas 140/200 berasal dari tes TTGO (minum 75 g glukosa). Setelah makan biasa, angkanya hanya perkiraan.": "The 140/200 limits come from the OGTT (drinking 75 g of glucose). After a normal meal they are only a rough guide.", "Hapus catatan": "Delete entry", "Belum ada catatan": "No entries yet", "Tensi": "Blood pressure", "Gula darah": "Blood sugar", "Gula": "Sugar", "dicatat": "logged", "Pemeriksaan": "Test", "Prediabetes": "Prediabetes", "Diabetes": "Diabetes", "Puasa (≥ 8 jam)": "Fasting (≥ 8 h)", "2 jam setelah TTGO*": "2 h after OGTT*", "≥ 200 + gejala": "≥ 200 + symptoms", "Di bawah 70 = hipoglikemia (derajat 1), di bawah 54 = derajat 2. *TTGO = tes setelah minum 75 g glukosa.": "Below 70 = hypoglycemia (level 1), below 54 = level 2. *OGTT = test after drinking 75 g of glucose.", "Target kendali penyandang diabetes: sebelum makan 80–130, 1–2 jam setelah makan < 180, HbA1c < 7% (atau sesuai anjuran dokter).": "Control targets for people with diabetes: before meals 80–130, 1–2 h after meals < 180, HbA1c < 7% (or as your doctor advises).", "Optimal": "Optimal", "Normal": "Normal", "Normal tinggi": "High normal", "Hipertensi derajat 1": "Grade 1 hypertension", "Hipertensi derajat 2": "Grade 2 hypertension", "Hipertensi derajat 3": "Grade 3 hypertension", "Hipertensi sistolik terisolasi": "Isolated systolic hypertension", "< 120 dan < 80": "< 120 and < 80", "120–129 dan/atau 80–84": "120–129 and/or 80–84", "130–139 dan/atau 85–89": "130–139 and/or 85–89", "140–159 dan/atau 90–99": "140–159 and/or 90–99", "160–179 dan/atau 100–109": "160–179 and/or 100–109", "≥ 180 dan/atau ≥ 110": "≥ 180 and/or ≥ 110", "≥ 140 dan < 90": "≥ 140 and < 90", "Angka dalam mmHg (sistolik/diastolik). Bila sistolik dan diastolik masuk golongan berbeda, dipakai golongan yang lebih tinggi.": "Values in mmHg (systolic/diastolic). If systolic and diastolic fall in different categories, the higher one applies.", "Tekanan darah ideal. Pertahankan pola hidup sehat.": "Ideal blood pressure. Keep up a healthy lifestyle.", "Masih normal. Tetap batasi garam dan rutin bergerak.": "Still normal. Keep limiting salt and stay active.", "Mendekati hipertensi. Kurangi garam, jaga berat badan, dan cek rutin.": "Close to hypertension. Cut salt, watch your weight, and check regularly.", "Ukur ulang setelah istirahat 5 menit. Bila tetap tinggi di hari lain, periksa ke puskesmas atau dokter.": "Measure again after resting 5 minutes. If it stays high on other days, see a clinic or doctor.", "Tinggi. Periksakan ke dokter untuk penanganan.": "High. See a doctor for treatment.", "Sangat tinggi. Ukur ulang setelah istirahat. Bila tetap ≥180/110, atau ada nyeri dada, sesak, sakit kepala hebat, atau lemah sebelah badan, segera ke IGD.": "Very high. Measure again after resting. If it stays ≥180/110, or you have chest pain, shortness of breath, a severe headache, or weakness on one side, go to the emergency room now.", "Rendah": "Low", "Di bawah 90/60. Bila pusing, lemas, atau hampir pingsan, duduk/berbaring dan periksakan ke dokter.": "Below 90/60. If you feel dizzy, weak, or faint, sit or lie down and see a doctor.", "Sangat rendah (hipoglikemia)": "Very low (hypoglycemia)", "Di bawah 54 mg/dL. Segera minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, mengantuk, atau bingung, segera cari pertolongan medis.": "Below 54 mg/dL. Have something sweet right away and check again in 15 minutes. If it doesn't improve, or you feel drowsy or confused, get medical help immediately.", "Rendah (hipoglikemia)": "Low (hypoglycemia)", "Di bawah 70 mg/dL. Minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, cari pertolongan medis.": "Below 70 mg/dL. Have something sweet and check again in 15 minutes. If it doesn't improve, get medical help.", "Dalam batas normal.": "Within the normal range.", "Masuk kriteria diabetes": "Meets diabetes criteria", "Satu kali hasil belum cukup untuk diagnosis. Periksakan ke dokter untuk tes ulang dengan darah vena di laboratorium.": "One result is not enough for a diagnosis. See a doctor for a repeat lab test using venous blood.", "HbA1c 5,7–6,4%. Perbaiki pola makan, aktif bergerak, dan konsultasi ke dokter.": "HbA1c 5.7–6.4%. Improve your diet, stay active, and talk to a doctor.", "Prediabetes (GDPT)": "Prediabetes (IFG)", "Gula darah puasa terganggu (100–125). Kurangi gula, aktif bergerak, dan cek ke dokter.": "Impaired fasting glucose (100–125). Cut sugar, stay active, and see a doctor.", "Prediabetes (TGT)": "Prediabetes (IGT)", "Toleransi glukosa terganggu (140–199). Kurangi gula, aktif bergerak, dan cek ke dokter.": "Impaired glucose tolerance (140–199). Cut sugar, stay active, and see a doctor.", "Di bawah 200": "Below 200", "Di bawah batas diabetes untuk gula darah sewaktu.": "Below the diabetes limit for random blood sugar.", "Puasa": "Fasting", "2 jam setelah makan": "2 h after eating", "Sewaktu": "Random", "HbA1c": "HbA1c", "Gula darah puasa": "Fasting blood sugar", "Gula darah 2 jam setelah makan": "Blood sugar 2 h after eating", "Gula darah sewaktu": "Random blood sugar", "HbA1c (rata-rata 3 bulan)": "HbA1c (3-month average)", "Target sebelum makan 80–130": "Before-meal target 80–130", "Target setelah makan < 180": "After-meal target < 180", "Target HbA1c < 7%": "HbA1c target < 7%", "Ukur duduk tenang setelah istirahat 5 menit, lengan setinggi jantung.": "Measure seated and relaxed after resting 5 minutes, arm at heart level.", "Nadi (opsional)": "Pulse (optional)", "Periksa lagi angkanya: sistolik harus lebih besar dari diastolik.": "Check the numbers: systolic must be higher than diastolic.", "Tensi &amp; Gula Darah": "Blood Pressure &amp; Sugar", "＋ Catat tensi": "＋ Log blood pressure", "＋ Catat gula": "＋ Log sugar", "Hapus catatan ini?": "Delete this entry?", "Tensi {}/{} dicatat ✅": "Blood pressure {}/{} logged ✅", "Gula darah {} dicatat ✅": "Blood sugar {} logged ✅", "Nadi {} kali/menit": "Pulse {} beats/min", "{} mmHg · nadi {}": "{} mmHg · pulse {}", "Gula {} · {}": "Sugar {} · {}"});
 /* --- i18n: bahasa tampilan (id/en) --- */
 const I18N={lang:'id',cache:{},tpls:null};
 function i18nTpls(){
@@ -4798,6 +4839,7 @@ let state = {
   settings: {name:'', theme:'system', apiKey:'', ai:'groq', aiKeys:{}, model:'gemini-flash-latest', voice:true, alarmSound:'melodi', lang:'id'},
   trHist: [],
   eng: {xp:0, streak:0, last:'', day:'', dayXp:0, stars:{}},
+  vital: {bp:[], glu:[], diabetic:false},
 };
 function load(){
   try{
@@ -4821,6 +4863,7 @@ function load(){
       if(!hadAi && state.settings.apiKey && !state.settings.aiKeys.gemini) state.settings.aiKeys.gemini = state.settings.apiKey;
       state.settings.apiKey = state.settings.aiKeys[state.settings.ai] || '';
       state.trHist = Array.isArray(d.trHist) ? d.trHist : [];
+      if(d.vital) state.vital = {bp: Array.isArray(d.vital.bp) ? d.vital.bp : [], glu: Array.isArray(d.vital.glu) ? d.vital.glu : [], diabetic: !!d.vital.diabetic};
       if(d.eng) state.eng = Object.assign(state.eng, d.eng, {stars: Object.assign({}, d.eng.stars || {})});
     }
   }catch(e){ console.warn('load', e); }
@@ -5373,6 +5416,8 @@ function renderSummary(){
   if(t){ const eat = kalSum(kalOn(now)).k - olaKcalOn(now); rows.push(r('kal', 'i-bowl', '#EA580C', 'Kalori', t.target - eat >= 0 ? `Sisa ${fmtK(t.target - eat)} kkal` : `Lebih ${fmtK(eat - t.target)} kkal`, '', eat / t.target)); }
   if(wkm) rows.push(r('ola', 'i-run', '#E11D48', 'Olahraga', `${wkm}/${olaS().goal} menit minggu ini`, '', wkm / olaS().goal));
   if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); rows.push(r('cycle', 'i-drop', '#DB2777', 'Siklus haid', esc(st.title), '')); } }
+  { const v = vS(), lb = v.bp[v.bp.length - 1], lg = v.glu[v.glu.length - 1];
+    if(lb || lg) rows.push(r(lb ? 'vital' : 'vitalglu', 'i-heart', '#DC2626', 'Tensi & gula', [lb ? `${lb.s}/${lb.d} · ${tr(bpLevel(lb.s, lb.d).l)}` : '', lg ? `${tr('Gula')} ${gluStr(lg.k, lg.v)} · ${tr(gluLevel(lg.k, lg.v).l)}` : ''].filter(Boolean).join('<br>'), '')); }
   const its = activeItems();
   if(its.length) rows.push(r('items', 'c-barang', '#D97706', 'Barang', `${its.length} disimpan · ${esc(its[0].title || '')}`, ''));
   if(rows.length % 2) rows.push(r('eng', 'i-bulb', '#4F46E5', 'Belajar Inggris', `🔥 ${engToday().streak} hari · ⭐ ${state.eng.xp} XP`, 'Mulai'));
@@ -5410,6 +5455,7 @@ const FEAT_GROUPS = [
     ['ola', 'i-run', 'Olahraga', 'Program latihan & catatan aktivitas'],
     ['kal', 'i-bowl', 'Kalori & diet', 'Hitung kalori makanan'],
     ['weight', 'i-target', 'Berat badan', 'Catat berat & target'],
+    ['vital', 'i-heart', 'Tensi & gula darah', 'Catat & lihat golongannya sesuai acuan Kemenkes'],
     ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid'],
   ]],
   ['Ibadah', '#059669', [
@@ -5465,6 +5511,8 @@ function onFeat(e){
     case 'support': startSupport(); break;
     case 'tests': openTests(null); break;
     case 'weight': openWeight(); break;
+    case 'vital': openVital(); break;
+    case 'vitalglu': openVital(true); break;
     case 'qibla': openQibla(); break;
     case 'quran': openQuran(); break;
     case 'doa': openDoa(); break;
@@ -5484,6 +5532,178 @@ function showItemsSheet(){
   const h = $('#itemsWrap .section-h'); if(h) h.remove();
   $('#isAdd').onclick = () => { closeSheet(); setTimeout(startItem, 280); };
   $('#overlay').classList.add('show'); $('#sheet').classList.add('show');
+}
+
+
+/* ---------------- TENSI & GULA DARAH (acuan Kemenkes RI) ----------------
+   Tensi: PNPK Hipertensi Dewasa — optimal <120/<80, normal 120–129/80–84, normal tinggi 130–139/85–89,
+   derajat 1 140–159/90–99, derajat 2 160–179/100–109, derajat 3 ≥180/≥110, sistolik terisolasi ≥140/<90.
+   Gula: PNPK DM Tipe 2 Dewasa (KMK HK.01.07/MENKES/302/2026) — prediabetes puasa 100–125, TTGO 2 jam 140–199,
+   HbA1c 5,7–6,4%; diabetes puasa ≥126, TTGO ≥200, sewaktu ≥200, HbA1c ≥6,5%; hipoglikemia <70 / <54.
+   Target penyandang diabetes: sebelum makan 80–130, 1–2 jam setelah makan <180, HbA1c <7%. */
+const VSRC = 'Acuan: PNPK Hipertensi Dewasa & PNPK Diabetes Melitus Tipe 2 Dewasa (Kemenkes RI).';
+const VC = {green:'#10B981', amber:'#F59E0B', orange:'#EA580C', red:'#DC2626', dark:'#991B1B', blue:'#2563EB'};
+const BP_LV = [
+  {k:'optimal', l:'Optimal', c:VC.green, a:'Tekanan darah ideal. Pertahankan pola hidup sehat.'},
+  {k:'normal', l:'Normal', c:VC.green, a:'Masih normal. Tetap batasi garam dan rutin bergerak.'},
+  {k:'normal_tinggi', l:'Normal tinggi', c:VC.amber, a:'Mendekati hipertensi. Kurangi garam, jaga berat badan, dan cek rutin.'},
+  {k:'h1', l:'Hipertensi derajat 1', c:VC.orange, a:'Ukur ulang setelah istirahat 5 menit. Bila tetap tinggi di hari lain, periksa ke puskesmas atau dokter.'},
+  {k:'h2', l:'Hipertensi derajat 2', c:VC.red, a:'Tinggi. Periksakan ke dokter untuk penanganan.'},
+  {k:'h3', l:'Hipertensi derajat 3', c:VC.dark, u:true, a:'Sangat tinggi. Ukur ulang setelah istirahat. Bila tetap ≥180/110, atau ada nyeri dada, sesak, sakit kepala hebat, atau lemah sebelah badan, segera ke IGD.'},
+];
+const BP_LOW = {k:'rendah', l:'Rendah', c:VC.blue, a:'Di bawah 90/60. Bila pusing, lemas, atau hampir pingsan, duduk/berbaring dan periksakan ke dokter.'};
+const bpIdx = (s, d) => Math.max(s < 120 ? 0 : s < 130 ? 1 : s < 140 ? 2 : s < 160 ? 3 : s < 180 ? 4 : 5, d < 80 ? 0 : d < 85 ? 1 : d < 90 ? 2 : d < 100 ? 3 : d < 110 ? 4 : 5);
+function bpLevel(s, d){ const i = bpIdx(s, d); if(i >= 3) return BP_LV[i]; if(s < 90 || d < 60) return BP_LOW; return BP_LV[i]; }
+const bpIso = (s, d) => s >= 140 && d < 90;
+const GK = {
+  puasa:{s:'Puasa', l:'Gula darah puasa', u:'mg/dL'},
+  pp2:{s:'2 jam setelah makan', l:'Gula darah 2 jam setelah makan', u:'mg/dL'},
+  sewaktu:{s:'Sewaktu', l:'Gula darah sewaktu', u:'mg/dL'},
+  hba1c:{s:'HbA1c', l:'HbA1c (rata-rata 3 bulan)', u:'%'},
+};
+const G_DM = {k:'diabetes', l:'Masuk kriteria diabetes', c:VC.red, a:'Satu kali hasil belum cukup untuk diagnosis. Periksakan ke dokter untuk tes ulang dengan darah vena di laboratorium.'};
+const G_N = {k:'normal', l:'Normal', c:VC.green, a:'Dalam batas normal.'};
+function gluLevel(k, v){
+  if(k === 'hba1c') return v < 5.7 ? G_N : v < 6.5 ? {k:'pre', l:'Prediabetes', c:VC.amber, a:'HbA1c 5,7–6,4%. Perbaiki pola makan, aktif bergerak, dan konsultasi ke dokter.'} : G_DM;
+  if(v < 54) return {k:'hipo2', l:'Sangat rendah (hipoglikemia)', c:VC.dark, u:true, a:'Di bawah 54 mg/dL. Segera minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, mengantuk, atau bingung, segera cari pertolongan medis.'};
+  if(v < 70) return {k:'hipo', l:'Rendah (hipoglikemia)', c:VC.blue, a:'Di bawah 70 mg/dL. Minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, cari pertolongan medis.'};
+  if(k === 'puasa') return v < 100 ? G_N : v < 126 ? {k:'pre', l:'Prediabetes (GDPT)', c:VC.amber, a:'Gula darah puasa terganggu (100–125). Kurangi gula, aktif bergerak, dan cek ke dokter.'} : G_DM;
+  if(k === 'pp2') return v < 140 ? G_N : v < 200 ? {k:'pre', l:'Prediabetes (TGT)', c:VC.amber, a:'Toleransi glukosa terganggu (140–199). Kurangi gula, aktif bergerak, dan cek ke dokter.'} : G_DM;
+  return v < 200 ? {k:'normal', l:'Di bawah 200', c:VC.green, a:'Di bawah batas diabetes untuk gula darah sewaktu.'} : G_DM;
+}
+function gluTarget(k, v){
+  if(k === 'puasa') return {t:'Target sebelum makan 80–130', s: v < 80 ? -1 : v <= 130 ? 0 : 1};
+  if(k === 'pp2') return {t:'Target setelah makan < 180', s: v < 70 ? -1 : v < 180 ? 0 : 1};
+  if(k === 'hba1c') return {t:'Target HbA1c < 7%', s: v < 7 ? 0 : 1};
+  return null;
+}
+const tgtWord = s => s === 0 ? 'sesuai target' : s > 0 ? 'di atas target' : 'di bawah target';
+const gluStr = (k, v) => k === 'hba1c' ? `${String(Math.round(v * 10) / 10).replace('.', ',')}%` : `${Math.round(v)}`;
+const vS = () => { if(!state.vital) state.vital = {bp:[], glu:[], diabetic:false}; return state.vital; };
+const vWhen = t => { const d = new Date(t); return `${tr(dayLabel(d))} ${fmtTime(d)}`; };
+let vTab = 'bp', vKind = 'puasa';
+function openVital(glu = false){ vTab = glu ? 'glu' : 'bp'; renderVital(); openFull('#vital'); }
+const vLevelCard = lv => `<div class="vlevel" style="--lc:${lv.c}"><svg class="i"><use href="#${lv.u ? 'i-bell' : 'i-heart'}"/></svg><div><b>${lv.l}</b><p>${lv.a}</p></div></div>`;
+function vChart(series, ts, limits, lo, hi, dec = 0){
+  const W = 320, H = 150, L = 32, R = 8, T = 10, B = 22;
+  const t0 = ts[0], t1 = Math.max(ts[ts.length - 1], t0 + 1);
+  const X = t => L + (t - t0) / (t1 - t0) * (W - L - R), Y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  const fmt = v => dec ? String(v.toFixed(dec)).replace('.', ',') : Math.round(v);
+  const ticks = [lo, (lo + hi) / 2, hi];
+  const d0 = new Date(t0), d1 = new Date(t1);
+  return `<svg class="vchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" class="vg"/><text x="${L - 6}" y="${Y(v) + 3}" text-anchor="end" class="vt">${fmt(v)}</text>`).join('')}
+    ${limits.map(l => `<line x1="${L}" x2="${W - R}" y1="${Y(l.y)}" y2="${Y(l.y)}" stroke="${l.c}" stroke-dasharray="5 4" stroke-width="1.3"/><text x="${W - R}" y="${Y(l.y) - 3}" text-anchor="end" class="vt" fill="${l.c}" style="fill:${l.c};font-weight:700">${fmt(l.y)}</text>`).join('')}
+    ${series.map(s => `<polyline fill="none" stroke="${s.c}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" points="${s.v.map((v, i) => `${X(ts[i])},${Y(v)}`).join(' ')}"/>${s.v.map((v, i) => `<circle cx="${X(ts[i])}" cy="${Y(v)}" r="3" fill="var(--card)" stroke="${s.c}" stroke-width="2"/>`).join('')}`).join('')}
+    <text x="${L}" y="${H - 6}" class="vt">${d0.getDate()} ${BULAN_S[d0.getMonth()]}</text><text x="${W - R}" y="${H - 6}" text-anchor="end" class="vt">${d1.getDate()} ${BULAN_S[d1.getMonth()]}</text>
+  </svg>`;
+}
+function renderVital(){
+  const box = $('#vitalBody'); if(!box) return;
+  const s = vS(), lb = s.bp[s.bp.length - 1], lg = s.glu[s.glu.length - 1];
+  const stat = (t, v, u, lv, at) => `<div class="vstat"><small>${t}</small><b>${v}${u ? `<i>${u}</i>` : ''}</b><span>${tr(lv ? lv.l : 'Belum ada catatan')}</span>${at ? `<em>${vWhen(at)}</em>` : ''}</div>`;
+  let h = `<div class="vhero fhero fx-vital"><span class="fh-label">Acuan Kemenkes RI</span><h3>Pantau tensi &amp; gula darah</h3>
+    <div class="vstats">${stat('Tensi terakhir', lb ? `${lb.s}/${lb.d}` : '–', 'mmHg', lb && bpLevel(lb.s, lb.d), lb && lb.at)}${stat(tr(lg ? GK[lg.k].l : 'Gula darah terakhir'), lg ? gluStr(lg.k, lg.v) : '–', lg && lg.k !== 'hba1c' ? 'mg/dL' : '', lg && gluLevel(lg.k, lg.v), lg && lg.at)}</div>
+    <div class="row2"><button class="wbtn" id="vAddBp">＋ Catat tensi</button><button class="wbtn ghost" id="vAddGlu">＋ Catat gula</button></div></div>
+    <div class="vtabs"><button data-vt="bp" class="${vTab === 'bp' ? 'on' : ''}">Tensi</button><button data-vt="glu" class="${vTab === 'glu' ? 'on' : ''}">Gula darah</button></div>`;
+  if(vTab === 'bp'){
+    const last = s.bp.slice(-30);
+    if(last.length >= 2){
+      const lo = Math.min(60, Math.floor((Math.min(...last.map(e => e.d)) - 10) / 10) * 10), hi = Math.max(150, Math.ceil((Math.max(...last.map(e => e.s)) + 10) / 10) * 10);
+      h += `<div class="section-h"><h2>Grafik tensi</h2></div><div class="card vcard">${vChart([{v:last.map(e => e.s), c:'#DC2626'}, {v:last.map(e => e.d), c:'#7C3AED'}], last.map(e => e.at), [{y:140, c:VC.orange}, {y:90, c:VC.orange}], lo, hi)}
+        <div class="vleg"><span style="--lc:#DC2626">Sistolik (atas)</span><span style="--lc:#7C3AED">Diastolik (bawah)</span></div></div>`;
+    }
+    h += `<div class="section-h"><h2>Riwayat tensi</h2><button class="link" id="vAddBp2">Catat</button></div>`;
+    h += s.bp.length ? `<div class="group">${[...s.bp].reverse().slice(0, 30).map(e => { const lv = bpLevel(e.s, e.d);
+        return `<button class="vrow" data-vbp="${e.id}"><i style="background:${lv.c}"></i><span><b>${e.s}/${e.d} mmHg${e.p ? ` · ${tr('nadi')} ${e.p}` : ''}</b><small>${vWhen(e.at)} · ${tr(lv.l)}${bpIso(e.s, e.d) ? ` (${tr('sistolik terisolasi')})` : ''}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>`; }).join('')}</div>`
+      : `<div class="empty-state"><div class="ill">${icon('i-heart')}</div><b>Belum ada catatan tensi.</b>Ukur dalam posisi duduk setelah istirahat 5 menit, lalu catat di sini.</div>`;
+    h += `<div class="section-h"><h2>Golongan tekanan darah</h2></div><div class="card vguide">${[['Optimal','< 120 dan < 80',VC.green],['Normal','120–129 dan/atau 80–84',VC.green],['Normal tinggi','130–139 dan/atau 85–89',VC.amber],['Hipertensi derajat 1','140–159 dan/atau 90–99',VC.orange],['Hipertensi derajat 2','160–179 dan/atau 100–109',VC.red],['Hipertensi derajat 3','≥ 180 dan/atau ≥ 110',VC.dark],['Hipertensi sistolik terisolasi','≥ 140 dan < 90',VC.orange]].map(([a, b, c]) => `<div class="vgr"><i style="background:${c}"></i><b>${a}</b><span>${b}</span></div>`).join('')}
+      <p>Angka dalam mmHg (sistolik/diastolik). Bila sistolik dan diastolik masuk golongan berbeda, dipakai golongan yang lebih tinggi.</p></div>`;
+  }else{
+    h += `<div class="tchips vkinds">${Object.entries(GK).map(([k, g]) => `<button class="tchip ${vKind === k ? 'on' : ''}" data-vk="${k}">${tr(g.s)}</button>`).join('')}</div>`;
+    const of = s.glu.filter(e => e.k === vKind).slice(-30);
+    if(of.length >= 2){
+      const a1 = vKind === 'hba1c', lim = {puasa:[100,126], pp2:[140,200], sewaktu:[200], hba1c:[5.7,6.5]}[vKind];
+      const vals = [...of.map(e => e.v), ...lim];
+      const lo = a1 ? Math.floor(Math.min(...vals) - .5) : Math.max(0, Math.floor((Math.min(...vals) - 20) / 20) * 20), hi = a1 ? Math.ceil(Math.max(...vals) + .5) : Math.ceil((Math.max(...vals) + 20) / 20) * 20;
+      h += `<div class="section-h"><h2>${I18N.lang === 'en' ? `${tr(GK[vKind].s)} chart` : `Grafik ${GK[vKind].s.toLowerCase()}`}</h2></div><div class="card vcard">${vChart([{v:of.map(e => e.v), c:'#DC2626'}], of.map(e => e.at), lim.map((y, i) => ({y, c: i === lim.length - 1 ? VC.red : VC.amber})), lo, hi, a1 ? 1 : 0)}</div>`;
+    }
+    h += `<div class="section-h"><h2>Riwayat gula darah</h2><button class="link" id="vAddGlu2">Catat</button></div>`;
+    h += s.glu.length ? `<div class="group">${[...s.glu].reverse().slice(0, 30).map(e => { const lv = gluLevel(e.k, e.v), t = s.diabetic ? gluTarget(e.k, e.v) : null;
+        return `<button class="vrow" data-vglu="${e.id}"><i style="background:${lv.c}"></i><span><b>${gluStr(e.k, e.v)}${e.k === 'hba1c' ? '' : ' mg/dL'} · ${tr(GK[e.k].s)}</b><small>${vWhen(e.at)} · ${tr(lv.l)}${t ? ` · ${tr(tgtWord(t.s))}` : ''}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>`; }).join('')}</div>`
+      : `<div class="empty-state"><div class="ill">${icon('i-drop')}</div><b>Belum ada catatan gula darah.</b>Pilih jenis pemeriksaan (puasa, 2 jam setelah makan, sewaktu, atau HbA1c), lalu catat hasilnya.</div>`;
+    h += `<div class="section-h"><h2>Golongan gula darah (mg/dL)</h2></div><div class="card vguide"><table class="vtab"><tr><th>Pemeriksaan</th><th style="color:${VC.green}">Normal</th><th style="color:${VC.amber}">Prediabetes</th><th style="color:${VC.red}">Diabetes</th></tr>
+      ${[['Puasa (≥ 8 jam)','< 100','100–125','≥ 126'],['2 jam setelah TTGO*','< 140','140–199','≥ 200'],['Sewaktu','< 200','–','≥ 200 + gejala'],['HbA1c','< 5,7%','5,7–6,4%','≥ 6,5%']].map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</table>
+      <p>Di bawah 70 = hipoglikemia (derajat 1), di bawah 54 = derajat 2. *TTGO = tes setelah minum 75 g glukosa.</p>
+      ${s.diabetic ? '<p><b>Target kendali penyandang diabetes: sebelum makan 80–130, 1–2 jam setelah makan < 180, HbA1c < 7% (atau sesuai anjuran dokter).</b></p>' : ''}</div>`;
+  }
+  h += `<div class="group" style="margin-top:22px">
+      <label class="frow vsw"><span class="tx"><b>Saya penyandang diabetes</b><small>Tampilkan target kendali gula darah dari dokter</small></span><input type="checkbox" class="vchk" id="vDiab" ${s.diabetic ? 'checked' : ''}></label>
+      <button class="frow" id="vRemind"><span class="fic gico" style="--gc:#DC2626">${icon('i-alarm')}</span><span class="tx"><b>Ingatkan cek setiap hari</b><small>Pengingat harian jam 07.00, bisa diubah</small></span><svg class="i chev"><use href="#i-right"/></svg></button></div>
+    <p class="vnote">Fitur ini untuk memantau, bukan untuk diagnosis. Diagnosis hipertensi dan diabetes ditegakkan dokter dari beberapa kali pemeriksaan. ${VSRC}</p>`;
+  box.innerHTML = h;
+  box.querySelectorAll('[data-vt]').forEach(b => b.onclick = () => { vTab = b.dataset.vt; renderVital(); });
+  box.querySelectorAll('[data-vk]').forEach(b => b.onclick = () => { vKind = b.dataset.vk; renderVital(); });
+  ['#vAddBp', '#vAddBp2'].forEach(id => { const b = box.querySelector(id); if(b) b.onclick = vBpSheet; });
+  ['#vAddGlu', '#vAddGlu2'].forEach(id => { const b = box.querySelector(id); if(b) b.onclick = () => vGluSheet(vKind); });
+  box.querySelectorAll('[data-vbp]').forEach(b => b.onclick = () => vDetail('bp', b.dataset.vbp));
+  box.querySelectorAll('[data-vglu]').forEach(b => b.onclick = () => vDetail('glu', b.dataset.vglu));
+  $('#vDiab').onchange = e => { vS().diabetic = e.target.checked; save(); renderVital(); };
+  $('#vRemind').onclick = () => {
+    const d = new Date(); d.setHours(7, 0, 0, 0); if(d <= new Date()) d.setDate(d.getDate() + 1);
+    addReminder({title:'Cek tensi & gula darah', scheduledAt: toLocalISO(d), repeat:'daily', category:'kesehatan'});
+    toast('Pengingat harian jam 07.00 dibuat ⏰');
+  };
+}
+const vNum = (id, label, ph, dec) => `<div class="field"><label>${label}</label><input class="input vnum" id="${id}" inputmode="${dec ? 'decimal' : 'numeric'}" placeholder="${ph}" autocomplete="off"></div>`;
+function vBpSheet(){
+  showSheet(`<h3 style="margin:4px 0 4px">Catat tensi</h3><p class="muted-c" style="text-align:left;margin:0 0 12px">Ukur duduk tenang setelah istirahat 5 menit, lengan setinggi jantung.</p>
+    <div class="two">${vNum('vSys', 'Sistolik (atas)', '120')}${vNum('vDia', 'Diastolik (bawah)', '80')}</div>${vNum('vPul', 'Nadi (opsional)', '75')}
+    <div id="vPrev"></div><button class="btn btn-primary btn-block vsave" id="vSave" disabled>Simpan</button>`);
+  const f = () => { const s = +$('#vSys').value, d = +$('#vDia').value, ok = s >= 50 && s <= 300 && d >= 30 && d <= 200 && s > d;
+    $('#vPrev').innerHTML = ok ? vLevelCard(bpLevel(s, d)) : (s && d ? '<p class="muted-c" style="text-align:left">Periksa lagi angkanya: sistolik harus lebih besar dari diastolik.</p>' : '');
+    $('#vSave').disabled = !ok; return ok; };
+  ['#vSys', '#vDia', '#vPul'].forEach(id => $(id).oninput = f);
+  setTimeout(() => $('#vSys').focus(), 250);
+  $('#vSave').onclick = () => { if(!f()) return; const s = +$('#vSys').value, d = +$('#vDia').value, p = +$('#vPul').value;
+    const v = vS(); v.bp = [...v.bp, {id: Date.now().toString(36), at: Date.now(), s, d, p: p >= 30 && p <= 220 ? p : null}].sort((a, b) => a.at - b.at).slice(-500);
+    save(); closeSheet(); renderVital(); renderAll(); toast(`${tr('Tensi')} ${s}/${d} ${tr('dicatat')} ✅`); };
+}
+function vGluSheet(kind = 'puasa'){
+  let k = kind;
+  const draw = () => {
+    showSheet(`<h3 style="margin:4px 0 10px">Catat gula darah</h3><div class="tchips" style="margin:0 0 12px">${Object.entries(GK).map(([x, g]) => `<button class="tchip ${k === x ? 'on' : ''}" data-gk="${x}">${tr(g.s)}</button>`).join('')}</div>
+      ${vNum('vGv', `${tr(GK[k].l)} (${GK[k].u})`, k === 'hba1c' ? '5,6' : '95', k === 'hba1c')}<div id="vPrev"></div>
+      ${k === 'pp2' ? '<p class="muted-c" style="text-align:left;font-size:12px">Batas 140/200 berasal dari tes TTGO (minum 75 g glukosa). Setelah makan biasa, angkanya hanya perkiraan.</p>' : ''}
+      <button class="btn btn-primary btn-block vsave" id="vSave" disabled>Simpan</button>`);
+    $('#sheetBody').querySelectorAll('[data-gk]').forEach(b => b.onclick = () => { k = b.dataset.gk; draw(); });
+    const f = () => { const v = parseFloat(($('#vGv').value || '').replace(',', '.')), ok = !isNaN(v) && (k === 'hba1c' ? v >= 3 && v <= 20 : v >= 20 && v <= 700);
+      const t = ok && vS().diabetic ? gluTarget(k, v) : null;
+      $('#vPrev').innerHTML = ok ? vLevelCard(gluLevel(k, v)) + (t ? `<p style="font-weight:600;font-size:13px;margin:8px 2px 0">${tr(t.t)} · ${tr(tgtWord(t.s))}</p>` : '') : '';
+      $('#vSave').disabled = !ok; return ok ? v : null; };
+    $('#vGv').oninput = f;
+    setTimeout(() => $('#vGv').focus(), 250);
+    $('#vSave').onclick = () => { const v = f(); if(v == null) return;
+      const s = vS(); s.glu = [...s.glu, {id: Date.now().toString(36), at: Date.now(), k, v}].sort((a, b) => a.at - b.at).slice(-500);
+      vKind = k; save(); closeSheet(); renderVital(); renderAll(); toast(`${tr('Gula darah')} ${gluStr(k, v)} ${tr('dicatat')} ✅`); };
+  };
+  draw();
+}
+function vDetail(type, id){
+  const s = vS(), e = (type === 'bp' ? s.bp : s.glu).find(x => x.id === id); if(!e) return;
+  const d = new Date(e.at);
+  const lv = type === 'bp' ? bpLevel(e.s, e.d) : gluLevel(e.k, e.v);
+  const val = type === 'bp' ? `${e.s}/${e.d}` : gluStr(e.k, e.v), unit = type === 'bp' ? 'mmHg' : e.k === 'hba1c' ? '' : 'mg/dL';
+  const t = type === 'glu' && s.diabetic ? gluTarget(e.k, e.v) : null;
+  const extra = type === 'bp' ? [e.p ? `${tr('Nadi')} ${e.p} ${tr('kali/menit')}` : '', bpIso(e.s, e.d) ? 'Hipertensi sistolik terisolasi: sistolik ≥ 140 dengan diastolik < 90.' : '']
+    : [t ? `${tr(t.t)} · ${tr(tgtWord(t.s))}` : '', e.k === 'pp2' ? 'Batas 140/200 berasal dari tes TTGO (minum 75 g glukosa). Setelah makan biasa, angkanya hanya perkiraan.' : ''];
+  showSheet(`${type === 'glu' ? `<p class="muted-c" style="text-align:left;margin:0">${tr(GK[e.k].l)}</p>` : ''}<div class="vbig">${val}<small>${unit}</small></div>
+    <p class="muted-c" style="text-align:left;margin:0 0 12px">${fmtDateLong(d)} · ${fmtTime(d)}</p>${vLevelCard(lv)}
+    ${extra.filter(Boolean).map(x => `<p class="muted-c" style="text-align:left;font-size:13px;margin:10px 2px 0">${x}</p>`).join('')}
+    <button class="btn btn-block vdel" id="vDel">${icon('i-trash')}Hapus catatan</button>`);
+  $('#vDel').onclick = () => { if(!confirm(tr('Hapus catatan ini?'))) return;
+    if(type === 'bp') s.bp = s.bp.filter(x => x.id !== id); else s.glu = s.glu.filter(x => x.id !== id);
+    save(); closeSheet(); renderVital(); renderAll(); };
 }
 
 /* ---------------- CALENDAR ---------------- */

@@ -23,6 +23,7 @@ import 'reminder_form_screen.dart';
 import 'stats_screen.dart';
 import 'ticket_screens.dart';
 import 'translate_screen.dart';
+import 'vital_screen.dart';
 import 'workout/workout_screen.dart';
 
 typedef _Feat = ({String id, IconData icon, String title, String sub});
@@ -70,6 +71,7 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
       (id: 'ola', icon: Icons.directions_run_rounded, title: 'Olahraga', sub: 'Program latihan & catatan aktivitas'),
       (id: 'kal', icon: Icons.restaurant_rounded, title: 'Kalori & diet', sub: 'Hitung kalori makanan'),
       (id: 'weight', icon: Icons.monitor_weight_outlined, title: 'Berat badan', sub: 'Catat berat & target'),
+      (id: 'vital', icon: Icons.monitor_heart_outlined, title: 'Tensi & gula darah', sub: 'Catat & lihat golongannya sesuai acuan Kemenkes'),
       (id: 'cycle', icon: Icons.water_drop_outlined, title: 'Siklus haid', sub: 'Pengingat & perkiraan haid'),
     ]),
     ('Ibadah', FeatureColors.muslim, [
@@ -136,6 +138,8 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
         openWeightScreen(context);
       case 'cycle':
         _push(const CycleScreen());
+      case 'vital':
+        _push(const VitalScreen());
       case 'muslim':
         _push(const MuslimScreen());
       case 'qibla':
