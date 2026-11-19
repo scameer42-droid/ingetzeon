@@ -66,6 +66,14 @@ jobs:
           flutter build apk --release --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tail -60 | tee -a ci.log
           cp build/app/outputs/flutter-apk/app-release.apk IngetZeon.apk
 
+      - name: Build App Bundle (Google Play)
+        run: |
+          set -o pipefail
+          echo "=== build appbundle ===" >> ci.log
+          flutter build appbundle --release --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tail -30 | tee -a ci.log
+          cp build/app/outputs/bundle/release/app-release.aab IngetZeon-bundle.aab
+          grep -hE "targetSdk|compileSdk|minSdk" android/app/build.gradle* | tee -a ci.log
+
       - uses: actions/upload-artifact@v4
         with:
           name: IngetZeon-apk
@@ -82,9 +90,11 @@ jobs:
           body: |
             - **IngetZeon.apk** — pasang di HP Android
             - **IngetZeon-website.zip** — versi website (unggah ke Cloudflare Pages)
+            - **IngetZeon-bundle.aab** — bahan untuk Google Play (perlu ditandatangani ulang dengan kunci upload sebelum diunggah)
           files: |
             IngetZeon.apk
             IngetZeon-website.zip
+            IngetZeon-bundle.aab
           make_latest: true
 
       # Ringkasan hasil build disimpan di branch "ci-status" (bisa dibaca tanpa membuka Actions).

@@ -239,10 +239,13 @@ class NotificationService {
     return Permission.ignoreBatteryOptimizations.isGranted;
   }
 
+  /// Buka pengaturan aplikasi supaya pengguna bisa memilih "Baterai → Tidak dibatasi".
+  /// (Tanpa izin REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, yang dibatasi oleh kebijakan Google Play.)
   Future<bool> requestBatteryUnrestricted() async {
     if (!Platform.isAndroid) return true;
-    final st = await Permission.ignoreBatteryOptimizations.request();
-    return st.isGranted;
+    if (await Permission.ignoreBatteryOptimizations.isGranted) return true;
+    await openAppSettings();
+    return Permission.ignoreBatteryOptimizations.isGranted;
   }
 
   /// Tes: notifikasi pengingat berbunyi [seconds] detik lagi, memakai mode yang sama dengan pengingat asli.

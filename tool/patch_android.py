@@ -25,7 +25,6 @@ PERMISSIONS = [
     '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32"/>',
     '<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>',
     '<uses-permission android:name="android.permission.USE_BIOMETRIC"/>',
-    '<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>',
     '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>',
     '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>',
 ]
@@ -66,6 +65,9 @@ QUERIES = """
 def patch_manifest():
     s = MANIFEST.read_text()
     if "ScheduledNotificationReceiver" in s:
+        s2 = s.replace('    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>\n', "")
+        if s2 != s:
+            MANIFEST.write_text(s2)
         print("Manifest sudah dipatch")
         return
     perms = "\n".join("    " + p for p in PERMISSIONS)
@@ -97,6 +99,9 @@ def patch_gradle():
             s = s.replace("android {", "android {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }", 1)
         # minSdk minimal 23 (speech_to_text & notifikasi)
         s = re.sub(r"minSdk\s*=\s*flutter\.minSdkVersion", "minSdk = maxOf(flutter.minSdkVersion, 23)", s)
+        # Google Play: aplikasi baru & update wajib menargetkan Android 16 (API 36)
+        s = re.sub(r"targetSdk\s*=\s*flutter\.targetSdkVersion", "targetSdk = maxOf(flutter.targetSdkVersion, 36)", s)
+        s = re.sub(r"compileSdk\s*=\s*flutter\.compileSdkVersion", "compileSdk = maxOf(flutter.compileSdkVersion, 36)", s)
     elif groovy.exists():
         f = groovy
         s = f.read_text()
@@ -109,6 +114,8 @@ def patch_gradle():
             s = s.replace("android {", "android {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }", 1)
         s = re.sub(r"minSdkVersion\s+flutter\.minSdkVersion", "minSdkVersion Math.max(flutter.minSdkVersion, 23)", s)
         s = re.sub(r"minSdk\s*=\s*flutter\.minSdkVersion", "minSdk = Math.max(flutter.minSdkVersion, 23)", s)
+        s = re.sub(r"targetSdk(?:Version)?\s*=?\s*flutter\.targetSdkVersion", "targetSdkVersion Math.max(flutter.targetSdkVersion, 36)", s)
+        s = re.sub(r"compileSdk(?:Version)?\s*=?\s*flutter\.compileSdkVersion", "compileSdkVersion Math.max(flutter.compileSdkVersion, 36)", s)
     else:
         raise SystemExit("build.gradle tidak ditemukan")
     f.write_text(s)
