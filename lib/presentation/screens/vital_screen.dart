@@ -397,8 +397,9 @@ class _GuideBp extends StatelessWidget {
             child: Row(children: [
               Container(width: 10, height: 10, decoration: BoxDecoration(color: colors[i], shape: BoxShape.circle)),
               const SizedBox(width: 10),
-              Expanded(child: Text(bpGuide[i].$1, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5, color: context.ink))),
-              Text(bpGuide[i].$2, style: TextStyle(fontSize: 13, color: context.muted)),
+              Expanded(flex: 5, child: Text(bpGuide[i].$1, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5, color: context.ink))),
+              const SizedBox(width: 8),
+              Expanded(flex: 4, child: Text(bpGuide[i].$2, textAlign: TextAlign.right, style: TextStyle(fontSize: 13, color: context.muted))),
             ]),
           ),
         ],
