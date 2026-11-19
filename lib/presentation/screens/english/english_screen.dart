@@ -102,38 +102,24 @@ class EnglishScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 4, 20, 40),
         children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            const Zeo(size: 84),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: context.card,
-                  border: Border.all(color: context.line),
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18), bottomRight: Radius.circular(18), bottomLeft: Radius.circular(6)),
-                ),
-                child: Text(bubble, style: const TextStyle(fontSize: 14.5, height: 1.5)),
-              ),
-            ),
-          ]),
-          const SizedBox(height: 16),
-          SoftCard(
-            padding: const EdgeInsets.all(16),
+          FeatureHero(
+            color: FeatureColors.english,
+            label: 'Belajar bareng Zeo',
+            title: bubble,
+            trailing: const Padding(padding: EdgeInsets.only(left: 8), child: Zeo(size: 60)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               Row(children: [
-                const Expanded(child: Text('Target harian', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700))),
-                Text('${p.dayXp}/$engGoal XP', translate: false, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.muted)),
+                const Expanded(child: Text('Target harian', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white))),
+                Text('${p.dayXp}/$engGoal XP', translate: false, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
               ]),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: (p.dayXp / engGoal).clamp(0, 1).toDouble()),
                 duration: const Duration(milliseconds: 800),
                 curve: Curves.easeOutCubic,
                 builder: (_, v, __) => ClipRRect(
                   borderRadius: BorderRadius.circular(99),
-                  child: LinearProgressIndicator(value: v, minHeight: 10, color: _amber, backgroundColor: context.card2),
+                  child: LinearProgressIndicator(value: v, minHeight: 7, color: Colors.white, backgroundColor: Colors.white.withValues(alpha: .22)),
                 ),
               ),
             ]),
@@ -160,11 +146,10 @@ class EnglishScreen extends ConsumerWidget {
               ),
             ),
           const SizedBox(height: 8),
-          _Tile(emoji: '🃏', bg: const Color(0xFFFEF0C7), title: 'Kartu kosakata', sub: 'Hafalkan kata dari topik yang sudah dibuka', onTap: () => openEnglishCards(context)),
+          _Tile(icon: Icons.style_outlined, title: 'Kartu kosakata', sub: 'Hafalkan kata dari topik yang sudah dibuka', onTap: () => openEnglishCards(context)),
           const SizedBox(height: 8),
           _Tile(
-            emoji: '⏰',
-            bg: const Color(0xFFE0F2FE),
+            icon: Icons.alarm_rounded,
             title: 'Ingatkan belajar tiap hari',
             sub: hasReminder ? 'Sudah aktif jam 19.00' : 'Pengingat jam 19.00 setiap hari',
             onTap: () async {
@@ -209,23 +194,18 @@ class _StatChip extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile({required this.emoji, required this.bg, required this.title, required this.sub, required this.onTap});
-  final String emoji, title, sub;
-  final Color bg;
+  const _Tile({required this.icon, required this.title, required this.sub, required this.onTap});
+  final IconData icon;
+  final String title, sub;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => SoftCard(
+        radius: 18,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         onTap: onTap,
         child: Row(children: [
-          Container(
-            width: 42,
-            height: 42,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(color: context.isDark ? context.card2 : bg, borderRadius: BorderRadius.circular(12)),
-            child: Text(emoji, translate: false, style: const TextStyle(fontSize: 22)),
-          ),
+          IconTile(icon: icon, color: FeatureColors.english, size: 42),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -234,11 +214,11 @@ class _Tile extends StatelessWidget {
               Text(sub, style: TextStyle(fontSize: 13, color: context.muted)),
             ]),
           ),
+          Icon(Icons.chevron_right_rounded, color: context.faint),
         ]),
       );
 }
 
-/// Satu lingkaran topik di jalur belajar.
 class _PathNode extends StatefulWidget {
   const _PathNode({required this.topic, required this.stars, required this.open, required this.current, required this.onTap});
   final EngTopic topic;

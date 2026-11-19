@@ -16,7 +16,8 @@ import 'calm_tools.dart';
 LinearGradient _grad(PsyTest t, {double a = 1}) => LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(t.colors[0]).withValues(alpha: a), Color(t.colors[1]).withValues(alpha: a)],
+      // satu warna per tes, gradasi lembut (gelap → terang) supaya tetap berwarna tapi rapi
+      colors: [Color.lerp(Color(t.colors[1]), Colors.black, .28)!.withValues(alpha: a), Color(t.colors[1]).withValues(alpha: a)],
     );
 
 /// Emoji yang melompat-lompat pelan.
@@ -463,7 +464,7 @@ class _ResultViewState extends ConsumerState<_ResultView> with SingleTickerProvi
           index: 0,
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
-            decoration: BoxDecoration(gradient: _grad(t), borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Color(t.colors[1]).withValues(alpha: .35), blurRadius: 30, offset: const Offset(0, 14), spreadRadius: -12)]),
+            decoration: BoxDecoration(gradient: _grad(t), borderRadius: BorderRadius.circular(20)),
             child: Column(children: [
               Bouncy(Text(gentle ? '🤗' : '🏅', style: const TextStyle(fontSize: 54)), height: 8),
               const SizedBox(height: 4),

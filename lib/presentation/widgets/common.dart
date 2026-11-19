@@ -390,19 +390,198 @@ class AestheticBackground extends StatelessWidget {
 
 /// Kartu utama bergradasi biru laut dengan hiasan cincin halus.
 class MeshCard extends StatelessWidget {
-  const MeshCard({super.key, required this.child, this.radius = 22, this.padding = const EdgeInsets.all(20)});
+  const MeshCard({super.key, required this.child, this.radius = 20, this.padding = const EdgeInsets.all(20), this.color});
   final Widget child;
   final double radius;
   final EdgeInsetsGeometry padding;
 
+  /// Warna aksen fitur (lihat [FeatureColors]); null = gradasi biru utama.
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
+    final g = color == null ? AppColors.gradient : FeatureColors.hero(color!);
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(gradient: AppColors.gradient, borderRadius: BorderRadius.circular(radius)),
+      decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(radius)),
       child: Padding(padding: padding, child: child),
     );
   }
+}
+
+/// Satu warna aksen per fitur — dipakai untuk kartu utama, ikon, dan tombol utama fitur itu.
+class FeatureColors {
+  FeatureColors._();
+  static const reminder = Color(0xFF2563EB);
+  static const parking = Color(0xFF0E8BD8);
+  static const items = Color(0xFFD97706);
+  static const notes = Color(0xFF7C3AED);
+  static const muslim = Color(0xFF059669);
+  static const calorie = Color(0xFFEA580C);
+  static const workout = Color(0xFFE11D48);
+  static const calm = Color(0xFF0D9488);
+  static const cycle = Color(0xFFDB2777);
+  static const english = Color(0xFF4F46E5);
+  static const translate = Color(0xFF0284C7);
+
+  /// Gradasi lembut satu warna untuk kartu utama fitur.
+  static LinearGradient hero(Color c) => LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color.lerp(c, Colors.black, .28)!, c],
+      );
+}
+
+/// Kartu utama di atas tiap layar fitur: judul, keterangan, angka besar, dan tombol.
+class FeatureHero extends StatelessWidget {
+  const FeatureHero({
+    super.key,
+    required this.color,
+    required this.title,
+    this.label,
+    this.subtitle,
+    this.big,
+    this.bigCaption,
+    this.icon,
+    this.actions = const [],
+    this.child,
+    this.trailing,
+  });
+  final Color color;
+  final String title;
+  final String? label, subtitle, big, bigCaption;
+  final IconData? icon;
+  final List<Widget> actions;
+  final Widget? child;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    const w80 = Color(0xCCFFFFFF);
+    return MeshCard(
+      color: color,
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (label != null) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(99)),
+                  child: Text(label!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 10),
+              ],
+              Text(title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700, height: 1.25)),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(subtitle!, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(color: w80, fontSize: 13, height: 1.4)),
+              ],
+            ]),
+          ),
+          if (trailing != null)
+            trailing!
+          else if (icon != null)
+            Container(
+              width: 42,
+              height: 42,
+              margin: const EdgeInsets.only(left: 10),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(13)),
+              child: Icon(icon, color: Colors.white, size: 22),
+            ),
+        ]),
+        if (big != null) ...[
+          const SizedBox(height: 12),
+          if (bigCaption != null) Text(bigCaption!, style: const TextStyle(color: w80, fontSize: 12.5, fontWeight: FontWeight.w600)),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(big!, translate: false, style: const TextStyle(color: Colors.white, fontSize: 38, fontWeight: FontWeight.w700, letterSpacing: -1, height: 1.15)),
+          ),
+        ],
+        if (child != null) ...[const SizedBox(height: 12), child!],
+        if (actions.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          Row(children: [
+            for (var i = 0; i < actions.length; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              Flexible(child: actions[i]),
+            ],
+          ]),
+        ],
+      ]),
+    );
+  }
+}
+
+/// Tombol di dalam [FeatureHero]: putih (utama) atau garis putih (kedua).
+class HeroButton extends StatelessWidget {
+  const HeroButton({super.key, required this.label, required this.onTap, this.color, this.icon, this.secondary = false});
+  final String label;
+  final VoidCallback onTap;
+  final Color? color;
+  final IconData? icon;
+  final bool secondary;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = secondary ? Colors.white : (color ?? AppColors.primary);
+    return Material(
+      color: secondary ? Colors.white.withValues(alpha: .14) : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          height: 42,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: secondary ? BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.white.withValues(alpha: .35))) : null,
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            if (icon != null) ...[Icon(icon, size: 18, color: fg), const SizedBox(width: 6)],
+            Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: fg, fontWeight: FontWeight.w600, fontSize: 13.5))),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// Ikon garis berwarna di kotak lembut — cara utama memberi warna di IngetZeon.
+class IconTile extends StatelessWidget {
+  const IconTile({super.key, required this.icon, required this.color, this.size = 44});
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: color.withValues(alpha: context.isDark ? .18 : .10), borderRadius: BorderRadius.circular(size * .32)),
+        child: Icon(icon, color: color, size: size * .5),
+      );
+}
+
+/// Ubin alat/pintasan: [IconTile] + label di bawah, di kartu putih bergaris.
+class ToolTile extends StatelessWidget {
+  const ToolTile({super.key, required this.icon, required this.color, required this.label, required this.onTap});
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => SoftCard(
+        radius: 16,
+        padding: const EdgeInsets.fromLTRB(8, 14, 8, 12),
+        onTap: onTap,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          IconTile(icon: icon, color: color, size: 42),
+          const SizedBox(height: 8),
+          Text(label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: context.ink, height: 1.25)),
+        ]),
+      );
 }
 
 

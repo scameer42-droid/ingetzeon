@@ -16,7 +16,7 @@ import 'muslim_tools.dart';
 const kGreen = Color(0xFF059669);
 const kGreen2 = Color(0xFF10B981);
 const kGold = Color(0xFFF59E0B);
-const kMuslimGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF047857), Color(0xFF10B981)]);
+const kMuslimGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF046C4C), Color(0xFF059669)]);
 
 String countdownText(Duration d) {
   if (d.isNegative) return 'sekarang';
@@ -126,43 +126,39 @@ class MuslimScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Muslim Harian'), centerTitle: false),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 32), children: [
         // ---- header
-        Container(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-          decoration: BoxDecoration(
-            gradient: kMuslimGradient,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: [BoxShadow(color: kGreen.withValues(alpha: .35), blurRadius: 30, offset: const Offset(0, 14), spreadRadius: -12)],
-          ),
-          child: Stack(clipBehavior: Clip.none, children: [
-            const Positioned(right: -4, top: -6, child: Text('🕌', style: TextStyle(fontSize: 54))),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              GestureDetector(
-                onTap: () => pickCity(context, ref),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(99)),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(s.auto ? Icons.my_location_rounded : Icons.location_on_rounded, size: 14, color: Colors.white),
-                    const SizedBox(width: 5),
-                    Text(s.city, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12.5)),
-                    const Icon(Icons.expand_more_rounded, size: 16, color: Colors.white),
-                  ]),
+        FeatureHero(
+          color: FeatureColors.muslim,
+          icon: Icons.mosque_rounded,
+          title: '${hijri.d} ${hijri.monthName} ${hijri.y} H',
+          subtitle: fmtDateLong(now),
+          bigCaption: 'Menuju ${prayerNames[next.key]}',
+          big: fmtTime(next.at),
+          trailing: GestureDetector(
+            onTap: () => pickCity(context, ref),
+            child: Container(
+              margin: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(99)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(s.auto ? Icons.my_location_rounded : Icons.location_on_rounded, size: 14, color: Colors.white),
+                const SizedBox(width: 5),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 110),
+                  child: Text(s.city, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12.5)),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text('${hijri.d} ${hijri.monthName} ${hijri.y} H', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-              Text(fmtDateLong(now), style: TextStyle(color: Colors.white.withValues(alpha: .8), fontSize: 12.5)),
-              const SizedBox(height: 14),
-              Text('Menuju ${prayerNames[next.key]}', style: TextStyle(color: Colors.white.withValues(alpha: .9), fontWeight: FontWeight.w600)),
-              Text(fmtTime(next.at), style: accentFont(size: 44, color: Colors.white)),
-              Container(
-                margin: const EdgeInsets.only(top: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: kGold, borderRadius: BorderRadius.circular(99)),
-                child: Text('⏳ ${countdownText(next.at.difference(now))}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12.5)),
-              ),
+                const Icon(Icons.expand_more_rounded, size: 16, color: Colors.white),
+              ]),
+            ),
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(99)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(Icons.schedule_rounded, size: 14, color: Colors.white),
+              const SizedBox(width: 5),
+              Text(countdownText(next.at.difference(now)), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12.5)),
             ]),
-          ]),
+          ),
         ),
         const SizedBox(height: 16),
         // ---- alat
@@ -172,14 +168,14 @@ class MuslimScreen extends ConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1.05,
+          childAspectRatio: 1.0,
           children: [
-            _Tool('🧭', 'Arah kiblat', const Color(0xFF059669), () => _push(context, const QiblaScreen())),
-            _Tool('📖', "Al-Qur'an", const Color(0xFF0EA5E9), () => _push(context, const QuranListScreen())),
-            _Tool('🤲', 'Doa harian', const Color(0xFFF59E0B), () => _push(context, const DoaScreen())),
-            _Tool('✨', 'Asmaul Husna', const Color(0xFF8B5CF6), () => _push(context, const AsmaScreen())),
-            _Tool('📿', 'Tasbih', const Color(0xFFEC4899), () => _push(context, const TasbihScreen())),
-            _Tool('📅', 'Hari besar', const Color(0xFF6366F1), () => showIslamicDays(context)),
+            ToolTile(icon: Icons.explore_outlined, color: FeatureColors.muslim, label: 'Arah kiblat', onTap: () => _push(context, const QiblaScreen())),
+            ToolTile(icon: Icons.menu_book_outlined, color: FeatureColors.muslim, label: "Al-Qur'an", onTap: () => _push(context, const QuranListScreen())),
+            ToolTile(icon: Icons.volunteer_activism_outlined, color: FeatureColors.muslim, label: 'Doa harian', onTap: () => _push(context, const DoaScreen())),
+            ToolTile(icon: Icons.auto_awesome_outlined, color: FeatureColors.muslim, label: 'Asmaul Husna', onTap: () => _push(context, const AsmaScreen())),
+            ToolTile(icon: Icons.radio_button_checked_rounded, color: FeatureColors.muslim, label: 'Tasbih', onTap: () => _push(context, const TasbihScreen())),
+            ToolTile(icon: Icons.event_outlined, color: FeatureColors.muslim, label: 'Hari besar', onTap: () => showIslamicDays(context)),
           ],
         ),
         // ---- jadwal
@@ -268,7 +264,7 @@ class _AdzanSoundCard extends ConsumerWidget {
           width: 46,
           height: 46,
           alignment: Alignment.center,
-          decoration: BoxDecoration(gradient: on ? const LinearGradient(colors: [Color(0xFF059669), Color(0xFF0D9488)]) : null, color: on ? null : context.line, borderRadius: BorderRadius.circular(14)),
+          decoration: BoxDecoration(color: on ? kGreen : context.line, borderRadius: BorderRadius.circular(14)),
           child: Text(!on ? '🔕' : s.adzanSound == 'getar' ? '📳' : s.adzanSound == 'notif' ? '🔔' : '🕌', style: const TextStyle(fontSize: 22)),
         ),
         const SizedBox(width: 12),
@@ -405,32 +401,6 @@ class IslamicDayRow extends StatelessWidget {
 }
 
 String hariLong(DateTime d) => fmtDateLong(d).split(',').first;
-
-class _Tool extends StatelessWidget {
-  const _Tool(this.emoji, this.label, this.color, this.onTap);
-  final String emoji;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    return SoftCard(
-      padding: const EdgeInsets.all(8),
-      onTap: onTap,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(color: color.withValues(alpha: .12), borderRadius: BorderRadius.circular(14)),
-          alignment: Alignment.center,
-          child: Text(emoji, style: const TextStyle(fontSize: 24)),
-        ),
-        const SizedBox(height: 8),
-        Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
-      ]),
-    );
-  }
-}
 
 class _PrayerRow extends StatelessWidget {
   const _PrayerRow({

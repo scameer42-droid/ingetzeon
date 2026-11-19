@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart' hide Text;
 import '../../../core/i18n/tr_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
@@ -15,22 +14,22 @@ import '../calorie/weight_screen.dart';
 import 'exercise_figure.dart';
 import 'workout_player.dart';
 
-const kOla = Color(0xFFF97316);
-const kOlaGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFFB923C), Color(0xFFE11D48)]);
-const kNavy = Color(0xFF0F172A);
-const kNavyGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF0F172A), Color(0xFF1E3A8A)]);
-const kBlueGradient = LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)]);
-const kFireGradient = LinearGradient(colors: [Color(0xFFE11D48), Color(0xFFF97316)]);
-const kBlue = Color(0xFF2563EB);
+/// Warna fitur Olahraga (lihat FeatureColors.workout) — satu aksen, gradasi lembut satu warna.
+const kOla = Color(0xFFE11D48);
+const kOlaGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFA21534), Color(0xFFE11D48)]);
+const kNavy = Color(0xFF111633);
+const kNavyGradient = kOlaGradient;
+const kBlueGradient = kOlaGradient;
+const kFireGradient = kOlaGradient;
+const kBlue = Color(0xFFE11D48);
 const levelNames = ['', 'Pemula', 'Menengah', 'Lanjut'];
 const levelColors = [Color(0xFF94A3B8), Color(0xFF10B981), Color(0xFFF59E0B), Color(0xFFE11D48)];
 
 String figureOf(WorkoutProgram p) => programFigure[p.id] ?? p.items.first.$1;
 
-/// Huruf tebal sempit untuk judul besar.
-TextStyle olaDisplay(double size, {Color color = Colors.white, double spacing = .3}) => useGoogleFonts
-    ? GoogleFonts.barlowCondensed(fontSize: size, fontWeight: FontWeight.w800, color: color, height: 1.0, letterSpacing: spacing)
-    : TextStyle(fontSize: size, fontWeight: FontWeight.w800, color: color, height: 1.0, letterSpacing: spacing);
+/// Judul/angka besar di fitur Olahraga — tebal tapi tenang (bukan huruf poster).
+TextStyle olaDisplay(double size, {Color color = Colors.white, double spacing = .3}) =>
+    TextStyle(fontSize: size * .72, fontWeight: FontWeight.w700, color: color, height: 1.15, letterSpacing: -.2);
 
 String fmtClock(int s) => '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
 String amountLabel(Exercise e, int a) => e.timed ? fmtClock(a) : '$a kali';
@@ -55,13 +54,12 @@ class BigStartButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: gradient,
           color: gradient == null ? Colors.white : null,
-          borderRadius: BorderRadius.circular(99),
-          boxShadow: [BoxShadow(color: (gradient == null ? Colors.black : kBlue).withValues(alpha: .35), blurRadius: 22, offset: const Offset(0, 10), spreadRadius: -10)],
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
-            borderRadius: BorderRadius.circular(99),
+            borderRadius: BorderRadius.circular(14),
             onTap: onTap,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -69,8 +67,8 @@ class BigStartButton extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    if (icon != null) ...[Icon(icon, color: textColor, size: height * .42), const SizedBox(width: 6)],
-                    Text(tr(label).toUpperCase(), maxLines: 1, style: olaDisplay(height * .42, color: textColor, spacing: 1)),
+                    if (icon != null) ...[Icon(icon, color: textColor, size: 22), const SizedBox(width: 8)],
+                    Text(label, maxLines: 1, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: textColor)),
                   ]),
                 ),
               ),
@@ -318,63 +316,49 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
 
   Widget _hero(BuildContext context, WorkoutState s, DateTime now) {
     final week = s.weekMinutes, goal = s.weeklyGoal;
-    return Container(
-      decoration: const BoxDecoration(gradient: kNavyGradient, borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              IconButton(onPressed: () => Navigator.of(context).maybePop(), icon: const Icon(Icons.arrow_back_rounded, color: Colors.white)),
-              const Expanded(child: Text('Olahraga', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17))),
-              IconButton(
-                tooltip: tr('Pengingat olahraga'),
-                onPressed: () => _reminder(context),
-                icon: Icon(s.reminderHour == null ? Icons.notifications_none_rounded : Icons.notifications_active_rounded, color: Colors.white),
-              ),
-            ]),
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: const EdgeInsets.fromLTRB(20, 4, 0, 14), child: Text('OLAHRAGA\nDI RUMAH', style: olaDisplay(44))),
-                  const OlaRibbon('Tanpa alat'),
-                ]),
-              ),
-              const SizedBox(width: 150, child: Padding(padding: EdgeInsets.only(right: 12), child: ExerciseFigure('jumping_jack', matColor: Color(0x33FFFFFF)))),
-            ]),
-            const SizedBox(height: 18),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(children: [
+    return SafeArea(
+      bottom: false,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          IconButton(onPressed: () => Navigator.of(context).maybePop(), icon: Icon(Icons.arrow_back_rounded, color: context.ink)),
+          Expanded(child: Text('Olahraga', style: TextStyle(color: context.ink, fontWeight: FontWeight.w700, fontSize: 19))),
+          IconButton(
+            tooltip: tr('Pengingat olahraga'),
+            onPressed: () => _reminder(context),
+            icon: Icon(s.reminderHour == null ? Icons.notifications_none_rounded : Icons.notifications_active_rounded, color: context.ink),
+          ),
+        ]),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: FeatureHero(
+            color: FeatureColors.workout,
+            label: 'Tanpa alat · di rumah',
+            title: 'Olahraga di rumah',
+            subtitle: week >= goal ? 'Target mingguan tercapai! 🏆' : 'Target WHO: $goal menit seminggu · sisa ${goal - week} menit',
+            trailing: const SizedBox(width: 78, height: 78, child: ExerciseFigure('jumping_jack', matColor: Color(0x33FFFFFF))),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
                 _stat('$week', '/ $goal menit\nminggu ini'),
                 _stat(fmtNum(s.kcalOn(now)), 'kkal terbakar\nhari ini'),
                 _stat('${s.streak}', 'hari\nberturut-turut'),
               ]),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-              child: ClipRRect(
+              const SizedBox(height: 12),
+              ClipRRect(
                 borderRadius: BorderRadius.circular(99),
-                child: LinearProgressIndicator(value: (week / goal).clamp(0, 1).toDouble(), minHeight: 8, color: kOla, backgroundColor: Colors.white.withValues(alpha: .14)),
+                child: LinearProgressIndicator(value: (week / goal).clamp(0, 1).toDouble(), minHeight: 6, color: Colors.white, backgroundColor: Colors.white.withValues(alpha: .22)),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-              child: Text(week >= goal ? 'Target mingguan tercapai! 🏆' : 'Target WHO: $goal menit seminggu · sisa ${goal - week} menit',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12.5, fontWeight: FontWeight.w600)),
-            ),
-          ]),
+            ]),
+          ),
         ),
-      ),
+      ]),
     );
   }
 
   Widget _stat(String v, String l) => Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(v, style: olaDisplay(34, color: Colors.white)),
+          Text(v, translate: false, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700, height: 1.1)),
           const SizedBox(height: 2),
-          Text(l, style: const TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.25, fontWeight: FontWeight.w600)),
+          Text(l, style: const TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.25, fontWeight: FontWeight.w500)),
         ]),
       );
 
@@ -478,24 +462,27 @@ class _ChallengeCard extends ConsumerWidget {
     final p = programById(pid)!;
     final todayDone = day != null && done.contains(day);
     final rest = day != null && day % 7 == 0; // hari ke-7 tiap minggu: istirahat
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFF97316), Color(0xFFE11D48)]),
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: [BoxShadow(color: kOla.withValues(alpha: .35), blurRadius: 28, offset: const Offset(0, 14), spreadRadius: -12)],
-      ),
+    const c = FeatureColors.workout;
+    return SoftCard(
+      padding: EdgeInsets.zero,
       child: Stack(children: [
-        const Positioned(right: -6, top: 6, width: 160, child: ExerciseFigure('crunch', matColor: Color(0x40FFFFFF))),
+        Positioned(right: 4, top: 10, width: 110, child: ExerciseFigure('crunch', matColor: c.withValues(alpha: .12))),
         Padding(
           padding: const EdgeInsets.all(18),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('TANTANGAN 28 HARI', style: olaDisplay(16, color: Colors.white.withValues(alpha: .85), spacing: 1.6)),
+            Row(children: [
+              const IconTile(icon: Icons.emoji_events_outlined, color: c, size: 32),
+              const SizedBox(width: 8),
+              Text('Tantangan 28 hari', style: TextStyle(color: context.muted, fontSize: 13, fontWeight: FontWeight.w600)),
+            ]),
+            const SizedBox(height: 10),
+            Text(!started ? 'Perut rata' : finished ? 'Selesai! 🏆' : 'Hari ke-${day ?? 28}', style: TextStyle(color: context.ink, fontSize: 24, fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
-            Text(!started ? 'PERUT\nRATA' : finished ? 'SELESAI!\n🏆' : 'HARI\nKE-${day ?? 28}', style: olaDisplay(46)),
-            const SizedBox(height: 8),
-            Text(!started ? '6 hari latihan + 1 hari istirahat\ntiap minggu, makin berat bertahap' : '${done.length} hari selesai · minggu ${week + 1}: ${p.name.split(' — ').first}',
-                style: const TextStyle(color: Colors.white, fontSize: 12.5, height: 1.35, fontWeight: FontWeight.w600)),
+            Padding(
+              padding: const EdgeInsets.only(right: 100),
+              child: Text(!started ? '6 hari latihan + 1 hari istirahat tiap minggu, makin berat bertahap' : '${done.length} hari selesai · minggu ${week + 1}: ${p.name.split(' — ').first}',
+                  style: TextStyle(color: context.muted, fontSize: 12.5, height: 1.4)),
+            ),
             const SizedBox(height: 14),
             Wrap(spacing: 5, runSpacing: 5, children: [
               for (var d = 1; d <= 28; d++)
@@ -505,35 +492,33 @@ class _ChallengeCard extends ConsumerWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: done.contains(d) ? Colors.white : Colors.white.withValues(alpha: d % 7 == 0 ? .08 : .16),
-                    border: d == day ? Border.all(color: Colors.white, width: 2.2) : null,
+                    color: done.contains(d) ? c : (d % 7 == 0 ? context.card2.withValues(alpha: .5) : context.card2),
+                    border: d == day ? Border.all(color: c, width: 2) : null,
                   ),
                   child: done.contains(d)
-                      ? const Icon(Icons.check_rounded, size: 16, color: Color(0xFFE11D48))
-                      : Text(d % 7 == 0 ? '😴' : '$d', style: TextStyle(fontSize: d % 7 == 0 ? 12 : 11.5, fontWeight: FontWeight.w800, color: Colors.white)),
+                      ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                      : Text(d % 7 == 0 ? '😴' : '$d', style: TextStyle(fontSize: d % 7 == 0 ? 12 : 11.5, fontWeight: FontWeight.w600, color: context.muted)),
                 ),
             ]),
             const SizedBox(height: 16),
             if (!started || finished)
               BigStartButton(
                 label: finished ? 'Ulangi tantangan' : 'Mulai tantangan',
-                gradient: null,
-                textColor: const Color(0xFFE11D48),
-                height: 54,
+                gradient: FeatureColors.hero(c),
+                height: 50,
                 onTap: () => ref.read(workoutProvider.notifier).startChallenge(),
               )
             else if (rest)
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(16)),
-                child: const Text('😴 Hari ini istirahat — otot tumbuh saat beristirahat. Boleh jalan santai atau peregangan.', style: TextStyle(color: Colors.white, height: 1.4)),
+                decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(14)),
+                child: Text('😴 Hari ini istirahat — otot tumbuh saat beristirahat. Boleh jalan santai atau peregangan.', style: TextStyle(color: context.ink, height: 1.4)),
               )
             else
               BigStartButton(
                 label: todayDone ? 'Sudah ✓ · ulangi' : 'Mulai · ${(Workout.seconds(p, mult: mult) / 60).round()} menit',
-                gradient: null,
-                textColor: const Color(0xFFE11D48),
-                height: 54,
+                gradient: FeatureColors.hero(c),
+                height: 50,
                 onTap: () => openProgram(context, p, mult: mult, logProgram: 'tantangan_$day', title: 'Tantangan hari ke-$day'),
               ),
             if (started)
@@ -545,7 +530,7 @@ class _ChallengeCard extends ConsumerWidget {
                       ref.read(workoutProvider.notifier).stopChallenge();
                     }
                   },
-                  child: const Text('Hentikan', style: TextStyle(color: Colors.white70)),
+                  child: Text('Hentikan', style: TextStyle(color: context.muted)),
                 ),
               ),
           ]),
@@ -562,38 +547,34 @@ class _ProgramCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Color(p.color);
-    final dark = Color.lerp(c, Colors.black, .45)!;
     final parts = p.name.split(' — ');
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        borderRadius: BorderRadius.circular(24),
-        clipBehavior: Clip.antiAlias,
-        child: Ink(
-          height: 148,
-          decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [dark, c])),
-          child: InkWell(
-            onTap: () => openProgram(context, p),
-            child: Stack(children: [
-              Positioned(right: 4, bottom: 6, width: 168, child: ExerciseFigure(figureOf(p), animate: false, matColor: Colors.white.withValues(alpha: .3))),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 16, 150, 14),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: .2), borderRadius: BorderRadius.circular(99)),
-                    child: Text('${p.emoji} ${tr(parts.length > 1 ? parts[1] : levelNames[p.level])}'.toUpperCase(),
-                        maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: .8)),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(child: Align(alignment: Alignment.topLeft, child: Text(tr(parts.first).toUpperCase(), maxLines: 2, overflow: TextOverflow.ellipsis, style: olaDisplay(28)))),
-                  Text('${(Workout.seconds(p) / 60).round()} MENIT · ${p.items.length} GERAKAN · ${fmtNum(Workout.kcal(p, kg))} KKAL', maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w800, letterSpacing: .4)),
-                ]),
-              ),
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SoftCard(
+        radius: 18,
+        padding: const EdgeInsets.all(10),
+        onTap: () => openProgram(context, p),
+        child: Row(children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(color: c.withValues(alpha: context.isDark ? .18 : .09), borderRadius: BorderRadius.circular(14)),
+            padding: const EdgeInsets.all(6),
+            child: ExerciseFigure(figureOf(p), animate: false, matColor: c.withValues(alpha: .18)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('${p.emoji} ${tr(parts.length > 1 ? parts[1] : levelNames[p.level])}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Text(parts.first, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.ink, fontSize: 16, fontWeight: FontWeight.w700, height: 1.25)),
+              const SizedBox(height: 6),
+              Text('${(Workout.seconds(p) / 60).round()} menit · ${p.items.length} gerakan · ${fmtNum(Workout.kcal(p, kg))} kkal', maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: context.muted, fontSize: 12.5)),
             ]),
           ),
-        ),
+          Icon(Icons.chevron_right_rounded, color: context.faint),
+        ]),
       ),
     );
   }
@@ -606,27 +587,28 @@ class _MiniProgram extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Color(p.color);
-    return Material(
-      borderRadius: BorderRadius.circular(20),
-      clipBehavior: Clip.antiAlias,
-      child: Ink(
-        width: 230,
-        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color.lerp(c, Colors.black, .4)!, c])),
-        child: InkWell(
-          onTap: () => openProgram(context, p),
-          child: Stack(children: [
-            Positioned(right: 0, bottom: 4, width: 112, child: ExerciseFigure(figureOf(p), animate: false, matColor: Colors.white.withValues(alpha: .3))),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 96, 12),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(tr(levelNames[p.level]).toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: .8)),
-                const SizedBox(height: 4),
-                Expanded(child: Align(alignment: Alignment.topLeft, child: Text(tr(p.name.split(' — ').first).toUpperCase(), maxLines: 3, overflow: TextOverflow.ellipsis, style: olaDisplay(20)))),
-                Text('${(Workout.seconds(p) / 60).round()} MNT · ${fmtNum(Workout.kcal(p, kg))} KKAL', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w800)),
-              ]),
-            ),
-          ]),
-        ),
+    return SizedBox(
+      width: 230,
+      child: SoftCard(
+        radius: 18,
+        padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+        onTap: () => openProgram(context, p),
+        child: Row(children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(levelNames[p.level], style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Expanded(child: Text(p.name.split(' — ').first, maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.ink, fontSize: 15, fontWeight: FontWeight.w700, height: 1.25))),
+              Text('${(Workout.seconds(p) / 60).round()} mnt · ${fmtNum(Workout.kcal(p, kg))} kkal', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 12)),
+            ]),
+          ),
+          Container(
+            width: 72,
+            decoration: BoxDecoration(color: c.withValues(alpha: context.isDark ? .18 : .09), borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.all(4),
+            child: ExerciseFigure(figureOf(p), animate: false, matColor: c.withValues(alpha: .18)),
+          ),
+        ]),
       ),
     );
   }
@@ -643,10 +625,9 @@ class ProgramScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = program;
     final kg = ref.watch(calorieProvider).profile?.kg;
-    final c = Color(p.color);
     final day = RegExp(r'hari ke-(\d+)').firstMatch(title ?? '')?.group(1);
-    final small = day != null ? 'TANTANGAN PERUT 28 HARI' : tr('${levelNames[p.level]} · ${p.rounds} ronde').toUpperCase();
-    final big = day != null ? 'HARI KE-$day' : tr(p.name.split(' — ').first).toUpperCase();
+    final small = day != null ? 'Tantangan perut 28 hari' : '${levelNames[p.level]} · ${p.rounds} ronde';
+    final big = day != null ? 'Hari ke-$day' : p.name.split(' — ').first;
     final items = [
       for (final it in p.items) (exerciseById(it.$1), ((it.$2 > 0 ? it.$2 : exerciseById(it.$1).amount) * mult).round()),
     ];
@@ -655,13 +636,13 @@ class ProgramScreen extends ConsumerWidget {
         SliverAppBar(
           pinned: true,
           expandedHeight: 300,
-          backgroundColor: kNavy,
+          backgroundColor: const Color(0xFFA21534),
           foregroundColor: Colors.white,
           title: Text(title ?? p.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
           flexibleSpace: FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
             background: Container(
-              decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [kNavy, Color.lerp(c, kNavy, .35)!])),
+              decoration: const BoxDecoration(gradient: kOlaGradient),
               child: SafeArea(
                 child: Stack(children: [
                   Positioned(right: 8, top: 54, width: 190, child: ExerciseFigure(figureOf(p), matColor: Colors.white.withValues(alpha: .25))),
@@ -698,7 +679,7 @@ class ProgramScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
                 child: Row(children: [
-                  Text('${p.items.length} GERAKAN', style: olaDisplay(22, color: context.ink)),
+                  Text('${p.items.length} gerakan', style: olaDisplay(22, color: context.ink)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text('Ulangi ${p.rounds}× · istirahat ${p.rest} dtk',
@@ -718,7 +699,7 @@ class ProgramScreen extends ConsumerWidget {
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(items[i].$1.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                          Text(items[i].$1.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                           const SizedBox(height: 4),
                           Text(amountLabel(items[i].$1, items[i].$2), style: olaDisplay(22, color: context.ink, spacing: .5)),
                           const SizedBox(height: 2),

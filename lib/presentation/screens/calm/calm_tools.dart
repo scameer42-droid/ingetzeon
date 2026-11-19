@@ -21,8 +21,8 @@ import '../muslim/muslim_tools.dart';
 import 'calm_screen.dart';
 import 'tests_screen.dart';
 
-const kCalm = Color(0xFF0EA5A4);
-const kCalmGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF14B8A6), Color(0xFF6366F1)]);
+const kCalm = Color(0xFF0D9488);
+const kCalmGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF096B62), Color(0xFF0D9488)]);
 
 /// Buka alat bantu dari nama alat (dipakai chat & layar Ruang Tenang).
 Future<void> openTool(BuildContext context, WidgetRef ref, String tool) async {

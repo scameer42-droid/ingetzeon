@@ -32,7 +32,7 @@ class CalmScreen extends ConsumerWidget {
         // ---- kartu mood
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(gradient: kCalmGradient, borderRadius: BorderRadius.circular(24)),
+          decoration: BoxDecoration(gradient: kCalmGradient, borderRadius: BorderRadius.circular(20)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(today == null ? 'Gimana perasaanmu hari ini?' : 'Mood hari ini: ${MoodAdvice.moodEmoji[today.mood - 1]} ${MoodAdvice.moodLabel[today.mood - 1]}',
                 style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800)),
@@ -58,12 +58,12 @@ class CalmScreen extends ConsumerWidget {
           crossAxisSpacing: 10,
           childAspectRatio: .95,
           children: [
-            _ToolTile(icon: Icons.forum_rounded, label: 'Teman cerita', color: const Color(0xFF6366F1), onTap: () => _openChat(context, ref)),
+            _ToolTile(icon: Icons.forum_rounded, label: 'Teman cerita', color: kCalm, onTap: () => _openChat(context, ref)),
             _ToolTile(icon: Icons.air_rounded, label: 'Latihan napas', color: kCalm, onTap: () => openTool(context, ref, Tool.napas)),
-            _ToolTile(icon: Icons.back_hand_rounded, label: 'Grounding', color: const Color(0xFF0891B2), onTap: () => openTool(context, ref, Tool.grounding)),
-            _ToolTile(icon: Icons.timer_rounded, label: 'Timer fokus', color: AppColors.primary, onTap: () => openTool(context, ref, Tool.fokus)),
-            _ToolTile(icon: Icons.menu_book_rounded, label: 'Jurnal', color: const Color(0xFF7C3AED), onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const JournalScreen()))),
-            _ToolTile(icon: Icons.quiz_rounded, label: 'Tes psikologi', color: const Color(0xFFD97706), onTap: () => openTool(context, ref, Tool.tes)),
+            _ToolTile(icon: Icons.back_hand_rounded, label: 'Grounding', color: kCalm, onTap: () => openTool(context, ref, Tool.grounding)),
+            _ToolTile(icon: Icons.timer_rounded, label: 'Timer fokus', color: kCalm, onTap: () => openTool(context, ref, Tool.fokus)),
+            _ToolTile(icon: Icons.menu_book_rounded, label: 'Jurnal', color: kCalm, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const JournalScreen()))),
+            _ToolTile(icon: Icons.quiz_rounded, label: 'Tes psikologi', color: kCalm, onTap: () => openTool(context, ref, Tool.tes)),
           ],
         ),
         // ---- kebiasaan

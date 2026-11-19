@@ -9,8 +9,8 @@ import '../../services/translate_service.dart';
 import '../../services/voice_service.dart';
 import '../widgets/common.dart';
 
-const kTrColor = Color(0xFF0EA5E9);
-const kTrGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF0EA5E9), Color(0xFF6366F1)]);
+const kTrColor = Color(0xFF0284C7);
+const kTrGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF015F8F), Color(0xFF0284C7)]);
 
 String _ln(String l) => l == 'id' ? tl('Indonesia', 'Indonesian') : tl('Inggris', 'English');
 const _flag = {'id': '🇮🇩', 'en': '🇬🇧'};
@@ -320,32 +320,32 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: kTrGradient,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [BoxShadow(color: kTrColor.withValues(alpha: .35), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -12)],
+        color: context.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: kTrColor.withValues(alpha: .45), width: 1.4),
       ),
       padding: const EdgeInsets.fromLTRB(16, 14, 10, 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('${_flag[_to]}  ${_ln(_to)}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Colors.white)),
+          Text('${_flag[_to]}  ${_ln(_to)}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: kTrColor)),
           const Spacer(),
           if (_engine.isNotEmpty)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .18), borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(20)),
               child: Text(_engine == 'gemini' ? 'Gemini AI' : (_engine == 'offline' ? 'Offline' : 'MyMemory'),
-                  translate: false, style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w700)),
+                  translate: false, style: TextStyle(color: context.muted, fontSize: 10.5, fontWeight: FontWeight.w700)),
             ),
         ]),
         const SizedBox(height: 8),
-        SelectableText(_out, style: const TextStyle(color: Colors.white, fontSize: 19, height: 1.45, fontWeight: FontWeight.w600)),
+        SelectableText(_out, style: TextStyle(color: context.ink, fontSize: 19, height: 1.45, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Row(children: [
-          _RoundIcon(icon: Icons.volume_up_rounded, color: Colors.white, onGradient: true, tooltip: 'Dengarkan', onTap: () => VoiceService.instance.speakIn(_out, _to)),
+          _RoundIcon(icon: Icons.volume_up_rounded, color: kTrColor, tooltip: 'Dengarkan', onTap: () => VoiceService.instance.speakIn(_out, _to)),
           const SizedBox(width: 6),
-          _RoundIcon(icon: Icons.copy_rounded, color: Colors.white, onGradient: true, tooltip: 'Salin', onTap: () => _copy(_out)),
+          _RoundIcon(icon: Icons.copy_rounded, color: kTrColor, tooltip: 'Salin', onTap: () => _copy(_out)),
           const SizedBox(width: 6),
-          _RoundIcon(icon: Icons.swap_vert_rounded, color: Colors.white, onGradient: true, tooltip: 'Balik', onTap: _swap),
+          _RoundIcon(icon: Icons.swap_vert_rounded, color: kTrColor, tooltip: 'Balik', onTap: _swap),
         ]),
       ]),
     );
@@ -409,7 +409,6 @@ class _LangBar extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: kTrGradient,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: kTrColor.withValues(alpha: .4), blurRadius: 26, offset: const Offset(0, 14), spreadRadius: -14)],
       ),
       child: Row(children: [
         pill(from),

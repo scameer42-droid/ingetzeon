@@ -15,8 +15,8 @@ import '../../../providers/workout_provider.dart';
 import 'food_detail.dart';
 import 'weight_screen.dart';
 
-const kKal = Color(0xFFF97316);
-const kKalGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFF97316), Color(0xFFF43F5E)]);
+const kKal = Color(0xFFEA580C);
+const kKalGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFA83F09), Color(0xFFEA580C)]);
 const kProt = Color(0xFF6366F1), kCarb = Color(0xFFF59E0B), kFat = Color(0xFF10B981);
 
 class CalorieScreen extends ConsumerStatefulWidget {
@@ -66,8 +66,7 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
           decoration: BoxDecoration(
             gradient: kKalGradient,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: [BoxShadow(color: kKal.withValues(alpha: .35), blurRadius: 30, offset: const Offset(0, 14), spreadRadius: -12)],
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Column(children: [
             Row(children: [

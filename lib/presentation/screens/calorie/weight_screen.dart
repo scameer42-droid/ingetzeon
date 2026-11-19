@@ -13,8 +13,8 @@ import '../../widgets/common.dart';
 import 'calorie_screen.dart';
 
 /// Warna khusus berat badan.
-const kW = Color(0xFF6366F1);
-const kWGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF4F46E5), Color(0xFF0EA5E9)]);
+const kW = Color(0xFFEA580C);
+const kWGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFA83F09), Color(0xFFEA580C)]);
 const kGood = Color(0xFF10B981), kWarn = Color(0xFFF59E0B);
 
 String kgStr(double v) => fmtQty(double.parse(v.toStringAsFixed(1)));
@@ -106,7 +106,7 @@ class WeightProgressCard extends ConsumerWidget {
               child: Row(children: [
                 const Text('⚖️', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: 8),
-                const Expanded(child: Text('PERKEMBANGAN BERAT BADAN', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12.5, letterSpacing: .6))),
+                const Expanded(child: Text('Perkembangan berat badan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13.5))),
                 Text('Detail', style: TextStyle(color: Colors.white.withValues(alpha: .9), fontWeight: FontWeight.w700, fontSize: 13)),
                 const Icon(Icons.chevron_right_rounded, color: Colors.white),
               ]),
@@ -253,7 +253,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
         // ---- pahlawan: berat saat ini
         Container(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          decoration: BoxDecoration(gradient: kWGradient, borderRadius: BorderRadius.circular(26), boxShadow: [BoxShadow(color: kW.withValues(alpha: .35), blurRadius: 28, offset: const Offset(0, 14), spreadRadius: -12)]),
+          decoration: BoxDecoration(gradient: kWGradient, borderRadius: BorderRadius.circular(20)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('BERAT SAAT INI', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w800, letterSpacing: 1, fontSize: 12)),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [

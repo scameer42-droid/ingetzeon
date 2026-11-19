@@ -9,9 +9,9 @@ import '../../core/utils/date_utils.dart';
 import '../../providers/cycle_provider.dart';
 import '../widgets/common.dart';
 
-const kHaid = Color(0xFFE11D74);
+const kHaid = Color(0xFFDB2777);
 const kSubur = Color(0xFF0EA5A4);
-const kHaidGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFF43F8E), Color(0xFFBE185D)]);
+const kHaidGradient = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF9E1C56), Color(0xFFDB2777)]);
 
 Future<DateTime?> _pickDate(BuildContext context, {DateTime? initial}) {
   final now = DateTime.now();
@@ -53,7 +53,6 @@ class CycleHomeCard extends ConsumerWidget {
         decoration: BoxDecoration(
           gradient: kHaidGradient,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: kHaid.withValues(alpha: .35), blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -14)],
         ),
         child: Material(
           type: MaterialType.transparency,
