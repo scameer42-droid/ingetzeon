@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide Text;
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter/material.dart' as m show Text;
+import 'package:flutter_map/flutter_map.dart' hide Path;
 import 'package:latlong2/latlong.dart';
 
 import '../../../core/i18n/tr_text.dart';
@@ -84,7 +85,7 @@ class _RouteMapState extends State<RouteMap> {
             if (all.length >= 2 && !widget.follow) Marker(point: all.last, width: 18, height: 18, child: const _Dot(color: Color(0xFFDC2626))),
             if (h != null && widget.follow) Marker(point: LatLng(h.lat, h.lon), width: 26, height: 26, child: const _Dot(color: Color(0xFF2563EB), size: 26)),
           ]),
-          const SimpleAttributionWidget(source: Text('OpenStreetMap', translate: false)),
+          SimpleAttributionWidget(source: m.Text('OpenStreetMap')),
         ],
       ),
     );

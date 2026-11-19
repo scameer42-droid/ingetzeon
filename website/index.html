@@ -1906,6 +1906,40 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 .vdel{margin-top:16px;color:#E11D48!important;background:none!important;box-shadow:none!important}
 .vsw{cursor:pointer}.vchk{width:22px;height:22px;accent-color:#DC2626;flex:none}
 .vnote{font-size:12px;color:var(--muted);line-height:1.45;margin:16px 2px 0}
+
+/* ===== Rekam aktivitas (GPS) ===== */
+.fx-track{--fx:#65A30D}
+.trkhero h3{font-size:20px;margin:0 0 12px;color:#fff}
+.trkbar{height:8px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}.trkbar i{display:block;height:100%;background:#fff;border-radius:99px}
+.trk3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.trk3 small{display:block;font-size:12px;font-weight:600;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trk3 b{display:block;font-size:22px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap}.trk3 b i{font-style:normal;font-size:12px;font-weight:600;opacity:.75;margin-left:3px}
+.trk3.dark small{color:var(--muted);opacity:1}.trk3.dark b{color:var(--ink)}.trk3.dark b i{color:var(--muted)}
+.trkhero .row2{display:flex;gap:8px;margin-top:16px}.trkhero .wbtn{flex:1!important;height:44px;border-radius:12px;background:#fff!important;color:#4D7C0F!important;font-weight:600}.trkhero .wbtn.ghost{background:rgba(255,255,255,.14)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)}
+.trkbanner{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;margin-bottom:12px}.trkbanner b{flex:1;font-weight:600}
+.trkweeks{padding:12px}.trkweeks svg{width:100%;height:160px;display:block}.trkweeks .vg{stroke:var(--line)}.trkweeks .vt{font-size:9.5px;fill:var(--muted)}
+.trkcard{display:flex;gap:14px;align-items:center;width:100%;text-align:left;padding:14px;margin-bottom:10px}
+.trkthumb{width:76px;height:76px;border-radius:14px;background:color-mix(in srgb,#65A30D 9%,transparent);flex:none;display:block}.trkthumb svg{width:100%;height:100%}
+.trkcard .tx{flex:1;min-width:0}.trkcard .tx>b{display:block;font-size:15.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trkcard .tx>small{color:var(--muted);font-size:12.5px}
+.trkm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.trkm b{display:block;font-size:14px;font-weight:700;white-space:nowrap}.trkm i{display:block;font-style:normal;font-size:11.5px;color:var(--muted)}
+.trkrecbody{padding:0!important;display:flex;flex-direction:column}
+.trkmapwrap{position:relative;flex:1;min-height:280px}.trkmap{position:absolute;inset:0;background:var(--card-2)}
+.trkgps{position:absolute;left:12px;top:12px;z-index:500;background:var(--card);border-radius:99px;padding:7px 12px;font-size:12.5px;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px}.trkgps i{width:9px;height:9px;border-radius:50%}
+.trkpanel{background:var(--card);border-top:1px solid var(--line);padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px))}
+.trktypes .tchip.on{background:color-mix(in srgb,#65A30D 15%,transparent);color:#4D7C0F;border-color:#65A30D}
+.trkgo{background:#65A30D!important;box-shadow:none!important;height:54px;font-size:16px;flex:1}
+.trkpause{background:#111633!important;color:#fff!important;height:54px;font-size:16px;margin-top:14px;box-shadow:none!important}
+.trkstop{background:#DC2626!important;color:#fff!important;height:54px;font-size:16px;flex:1;box-shadow:none!important}
+.trkpanel .row2,.trkacts{display:flex;gap:10px;margin-top:14px}
+.trkghost{flex:1;height:48px;background:none!important;border:1px solid color-mix(in srgb,#65A30D 45%,transparent)!important;color:#4D7C0F!important;box-shadow:none!important}
+[data-theme="dark"] .trkghost,[data-theme="dark"] .trktypes .tchip.on{color:#A3E635!important}
+.trkbig{text-align:center}.trkbig small{color:var(--muted);font-size:12.5px;font-weight:600}.trkbig b{display:block;font-size:46px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.trkerr{color:#E11D48;font-weight:600;margin:0 0 10px}
+.trkdetmap{height:280px;margin:-4px -20px 0;background:var(--card-2);position:relative;z-index:0}.trkdetmap>svg{width:100%;height:100%}
+.trkdtitle{font-size:22px;margin:16px 0 0}
+.trkstats{padding:2px 16px 16px;margin-top:16px}
+.trksplits{padding:8px 14px}.trksp{display:grid;grid-template-columns:44px 62px 1fr 48px;align-items:center;gap:6px;padding:6px 0;font-size:14px}.trksp em{font-style:normal;text-align:right;color:var(--muted);font-size:13px}
+.trksp.head b{font-size:12px;color:var(--muted)}.trksp.head b:last-child{text-align:right}.trkspbar i{display:block;height:12px;border-radius:6px;background:#65A30D}
+.leaflet-container{font:inherit}
 </style>
 
 
@@ -2223,6 +2257,9 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 <div class="full fx-workout" id="olaP"><div class="full-head"><button class="icon-btn" data-close="#olaP" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaPTitle">Program</h2></div><div class="full-body" id="olaPBody"></div></div>
 <div class="full fx-workout" id="olaPlay"><div class="full-body" id="olaPlayBody"></div></div>
 <div class="full fx-workout" id="olaEx"><div class="full-head"><button class="icon-btn" onclick="exClose()" aria-label="Kembali"><svg class="i"><use href="#i-x"/></svg></button><h2 id="olaExTitle">Cara melakukan</h2></div><div class="full-body" id="olaExBody"></div></div>
+<div class="full fx-track" id="track"><div class="full-head"><button class="icon-btn" data-close="#track" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Rekam Aktivitas</h2></div><div class="full-body" id="trackBody"></div></div>
+<div class="full fx-track" id="trackRec"><div class="full-head"><button class="icon-btn" data-close="#trackRec" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Rekam aktivitas</h2></div><div class="full-body trkrecbody" id="trackRecBody"></div></div>
+<div class="full fx-track" id="trackDet"><div class="full-head"><button class="icon-btn" data-close="#trackDet" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2 id="trackDetTitle">Aktivitas</h2></div><div class="full-body" id="trackDetBody"></div></div>
 <div class="full fx-vital" id="vital"><div class="full-head"><button class="icon-btn" data-close="#vital" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Tensi &amp; Gula Darah</h2></div><div class="full-body" id="vitalBody"></div></div>
 <div class="full fx-calorie" id="berat"><div class="full-head"><button class="icon-btn" data-close="#berat" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Berat badan</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="beratBody"></div></div>
 <div class="full fx-calorie" id="kal"><div class="full-head"><button class="icon-btn" data-close="#kal" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button><h2>Kalori &amp; Diet</h2><button class="icon-btn" style="margin-left:auto" onclick="kalProfileSheet()" aria-label="Profil tubuh">⚙️</button></div><div class="full-body" id="kalBody"></div></div>
@@ -2817,6 +2854,7 @@ Object.assign(EN_DICT,{"Agenda terdekat": "Next up", "Akses cepat": "Quick acces
 Object.assign(EN_DICT,{"Jadwal berikutnya": "Next up"});
 Object.assign(EN_DICT,{"Asisten AI": "AI Assistant", "Pilih asisten AI": "Choose AI assistant", "Semua gratis. Pilih satu, lalu tempel kuncinya.": "All free. Pick one, then paste its key.", "Disarankan": "Recommended", "Sangat cepat · daftar pakai akun Google": "Very fast · sign up with a Google account", "Banyak model gratis · bisa baca foto": "Many free models · can read photos", "Google · bisa cari info terbaru": "Google · can search the latest info", "Matikan AI (mode offline)": "Turn off AI (offline mode)", "Simpan & pakai": "Save & use", "Aku belum bisa menjawab itu tanpa asisten AI.": "I can't answer that without the AI assistant yet.", "Diterjemahkan dengan AI — hasil lebih natural.": "Translated with AI — more natural results.", "Memakai layanan terjemahan gratis. Pilih asisten AI di Profil untuk hasil yang lebih natural.": "Using a free translation service. Choose an AI assistant in Profile for more natural results.", "Buat pengingat": "Create reminder", "Sudah diambil": "Picked up"});
 Object.assign(EN_DICT,{"Fitur favorit": "Favorite features", "Pengingat berikutnya": "Next reminder", "Muslim": "Muslim", "Tenang": "Calm"});
+Object.assign(EN_DICT,{"Rekam Aktivitas": "Record Activity", "Rekam aktivitas": "Record activity", "Lari, jalan, sepeda & hiking dengan GPS": "Run, walk, ride & hike with GPS", "Lari": "Run", "Jalan": "Walk", "Sepeda": "Ride", "Hiking": "Hike", "Lari pagi": "Morning run", "Lari siang": "Afternoon run", "Lari sore": "Evening run", "Lari malam": "Night run", "Jalan pagi": "Morning walk", "Jalan siang": "Afternoon walk", "Jalan sore": "Evening walk", "Jalan malam": "Night walk", "Sepeda pagi": "Morning ride", "Sepeda siang": "Afternoon ride", "Sepeda sore": "Evening ride", "Sepeda malam": "Night ride", "Hiking pagi": "Morning hike", "Hiking siang": "Afternoon hike", "Hiking sore": "Evening hike", "Hiking malam": "Night hike", "Rekaman dijeda — ketuk untuk melanjutkan": "Recording paused — tap to continue", "Sedang merekam — ketuk untuk membuka": "Recording — tap to open", "Minggu ini": "This week", "km dari target": "km of", "Aktivitas": "Activity", "Elevasi": "Elevation", "Buka rekaman": "Open recording", "Mulai rekam": "Start recording", "Belum ada aktivitas.": "No activities yet.", "Tekan \"Mulai rekam\", pilih lari, jalan, sepeda, atau hiking, lalu IngetZeon mencatat rute, jarak, pace, dan elevasimu dengan GPS.": "Tap \"Start recording\", choose run, walk, ride, or hike, and IngetZeon records your route, distance, pace, and elevation with GPS.", "Jarak 12 minggu terakhir": "Distance, last 12 weeks", "Rekor pribadi": "Personal records", "Terjauh": "Longest", "Tanjakan terbanyak": "Most climbing", "Rekor lari 1 km, 5 km, 10 km, dan half marathon muncul otomatis setelah kamu merekam lari sejauh itu.": "Run records for 1 km, 5 km, 10 km, and half marathon appear automatically once you've recorded runs that long.", "Riwayat": "History", "Peta © OpenStreetMap. Kalori adalah perkiraan.": "Map © OpenStreetMap. Calories are estimates.", "Pengaturan rekam": "Recording settings", "Target jarak per minggu": "Weekly distance goal", "Aba-aba suara tiap 1 km": "Voice cue every 1 km", "Jarak, waktu, dan pace dibacakan": "Distance, time, and pace read aloud", "Mulai": "Start", "Mulai (GPS belum akurat)": "Start (GPS not accurate yet)", "Tips: tunggu sampai GPS hijau, dan biarkan HP di saku. Rekaman tetap berjalan saat layar mati.": "Tip: wait until GPS is green and keep your phone in your pocket. Recording continues with the screen off.", "Waktu": "Time", "Jarak": "Distance", "Pace": "Pace", "Kecepatan": "Speed", "rata-rata": "avg", "Km": "Km", "Jeda": "Pause", "Lanjut": "Resume", "Selesai": "Finish", "Jaraknya terlalu pendek, aktivitas tidak disimpan.": "Too short, activity not saved.", "GPS siap": "GPS ready", "GPS belum akurat": "GPS not accurate yet", "Mencari GPS…": "Finding GPS…", "Simpan aktivitas": "Save activity", "Judul": "Title", "Catatan (opsional)": "Note (optional)", "Gimana rasanya hari ini?": "How did it feel today?", "Buang aktivitas ini?": "Discard this activity?", "Rute dan waktunya tidak disimpan.": "The route and time won't be saved.", "Buang": "Discard", "Aktivitas tidak ditemukan.": "Activity not found.", "Ubah judul & catatan": "Edit title & note", "Ekspor GPX": "Export GPX", "Waktu bergerak": "Moving time", "Elevasi naik": "Elevation gain", "Kalori": "Calories", "Waktu total": "Elapsed time", "Bagikan": "Share", "Split per km": "Splits per km", "Profil elevasi": "Elevation profile", "Upaya terbaik": "Best efforts", "Rekor pribadi!": "Personal record!", "Ubah aktivitas": "Edit activity", "GPX belum bisa dibuat. Coba lagi.": "Couldn't create the GPX. Try again.", "Bagikan aktivitas": "Share activity", "Bagikan gambar": "Share image", "Gambar belum bisa dibagikan. Coba lagi.": "Couldn't share the image. Try again.", "Izin lokasi ditolak. Buka pengaturan aplikasi untuk mengizinkan lokasi.": "Location permission denied. Open app settings to allow location.", "GPS tidak bisa dipakai di perangkat ini.": "GPS isn't available on this device.", "IngetZeon sedang merekam aktivitas": "IngetZeon is recording your activity", "GPS tetap aktif walau layar mati": "GPS stays on even with the screen off", "Sinyal GPS hilang. Coba di tempat terbuka.": "GPS signal lost. Try an open area.", "Dijeda": "Paused", "kecepatan": "speed", "kilometer per jam": "kilometers per hour", "pace": "pace", "kilometer": "kilometers", "menit": "minutes", "detik": "seconds", "jam": "hours", "Pengaturan": "Settings", "Lanjutkan": "Resume", "▶ Mulai rekam": "▶ Start recording", "▶ Buka rekaman": "▶ Open recording", "⚙︎ Pengaturan": "⚙︎ Settings", "Peta © OpenStreetMap. Kalori adalah perkiraan. Di website, rekaman berjalan selama halaman ini terbuka; pakai aplikasi Android supaya tetap merekam saat layar mati.": "Map © OpenStreetMap. Calories are estimates. On the website, recording runs while this page is open; use the Android app to keep recording with the screen off.", "Tips: tunggu sampai GPS hijau. Di website, biarkan halaman ini tetap terbuka selama merekam.": "Tip: wait until GPS is green. On the website, keep this page open while recording.", "Aktivitas disimpan 🏅": "Activity saved 🏅", "Gambar aktivitas diunduh 📸": "Activity image downloaded 📸", "Hapus aktivitas ini?": "Delete this activity?", "Ubah judul &amp; catatan": "Edit title &amp; note", "Elev": "Elev"});
 Object.assign(EN_DICT,{"Tensi & Gula Darah": "Blood Pressure & Sugar", "Tensi & gula darah": "Blood pressure & sugar", "Tensi & gula": "BP & sugar", "Catat & lihat golongannya sesuai acuan Kemenkes": "Log readings and see their category (Indonesian MoH guidelines)", "Acuan Kemenkes RI": "Indonesian MoH guidelines", "Pantau tensi & gula darah": "Track blood pressure & sugar", "Tensi terakhir": "Last blood pressure", "Gula darah terakhir": "Last blood sugar", "Catat tensi": "Log blood pressure", "Catat gula": "Log sugar", "Catat gula darah": "Log blood sugar", "Saya penyandang diabetes": "I have diabetes", "Tampilkan target kendali gula darah dari dokter": "Show blood sugar control targets", "Ingatkan cek setiap hari": "Remind me to check daily", "Pengingat harian jam 07.00, bisa diubah": "Daily reminder at 07:00, can be changed", "Fitur ini untuk memantau, bukan untuk diagnosis. Diagnosis hipertensi dan diabetes ditegakkan dokter dari beberapa kali pemeriksaan.": "This feature is for tracking, not diagnosis. Hypertension and diabetes are diagnosed by a doctor from several measurements.", "Acuan: PNPK Hipertensi Dewasa & PNPK Diabetes Melitus Tipe 2 Dewasa (Kemenkes RI).": "Reference: Indonesian MoH national clinical guidelines for adult hypertension and adult type 2 diabetes.", "Cek tensi & gula darah": "Check blood pressure & sugar", "Pengingat harian jam 07.00 dibuat ⏰": "Daily 07:00 reminder created ⏰", "Grafik tensi": "Blood pressure chart", "Grafik {}": "{} chart", "Sistolik (atas)": "Systolic (top)", "Diastolik (bawah)": "Diastolic (bottom)", "Riwayat tensi": "Blood pressure history", "Riwayat gula darah": "Blood sugar history", "Catat": "Log", "Belum ada catatan tensi.": "No blood pressure readings yet.", "Ukur dalam posisi duduk setelah istirahat 5 menit, lalu catat di sini.": "Measure while seated after resting 5 minutes, then log it here.", "Belum ada catatan gula darah.": "No blood sugar readings yet.", "Pilih jenis pemeriksaan (puasa, 2 jam setelah makan, sewaktu, atau HbA1c), lalu catat hasilnya.": "Choose the test type (fasting, 2 hours after eating, random, or HbA1c), then log the result.", "nadi": "pulse", "Nadi": "Pulse", "kali/menit": "beats/min", "sistolik terisolasi": "isolated systolic", "Golongan tekanan darah": "Blood pressure categories", "Golongan gula darah (mg/dL)": "Blood sugar categories (mg/dL)", "sesuai target": "on target", "di atas target": "above target", "di bawah target": "below target", "Hipertensi sistolik terisolasi: sistolik ≥ 140 dengan diastolik < 90.": "Isolated systolic hypertension: systolic ≥ 140 with diastolic < 90.", "Batas 140/200 berasal dari tes TTGO (minum 75 g glukosa). Setelah makan biasa, angkanya hanya perkiraan.": "The 140/200 limits come from the OGTT (drinking 75 g of glucose). After a normal meal they are only a rough guide.", "Hapus catatan": "Delete entry", "Belum ada catatan": "No entries yet", "Tensi": "Blood pressure", "Gula darah": "Blood sugar", "Gula": "Sugar", "dicatat": "logged", "Pemeriksaan": "Test", "Prediabetes": "Prediabetes", "Diabetes": "Diabetes", "Puasa (≥ 8 jam)": "Fasting (≥ 8 h)", "2 jam setelah TTGO*": "2 h after OGTT*", "≥ 200 + gejala": "≥ 200 + symptoms", "Di bawah 70 = hipoglikemia (derajat 1), di bawah 54 = derajat 2. *TTGO = tes setelah minum 75 g glukosa.": "Below 70 = hypoglycemia (level 1), below 54 = level 2. *OGTT = test after drinking 75 g of glucose.", "Target kendali penyandang diabetes: sebelum makan 80–130, 1–2 jam setelah makan < 180, HbA1c < 7% (atau sesuai anjuran dokter).": "Control targets for people with diabetes: before meals 80–130, 1–2 h after meals < 180, HbA1c < 7% (or as your doctor advises).", "Optimal": "Optimal", "Normal": "Normal", "Normal tinggi": "High normal", "Hipertensi derajat 1": "Grade 1 hypertension", "Hipertensi derajat 2": "Grade 2 hypertension", "Hipertensi derajat 3": "Grade 3 hypertension", "Hipertensi sistolik terisolasi": "Isolated systolic hypertension", "< 120 dan < 80": "< 120 and < 80", "120–129 dan/atau 80–84": "120–129 and/or 80–84", "130–139 dan/atau 85–89": "130–139 and/or 85–89", "140–159 dan/atau 90–99": "140–159 and/or 90–99", "160–179 dan/atau 100–109": "160–179 and/or 100–109", "≥ 180 dan/atau ≥ 110": "≥ 180 and/or ≥ 110", "≥ 140 dan < 90": "≥ 140 and < 90", "Angka dalam mmHg (sistolik/diastolik). Bila sistolik dan diastolik masuk golongan berbeda, dipakai golongan yang lebih tinggi.": "Values in mmHg (systolic/diastolic). If systolic and diastolic fall in different categories, the higher one applies.", "Tekanan darah ideal. Pertahankan pola hidup sehat.": "Ideal blood pressure. Keep up a healthy lifestyle.", "Masih normal. Tetap batasi garam dan rutin bergerak.": "Still normal. Keep limiting salt and stay active.", "Mendekati hipertensi. Kurangi garam, jaga berat badan, dan cek rutin.": "Close to hypertension. Cut salt, watch your weight, and check regularly.", "Ukur ulang setelah istirahat 5 menit. Bila tetap tinggi di hari lain, periksa ke puskesmas atau dokter.": "Measure again after resting 5 minutes. If it stays high on other days, see a clinic or doctor.", "Tinggi. Periksakan ke dokter untuk penanganan.": "High. See a doctor for treatment.", "Sangat tinggi. Ukur ulang setelah istirahat. Bila tetap ≥180/110, atau ada nyeri dada, sesak, sakit kepala hebat, atau lemah sebelah badan, segera ke IGD.": "Very high. Measure again after resting. If it stays ≥180/110, or you have chest pain, shortness of breath, a severe headache, or weakness on one side, go to the emergency room now.", "Rendah": "Low", "Di bawah 90/60. Bila pusing, lemas, atau hampir pingsan, duduk/berbaring dan periksakan ke dokter.": "Below 90/60. If you feel dizzy, weak, or faint, sit or lie down and see a doctor.", "Sangat rendah (hipoglikemia)": "Very low (hypoglycemia)", "Di bawah 54 mg/dL. Segera minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, mengantuk, atau bingung, segera cari pertolongan medis.": "Below 54 mg/dL. Have something sweet right away and check again in 15 minutes. If it doesn't improve, or you feel drowsy or confused, get medical help immediately.", "Rendah (hipoglikemia)": "Low (hypoglycemia)", "Di bawah 70 mg/dL. Minum atau makan yang manis, lalu cek ulang 15 menit lagi. Bila tidak membaik, cari pertolongan medis.": "Below 70 mg/dL. Have something sweet and check again in 15 minutes. If it doesn't improve, get medical help.", "Dalam batas normal.": "Within the normal range.", "Masuk kriteria diabetes": "Meets diabetes criteria", "Satu kali hasil belum cukup untuk diagnosis. Periksakan ke dokter untuk tes ulang dengan darah vena di laboratorium.": "One result is not enough for a diagnosis. See a doctor for a repeat lab test using venous blood.", "HbA1c 5,7–6,4%. Perbaiki pola makan, aktif bergerak, dan konsultasi ke dokter.": "HbA1c 5.7–6.4%. Improve your diet, stay active, and talk to a doctor.", "Prediabetes (GDPT)": "Prediabetes (IFG)", "Gula darah puasa terganggu (100–125). Kurangi gula, aktif bergerak, dan cek ke dokter.": "Impaired fasting glucose (100–125). Cut sugar, stay active, and see a doctor.", "Prediabetes (TGT)": "Prediabetes (IGT)", "Toleransi glukosa terganggu (140–199). Kurangi gula, aktif bergerak, dan cek ke dokter.": "Impaired glucose tolerance (140–199). Cut sugar, stay active, and see a doctor.", "Di bawah 200": "Below 200", "Di bawah batas diabetes untuk gula darah sewaktu.": "Below the diabetes limit for random blood sugar.", "Puasa": "Fasting", "2 jam setelah makan": "2 h after eating", "Sewaktu": "Random", "HbA1c": "HbA1c", "Gula darah puasa": "Fasting blood sugar", "Gula darah 2 jam setelah makan": "Blood sugar 2 h after eating", "Gula darah sewaktu": "Random blood sugar", "HbA1c (rata-rata 3 bulan)": "HbA1c (3-month average)", "Target sebelum makan 80–130": "Before-meal target 80–130", "Target setelah makan < 180": "After-meal target < 180", "Target HbA1c < 7%": "HbA1c target < 7%", "Ukur duduk tenang setelah istirahat 5 menit, lengan setinggi jantung.": "Measure seated and relaxed after resting 5 minutes, arm at heart level.", "Nadi (opsional)": "Pulse (optional)", "Periksa lagi angkanya: sistolik harus lebih besar dari diastolik.": "Check the numbers: systolic must be higher than diastolic.", "Tensi &amp; Gula Darah": "Blood Pressure &amp; Sugar", "＋ Catat tensi": "＋ Log blood pressure", "＋ Catat gula": "＋ Log sugar", "Hapus catatan ini?": "Delete this entry?", "Tensi {}/{} dicatat ✅": "Blood pressure {}/{} logged ✅", "Gula darah {} dicatat ✅": "Blood sugar {} logged ✅", "Nadi {} kali/menit": "Pulse {} beats/min", "{} mmHg · nadi {}": "{} mmHg · pulse {}", "Gula {} · {}": "Sugar {} · {}"});
 /* --- i18n: bahasa tampilan (id/en) --- */
 const I18N={lang:'id',cache:{},tpls:null};
@@ -4840,6 +4878,7 @@ let state = {
   trHist: [],
   eng: {xp:0, streak:0, last:'', day:'', dayXp:0, stars:{}},
   vital: {bp:[], glu:[], diabetic:false},
+  track: {a:[], g:20, v:true},
 };
 function load(){
   try{
@@ -4863,6 +4902,7 @@ function load(){
       if(!hadAi && state.settings.apiKey && !state.settings.aiKeys.gemini) state.settings.aiKeys.gemini = state.settings.apiKey;
       state.settings.apiKey = state.settings.aiKeys[state.settings.ai] || '';
       state.trHist = Array.isArray(d.trHist) ? d.trHist : [];
+      if(d.track) state.track = {a: Array.isArray(d.track.a) ? d.track.a : [], g: d.track.g || 20, v: d.track.v !== false};
       if(d.vital) state.vital = {bp: Array.isArray(d.vital.bp) ? d.vital.bp : [], glu: Array.isArray(d.vital.glu) ? d.vital.glu : [], diabetic: !!d.vital.diabetic};
       if(d.eng) state.eng = Object.assign(state.eng, d.eng, {stars: Object.assign({}, d.eng.stars || {})});
     }
@@ -5452,6 +5492,7 @@ const FEAT_GROUPS = [
     ['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu'],
   ]],
   ['Kesehatan', '#EA580C', [
+    ['track', 'i-run', 'Rekam aktivitas', 'Lari, jalan, sepeda & hiking dengan GPS'],
     ['ola', 'i-run', 'Olahraga', 'Program latihan & catatan aktivitas'],
     ['kal', 'i-bowl', 'Kalori & diet', 'Hitung kalori makanan'],
     ['weight', 'i-target', 'Berat badan', 'Catat berat & target'],
@@ -5512,6 +5553,7 @@ function onFeat(e){
     case 'tests': openTests(null); break;
     case 'weight': openWeight(); break;
     case 'vital': openVital(); break;
+    case 'track': openTrack(); break;
     case 'vitalglu': openVital(true); break;
     case 'qibla': openQibla(); break;
     case 'quran': openQuran(); break;
@@ -5704,6 +5746,327 @@ function vDetail(type, id){
   $('#vDel').onclick = () => { if(!confirm(tr('Hapus catatan ini?'))) return;
     if(type === 'bp') s.bp = s.bp.filter(x => x.id !== id); else s.glu = s.glu.filter(x => x.id !== id);
     save(); closeSheet(); renderVital(); renderAll(); };
+}
+
+
+/* ---------------- REKAM AKTIVITAS (gaya Strava): GPS lari/jalan/sepeda/hiking ---------------- */
+const TRK_TYPES = {
+  lari:{l:'Lari', e:'🏃', max:12, min:.9}, jalan:{l:'Jalan', e:'🚶', max:4.5, min:.5},
+  sepeda:{l:'Sepeda', e:'🚴', max:25, min:1.5}, hiking:{l:'Hiking', e:'🥾', max:4.5, min:.4},
+};
+const TRK_C = '#65A30D';
+const trkS = () => { if(!state.track) state.track = {a:[], g:20, v:true}; return state.track; };
+function hav(a, b){ const R = 6371000, r = x => x * Math.PI / 180, dLa = r(b[0] - a[0]), dLo = r(b[1] - a[1]);
+  const h = Math.sin(dLa / 2) ** 2 + Math.cos(r(a[0])) * Math.cos(r(b[0])) * Math.sin(dLo / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); }
+const fmtPaceS = s => (!isFinite(s) || s <= 0 || s > 3600) ? '–:––' : `${Math.floor(Math.round(s) / 60)}:${String(Math.round(s) % 60).padStart(2, '0')}`;
+const fmtDurS = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}` : `${m}:${String(x).padStart(2,'0')}`; };
+const fmtKmS = (m, d = 2) => (m / 1000).toFixed(d).replace('.', ',');
+const usesSpeed = ty => ty === 'sepeda';
+const paceOrSpeedS = (ty, m, s) => m < 10 || s <= 0 ? (usesSpeed(ty) ? '0,0' : '–:––') : usesSpeed(ty) ? (m / s * 3.6).toFixed(1).replace('.', ',') : fmtPaceS(s / (m / 1000));
+const paceUnitS = ty => usesSpeed(ty) ? 'km/j' : '/km';
+const paceLabelS = ty => usesSpeed(ty) ? 'Kecepatan' : 'Pace';
+function trkMet(ty, kmh){
+  if(ty === 'lari') return kmh < 8 ? 8.3 : kmh < 9.7 ? 9.8 : kmh < 11.3 ? 11 : kmh < 12.9 ? 11.8 : 12.8;
+  if(ty === 'jalan') return kmh < 4 ? 3 : kmh < 5.6 ? 3.5 : 5;
+  if(ty === 'sepeda') return kmh < 16 ? 4 : kmh < 19 ? 6.8 : kmh < 22.5 ? 8 : kmh < 25.7 ? 10 : 12;
+  return 6;
+}
+/* titik: [lat, lon, alt|null, waktu ms] ; segmen terpisah saat dijeda */
+function trkStats(sg, ty){
+  const minMv = TRK_TYPES[ty].min; let dist = 0, mov = 0, gain = 0, ref = null;
+  const cd = [], ct = [], ca = [];
+  for(const s of sg){
+    if(!s.length) continue;
+    const al = s.map((p, i) => { const w = s.slice(Math.max(0, i - 2), i + 3).map(q => q[2]).filter(v => v != null); return w.length ? w.reduce((a, b) => a + b, 0) / w.length : null; });
+    s.forEach((p, i) => {
+      if(i){ const q = s[i - 1], d = hav(q, p), dt = (p[3] - q[3]) / 1000; dist += d; if(dt > 0 && dt <= 30 && d / dt >= minMv) mov += dt; }
+      const a = al[i];
+      if(a != null){ if(ref == null) ref = a; else if(a - ref >= 3){ gain += a - ref; ref = a; } else if(ref - a >= 3) ref = a; }
+      cd.push(dist); ct.push(mov); ca.push(a != null ? a : (ca.length ? ca[ca.length - 1] : 0));
+    });
+  }
+  const splits = []; let lD = 0, lT = 0, lA = ca[0] || 0, k = 1;
+  for(let i = 1; i < cd.length; i++){
+    while(cd[i] >= k * 1000){ const f = (k * 1000 - cd[i - 1]) / Math.max(1e-9, cd[i] - cd[i - 1]);
+      const t = ct[i - 1] + f * (ct[i] - ct[i - 1]), a = ca[i - 1] + f * (ca[i] - ca[i - 1]);
+      splits.push({i:k, m:1000, s:Math.round(t - lT), e:a - lA}); lD = k * 1000; lT = t; lA = a; k++; }
+  }
+  if(dist - lD >= 50 && cd.length) splits.push({i:k, m:dist - lD, s:Math.round(mov - lT), e:ca[ca.length - 1] - lA});
+  return {dist, mov:Math.round(mov), gain, cd, ct, ca, splits};
+}
+function trkBest(st, m){
+  const {cd, ct} = st; if(st.dist < m || cd.length < 2) return null; let best = null, j = 0;
+  for(let i = 0; i < cd.length; i++){
+    while(j + 1 < cd.length && cd[i] - cd[j + 1] >= m) j++;
+    if(cd[i] - cd[j] >= m){ const over = cd[i] - cd[j] - m, sd = i ? cd[i] - cd[i - 1] : 0, stt = i ? ct[i] - ct[i - 1] : 0;
+      const t = (ct[i] - ct[j]) - (sd > 0 ? over / sd * stt : 0); if(best == null || t < best) best = t; }
+  }
+  return best == null ? null : Math.round(best);
+}
+const TRK_BEST = [[1000, '1 km'], [5000, '5 km'], [10000, '10 km'], [21097.5, 'Half marathon']];
+const trkStatsCache = new Map();
+function aStats(a){ let s = trkStatsCache.get(a.id); if(!s){ s = trkStats(a.sg, a.ty); trkStatsCache.set(a.id, s); } return s; }
+function trkTitle(ty, d){ const h = d.getHours(); return `${TRK_TYPES[ty].l} ${h < 4 ? 'malam' : h < 11 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam'}`; }
+function trkWeekStart(d){ const x = startOfDay(d); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+function trkInWeek(d){ const s = trkWeekStart(d).getTime(), e = s + 7 * 864e5; return trkS().a.filter(a => a.st >= s && a.st < e); }
+const trkWeekKm = d => trkInWeek(d).reduce((x, a) => x + aStats(a).dist, 0) / 1000;
+function trkPRs(ty = 'lari'){
+  const out = [];
+  for(const [m, l] of TRK_BEST){ let b = null; for(const a of trkS().a.filter(a => a.ty === ty)){ const t = trkBest(aStats(a), m); if(t != null && (!b || t < b.t)) b = {l, m, t, a}; } if(b) out.push(b); }
+  return out;
+}
+/* bentuk rute tanpa peta (SVG) */
+function trkSvg(sg, w, h, color = TRK_C, sw = 3){
+  const pts = sg.flat(); if(pts.length < 2) return `<svg viewBox="0 0 ${w} ${h}"></svg>`;
+  const k = Math.cos(pts[0][0] * Math.PI / 180), X = p => p[1] * k, Y = p => -p[0];
+  const xs = pts.map(X), ys = pts.map(Y), mnx = Math.min(...xs), mxx = Math.max(...xs), mny = Math.min(...ys), mxy = Math.max(...ys);
+  const pad = sw * 2, sc = Math.min((w - pad * 2) / Math.max(1e-9, mxx - mnx), (h - pad * 2) / Math.max(1e-9, mxy - mny));
+  const ox = (w - (mxx - mnx) * sc) / 2, oy = (h - (mxy - mny) * sc) / 2, P = p => `${(ox + (X(p) - mnx) * sc).toFixed(1)},${(oy + (Y(p) - mny) * sc).toFixed(1)}`;
+  const f = pts[0], l = pts[pts.length - 1];
+  return `<svg viewBox="0 0 ${w} ${h}" class="trkroute">${sg.filter(s => s.length > 1).map(s => `<polyline points="${s.map(P).join(' ')}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}
+    <circle cx="${P(f).split(',')[0]}" cy="${P(f).split(',')[1]}" r="${sw * 1.3}" fill="#10B981"/><circle cx="${P(l).split(',')[0]}" cy="${P(l).split(',')[1]}" r="${sw * 1.3}" fill="#DC2626"/></svg>`;
+}
+/* Leaflet (dimuat saat dibutuhkan) */
+let leafletP = null;
+function loadLeaflet(){
+  if(window.L) return Promise.resolve(window.L);
+  if(!leafletP) leafletP = new Promise((res, rej) => {
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'lib/leaflet.css'; document.head.appendChild(css);
+    const s = document.createElement('script'); s.src = 'lib/leaflet.js'; s.onload = () => res(window.L); s.onerror = rej; document.head.appendChild(s);
+  });
+  return leafletP;
+}
+async function trkMap(el, sg, opts = {}){
+  try{
+    const L = await loadLeaflet();
+    if(el._map){ el._map.remove(); el._map = null; }
+    const map = L.map(el, {zoomControl:false, attributionControl:true, dragging: opts.interactive !== false, scrollWheelZoom:false});
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
+    el._map = map; el._lines = [];
+    const pts = sg.flat().map(p => [p[0], p[1]]);
+    sg.filter(s => s.length > 1).forEach(s => el._lines.push(L.polyline(s.map(p => [p[0], p[1]]), {color:TRK_C, weight:5}).addTo(map)));
+    if(pts.length > 1 && !opts.follow){
+      L.circleMarker(pts[0], {radius:7, color:'#fff', weight:3, fillColor:'#10B981', fillOpacity:1}).addTo(map);
+      L.circleMarker(pts[pts.length - 1], {radius:7, color:'#fff', weight:3, fillColor:'#DC2626', fillOpacity:1}).addTo(map);
+      map.fitBounds(L.latLngBounds(pts), {padding:[30, 30]});
+    }else map.setView(pts.length ? pts[pts.length - 1] : (opts.here || [-6.2088, 106.8456]), opts.zoom || 16);
+    map.attributionControl.setPrefix('');
+    setTimeout(() => { map.invalidateSize(); if(pts.length > 1 && !opts.follow) map.fitBounds(L.latLngBounds(pts), {padding:[30, 30]}); }, 300);
+    return map;
+  }catch(e){ el.innerHTML = trkSvg(sg, 360, 220); return null; }
+}
+
+/* ----- layar utama ----- */
+function openTrack(){ renderTrack(); openFull('#track'); }
+function renderTrack(){
+  const box = $('#trackBody'); if(!box) return;
+  const s = trkS(), now = new Date(), wk = trkInWeek(now), km = trkWeekKm(now);
+  const secs = wk.reduce((x, a) => x + aStats(a).mov, 0), elev = wk.reduce((x, a) => x + aStats(a).gain, 0);
+  let h = trec.status !== 'idle' ? `<button class="card trkbanner" id="trkResume"><span class="fic gico" style="--gc:#DC2626">${icon(trec.status === 'paused' ? 'i-clock' : 'i-run')}</span><b>${trec.status === 'paused' ? 'Rekaman dijeda — ketuk untuk melanjutkan' : 'Sedang merekam — ketuk untuk membuka'}</b><svg class="i chev"><use href="#i-right"/></svg></button>` : '';
+  h += `<div class="fhero fx-track trkhero"><span class="fh-label">Minggu ini</span><h3>${fmtKmS(km * 1000, 1)} ${tr('km dari target')} ${s.g} km</h3>
+    <div class="trkbar"><i style="width:${Math.min(100, km / s.g * 100)}%"></i></div>
+    <div class="trk3"><div><small>Aktivitas</small><b>${wk.length}</b></div><div><small>Waktu</small><b>${fmtDurS(secs)}</b></div><div><small>Elevasi</small><b>${Math.round(elev)}<i>m</i></b></div></div>
+    <div class="row2"><button class="wbtn" id="trkStart">▶ ${trec.status !== 'idle' ? 'Buka rekaman' : 'Mulai rekam'}</button><button class="wbtn ghost" id="trkSet">⚙︎ Pengaturan</button></div></div>`;
+  if(!s.a.length){
+    h += `<div class="empty-state" style="margin-top:20px"><div class="ill">${icon('i-run')}</div><b>Belum ada aktivitas.</b>Tekan "Mulai rekam", pilih lari, jalan, sepeda, atau hiking, lalu IngetZeon mencatat rute, jarak, pace, dan elevasimu dengan GPS.</div>`;
+  }else{
+    const weeks = [...Array(12)].map((_, i) => { const d = trkWeekStart(now); d.setDate(d.getDate() - 7 * (11 - i)); return d; });
+    const vals = weeks.map(d => trkWeekKm(d)), mx = Math.max(5, Math.ceil(Math.max(...vals) / 5) * 5);
+    h += `<div class="section-h"><h2>Jarak 12 minggu terakhir</h2></div><div class="card trkweeks"><svg viewBox="0 0 320 150" preserveAspectRatio="none">
+      ${[0, .5, 1].map(f => `<line x1="28" x2="316" y1="${10 + 115 * (1 - f)}" y2="${10 + 115 * (1 - f)}" class="vg"/><text x="22" y="${13 + 115 * (1 - f)}" text-anchor="end" class="vt">${Math.round(mx * f)}</text>`).join('')}
+      ${vals.map((v, i) => `<rect x="${34 + i * 23.5}" y="${10 + 115 * (1 - v / mx)}" width="14" height="${Math.max(0, 115 * v / mx)}" rx="3" fill="${TRK_C}" opacity="${i === 11 ? 1 : .45}"><title>${fmtKmS(v * 1000, 1)} km</title></rect>`).join('')}
+      ${[0, 6, 11].map(i => `<text x="${41 + i * 23.5}" y="145" text-anchor="middle" class="vt">${weeks[i].getDate()} ${BULAN_S[weeks[i].getMonth()]}</text>`).join('')}</svg></div>`;
+    const prs = trkPRs(), lg = s.a.reduce((a, b) => aStats(a).dist >= aStats(b).dist ? a : b), cl = s.a.reduce((a, b) => aStats(a).gain >= aStats(b).gain ? a : b);
+    h += `<div class="section-h"><h2>Rekor pribadi</h2></div><div class="group">
+      ${prs.map(p => `<button class="frow" data-trka="${p.a.id}"><span class="fic gico" style="--gc:#F59E0B">${icon('i-flame')}</span><span class="tx"><b>${tr('Lari')} ${p.l}</b><small>${fmtDurS(p.t)} · ${fmtPaceS(p.t / (p.m / 1000))}/km · ${fmtDateShort(new Date(p.a.st))}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>`).join('')}
+      <button class="frow" data-trka="${lg.id}"><span class="fic gico" style="--gc:${TRK_C}">${icon('i-target')}</span><span class="tx"><b>Terjauh</b><small>${fmtKmS(aStats(lg).dist)} km · ${esc(lg.ti)}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>
+      ${aStats(cl).gain >= 5 ? `<button class="frow" data-trka="${cl.id}"><span class="fic gico" style="--gc:#7C3AED">${icon('i-chart')}</span><span class="tx"><b>Tanjakan terbanyak</b><small>${Math.round(aStats(cl).gain)} m · ${esc(cl.ti)}</small></span><svg class="i chev"><use href="#i-right"/></svg></button>` : ''}</div>
+      ${prs.length ? '' : '<p class="vnote">Rekor lari 1 km, 5 km, 10 km, dan half marathon muncul otomatis setelah kamu merekam lari sejauh itu.</p>'}`;
+    h += `<div class="section-h"><h2>Riwayat</h2></div>${s.a.slice(0, 50).map(a => { const st = aStats(a), d = new Date(a.st);
+      return `<button class="card trkcard" data-trka="${a.id}"><span class="trkthumb">${trkSvg(a.sg, 76, 76, TRK_C, 2.4)}</span><span class="tx"><b>${TRK_TYPES[a.ty].e} ${esc(a.ti)}</b><small>${tr(dayLabel(d))} · ${fmtTime(d)}</small>
+        <span class="trkm"><span><b>${fmtKmS(st.dist)} km</b><i>${tr('Jarak')}</i></span><span><b>${paceOrSpeedS(a.ty, st.dist, st.mov)}${paceUnitS(a.ty)}</b><i>${tr(paceLabelS(a.ty))}</i></span><span><b>${fmtDurS(st.mov)}</b><i>${tr('Waktu')}</i></span></span></span></button>`; }).join('')}`;
+  }
+  h += `<p class="vnote">Peta © OpenStreetMap. Kalori adalah perkiraan. Di website, rekaman berjalan selama halaman ini terbuka; pakai aplikasi Android supaya tetap merekam saat layar mati.</p>`;
+  box.innerHTML = h;
+  $('#trkStart').onclick = openTrackRec;
+  if($('#trkResume')) $('#trkResume').onclick = openTrackRec;
+  $('#trkSet').onclick = trkSettings;
+  box.querySelectorAll('[data-trka]').forEach(b => b.onclick = () => openTrackDet(b.dataset.trka));
+}
+function trkSettings(){
+  const s = trkS();
+  showSheet(`<h3 style="margin:4px 0 12px">Pengaturan rekam</h3>
+    <div class="frow" style="padding:6px 0"><span class="tx"><b>Target jarak per minggu</b></span><button class="icon-btn" id="tgM">−</button><b style="min-width:64px;text-align:center" id="tgV">${s.g} km</b><button class="icon-btn" id="tgP">＋</button></div>
+    <label class="frow vsw" style="padding:6px 0"><span class="tx"><b>Aba-aba suara tiap 1 km</b><small>Jarak, waktu, dan pace dibacakan</small></span><input type="checkbox" class="vchk trkchk" id="tgVoice" ${s.v ? 'checked' : ''}></label>`);
+  const set = g => { s.g = Math.max(1, Math.min(1000, g)); $('#tgV').textContent = `${s.g} km`; save(); renderTrack(); };
+  $('#tgM').onclick = () => set(s.g - 5); $('#tgP').onclick = () => set(s.g + 5);
+  $('#tgVoice').onchange = e => { s.v = e.target.checked; save(); };
+}
+
+/* ----- perekam ----- */
+const trec = {status:'idle', ty:'lari', sg:[], here:null, ok:false, acc:0, since:0, watch:null, tick:null, last:null, lastKm:0, start:0, lock:null, map:null, line:null, dot:null, err:''};
+function trkSay(t){ if(!trkS().v || !window.speechSynthesis) return; try{ const u = new SpeechSynthesisUtterance(tr(t)); u.lang = I18N.lang === 'en' ? 'en-US' : 'id-ID'; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+function trkAccept(p){
+  if(p.acc > 35) return false; const l = trec.last; if(!l){ trec.last = p; return true; }
+  const d = hav(l.c, p.c), dt = (p.c[3] - l.c[3]) / 1000; if(dt <= 0) return false;
+  if(d / dt > TRK_TYPES[trec.ty].max) return false;
+  if(d < Math.max(3, p.acc * .4) && dt < 15) return false;
+  trec.last = p; return true;
+}
+function trkWatch(){
+  if(trec.watch != null) return;
+  if(!navigator.geolocation){ trec.err = 'GPS tidak bisa dipakai di perangkat ini.'; renderTrackRec(); return; }
+  trec.watch = navigator.geolocation.watchPosition(pos => {
+    const c = pos.coords, p = {c:[c.latitude, c.longitude, c.altitude == null ? null : c.altitude, pos.timestamp || Date.now()], acc:c.accuracy};
+    trec.here = p.c; trec.ok = c.accuracy <= 25; trec.err = '';
+    if(trec.status === 'recording' && trkAccept(p)){
+      trec.sg[trec.sg.length - 1].push(p.c);
+      const st = trkStats(trec.sg, trec.ty), km = Math.floor(st.dist / 1000);
+      if(km > trec.lastKm && st.splits[km - 1]){ trec.lastKm = km; const sp = st.splits[km - 1];
+        trkSay(`${km} ${tr('kilometer')}. ${tr('Waktu')} ${Math.floor(st.mov / 60)} ${tr('menit')}. ${usesSpeed(trec.ty) ? `${tr('kecepatan')} ${(1000 / sp.s * 3.6).toFixed(1)}` : `${tr('pace')} ${Math.floor(sp.s / 60)} ${tr('menit')} ${sp.s % 60} ${tr('detik')}`}`); }
+    }
+    trkLive();
+  }, err => { trec.err = err.code === 1 ? 'Izin lokasi ditolak. Buka pengaturan aplikasi untuk mengizinkan lokasi.' : 'Sinyal GPS hilang. Coba di tempat terbuka.'; trkLive(); },
+  {enableHighAccuracy:true, maximumAge:0, timeout:30000});
+}
+function trkStopWatch(){ if(trec.watch != null) navigator.geolocation.clearWatch(trec.watch); trec.watch = null; clearInterval(trec.tick); trec.tick = null; try{ trec.lock && trec.lock.release(); }catch(e){} trec.lock = null; }
+async function trkWake(){ try{ if(navigator.wakeLock) trec.lock = await navigator.wakeLock.request('screen'); }catch(e){} }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && trec.status !== 'idle') trkWake(); });
+const trkElapsed = () => trec.acc + (trec.status === 'recording' ? Date.now() - trec.since : 0);
+function openTrackRec(){ openFull('#trackRec'); trkWatch(); renderTrackRec(); }
+function renderTrackRec(){
+  const box = $('#trackRecBody'); if(!box) return;
+  box.innerHTML = `<div class="trkmapwrap"><div id="trkMap" class="trkmap"></div><div class="trkgps" id="trkGps"></div></div><div class="trkpanel" id="trkPanel"></div>`;
+  trkMap($('#trkMap'), trec.sg, {follow:true, here: trec.here, zoom:17}).then(m => { trec.map = m; trec.line = null; trec.dot = null; trkLive(); });
+  trkLive();
+}
+function trkLive(){
+  const pan = $('#trkPanel'); if(!pan || !$('#trackRec').classList.contains('show')) return;
+  $('#trkGps').innerHTML = `<i style="background:${trec.ok ? '#10B981' : trec.here ? '#F59E0B' : '#9AA0BC'}"></i>${tr(trec.ok ? 'GPS siap' : trec.here ? 'GPS belum akurat' : 'Mencari GPS…')}`;
+  if(trec.map && window.L){
+    const L = window.L, segs = trec.sg.filter(s => s.length > 1);
+    if(trec.line) trec.line.forEach(l => l.remove()); trec.line = segs.map(s => L.polyline(s.map(p => [p[0], p[1]]), {color:TRK_C, weight:5}).addTo(trec.map));
+    if(trec.here){ if(!trec.dot) trec.dot = L.circleMarker([trec.here[0], trec.here[1]], {radius:9, color:'#fff', weight:3, fillColor:'#2563EB', fillOpacity:1}).addTo(trec.map); else trec.dot.setLatLng([trec.here[0], trec.here[1]]); trec.map.panTo([trec.here[0], trec.here[1]], {animate:true}); }
+  }
+  const t = trec.ty;
+  if(trec.status === 'idle'){
+    pan.innerHTML = `${trec.err ? `<p class="trkerr">${tr(trec.err)}</p>` : ''}<div class="tchips trktypes">${Object.entries(TRK_TYPES).map(([k, v]) => `<button class="tchip ${k === t ? 'on' : ''}" data-tt="${k}">${v.e} ${tr(v.l)}</button>`).join('')}</div>
+      <button class="btn btn-primary btn-block trkgo" id="trkGo">▶ ${tr(trec.ok ? 'Mulai' : 'Mulai (GPS belum akurat)')}</button>
+      <p class="vnote" style="text-align:center">Tips: tunggu sampai GPS hijau. Di website, biarkan halaman ini tetap terbuka selama merekam.</p>`;
+    pan.querySelectorAll('[data-tt]').forEach(b => b.onclick = () => { trec.ty = b.dataset.tt; trkLive(); });
+    $('#trkGo').onclick = trkStartRec;
+    return;
+  }
+  const st = trkStats(trec.sg, t), ls = st.splits[st.splits.length - 1];
+  pan.innerHTML = `<div class="trkbig"><small>${tr('Waktu')}</small><b>${fmtDurS(trkElapsed() / 1000)}</b></div>
+    <div class="trk3 dark"><div><small>${tr('Jarak')}</small><b>${fmtKmS(st.dist)}<i>km</i></b></div><div><small>${tr(paceLabelS(t))} ${tr('rata-rata')}</small><b>${paceOrSpeedS(t, st.dist, st.mov)}<i>${paceUnitS(t)}</i></b></div>
+    <div><small>${ls ? `Km ${ls.i}` : tr('Elevasi')}</small><b>${ls ? paceOrSpeedS(t, ls.m, ls.s) : Math.round(st.gain)}<i>${ls ? paceUnitS(t) : 'm'}</i></b></div></div>
+    ${trec.status === 'recording' ? `<button class="btn btn-block trkpause" id="trkPause">❚❚ ${tr('Jeda')}</button>`
+      : `<div class="row2"><button class="btn btn-primary trkgo" id="trkRes">▶ ${tr('Lanjutkan')}</button><button class="btn trkstop" id="trkFin">■ ${tr('Selesai')}</button></div>`}`;
+  if($('#trkPause')) $('#trkPause').onclick = () => { trec.acc += Date.now() - trec.since; trec.status = 'paused'; trkSay('Dijeda'); trkLive(); };
+  if($('#trkRes')) $('#trkRes').onclick = () => { trec.since = Date.now(); trec.last = null; trec.sg.push([]); trec.status = 'recording'; trkSay('Lanjutkan'); trkLive(); };
+  if($('#trkFin')) $('#trkFin').onclick = trkFinish;
+}
+function trkStartRec(){
+  Object.assign(trec, {status:'recording', sg:[[]], acc:0, since:Date.now(), last:null, lastKm:0, start:Date.now()});
+  trkWake(); trkWatch();
+  trec.tick = setInterval(() => { if(trec.status === 'recording'){ const b = document.querySelector('.trkbig b'); if(b) b.textContent = fmtDurS(trkElapsed() / 1000); } }, 1000);
+  trkSay(`${tr('Mulai')} ${tr(TRK_TYPES[trec.ty].l).toLowerCase()}`); trkLive();
+}
+function trkThin(s, max){ if(s.length <= max) return s; const st = s.length / max; return [...[...Array(max)].map((_, i) => s[Math.floor(i * st)]), s[s.length - 1]]; }
+function trkFinish(){
+  const elapsed = Math.round(trkElapsed() / 1000), sg = trec.sg.filter(s => s.length > 1).map(s => trkThin(s.map(p => [+p[0].toFixed(6), +p[1].toFixed(6), p[2] == null ? null : Math.round(p[2]), p[3]]), 900)), ty = trec.ty, st0 = trec.start;
+  trkStopWatch(); Object.assign(trec, {status:'idle', sg:[], last:null});
+  const st = trkStats(sg, ty);
+  if(!sg.length || st.dist < 20){ toast('Jaraknya terlalu pendek, aktivitas tidak disimpan.'); closeFull('#trackRec'); renderTrack(); return; }
+  const kg = (state.kal && state.kal.profile && state.kal.profile.kg) || 65;
+  const a = {id: String(st0), ty, st: st0, ti: tr(trkTitle(ty, new Date(st0))), no:'', el: elapsed, kc: Math.round(trkMet(ty, st.mov ? st.dist / st.mov * 3.6 : 0) * kg * st.mov / 3600), sg};
+  trkSaveSheet(a);
+}
+function trkSaveSheet(a){
+  const st = trkStats(a.sg, a.ty);
+  showSheet(`<h3 style="margin:4px 0 12px">Simpan aktivitas</h3>
+    <div class="trk3 dark" style="margin-bottom:12px"><div><small>${tr('Jarak')}</small><b>${fmtKmS(st.dist)}<i>km</i></b></div><div><small>${tr('Waktu')}</small><b>${fmtDurS(st.mov)}</b></div><div><small>${tr(paceLabelS(a.ty))}</small><b>${paceOrSpeedS(a.ty, st.dist, st.mov)}<i>${paceUnitS(a.ty)}</i></b></div></div>
+    <div class="field"><label>Judul</label><input class="input" id="tsTi" value="${esc(a.ti)}"></div>
+    <div class="field"><label>Catatan (opsional)</label><textarea class="input" id="tsNo" rows="2" placeholder="${tr('Gimana rasanya hari ini?')}"></textarea></div>
+    <div class="tchips trktypes" style="margin:0 0 14px">${Object.entries(TRK_TYPES).map(([k, v]) => `<button class="tchip ${k === a.ty ? 'on' : ''}" data-st="${k}">${v.e} ${tr(v.l)}</button>`).join('')}</div>
+    <button class="btn btn-primary btn-block trkgo" id="tsSave">Simpan</button><button class="btn btn-block vdel" id="tsDrop">Buang</button>`);
+  $('#sheetBody').querySelectorAll('[data-st]').forEach(b => b.onclick = () => { a.ty = b.dataset.st; $('#sheetBody').querySelectorAll('[data-st]').forEach(x => x.classList.toggle('on', x === b)); });
+  $('#tsSave').onclick = () => {
+    a.ti = $('#tsTi').value.trim() || a.ti; a.no = $('#tsNo').value.trim();
+    const s = trkS(); s.a = [a, ...s.a].slice(0, 60);
+    const o = olaS(); o.logs = [{id: Date.now().toString(36), at: a.st, n: a.ti, s: aStats(a).mov, k: a.kc, p: 'gps', e: TRK_TYPES[a.ty].e}, ...o.logs].slice(0, 400);
+    save(); closeSheet(); closeFull('#trackRec'); renderTrack(); renderAll(); openTrackDet(a.id); toast('Aktivitas disimpan 🏅');
+  };
+  $('#tsDrop').onclick = () => { if(!confirm(tr('Buang aktivitas ini?'))) return; closeSheet(); closeFull('#trackRec'); renderTrack(); };
+}
+
+/* ----- detail ----- */
+let trkDetId = null;
+function openTrackDet(id){ trkDetId = id; openFull('#trackDet'); renderTrackDet(); }
+function renderTrackDet(){
+  const box = $('#trackDetBody'), a = trkS().a.find(x => x.id === trkDetId); if(!box || !a) return;
+  const st = aStats(a), d = new Date(a.st), t = a.ty, prs = Object.fromEntries(trkPRs(t).map(p => [p.l, p]));
+  $('#trackDetTitle').textContent = `${TRK_TYPES[t].e} ${tr(TRK_TYPES[t].l)}`;
+  const paces = st.splits.map(s => s.s / (s.m / 1000)), fast = Math.min(...paces), slow = Math.max(...paces);
+  const hasAlt = a.sg.flat().some(p => p[2] != null) && st.dist >= 100;
+  let elev = '';
+  if(hasAlt){ const n = st.cd.length, step = Math.max(1, Math.floor(n / 200)), lo = Math.min(...st.ca), hi = Math.max(...st.ca), pd = Math.max(5, (hi - lo) * .15), L0 = lo - pd, H0 = hi + pd;
+    const X = v => 30 + v / st.dist * 284, Y = v => 10 + (1 - (v - L0) / (H0 - L0)) * 110;
+    const pts = []; for(let i = 0; i < n; i += step) pts.push(`${X(st.cd[i]).toFixed(1)},${Y(st.ca[i]).toFixed(1)}`);
+    elev = `<div class="section-h"><h2>Profil elevasi</h2></div><div class="card vcard"><svg class="vchart" viewBox="0 0 320 140" preserveAspectRatio="none">
+      <line x1="30" x2="316" y1="${Y(hi)}" y2="${Y(hi)}" class="vg"/><line x1="30" x2="316" y1="${Y(lo)}" y2="${Y(lo)}" class="vg"/><text x="26" y="${Y(hi) + 3}" text-anchor="end" class="vt">${Math.round(hi)}</text><text x="26" y="${Y(lo) + 3}" text-anchor="end" class="vt">${Math.round(lo)}</text>
+      <polygon points="30,120 ${pts.join(' ')} 314,120" fill="#7C3AED" opacity=".15"/><polyline points="${pts.join(' ')}" fill="none" stroke="#7C3AED" stroke-width="2"/>
+      <text x="314" y="136" text-anchor="end" class="vt">${fmtKmS(st.dist, 1)} km</text></svg></div>`; }
+  const eff = TRK_BEST.map(([m, l]) => { const s = trkBest(st, m); return s == null ? null : {m, l, s}; }).filter(Boolean);
+  box.innerHTML = `<div class="trkdetmap" id="trkDetMap"></div>
+    <h2 class="trkdtitle">${esc(a.ti)}</h2><p class="muted-c" style="text-align:left;margin:2px 0 0">${fmtDateLong(d)} · ${fmtTime(d)}</p>${a.no ? `<p style="margin:8px 0 0">${esc(a.no)}</p>` : ''}
+    <div class="card trkstats"><div class="trk3 dark"><div><small>${tr('Jarak')}</small><b>${fmtKmS(st.dist)}<i>km</i></b></div><div><small>${tr(paceLabelS(t))}</small><b>${paceOrSpeedS(t, st.dist, st.mov)}<i>${paceUnitS(t)}</i></b></div><div><small>${tr('Waktu bergerak')}</small><b>${fmtDurS(st.mov)}</b></div></div>
+      <div class="trk3 dark"><div><small>${tr('Elevasi naik')}</small><b>${Math.round(st.gain)}<i>m</i></b></div><div><small>${tr('Kalori')}</small><b>${a.kc}<i>kkal</i></b></div><div><small>${tr('Waktu total')}</small><b>${fmtDurS(Math.max(a.el, st.mov))}</b></div></div></div>
+    <div class="row2 trkacts"><button class="btn btn-primary trkgo" id="tdShare">⤴ ${tr('Bagikan')}</button><button class="btn trkghost" id="tdGpx">⬇ GPX</button></div>
+    ${st.splits.length ? `<div class="section-h"><h2>Split per km</h2></div><div class="card trksplits"><div class="trksp head"><b>Km</b><b>${tr(paceLabelS(t))}</b><span></span><b>Elev</b></div>
+      ${st.splits.map(s => { const p = s.s / (s.m / 1000), f = slow === fast ? 1 : 1 - (p - fast) / (slow - fast) * .7;
+        return `<div class="trksp"><b>${s.m < 999 ? fmtKmS(s.m, 1) : s.i}</b><span>${paceOrSpeedS(t, s.m, s.s)}</span><span class="trkspbar"><i style="width:${Math.max(20, f * 100)}%;opacity:${p === fast ? 1 : .45}"></i></span><em>${s.e >= 0 ? '+' : ''}${Math.round(s.e)}</em></div>`; }).join('')}</div>` : ''}
+    ${elev}
+    ${eff.length ? `<div class="section-h"><h2>Upaya terbaik</h2></div><div class="group">${eff.map(e => { const pr = prs[e.l] && prs[e.l].a.id === a.id;
+      return `<div class="frow"><span class="fic gico" style="--gc:${pr ? '#F59E0B' : TRK_C}">${icon('i-flame')}</span><span class="tx"><b>${e.l}</b><small>${fmtDurS(e.s)} · ${fmtPaceS(e.s / (e.m / 1000))}/km${pr ? ` · ${tr('Rekor pribadi!')}` : ''}</small></span></div>`; }).join('')}</div>` : ''}
+    <div class="group" style="margin-top:22px"><button class="frow" id="tdEdit"><span class="tx"><b>Ubah judul &amp; catatan</b></span><svg class="i chev"><use href="#i-right"/></svg></button><button class="frow" id="tdDel"><span class="tx"><b style="color:#E11D48">Hapus</b></span></button></div>`;
+  trkMap($('#trkDetMap'), a.sg);
+  $('#tdShare').onclick = () => trkShare(a); $('#tdGpx').onclick = () => trkGpx(a);
+  $('#tdEdit').onclick = () => { showSheet(`<h3 style="margin:4px 0 12px">Ubah aktivitas</h3><div class="field"><label>Judul</label><input class="input" id="teTi" value="${esc(a.ti)}"></div><div class="field"><label>Catatan (opsional)</label><textarea class="input" id="teNo" rows="3">${esc(a.no)}</textarea></div><button class="btn btn-primary btn-block trkgo" id="teSave">Simpan</button>`);
+    $('#teSave').onclick = () => { a.ti = $('#teTi').value.trim() || a.ti; a.no = $('#teNo').value.trim(); save(); closeSheet(); renderTrackDet(); renderTrack(); }; };
+  $('#tdDel').onclick = () => { if(!confirm(tr('Hapus aktivitas ini?'))) return; const s = trkS(); s.a = s.a.filter(x => x.id !== a.id); save(); closeFull('#trackDet'); renderTrack(); };
+}
+function trkGpx(a){
+  const e = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const typ = {lari:'running', jalan:'walking', sepeda:'cycling', hiking:'hiking'}[a.ty];
+  const x = `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="IngetZeon" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>${e(a.ti)}</name><type>${typ}</type>\n${a.sg.map(s => `<trkseg>\n${s.map(p => `<trkpt lat="${p[0].toFixed(6)}" lon="${p[1].toFixed(6)}">${p[2] != null ? `<ele>${p[2]}</ele>` : ''}<time>${new Date(p[3]).toISOString()}</time></trkpt>`).join('\n')}\n</trkseg>`).join('\n')}\n</trk></gpx>\n`;
+  const url = URL.createObjectURL(new Blob([x], {type:'application/gpx+xml'})), l = document.createElement('a');
+  l.href = url; l.download = `IngetZeon_${a.ti.replace(/[^A-Za-z0-9 _-]/g, '').trim().replace(/ /g, '_') || 'aktivitas'}_${dayKey(new Date(a.st))}.gpx`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+async function trkShare(a){
+  const st = aStats(a), c = document.createElement('canvas'), W = 900, H = 1140; c.width = W; c.height = H;
+  const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#0E1A4A'); gr.addColorStop(.6, '#1E3A8A'); gr.addColorStop(1, '#3B5BC4');
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(W * .23, H + 40, W * .6, 160, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(W * .85, H + 60, W * .57, 150, 0, 0, Math.PI * 2); g.fill();
+  const F = (w, s) => `${w} ${s}px Inter, system-ui, sans-serif`;
+  g.fillStyle = '#fff'; g.font = F(700, 50); g.fillText(`${TRK_TYPES[a.ty].e} ${a.ti}`.slice(0, 30), 60, 110);
+  g.fillStyle = 'rgba(255,255,255,.8)'; g.font = F(500, 34); g.fillText(`${fmtDateShort(new Date(a.st))} · ${fmtTime(new Date(a.st))}`, 60, 160);
+  const pts = a.sg.flat();
+  if(pts.length > 1){ const k = Math.cos(pts[0][0] * Math.PI / 180), xs = pts.map(p => p[1] * k), ys = pts.map(p => -p[0]);
+    const mnx = Math.min(...xs), mxx = Math.max(...xs), mny = Math.min(...ys), mxy = Math.max(...ys), bx = 80, by = 210, bw = W - 160, bh = 560;
+    const sc = Math.min(bw / Math.max(1e-9, mxx - mnx), bh / Math.max(1e-9, mxy - mny)), ox = bx + (bw - (mxx - mnx) * sc) / 2, oy = by + (bh - (mxy - mny) * sc) / 2;
+    const P = p => [ox + (p[1] * k - mnx) * sc, oy + (-p[0] - mny) * sc];
+    g.strokeStyle = '#FDE68A'; g.lineWidth = 12; g.lineCap = 'round'; g.lineJoin = 'round';
+    a.sg.filter(s => s.length > 1).forEach(s => { g.beginPath(); s.forEach((p, i) => { const [x, y] = P(p); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); });
+    [[pts[0], '#10B981'], [pts[pts.length - 1], '#DC2626']].forEach(([p, col]) => { const [x, y] = P(p); g.fillStyle = col; g.beginPath(); g.arc(x, y, 16, 0, Math.PI * 2); g.fill(); }); }
+  const cols = [[tr('Jarak'), `${fmtKmS(st.dist)} km`], [tr(paceLabelS(a.ty)), `${paceOrSpeedS(a.ty, st.dist, st.mov)}${paceUnitS(a.ty)}`], [tr('Waktu'), fmtDurS(st.mov)]];
+  cols.forEach(([l, v], i) => { const x = 60 + i * 270; g.fillStyle = 'rgba(255,255,255,.8)'; g.font = F(600, 30); g.fillText(l, x, 880); g.fillStyle = '#fff'; g.font = F(700, 56); g.fillText(v, x, 945); });
+  g.fillStyle = '#fff'; g.font = F(800, 34); g.fillText('IngetZeon', 60, 1060);
+  const blob = await new Promise(r => c.toBlob(r, 'image/png')), file = new File([blob], `IngetZeon_${a.id}.png`, {type:'image/png'});
+  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], text:`${a.ti} · ${fmtKmS(st.dist)} km #IngetZeon`}); return; } }catch(e){ if(e && e.name === 'AbortError') return; }
+  const url = URL.createObjectURL(blob), l = document.createElement('a'); l.href = url; l.download = file.name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+  toast('Gambar aktivitas diunduh 📸');
 }
 
 /* ---------------- CALENDAR ---------------- */
