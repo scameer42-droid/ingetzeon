@@ -15,7 +15,7 @@ import 'package:ingetzeon/services/track_logic.dart';
 List<TrackPoint> line(int secs, double mps, {DateTime? start}) {
   final t0 = start ?? DateTime(2026, 11, 19, 6);
   return [
-    for (var i = 0; i <= secs; i++) TrackPoint(-6.2 + i * mps / 111320, 106.8, t0.add(Duration(seconds: i)), alt: 20 + 15 * math.sin(i / 120)),
+    for (var i = 0; i <= secs; i++) TrackPoint(-6.2 + i * mps / 111194.93, 106.8, t0.add(Duration(seconds: i)), alt: 20 + 15 * math.sin(i / 120)),
   ];
 }
 
@@ -103,8 +103,9 @@ void main() {
           await t.binding.setSurfaceSize(size);
           await t.pumpWidget(_app(const TrackScreen()));
           await t.pump(const Duration(milliseconds: 300));
-          expect(find.byType(ActivityCard), findsWidgets);
+          expect(find.byType(FeatureHero), findsOneWidget);
           await _scrollAll(t);
+          expect(find.byType(ActivityCard), findsWidgets);
           await t.pumpWidget(_app(const TrackDetailScreen(id: 'b')));
           await t.pump(const Duration(milliseconds: 300));
           expect(find.textContaining('10,4'), findsWidgets);
