@@ -34,6 +34,9 @@ dependencies:
   local_auth: ^2.3.0
   # Muslim Harian: lokasi (jadwal sholat) & sensor kompas (kiblat)
   geolocator: ^13.0.1
+  flutter_map: ^8.2.1
+  latlong2: ^0.9.1
+  share_plus: '>=11.0.0 <14.0.0'
   sensors_plus: ^6.0.1
   wakelock_plus: ^1.2.8
   # AI (Gemini lewat REST API)

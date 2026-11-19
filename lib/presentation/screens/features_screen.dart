@@ -24,6 +24,7 @@ import 'stats_screen.dart';
 import 'ticket_screens.dart';
 import 'translate_screen.dart';
 import 'vital_screen.dart';
+import 'track/track_screen.dart';
 import 'workout/workout_screen.dart';
 
 typedef _Feat = ({String id, IconData icon, String title, String sub});
@@ -68,6 +69,7 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
       (id: 'calm', icon: Icons.spa_outlined, title: 'Ruang Tenang', sub: 'Mood, kebiasaan, fokus, jurnal'),
     ]),
     ('Kesehatan', FeatureColors.calorie, [
+      (id: 'track', icon: Icons.route_rounded, title: 'Rekam aktivitas', sub: 'Lari, jalan, sepeda & hiking dengan GPS'),
       (id: 'ola', icon: Icons.directions_run_rounded, title: 'Olahraga', sub: 'Program latihan & catatan aktivitas'),
       (id: 'kal', icon: Icons.restaurant_rounded, title: 'Kalori & diet', sub: 'Hitung kalori makanan'),
       (id: 'weight', icon: Icons.monitor_weight_outlined, title: 'Berat badan', sub: 'Catat berat & target'),
@@ -138,6 +140,8 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
         openWeightScreen(context);
       case 'cycle':
         _push(const CycleScreen());
+      case 'track':
+        openTrack(context);
       case 'vital':
         _push(const VitalScreen());
       case 'muslim':

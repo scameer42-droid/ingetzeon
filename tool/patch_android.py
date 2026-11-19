@@ -27,6 +27,8 @@ PERMISSIONS = [
     '<uses-permission android:name="android.permission.USE_BIOMETRIC"/>',
     '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>',
     '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>',
+    '<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>',
+    '<uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>',
 ]
 
 RECEIVERS = """
