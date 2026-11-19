@@ -40,11 +40,11 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
   final _q = TextEditingController();
 
   static const List<(String, Color, List<_Feat>)> _groups = [
-    ('Belajar', Color(0xFFF79009), [
+    ('Belajar', FeatureColors.english, [
       (id: 'eng', icon: Icons.school_outlined, title: 'Belajar Inggris', sub: 'Pelajaran seru 5 menit dengan Zeo'),
       (id: 'engcards', icon: Icons.style_outlined, title: 'Kartu kosakata', sub: 'Hafalkan kata dengan kartu bolak-balik'),
     ]),
-    ('Produktivitas', AppColors.primary, [
+    ('Produktivitas', FeatureColors.reminder, [
       (id: 'new', icon: Icons.add_alarm_rounded, title: 'Pengingat', sub: 'Buat pengingat dengan alarm berlagu'),
       (id: 'notes', icon: Icons.sticky_note_2_outlined, title: 'Catatan & rahasia', sub: 'Simpan catatan, kata sandi terkunci'),
       (id: 'habits', icon: Icons.task_alt_rounded, title: 'Kebiasaan', sub: 'Centang kebiasaan baik tiap hari'),
@@ -52,13 +52,13 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
       (id: 'agenda', icon: Icons.calendar_month_outlined, title: 'Agenda', sub: 'Semua jadwal per tanggal'),
       (id: 'stats', icon: Icons.bar_chart_rounded, title: 'Statistik', sub: 'Progres pengingat 7 hari terakhir'),
     ]),
-    ('Aktivitas harian', Color(0xFF0E7490), [
+    ('Aktivitas harian', FeatureColors.parking, [
       (id: 'park', icon: Icons.local_parking_rounded, title: 'Lokasi parkir', sub: 'Foto lokasi & pindai tiket parkir'),
       (id: 'ticket', icon: Icons.qr_code_2_rounded, title: 'Tiket parkir', sub: 'Tampilkan tiket parkir yang tersimpan'),
       (id: 'items', icon: Icons.inventory_2_outlined, title: 'Barang', sub: 'Ingat di mana barangmu disimpan'),
       (id: 'trans', icon: Icons.translate_rounded, title: 'Terjemahkan', sub: 'Indonesia ⇄ Inggris, ketik atau ucapkan'),
     ]),
-    ('Kesejahteraan', AppColors.success, [
+    ('Kesejahteraan', FeatureColors.calm, [
       (id: 'mood', icon: Icons.sentiment_satisfied_alt_rounded, title: 'Cek mood', sub: 'Catat mood & energi hari ini'),
       (id: 'journal', icon: Icons.edit_note_rounded, title: 'Jurnal malam', sub: 'Tulis refleksi sebelum tidur'),
       (id: 'breathe', icon: Icons.air_rounded, title: 'Latihan tenang', sub: 'Latihan napas pelan-pelan'),
@@ -66,13 +66,13 @@ class _FeaturesScreenState extends ConsumerState<FeaturesScreen> {
       (id: 'tests', icon: Icons.psychology_outlined, title: 'Tes psikologi', sub: 'Kenali kondisi dirimu'),
       (id: 'calm', icon: Icons.spa_outlined, title: 'Ruang Tenang', sub: 'Mood, kebiasaan, fokus, jurnal'),
     ]),
-    ('Kesehatan', AppColors.warning, [
+    ('Kesehatan', FeatureColors.calorie, [
       (id: 'ola', icon: Icons.directions_run_rounded, title: 'Olahraga', sub: 'Program latihan & catatan aktivitas'),
       (id: 'kal', icon: Icons.restaurant_rounded, title: 'Kalori & diet', sub: 'Hitung kalori makanan'),
       (id: 'weight', icon: Icons.monitor_weight_outlined, title: 'Berat badan', sub: 'Catat berat & target'),
       (id: 'cycle', icon: Icons.water_drop_outlined, title: 'Siklus haid', sub: 'Pengingat & perkiraan haid'),
     ]),
-    ('Ibadah', Color(0xFF0F766E), [
+    ('Ibadah', FeatureColors.muslim, [
       (id: 'muslim', icon: Icons.mosque_outlined, title: 'Jadwal sholat', sub: 'Waktu sholat & adzan di kotamu'),
       (id: 'qibla', icon: Icons.explore_outlined, title: 'Arah kiblat', sub: 'Kompas arah kiblat'),
       (id: 'quran', icon: Icons.menu_book_outlined, title: "Al-Qur'an", sub: 'Baca surah & ayat'),

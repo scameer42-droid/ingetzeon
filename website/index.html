@@ -1822,6 +1822,51 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 .tgrid button{border:1px solid var(--line);box-shadow:var(--shadow);font-weight:600}
 .tgrid button i.itile{font-style:normal}
 .calm-hero .wbtn{background:#fff!important;color:#0D9488!important;box-shadow:none!important;font-weight:600}
+
+/* ===== LANGIT 2026 — beranda dengan langit yang berganti pagi/siang/sore/malam; ikon fitur bulat berwarna (lihat skill ingetzeon-design) ===== */
+#s-home{padding-top:0}
+.skyh{position:relative;overflow:hidden;margin:0 -20px;padding:calc(18px + env(safe-area-inset-top,0px)) 20px 78px;color:#fff}
+.sky-pagi{background:linear-gradient(180deg,#2F6FD0 0%,#5E9BE3 55%,#F2B880 100%)}
+.sky-siang{background:linear-gradient(180deg,#1B66D6 0%,#4DA2F2 100%)}
+.sky-sore{background:linear-gradient(180deg,#2A2F7A 0%,#8B3F86 58%,#F08A4B 100%)}
+.sky-malam{background:linear-gradient(180deg,#0E1A4A 0%,#1E3A8A 60%,#3B5BC4 100%)}
+.sky-art{position:absolute;inset:0;pointer-events:none}
+.sky-stars{position:absolute;inset:0;width:100%;height:100%}
+.sky-deco{position:absolute;right:18px;top:calc(env(safe-area-inset-top,0px) + 84px);width:110px;height:82px}
+.sky-hills{position:absolute;left:0;bottom:0;width:100%;height:96px}
+.skyh>.top,.skyh>#heroWrap{position:relative;z-index:1}
+#homeSky .greet .eyebrow{color:rgba(255,255,255,.82)!important}
+#homeSky .greet h1,#homeSky .greet h1 span{color:#fff!important;background:none!important;-webkit-text-fill-color:#fff!important;font-weight:700!important;font-size:24px!important;letter-spacing:-.02em}
+#homeSky .avatar{background:#fff!important;color:#1E3A8A!important;border-radius:50%!important;box-shadow:none!important;width:44px;height:44px}
+#homeSky .avatar.has-photo{border:2px solid #fff!important}
+#homeSky .langchip{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:none!important}
+#homeSky .langchip svg{color:#fff!important}
+.skyhero{margin-top:26px}
+.skyhero .h-lb{font-size:13px;font-weight:600;color:rgba(255,255,255,.82)}
+.skyhero .h-big{font-size:54px;font-weight:700;letter-spacing:-.03em;line-height:1.05;font-variant-numeric:tabular-nums;margin-top:4px}
+.skyhero .h-lb,.skyhero .h-big,.skyhero.empty h3{max-width:calc(100% - 120px)}
+.skyhero h3{font-size:18px;font-weight:600;margin:6px 0 0;line-height:1.3;color:#fff;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.skyhero.empty h3{font-size:22px;font-weight:700;margin-top:8px}
+.skyhero .h-sub,.skyhero p{font-size:13.5px;color:rgba(255,255,255,.85);margin-top:4px;line-height:1.45}
+.skyhero .h-act{display:flex;gap:8px;margin-top:18px;max-width:420px}
+.skyhero .h-btn{flex:1;height:44px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.skyhero .h-btn.pri{background:#fff;color:#1E3A8A;border-color:#fff}
+.skyhero .h-btn:active{transform:scale(.97)}
+.skysheet{position:relative;z-index:2;margin:-30px -20px 0;padding:6px 20px 0;background:var(--bg);border-radius:28px 28px 0 0}
+.skysheet>.section-h:first-child{margin-top:16px}
+#s-home .mcard{background:none!important;box-shadow:none!important;border:0!important;padding:4px 0 0!important;margin-top:8px}
+#s-home .mgrid{row-gap:14px}
+#s-home .mitem{font-size:12.5px;font-weight:600}
+#s-home .mitem .mic2.gico,.frow .fic.gico,.dtile .dt-ic.gico{background:var(--gc)!important;color:#fff!important;border:0!important;border-radius:50%!important}
+#s-home .mitem .mic2{width:54px;height:54px}
+#s-home .ask{margin-top:18px}
+#s-home #engWrap{display:none}
+/* kartu utama fitur: bukit lembut di bawah, senada dengan langit beranda */
+.fhero{position:relative;overflow:hidden}
+.fhero>*{position:relative;z-index:1}
+.fhero::after{content:""!important;display:block!important;position:absolute;left:0;right:0;bottom:0;height:46px;z-index:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 46' preserveAspectRatio='none'%3E%3Cellipse cx='90' cy='62' rx='230' ry='50' fill='%23000' fill-opacity='.10'/%3E%3Cellipse cx='330' cy='68' rx='220' ry='46' fill='%23000' fill-opacity='.14'/%3E%3C/svg%3E") bottom/100% 100% no-repeat}
+.itile,[data-theme="dark"] .itile{background:var(--fx,#2563EB)!important;color:#fff!important;border-radius:50%!important}
+.itile svg{width:20px;height:20px}
 </style>
 
 
@@ -1834,6 +1879,8 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 
   <!-- ================= HOME ================= -->
   <section class="screen active" id="s-home">
+    <div class="skyh sky-malam" id="homeSky">
+    <div class="sky-art" id="skyArt" aria-hidden="true"></div>
     <div class="top greet">
       <div class="gtx">
         <div class="eyebrow" id="todayLabel">—</div>
@@ -1846,14 +1893,15 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
     </div>
 
     <div id="heroWrap"></div>
-
+    </div>
+    <div class="skysheet">
+    <div class="section-h"><h2>Fitur favorit</h2><button class="link" data-go="features">Semua</button></div>
+    <div class="mcard"><div class="mgrid" id="featGrid"></div></div>
     <button class="ask" id="askBar" aria-label="Buka asisten">
       <div class="spark"><svg class="i"><use href="#i-spark"/></svg></div>
       <span>Ketik atau ucapkan pengingat…</span>
       <div class="mic"><svg class="i"><use href="#i-mic"/></svg></div>
     </button>
-    <div class="section-h"><h2>Akses cepat</h2><button class="link" data-go="features">Semua fitur</button></div>
-    <div class="mcard"><div class="mgrid" id="featGrid"></div></div>
     <div id="engWrap"></div>
     <div id="parkWrap"></div>
 
@@ -1871,6 +1919,7 @@ body,[data-theme="dark"] body{background:var(--bg)!important}
 
     <div class="section-h"><h2>Ringkasan harian</h2></div>
     <div class="sumrow" id="sumRow"></div>
+    </div>
   </section>
 
   <!-- ================= SEMUA FITUR ================= -->
@@ -2727,6 +2776,7 @@ Object.assign(EN_DICT,{"Belajar Inggris": "Learn English", "Belajar": "Learning"
 Object.assign(EN_DICT,{"Agenda terdekat": "Next up", "Akses cepat": "Quick access", "Semua fitur": "All features", "Tambah pengingat": "Add reminder", "Simpan parkir": "Save parking", "Fokus": "Focus", "Tandai selesai": "Mark done", "Lihat detail": "View details", "Belum ada agenda berikutnya.": "No upcoming agenda.", "Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.": "Add your first reminder, or ask the Assistant to make one.", "Buka Asisten": "Open Assistant", "Belum ada agenda hari ini.": "No agenda today.", "Tambahkan pengingat pertamamu.": "Add your first reminder.", "Ringkasan harian": "Daily summary", "Belum dicatat hari ini": "Not logged today", "Catat": "Log", "Kebiasaan": "Habits", "Belum ada kebiasaan": "No habits yet", "Buat": "Create", "Sholat berikutnya": "Next prayer", "Cari fitur…": "Search features…", "Produktivitas": "Productivity", "Aktivitas harian": "Daily activities", "Kesejahteraan": "Wellbeing", "Kesehatan": "Health", "Ibadah": "Worship", "Agenda": "Agenda", "Fitur": "Features", "Asisten": "Assistant", "Semua jadwal per tanggal": "All schedules by date", "Coba minta": "Try asking", "Ingatkan rapat besok jam 9": "Remind me of the meeting tomorrow at 9", "Simpan lokasi parkir": "Save parking location", "Tampilkan jadwal hari ini": "Show today's schedule", "Ketik pesan atau perintah…": "Type a message or command…", "Pengingat aktif": "Reminder on", "Tersimpan": "Saved", "Nama kegiatan": "Activity name", "Lokasi parkir": "Parking location", "Foto lokasi & pindai tiket parkir": "Photo the spot & scan the parking ticket", "Tiket parkir": "Parking ticket", "Cek mood": "Mood check", "Jurnal malam": "Evening journal", "Latihan tenang": "Calm exercise", "Teman cerita": "Talk it out", "Jadwal sholat": "Prayer times", "Arah kiblat": "Qibla direction", "Doa harian": "Daily prayers", "Tasbih": "Tasbih", "Berat badan": "Body weight", "Catatan & rahasia": "Notes & secrets", "Pengingat": "Reminders", "Statistik": "Statistics", "Barang": "Items", "Terjemahkan": "Translate", "Olahraga": "Workout", "Kalori & diet": "Calories & diet", "Siklus haid": "Period cycle", "Tes psikologi": "Psychology tests"});
 Object.assign(EN_DICT,{"Jadwal berikutnya": "Next up"});
 Object.assign(EN_DICT,{"Asisten AI": "AI Assistant", "Pilih asisten AI": "Choose AI assistant", "Semua gratis. Pilih satu, lalu tempel kuncinya.": "All free. Pick one, then paste its key.", "Disarankan": "Recommended", "Sangat cepat · daftar pakai akun Google": "Very fast · sign up with a Google account", "Banyak model gratis · bisa baca foto": "Many free models · can read photos", "Google · bisa cari info terbaru": "Google · can search the latest info", "Matikan AI (mode offline)": "Turn off AI (offline mode)", "Simpan & pakai": "Save & use", "Aku belum bisa menjawab itu tanpa asisten AI.": "I can't answer that without the AI assistant yet.", "Diterjemahkan dengan AI — hasil lebih natural.": "Translated with AI — more natural results.", "Memakai layanan terjemahan gratis. Pilih asisten AI di Profil untuk hasil yang lebih natural.": "Using a free translation service. Choose an AI assistant in Profile for more natural results.", "Buat pengingat": "Create reminder", "Sudah diambil": "Picked up"});
+Object.assign(EN_DICT,{"Fitur favorit": "Favorite features", "Pengingat berikutnya": "Next reminder", "Muslim": "Muslim", "Tenang": "Calm"});
 /* --- i18n: bahasa tampilan (id/en) --- */
 const I18N={lang:'id',cache:{},tpls:null};
 function i18nTpls(){
@@ -5196,22 +5246,24 @@ function renderHome(){
   $('#todayLabel').textContent = fmtDateLong(now);
   $('#greetText').innerHTML = `${greeting()}, <span>${esc(name || 'Kamu')}</span>`;
   paintAvatar($('#homeAvatar'));
+  paintSky(now);
 
   const nx = nextUpcoming();
   if(nx){
     const cat = nx.r.category || 'lainnya', cic = document.getElementById('c-' + cat) ? 'c-' + cat : 'c-lainnya';
     const today = dayKey(nx.at) === dayKey(now);
-    $('#heroWrap').innerHTML = `<div class="hero">
-      <div class="h-lb">Agenda berikutnya</div>
+    $('#heroWrap').innerHTML = `<div class="skyhero">
+      <div class="h-lb">Pengingat berikutnya</div>
+      <div class="h-big">${fmtTime(nx.at)}</div>
       <h3>${esc(nx.r.title)}</h3>
-      <div class="h-tm"><b>${fmtTime(nx.at)}</b><span>${dayLabel(nx.at)} · ${countdown(nx.at)}${nx.r.repeat!=='once' ? ' · ' + esc(repeatLabel(nx.r)) : ''}</span></div>
+      <div class="h-sub">${dayLabel(nx.at)} · ${countdown(nx.at)}${nx.r.repeat!=='once' ? ' · ' + esc(repeatLabel(nx.r)) : ''}</div>
       <div class="h-act">${today ? `<button class="h-btn pri" id="heroDone">Tandai selesai</button>` : ''}<button class="h-btn${today ? '' : ' pri'}" id="heroOpen">Lihat detail</button></div>
     </div>`;
     $('#heroOpen').onclick = () => openDetail(nx.r, nx.at);
     if($('#heroDone')) $('#heroDone').onclick = () => completeReminder(nx.r, nx.at);
   }else{
-    $('#heroWrap').innerHTML = `<div class="hero empty">
-      <div class="h-lb">Agenda berikutnya</div>
+    $('#heroWrap').innerHTML = `<div class="skyhero empty">
+      <div class="h-lb">Pengingat berikutnya</div>
       <h3>Belum ada agenda berikutnya.</h3>
       <p>Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.</p>
       <div class="h-act"><button class="h-btn pri" data-new>Tambah pengingat</button><button class="h-btn" onclick="openAI(false)">Buka Asisten</button></div>
@@ -5269,11 +5321,37 @@ $('#homeAdd').onclick = () => openForm();
 
 /* --- beranda: satu kotak per fitur, isi lengkap dibuka saat diketuk --- */
 const MENU = [
-  ['new', 'i-bell', 'Pengingat', '#6366F1'],
-  ['park', 'c-parkir', 'Parkir', '#0EA5E9'],
-  ['notes', 'i-note', 'Catatan', '#F59E0B'],
-  ['all', 'i-grid', 'Semua', '#8B5CF6'],
+  ['new', 'i-bell', 'Pengingat', '#2563EB'],
+  ['park', 'c-parkir', 'Parkir', '#0E8BD8'],
+  ['muslim', 'i-mosque', 'Muslim', '#059669'],
+  ['ola', 'i-run', 'Olahraga', '#E11D48'],
+  ['notes', 'i-note', 'Catatan', '#7C3AED'],
+  ['kal', 'i-bowl', 'Kalori', '#EA580C'],
+  ['calm', 'i-leaf', 'Tenang', '#0D9488'],
+  ['eng', 'i-bulb', 'Inggris', '#4F46E5'],
 ];
+/* --- langit beranda: berganti pagi, siang, sore, malam --- */
+function skyPhase(d){ const h = d.getHours(); return h >= 4 && h < 10 ? 'pagi' : h >= 10 && h < 15 ? 'siang' : h >= 15 && h < 18 ? 'sore' : 'malam'; }
+function skyArt(ph){
+  const hills = {pagi:['#4C86D2','#3F79C6'], siang:['#2A78DD','#2169CF'], sore:['#3A2D6E','#2F2560'], malam:['#2C4BA8','#24409A']}[ph];
+  const cloud = (x, y, k) => `<g fill="#fff" opacity=".9" transform="translate(${x} ${y}) scale(${k})"><rect x="0" y="10" width="64" height="16" rx="8"/><circle cx="22" cy="12" r="11"/><circle cx="40" cy="9" r="13"/></g>`;
+  const stars = ph === 'malam' ? `<svg class="sky-stars" viewBox="0 0 390 330" preserveAspectRatio="xMidYMin slice">${[[205,120],[250,70],[352,250],[120,230],[300,226],[60,270],[190,260],[372,40],[160,200],[30,240]].map(([x,y],i) => `<circle cx="${x}" cy="${y}" r="${i % 3 ? 1.2 : 1.8}" fill="#fff" opacity="${i % 2 ? .5 : .85}"/>`).join('')}</svg>` : '';
+  const deco = {
+    malam: `<mask id="skyMoon"><rect width="120" height="90" fill="#fff"/><circle cx="86" cy="32" r="26" fill="#000"/></mask><circle cx="72" cy="42" r="26" fill="#FDE68A" mask="url(#skyMoon)"/><circle cx="18" cy="70" r="1.6" fill="#fff"/><circle cx="108" cy="80" r="1.2" fill="#fff" opacity=".7"/>`,
+    pagi: `<circle cx="80" cy="46" r="24" fill="#FFE7A3"/>` + cloud(2, 50, .85),
+    siang: `<circle cx="82" cy="34" r="24" fill="#FFD66B"/>` + cloud(8, 44, .95),
+    sore: `<circle cx="74" cy="52" r="27" fill="#FFC46B"/>` + cloud(0, 14, .6),
+  }[ph];
+  return `${stars}<svg class="sky-deco" viewBox="0 0 120 90">${deco}</svg><svg class="sky-hills" viewBox="0 0 390 90" preserveAspectRatio="none"><ellipse cx="90" cy="100" rx="230" ry="62" fill="${hills[0]}"/><ellipse cx="330" cy="108" rx="220" ry="56" fill="${hills[1]}"/></svg>`;
+}
+function paintSky(now){
+  const el = $('#homeSky'); if(!el) return;
+  const ph = skyPhase(now);
+  if(el.dataset.ph === ph) return;
+  el.dataset.ph = ph;
+  el.className = 'skyh sky-' + ph;
+  $('#skyArt').innerHTML = skyArt(ph);
+}
 function renderFeatures(){
   const box = $('#featGrid'); if(!box) return;
   box.innerHTML = MENU.map(([id, ic, label, c]) => `<button class="mitem" data-feat="${id}" style="--gc:${c}"><span class="mic2 gico">${icon(ic)}</span>${label}</button>`).join('');
@@ -5286,28 +5364,28 @@ function renderSummary(){
   const nx = nextPrayer(now), t = kalTarget(), wkm = olaWeekMin();
   const r = (id, ic, c, title, sub, val, bar) => `<button class="dtile" data-feat="${id}" style="--gc:${c}"><span class="dt-ic gico">${icon(ic)}</span><b>${title}</b><small>${sub}</small>${bar != null ? `<span class="dt-bar"><i style="width:${Math.round(Math.min(1, Math.max(0, bar)) * 100)}%"></i></span>` : val ? `<span class="dt-act">${val}</span>` : ''}</button>`;
   const rows = [
-    md ? r('mood', 'i-leaf', '#10B981', 'Mood', `${MOOD_EMOJI[md.m - 1]} ${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')}`, '')
-       : r('mood', 'i-leaf', '#10B981', 'Mood', 'Belum dicatat hari ini', 'Catat'),
-    hs.length ? r('habits', 'i-check', '#6366F1', 'Kebiasaan', `${hd} dari ${hs.length} selesai`, '', hd / hs.length)
-              : r('habits', 'i-check', '#6366F1', 'Kebiasaan', 'Belum ada kebiasaan', 'Buat'),
-    r('muslim', 'i-mosque', '#14B8A6', `Sholat ${PRAYER_NAMES[nx.key]}`, `${fmtTime(nx.at)} · ${cdText(nx.at - now)}`, ''),
+    md ? r('mood', 'i-leaf', '#0D9488', 'Mood', `${MOOD_EMOJI[md.m - 1]} ${esc(MOOD_LABEL ? MOOD_LABEL[md.m - 1] : '')}`, '')
+       : r('mood', 'i-leaf', '#0D9488', 'Mood', 'Belum dicatat hari ini', 'Catat'),
+    hs.length ? r('habits', 'i-check', '#2563EB', 'Kebiasaan', `${hd} dari ${hs.length} selesai`, '', hd / hs.length)
+              : r('habits', 'i-check', '#2563EB', 'Kebiasaan', 'Belum ada kebiasaan', 'Buat'),
+    r('muslim', 'i-mosque', '#059669', `Sholat ${PRAYER_NAMES[nx.key]}`, `${fmtTime(nx.at)} · ${cdText(nx.at - now)}`, ''),
   ];
-  if(t){ const eat = kalSum(kalOn(now)).k - olaKcalOn(now); rows.push(r('kal', 'i-bowl', '#F97316', 'Kalori', t.target - eat >= 0 ? `Sisa ${fmtK(t.target - eat)} kkal` : `Lebih ${fmtK(eat - t.target)} kkal`, '', eat / t.target)); }
-  if(wkm) rows.push(r('ola', 'i-run', '#F43F5E', 'Olahraga', `${wkm}/${olaS().goal} menit minggu ini`, '', wkm / olaS().goal));
-  if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); rows.push(r('cycle', 'i-drop', '#EC4899', 'Siklus haid', esc(st.title), '')); } }
+  if(t){ const eat = kalSum(kalOn(now)).k - olaKcalOn(now); rows.push(r('kal', 'i-bowl', '#EA580C', 'Kalori', t.target - eat >= 0 ? `Sisa ${fmtK(t.target - eat)} kkal` : `Lebih ${fmtK(eat - t.target)} kkal`, '', eat / t.target)); }
+  if(wkm) rows.push(r('ola', 'i-run', '#E11D48', 'Olahraga', `${wkm}/${olaS().goal} menit minggu ini`, '', wkm / olaS().goal));
+  if(state.cycle.enabled){ const ci = cycleInfo(); if(ci){ const st = cycleStatus(ci); rows.push(r('cycle', 'i-drop', '#DB2777', 'Siklus haid', esc(st.title), '')); } }
   const its = activeItems();
-  if(its.length) rows.push(r('items', 'c-barang', '#0EA5E9', 'Barang', `${its.length} disimpan · ${esc(its[0].title || '')}`, ''));
-  if(rows.length % 2) rows.push(r('eng', 'i-bulb', '#F97316', 'Belajar Inggris', `🔥 ${engToday().streak} hari · ⭐ ${state.eng.xp} XP`, 'Mulai'));
+  if(its.length) rows.push(r('items', 'c-barang', '#D97706', 'Barang', `${its.length} disimpan · ${esc(its[0].title || '')}`, ''));
+  if(rows.length % 2) rows.push(r('eng', 'i-bulb', '#4F46E5', 'Belajar Inggris', `🔥 ${engToday().streak} hari · ⭐ ${state.eng.xp} XP`, 'Mulai'));
   row.innerHTML = `<div class="dgrid">${rows.join('')}</div>`;
 }
 
 /* --- halaman Semua Fitur: dikelompokkan, bisa dicari --- */
 const FEAT_GROUPS = [
-  ['Belajar', '#10B981', [
+  ['Belajar', '#4F46E5', [
     ['eng', 'i-bulb', 'Belajar Inggris', 'Pelajaran seru 5 menit dengan Zeo'],
     ['engcards', 'i-note', 'Kartu kosakata', 'Hafalkan kata dengan kartu bolak-balik'],
   ]],
-  ['Produktivitas', '#6366F1', [
+  ['Produktivitas', '#2563EB', [
     ['new', 'i-alarm', 'Pengingat', 'Buat pengingat dengan alarm berlagu'],
     ['notes', 'i-note', 'Catatan & rahasia', 'Simpan catatan, kata sandi terkunci'],
     ['habits', 'i-check', 'Kebiasaan', 'Centang kebiasaan baik tiap hari'],
@@ -5315,26 +5393,26 @@ const FEAT_GROUPS = [
     ['calendar', 'i-calendar', 'Agenda', 'Semua jadwal per tanggal'],
     ['stats', 'i-chart', 'Statistik', 'Progres pengingat 7 hari terakhir'],
   ]],
-  ['Aktivitas harian', '#0EA5E9', [
+  ['Aktivitas harian', '#0E8BD8', [
     ['park', 'c-parkir', 'Lokasi parkir', 'Foto lokasi & pindai tiket parkir'],
     ['ticket', 'i-qr', 'Tiket parkir', 'Tampilkan tiket parkir yang tersimpan'],
     ['items', 'c-barang', 'Barang', 'Ingat di mana barangmu disimpan'],
     ['trans', 'i-globe', 'Terjemahkan', 'Indonesia ⇄ Inggris, ketik atau ucapkan'],
   ]],
-  ['Kesejahteraan', '#14B8A6', [
+  ['Kesejahteraan', '#0D9488', [
     ['mood', 'i-leaf', 'Cek mood', 'Catat mood & energi hari ini'],
     ['journal', 'i-edit', 'Jurnal malam', 'Tulis refleksi sebelum tidur'],
     ['breathe', 'i-heart', 'Latihan tenang', 'Latihan napas pelan-pelan'],
     ['support', 'i-chat', 'Teman cerita', 'Ceritakan perasaanmu ke Asisten'],
     ['tests', 'i-bulb', 'Tes psikologi', 'Kenali kondisi dirimu'],
   ]],
-  ['Kesehatan', '#F43F5E', [
+  ['Kesehatan', '#EA580C', [
     ['ola', 'i-run', 'Olahraga', 'Program latihan & catatan aktivitas'],
     ['kal', 'i-bowl', 'Kalori & diet', 'Hitung kalori makanan'],
     ['weight', 'i-target', 'Berat badan', 'Catat berat & target'],
     ['cycle', 'i-drop', 'Siklus haid', 'Pengingat & perkiraan haid'],
   ]],
-  ['Ibadah', '#8B5CF6', [
+  ['Ibadah', '#059669', [
     ['muslim', 'i-mosque', 'Jadwal sholat', 'Waktu sholat & adzan di kotamu'],
     ['qibla', 'i-target', 'Arah kiblat', 'Kompas arah kiblat'],
     ['quran', 'i-note', "Al-Qur'an", 'Baca surah & ayat'],

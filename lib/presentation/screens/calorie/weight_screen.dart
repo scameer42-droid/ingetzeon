@@ -251,10 +251,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
       ]),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 110), children: [
         // ---- pahlawan: berat saat ini
-        Container(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          decoration: BoxDecoration(gradient: kWGradient, borderRadius: BorderRadius.circular(20)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(gradient: kWGradient, borderRadius: BorderRadius.circular(20)), child: CustomPaint(painter: const HillsPainter(), child: Padding(padding: const EdgeInsets.fromLTRB(20, 18, 20, 18), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('BERAT SAAT INI', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w800, letterSpacing: 1, fontSize: 12)),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Flexible(
@@ -282,8 +279,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               const SizedBox(width: 8),
               _heroBox('Per minggu', st.perWeek == null ? '–' : '${st.perWeek! > 0 ? '+' : ''}${kgStr(st.perWeek!)} kg', st.perWeek == null ? 'butuh 1 minggu' : 'rata-rata'),
             ]),
-          ]),
-        ),
+          ])))),
         // ---- perjalanan menuju target
         if (st.target != null) ...[
           const SizedBox(height: 14),

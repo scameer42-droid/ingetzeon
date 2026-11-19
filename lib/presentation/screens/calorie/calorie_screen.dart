@@ -62,13 +62,10 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
           IconButton(onPressed: isToday ? null : () => setState(() => _day = addDays(_day, 1)), icon: const Icon(Icons.chevron_right_rounded)),
         ]),
         // ---- ringkasan
-        Container(
-          padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-          decoration: BoxDecoration(
+        Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(
             gradient: kKalGradient,
             borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(children: [
+          ), child: CustomPaint(painter: const HillsPainter(), child: Padding(padding: const EdgeInsets.fromLTRB(18, 18, 18, 16), child: Column(children: [
             Row(children: [
               SizedBox(
                 width: 132,
@@ -106,8 +103,7 @@ class _CalorieScreenState extends ConsumerState<CalorieScreen> {
               const SizedBox(width: 10),
               _macro('Lemak', mac.f, t?.fat ?? 67),
             ]),
-          ]),
-        ),
+          ])))),
         if (t?.note.isNotEmpty == true)
           Padding(
             padding: const EdgeInsets.only(top: 10),

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart' hide Text;
+import 'sky.dart';
+export 'sky.dart';
 import '../../core/i18n/tr_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -151,12 +153,7 @@ class AppListRow extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.line)),
-              child: Icon(icon, color: c, size: 20),
-            ),
+            CircleIcon(icon: icon, color: c, size: 40),
             const SizedBox(width: 12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -403,8 +400,9 @@ class MeshCard extends StatelessWidget {
     final g = color == null ? AppColors.gradient : FeatureColors.hero(color!);
     return Container(
       width: double.infinity,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(radius)),
-      child: Padding(padding: padding, child: child),
+      child: CustomPaint(painter: const HillsPainter(), child: Padding(padding: padding, child: child)),
     );
   }
 }
@@ -563,6 +561,22 @@ class IconTile extends StatelessWidget {
       );
 }
 
+/// Ikon putih di lingkaran berwarna penuh — gaya "Langit" untuk menu & daftar fitur.
+class CircleIcon extends StatelessWidget {
+  const CircleIcon({super.key, required this.icon, required this.color, this.size = 54});
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        child: Icon(icon, color: Colors.white, size: size * .46),
+      );
+}
+
 /// Ubin alat/pintasan: [IconTile] + label di bawah, di kartu putih bergaris.
 class ToolTile extends StatelessWidget {
   const ToolTile({super.key, required this.icon, required this.color, required this.label, required this.onTap});
@@ -577,7 +591,7 @@ class ToolTile extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(8, 14, 8, 12),
         onTap: onTap,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          IconTile(icon: icon, color: color, size: 42),
+          CircleIcon(icon: icon, color: color, size: 44),
           const SizedBox(height: 8),
           Text(label, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: context.ink, height: 1.25)),
         ]),

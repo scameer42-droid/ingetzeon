@@ -3419,4 +3419,8 @@ const Map<String, String> kEnDict = {
   'Tanpa alat · di rumah': 'No equipment · at home',
   '{} menit · {} gerakan · {} kkal': '{} min · {} moves · {} kcal',
   '{} mnt · {} kkal': '{} min · {} kcal',
+  'Fitur favorit': 'Favorite features',
+  'Pengingat berikutnya': 'Next reminder',
+  'Muslim': 'Muslim',
+  'Tenang': 'Calm',
 };

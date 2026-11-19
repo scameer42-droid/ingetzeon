@@ -49,12 +49,10 @@ class CycleHomeCard extends ConsumerWidget {
     final st = info.status();
     return Padding(
       padding: const EdgeInsets.only(top: 14),
-      child: Container(
-        decoration: BoxDecoration(
+      child: Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(
           gradient: kHaidGradient,
           borderRadius: BorderRadius.circular(20),
-        ),
-        child: Material(
+        ), child: CustomPaint(painter: const HillsPainter(), child: Material(
           type: MaterialType.transparency,
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
@@ -90,8 +88,7 @@ class CycleHomeCard extends ConsumerWidget {
               ]),
             ),
           ),
-        ),
-      ),
+        ))),
     );
   }
 }

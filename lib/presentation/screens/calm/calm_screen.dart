@@ -31,9 +31,13 @@ class CalmScreen extends ConsumerWidget {
       body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 32), children: [
         // ---- kartu mood
         Container(
-          padding: const EdgeInsets.all(20),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(gradient: kCalmGradient, borderRadius: BorderRadius.circular(20)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: CustomPaint(
+            painter: const HillsPainter(),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(today == null ? 'Gimana perasaanmu hari ini?' : 'Mood hari ini: ${MoodAdvice.moodEmoji[today.mood - 1]} ${MoodAdvice.moodLabel[today.mood - 1]}',
                 style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
@@ -47,6 +51,8 @@ class CalmScreen extends ConsumerWidget {
               if (today != null) ...[const SizedBox(width: 8), _WhiteBtn(label: 'Saran jadwal', icon: Icons.tips_and_updates_rounded, onTap: () => showMoodAdvice(context, ref))],
             ]),
           ]),
+            ),
+          ),
         ),
         const SizedBox(height: 18),
         // ---- alat

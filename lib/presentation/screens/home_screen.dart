@@ -57,20 +57,21 @@ class HomeScreen extends ConsumerWidget {
         ...occurrencesOn(list, addDays(dateOnly(now), i)).where((x) => x.reminder.alarm && seen.add(x.reminder.id)),
     ];
 
-    return SafeArea(
-      bottom: false,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        children: [
-          // A. header
-          Row(
-            children: [
+    final phase = SkyPhase.of(now);
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        // A. langit: salam, foto profil, pengingat berikutnya
+        SkyHeader(
+          phase: phase,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: context.muted, fontWeight: FontWeight.w500)),
+                  Text(fmtDateLong(now), style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: .82), fontWeight: FontWeight.w500)),
                   const SizedBox(height: 3),
                   Text('${tr(greeting(now))}, ${name.isEmpty ? tr('Kamu') : name}',
-                      translate: false, maxLines: 2, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -.5, height: 1.25, color: context.ink)),
+                      translate: false, maxLines: 2, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -.5, height: 1.25, color: Colors.white)),
                 ]),
               ),
               const SizedBox(width: 12),
@@ -80,38 +81,44 @@ class HomeScreen extends ConsumerWidget {
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () => onGoTo(3),
-                  child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 44, radius: 22),
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    child: UserAvatar(name: name, path: ref.watch(settingsProvider).avatarPath, size: 42, radius: 21),
+                  ),
                 ),
               ),
+            ]),
+            const SizedBox(height: 26),
+            _NextCard(next: next, now: now, phase: phase, onNew: () => _openForm(context), onOpenAi: onOpenAi),
+          ]),
+        ),
+        // B. lembar isi yang menumpuk di atas bukit
+        Container(
+          transform: Matrix4.translationValues(0, -28, 0),
+          decoration: BoxDecoration(color: context.bg, borderRadius: const BorderRadius.vertical(top: Radius.circular(28))),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            SectionHeader('Fitur favorit', action: 'Semua', onAction: () => onGoTo(2)),
+            _QuickAccess(onNew: () => _openForm(context), onAll: () => onGoTo(2)),
+            if (parking != null) ...[
+              const SizedBox(height: 16),
+              _ParkingCard(parking: parking),
             ],
-          ),
-          const SizedBox(height: 22),
-          // B. agenda berikutnya
-          _NextCard(next: next, now: now, onNew: () => _openForm(context), onOpenAi: onOpenAi),
-          // C. akses cepat
-          SectionHeader('Akses cepat', action: 'Semua fitur', onAction: () => onGoTo(2)),
-          _QuickAccess(onNew: () => _openForm(context), onAll: () => onGoTo(2)),
-          const SizedBox(height: 14),
-          const EnglishHomeCard(),
-          if (parking != null) ...[
-            const SizedBox(height: 12),
-            _ParkingCard(parking: parking),
-          ],
-          // D. jadwal hari ini
-          SectionHeader('Jadwal hari ini', action: 'Tambah', onAction: () => _openForm(context)),
-          _TodaySection(
-            today: today,
-            upcoming: upcoming,
-            doneCount: doneCount,
-            totalCount: totalCount,
-            onAdd: () => _openForm(context),
-            onCalendar: () => onGoTo(1),
-          ),
-          // E. ringkasan harian
-          const SectionHeader('Ringkasan harian'),
-          const _DailySummary(),
-        ],
-      ),
+            SectionHeader('Jadwal hari ini', action: 'Tambah', onAction: () => _openForm(context)),
+            _TodaySection(
+              today: today,
+              upcoming: upcoming,
+              doneCount: doneCount,
+              totalCount: totalCount,
+              onAdd: () => _openForm(context),
+              onCalendar: () => onGoTo(1),
+            ),
+            const SectionHeader('Ringkasan harian'),
+            const _DailySummary(),
+          ]),
+        ),
+      ],
     );
   }
 
@@ -232,85 +239,79 @@ class _LangChip extends ConsumerWidget {
 }
 
 
-/// B. Kartu "Agenda terdekat" — fokus utama beranda.
+/// Pengingat berikutnya, tampil langsung di atas langit beranda.
 class _NextCard extends ConsumerWidget {
-  const _NextCard({required this.next, required this.now, required this.onNew, required this.onOpenAi});
+  const _NextCard({required this.next, required this.now, required this.phase, required this.onNew, required this.onOpenAi});
   final Occurrence? next;
   final DateTime now;
+  final SkyPhase phase;
   final VoidCallback onNew, onOpenAi;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final n = next;
-    const onCard = Colors.white;
-    final dim = Colors.white.withValues(alpha: .8);
-    Widget btn(String label, VoidCallback onTap, {IconData? icon, bool primary = false}) => Expanded(
+    final dim = Colors.white.withValues(alpha: .85);
+    Widget btn(String label, VoidCallback onTap, {bool primary = false}) => Expanded(
           child: SizedBox(
-            height: 48,
+            height: 46,
             child: FilledButton(
               onPressed: onTap,
               style: FilledButton.styleFrom(
-                backgroundColor: primary ? Colors.white : Colors.white.withValues(alpha: .14),
-                foregroundColor: primary ? const Color(0xFF1D4ED8) : Colors.white,
+                backgroundColor: primary ? Colors.white : Colors.white.withValues(alpha: .16),
+                foregroundColor: primary ? phase.ink : Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                side: primary ? null : BorderSide(color: Colors.white.withValues(alpha: .3)),
+                shape: const StadiumBorder(),
               ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 6)],
-                Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
-              ]),
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             ),
           ),
         );
+    // sisakan ruang kanan untuk matahari / bulan
+    Widget narrow(Widget w) => Padding(padding: const EdgeInsets.only(right: 112), child: w);
+    final label = narrow(Text('Pengingat berikutnya', style: TextStyle(color: dim, fontSize: 13, fontWeight: FontWeight.w600)));
 
-    Widget label() => Text(tr('Agenda berikutnya').toUpperCase(),
-        translate: false, style: TextStyle(color: dim, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: .8));
     if (n == null) {
-      return MeshCard(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          label(),
-          const SizedBox(height: 10),
-          const Text('Belum ada agenda berikutnya.', style: TextStyle(color: onCard, fontSize: 21, fontWeight: FontWeight.w700, height: 1.3)),
-          const SizedBox(height: 6),
-          Text('Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.', style: TextStyle(color: dim, fontSize: 14, height: 1.5)),
-          const SizedBox(height: 18),
-          Row(children: [
-            btn('Tambah pengingat', onNew, primary: true),
-            const SizedBox(width: 8),
-            btn('Buka Asisten', onOpenAi),
-          ]),
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        label,
+        const SizedBox(height: 8),
+        narrow(const Text('Belum ada agenda berikutnya.', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700, height: 1.3))),
+        const SizedBox(height: 6),
+        Text('Tambahkan pengingat pertamamu, atau minta Asisten membuatkannya.', style: TextStyle(color: dim, fontSize: 13.5, height: 1.45)),
+        const SizedBox(height: 18),
+        Row(children: [
+          btn('Tambah pengingat', onNew, primary: true),
+          const SizedBox(width: 8),
+          btn('Buka Asisten', onOpenAi),
         ]),
-      );
+      ]);
     }
 
     final r = n.reminder;
     final isToday = dateOnly(n.at) == dateOnly(now);
-    return MeshCard(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        label(),
-        const SizedBox(height: 10),
-        Text(r.title, translate: false, maxLines: 3, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: onCard, fontSize: 21, fontWeight: FontWeight.w700, height: 1.3, letterSpacing: -.2)),
-        const SizedBox(height: 14),
-        Wrap(crossAxisAlignment: WrapCrossAlignment.end, spacing: 10, runSpacing: 4, children: [
-          Text(fmtTime(n.at), translate: false,
-              style: const TextStyle(color: onCard, fontSize: 40, fontWeight: FontWeight.w700, height: 1, letterSpacing: -1.2, fontFeatures: [FontFeature.tabularFigures()])),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3),
-            child: Text('${tr(dayLabel(n.at, now))} · ${countdown(n.at, now)}${r.repeat != RepeatType.once ? ' · ${tr(r.repeatLabel)}' : ''}',
-                translate: false, style: TextStyle(color: dim, fontSize: 13.5)),
-          ),
-        ]),
-        const SizedBox(height: 18),
-        Row(children: [
-          if (isToday) ...[
-            btn('Tandai selesai', () => completeWithUndo(ScaffoldMessenger.of(context), ref, r, n.at), primary: true),
-            const SizedBox(width: 8),
-          ],
-          btn('Lihat detail', () => showReminderDetail(context, ref, r, n.at), primary: !isToday),
-        ]),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      label,
+      narrow(FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(fmtTime(n.at), translate: false,
+            style: const TextStyle(color: Colors.white, fontSize: 54, fontWeight: FontWeight.w700, height: 1.1, letterSpacing: -1.5, fontFeatures: [FontFeature.tabularFigures()])),
+      )),
+      const SizedBox(height: 4),
+      Text(r.title, translate: false, maxLines: 2, overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, height: 1.3)),
+      const SizedBox(height: 4),
+      Text('${tr(dayLabel(n.at, now))} · ${countdown(n.at, now)}${r.repeat != RepeatType.once ? ' · ${tr(r.repeatLabel)}' : ''}',
+          translate: false, style: TextStyle(color: dim, fontSize: 13.5)),
+      const SizedBox(height: 18),
+      Row(children: [
+        if (isToday) ...[
+          btn('Tandai selesai', () => completeWithUndo(ScaffoldMessenger.of(context), ref, r, n.at), primary: true),
+          const SizedBox(width: 8),
+        ],
+        btn('Lihat detail', () => showReminderDetail(context, ref, r, n.at), primary: !isToday),
       ]),
-    );
+    ]);
   }
 }
 
@@ -375,7 +376,7 @@ class _ParkingCard extends ConsumerWidget {
   }
 }
 
-/// C. Delapan menu cepat dengan ikon bergradasi.
+/// C. Delapan fitur favorit: ikon putih di lingkaran berwarna.
 class _QuickAccess extends ConsumerWidget {
   const _QuickAccess({required this.onNew, required this.onAll});
   final VoidCallback onNew, onAll;
@@ -384,14 +385,16 @@ class _QuickAccess extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void push(Widget w) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => w));
     final menu = <({IconData icon, String label, Color color, VoidCallback onTap})>[
-      (icon: Icons.notifications_none_rounded, label: 'Pengingat', color: const Color(0xFF6366F1), onTap: onNew),
-      (icon: Icons.local_parking_rounded, label: 'Parkir', color: const Color(0xFF0EA5E9), onTap: () => startParkingFlow(context, ref)),
-      (icon: Icons.description_outlined, label: 'Catatan', color: const Color(0xFFF59E0B), onTap: () => push(const NotesScreen())),
-      (icon: Icons.grid_view_rounded, label: 'Semua', color: const Color(0xFF8B5CF6), onTap: onAll),
+      (icon: Icons.notifications_none_rounded, label: 'Pengingat', color: FeatureColors.reminder, onTap: onNew),
+      (icon: Icons.local_parking_rounded, label: 'Parkir', color: FeatureColors.parking, onTap: () => startParkingFlow(context, ref)),
+      (icon: Icons.mosque_outlined, label: 'Muslim', color: FeatureColors.muslim, onTap: () => push(const MuslimScreen())),
+      (icon: Icons.directions_run_rounded, label: 'Olahraga', color: FeatureColors.workout, onTap: () => push(const WorkoutScreen())),
+      (icon: Icons.description_outlined, label: 'Catatan', color: FeatureColors.notes, onTap: () => push(const NotesScreen())),
+      (icon: Icons.restaurant_rounded, label: 'Kalori', color: FeatureColors.calorie, onTap: () => push(const CalorieScreen())),
+      (icon: Icons.spa_outlined, label: 'Tenang', color: FeatureColors.calm, onTap: () => push(const CalmScreen())),
+      (icon: Icons.school_outlined, label: 'Inggris', color: FeatureColors.english, onTap: () => openEnglish(context)),
     ];
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      for (final m in menu)
-        Expanded(
+    Widget item(({IconData icon, String label, Color color, VoidCallback onTap}) m) => Expanded(
           child: Semantics(
             button: true,
             label: tr(m.label),
@@ -402,19 +405,18 @@ class _QuickAccess extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Column(children: [
-                  Container(
-                    width: 54,
-                    height: 54,
-                    decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.line)),
-                    child: Icon(m.icon, color: m.color, size: 24),
-                  ),
+                  CircleIcon(icon: m.icon, color: m.color, size: 54),
                   const SizedBox(height: 8),
                   Text(m.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: context.ink)),
                 ]),
               ),
             ),
           ),
-        ),
+        );
+    return Column(children: [
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [for (final m in menu.take(4)) item(m)]),
+      const SizedBox(height: 10),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [for (final m in menu.skip(4)) item(m)]),
     ]);
   }
 }
@@ -443,7 +445,7 @@ class _DailySummary extends ConsumerWidget {
     final tiles = <Widget>[
       _Tile(
         icon: Icons.sentiment_satisfied_alt_rounded,
-        color: const Color(0xFF10B981),
+        color: FeatureColors.calm,
         title: 'Mood',
         sub: mood == null ? 'Belum dicatat hari ini' : '${MoodAdvice.moodEmoji[mood.mood - 1]} ${tr(MoodAdvice.moodLabel[mood.mood - 1])}',
         action: mood == null ? 'Catat' : null,
@@ -451,7 +453,7 @@ class _DailySummary extends ConsumerWidget {
       ),
       _Tile(
         icon: Icons.task_alt_rounded,
-        color: const Color(0xFF6366F1),
+        color: FeatureColors.reminder,
         title: 'Kebiasaan',
         sub: habits.isEmpty ? 'Belum ada kebiasaan' : '$habitsDone dari ${habits.length} selesai',
         progress: habits.isEmpty ? null : habitsDone / habits.length,
@@ -460,7 +462,7 @@ class _DailySummary extends ConsumerWidget {
       ),
       _Tile(
         icon: Icons.mosque_rounded,
-        color: const Color(0xFF14B8A6),
+        color: FeatureColors.muslim,
         title: '${tr('Sholat')} ${tr(prayerNames[nx.key]!)}',
         sub: '${fmtTime(nx.at)} · ${tr(countdownText(nx.at.difference(now)))}',
         onTap: () => push(const MuslimScreen()),
@@ -468,7 +470,7 @@ class _DailySummary extends ConsumerWidget {
       if (t != null)
         _Tile(
           icon: Icons.restaurant_rounded,
-          color: const Color(0xFFF97316),
+          color: FeatureColors.calorie,
           title: 'Kalori',
           sub: t.target - eaten >= 0 ? 'Sisa ${fmtKcal(t.target - eaten)} kkal' : 'Lebih ${fmtKcal(eaten - t.target)} kkal',
           progress: eaten / t.target,
@@ -477,25 +479,25 @@ class _DailySummary extends ConsumerWidget {
       if (wk.weekMinutes > 0)
         _Tile(
           icon: Icons.directions_run_rounded,
-          color: const Color(0xFFF43F5E),
+          color: FeatureColors.workout,
           title: 'Olahraga',
           sub: '${wk.weekMinutes}/${wk.weeklyGoal} menit minggu ini',
           progress: wk.weekMinutes / wk.weeklyGoal,
           onTap: () => push(const WorkoutScreen()),
         ),
       if (ci != null)
-        _Tile(icon: Icons.water_drop_rounded, color: const Color(0xFFEC4899), title: 'Siklus haid', sub: ci.status().title, onTap: () => push(const CycleScreen())),
+        _Tile(icon: Icons.water_drop_rounded, color: FeatureColors.cycle, title: 'Siklus haid', sub: ci.status().title, onTap: () => push(const CycleScreen())),
       if (items.isNotEmpty)
         _Tile(
           icon: ReminderCategory.barang.icon,
-          color: const Color(0xFF0EA5E9),
+          color: FeatureColors.items,
           title: 'Barang',
           sub: '${items.length} disimpan · ${items.first.title}',
           onTap: () => showItemsSheet(context),
         ),
     ];
     if (tiles.length.isOdd) {
-      tiles.add(_Tile(icon: Icons.school_rounded, color: const Color(0xFFF97316), title: 'Belajar Inggris', sub: '5 menit sehari bersama Zeo', action: 'Mulai', onTap: () => openEnglish(context)));
+      tiles.add(_Tile(icon: Icons.school_rounded, color: FeatureColors.english, title: 'Belajar Inggris', sub: '5 menit sehari bersama Zeo', action: 'Mulai', onTap: () => openEnglish(context)));
     }
     return Column(children: [
       for (var i = 0; i < tiles.length; i += 2) ...[
@@ -530,12 +532,7 @@ class _Tile extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 100),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(color: context.iconBox, borderRadius: BorderRadius.circular(11), border: Border.all(color: context.line)),
-            child: Icon(icon, color: color, size: 20),
-          ),
+          CircleIcon(icon: icon, color: color, size: 40),
           const SizedBox(height: 10),
           Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700)),
           const SizedBox(height: 2),
