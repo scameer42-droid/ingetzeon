@@ -227,7 +227,7 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                hasKey ? 'Diterjemahkan dengan Gemini AI — hasil lebih natural.' : 'Memakai layanan terjemahan gratis. Isi kunci Gemini di Profil untuk hasil yang lebih natural.',
+                hasKey ? 'Diterjemahkan dengan Gemini AI — hasil lebih natural.' : 'Memakai Google Translate gratis. Isi kunci Gemini di Profil untuk hasil yang lebih natural.',
                 style: TextStyle(fontSize: 12, color: context.faint),
               ),
             ),
@@ -333,7 +333,7 @@ class _TranslateScreenState extends ConsumerState<TranslateScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(color: context.card2, borderRadius: BorderRadius.circular(20)),
-              child: Text(_engine == 'gemini' ? 'Gemini AI' : (_engine == 'offline' ? 'Offline' : 'MyMemory'),
+              child: Text(_engine == 'gemini' ? 'Gemini AI' : (_engine == 'offline' ? 'Offline' : (_engine == 'google' ? 'Google Translate' : 'MyMemory')),
                   translate: false, style: TextStyle(color: context.muted, fontSize: 10.5, fontWeight: FontWeight.w700)),
             ),
         ]),

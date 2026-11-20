@@ -3609,4 +3609,5 @@ const Map<String, String> kEnDict = {
   'pace': 'pace',
   'kilometer': 'kilometers',
   'Lanjutkan': 'Resume',
+  'Memakai Google Translate gratis. Isi kunci Gemini di Profil untuk hasil yang lebih natural.': 'Using free Google Translate. Add a Gemini key in Profile for more natural results.',
 };

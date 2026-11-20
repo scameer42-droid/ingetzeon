@@ -11,7 +11,7 @@ class TranslateResult {
   const TranslateResult(this.text, this.engine, {this.from = 'id'});
   final String text;
 
-  /// 'gemini', 'mymemory', atau 'offline'.
+  /// 'gemini', 'google', 'mymemory', atau 'offline'.
   final String engine;
 
   /// Bahasa sumber yang benar-benar dipakai ('id' / 'en') — bisa beda dari pilihan
@@ -31,7 +31,7 @@ class TranslateException implements Exception {
 /// Terjemah Indonesia ⇄ Inggris.
 ///
 /// Bahasa teks ditebak otomatis. Memakai Gemini bila kunci API sudah diisi (paling
-/// natural); kalau tidak memakai layanan gratis MyMemory. Bila bahasanya masih ragu
+/// natural); kalau tidak memakai Google Translate gratis, lalu MyMemory sebagai cadangan. Bila bahasanya masih ragu
 /// (mis. satu kata "singa"), kedua arah dicoba lalu dipilih hasil yang paling cocok.
 class TranslateService {
   TranslateService._();
@@ -127,7 +127,23 @@ class TranslateService {
       }
     }
 
-    // 2) MyMemory (gratis, tanpa kunci)
+    // 2) Google Translate (gratis, tanpa kunci) — bahasa sumber dideteksi Google
+    try {
+      final g = await _google(src, 'auto', t);
+      var gFrom = g.src == 'en' || g.src == 'id' ? g.src : f;
+      var out = g.text;
+      if (gFrom == t) {
+        // teks ternyata bahasa tujuan → balik arah
+        final g2 = await _google(src, t, f);
+        out = g2.text;
+      }
+      if (gFrom != 'en' && gFrom != 'id') gFrom = f;
+      if (out.trim().isNotEmpty && sane(src, out)) return TranslateResult(out.trim(), 'google', from: gFrom);
+    } catch (_) {
+      // lanjut ke MyMemory
+    }
+
+    // 3) MyMemory (cadangan) — hasil memori yang ngawur dibuang
     try {
       if (det == null && src.length <= 60) {
         // bahasa masih ragu → coba dua arah, ambil yang paling cocok
@@ -138,11 +154,11 @@ class TranslateService {
         } catch (_) {}
         bool same(String x) => x.trim().toLowerCase() == src.toLowerCase();
         final aOk = a.text.isNotEmpty && !same(a.text), bOk = b.text.isNotEmpty && !same(b.text);
-        if (bOk && (!aOk || b.match > a.match + .05)) return TranslateResult(b.text, 'mymemory', from: t);
-        if (a.text.isNotEmpty) return TranslateResult(a.text, 'mymemory', from: f);
+        if (bOk && sane(src, b.text) && (!aOk || b.match > a.match + .05)) return TranslateResult(b.text, 'mymemory', from: t);
+        if (a.text.isNotEmpty && sane(src, a.text)) return TranslateResult(a.text, 'mymemory', from: f);
       } else {
         final a = await _myMemory(src, f, t);
-        if (a.text.isNotEmpty) return TranslateResult(a.text, 'mymemory', from: f);
+        if (a.text.isNotEmpty && sane(src, a.text)) return TranslateResult(a.text, 'mymemory', from: f);
       }
     } on TranslateException {
       final known = _offline(src, f, t);
@@ -152,6 +168,38 @@ class TranslateService {
     final known = _offline(src, f, t);
     if (known != null) return TranslateResult(known, 'offline', from: f);
     throw TranslateException('Terjemahan belum berhasil. Coba lagi sebentar lagi.');
+  }
+
+  /// Buang hasil yang jelas salah: nama layanan ("Google Translate", "MyMemory") yang tidak
+  /// ada di teks asli, atau hasil sama persis dengan teks asli untuk kalimat ≥ 2 kata.
+  static bool sane(String src, String out) {
+    final s = src.toLowerCase(), o = out.trim().toLowerCase();
+    if (o.isEmpty) return false;
+    for (final junk in ['google translate', 'translate', 'mymemory', 'translated.net', 'terjemahan google']) {
+      if (o.contains(junk) && !s.contains(junk)) return false;
+    }
+    if (o == s.trim() && RegExp(r'\s').hasMatch(s.trim())) return false;
+    return true;
+  }
+
+  /// Google Translate gratis (endpoint gtx, tanpa kunci). [from] boleh 'auto'.
+  Future<({String text, String src})> _google(String s, String from, String to) async {
+    final pieces = <String>[];
+    var detected = from;
+    for (final c in _chunks(s)) {
+      final uri = Uri.https('translate.googleapis.com', '/translate_a/single', {'client': 'gtx', 'sl': from, 'tl': to, 'dt': 't', 'q': c});
+      final res = await _client.get(uri).timeout(const Duration(seconds: 15));
+      if (res.statusCode != 200) throw TranslateException('Google Translate sibuk (kode ${res.statusCode}).');
+      final data = jsonDecode(utf8.decode(res.bodyBytes));
+      if (data is! List || data.isEmpty || data[0] is! List) throw TranslateException('Jawaban Google Translate tidak terbaca.');
+      final b = StringBuffer();
+      for (final seg in data[0] as List) {
+        if (seg is List && seg.isNotEmpty && seg[0] is String) b.write(seg[0]);
+      }
+      pieces.add(b.toString());
+      if (data.length > 2 && data[2] is String) detected = data[2] as String;
+    }
+    return (text: pieces.join(' ').trim(), src: detected);
   }
 
   Future<TranslateResult?> _gemini(String src, String? det, String apiKey, String model) async {
