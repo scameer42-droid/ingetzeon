@@ -426,11 +426,11 @@ class ShareCard extends StatelessWidget {
           top: 24,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Container(
+              Flexible(child: Container(
                 padding: EdgeInsets.symmetric(horizontal: sticker ? 0 : 9, vertical: 4),
                 decoration: BoxDecoration(color: sticker ? null : const Color(0x29FFFFFF), borderRadius: BorderRadius.circular(20)),
-                child: Text('${a.type.emoji}  ${tr(a.type.label)}', translate: false, style: TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w600, shadows: sh)),
-              ),
+                child: Text('${a.type.emoji}  ${tr(a.type.label)}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w600, shadows: sh)),
+              )),
               const SizedBox(width: 8),
               Flexible(child: Text('${fmtDateShort(a.start)} · ${fmtTime(a.start)}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: mute, fontSize: 10.5, fontWeight: FontWeight.w500, shadows: sh))),
             ]),
@@ -474,8 +474,8 @@ class ShareCard extends StatelessWidget {
             ),
             const SizedBox(width: 7),
             Text('IngetZeon', translate: false, style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, shadows: sh)),
-            const Spacer(),
-            Text(extra, translate: false, style: TextStyle(color: mute, fontSize: 10, fontWeight: FontWeight.w500, shadows: sh)),
+            const SizedBox(width: 10),
+            Expanded(child: Text(extra, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.right, style: TextStyle(color: mute, fontSize: 10, fontWeight: FontWeight.w500, shadows: sh))),
           ]),
         ),
       ]),
