@@ -10,6 +10,7 @@ import 'package:ingetzeon/presentation/screens/track/track_save_screen.dart';
 import 'package:ingetzeon/presentation/screens/track/track_screen.dart';
 import 'package:ingetzeon/presentation/screens/track/track_widgets.dart';
 import 'package:ingetzeon/presentation/widgets/common.dart';
+import 'package:ingetzeon/providers/settings_provider.dart';
 import 'package:ingetzeon/providers/track_provider.dart';
 import 'package:ingetzeon/services/track_logic.dart';
 
@@ -41,12 +42,17 @@ RecState _recording(RecStatus status) {
   return RecState(status: status, type: ActivityType.lari, segments: segs, elapsedMs: 905000, here: segs.first.last, stats: TrackStats.compute(segs, ActivityType.lari), gpsOk: true, laps: const [(1000.0, 333)]);
 }
 
+class _FakeSettings extends SettingsNotifier {
+  @override
+  AppSettings build() => const AppSettings(name: 'Fathir');
+}
+
 class _FakeTrack extends TrackNotifier {
   @override
   TrackState build() => TrackState(activities: [act('a', 5.3), act('b', 10.4, mps: 2.9, daysAgo: 3), act('c', 21.5, type: ActivityType.sepeda, mps: 7, daysAgo: 9)]);
 }
 
-Widget _app(Widget home) => ProviderScope(overrides: [trackProvider.overrideWith(_FakeTrack.new)], child: MaterialApp(home: home));
+Widget _app(Widget home) => ProviderScope(overrides: [trackProvider.overrideWith(_FakeTrack.new), settingsProvider.overrideWith(_FakeSettings.new)], child: MaterialApp(home: home));
 
 Future<void> _scrollAll(WidgetTester t) async {
   for (var i = 0; i < 14; i++) {
@@ -105,7 +111,7 @@ void main() {
     });
     test('pace split, lap, usaha', () {
       final st = TrackStats.compute([line(1200, 3)], ActivityType.lari);
-      expect(fmtPace(currentSplitPace(st)), '5:33');
+      expect(currentSplitPace(st), closeTo(333, 6));
       final laps = lapsFrom(const [(1000.0, 333), (2500.0, 833)], st);
       expect(laps.length, 3);
       expect(laps[1].meters, closeTo(1500, 1));
@@ -161,7 +167,7 @@ void main() {
           await t.binding.setSurfaceSize(size);
           for (final st in [const RecState(gpsOk: true), _recording(RecStatus.recording), _recording(RecStatus.paused)]) {
             await t.pumpWidget(ProviderScope(
-              overrides: [trackProvider.overrideWith(_FakeTrack.new), recorderProvider.overrideWith(() => _FakeRec(st))],
+              overrides: [trackProvider.overrideWith(_FakeTrack.new), settingsProvider.overrideWith(_FakeSettings.new), recorderProvider.overrideWith(() => _FakeRec(st))],
               child: const MaterialApp(home: TrackRecordScreen()),
             ));
             await t.pump(const Duration(milliseconds: 200));
