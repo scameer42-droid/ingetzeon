@@ -248,7 +248,7 @@ class _PaceChart extends StatelessWidget {
       if (dd < 50 || tt <= 0) continue;
       final kmh = dd / tt * 3.6;
       // pace dibalik (makin cepat makin tinggi) seperti Strava
-      spots.add(FlSpot(d / 1000, speed ? kmh : -math.min(1200, 3600 / kmh)));
+      spots.add(FlSpot(d / 1000, speed ? kmh : -math.min(1200.0, 3600 / kmh)));
     }
     if (spots.length < 2) return const SizedBox.shrink();
     final ys = spots.map((s) => s.y);

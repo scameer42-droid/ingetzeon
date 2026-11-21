@@ -196,7 +196,7 @@ class _WeeksChart extends StatelessWidget {
     final now = DateTime.now();
     final weeks = [for (var i = 11; i >= 0; i--) TrackState.weekStart(now).subtract(Duration(days: 7 * i))];
     final vals = [for (final w in weeks) s.between(w, w.add(const Duration(days: 7)), f).fold(0.0, (a, x) => a + x.distance) / 1000];
-    final maxY = math.max(5.0, (vals.reduce(math.max) / 5).ceil() * 5.0);
+    final maxY = math.max(4.0, (vals.reduce(math.max) / 4).ceil() * 4.0);
     return LineChart(LineChartData(
       minY: 0,
       maxY: maxY,
