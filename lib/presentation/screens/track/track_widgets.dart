@@ -27,10 +27,11 @@ String paceLabel(ActivityType t) => t.usesSpeed ? 'Kecepatan' : 'Pace';
 
 /// Peta OpenStreetMap dengan rute (garis) dan posisi terkini.
 class RouteMap extends StatefulWidget {
-  const RouteMap({super.key, required this.segments, this.here, this.follow = false, this.interactive = true, this.zoom = 16});
+  const RouteMap({super.key, required this.segments, this.here, this.follow = false, this.interactive = true, this.zoom = 16, this.attribution = true, this.fitPadding = const EdgeInsets.all(36)});
   final List<List<TrackPoint>> segments;
   final TrackPoint? here;
-  final bool follow, interactive;
+  final bool follow, interactive, attribution;
+  final EdgeInsets fitPadding;
   final double zoom;
   @override
   State<RouteMap> createState() => _RouteMapState();
@@ -64,7 +65,7 @@ class _RouteMapState extends State<RouteMap> {
         options: MapOptions(
           initialCenter: center,
           initialZoom: widget.zoom,
-          initialCameraFit: fit ? CameraFit.bounds(bounds: LatLngBounds.fromPoints(all), padding: const EdgeInsets.all(36)) : null,
+          initialCameraFit: fit ? CameraFit.bounds(bounds: LatLngBounds.fromPoints(all), padding: widget.fitPadding) : null,
           interactionOptions: InteractionOptions(flags: widget.interactive ? InteractiveFlag.all & ~InteractiveFlag.rotate : InteractiveFlag.none),
           onMapReady: () => _ready = true,
         ),
@@ -84,6 +85,7 @@ class _RouteMapState extends State<RouteMap> {
             if (all.length >= 2 && !widget.follow) Marker(point: all.last, width: 18, height: 18, child: const _Dot(color: Color(0xFFDC2626))),
             if (h != null && widget.follow) Marker(point: LatLng(h.lat, h.lon), width: 26, height: 26, child: const _Dot(color: Color(0xFF2563EB), size: 26)),
           ]),
+          if (widget.attribution)
           Align(
             alignment: Alignment.bottomRight,
             child: Container(

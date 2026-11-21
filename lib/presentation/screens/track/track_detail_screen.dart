@@ -298,73 +298,288 @@ class _ElevChart extends StatelessWidget {
 
 // ---------------------------------------------------------------- kartu bagikan
 
-/// Pratinjau kartu bergaya langit malam lalu bagikan sebagai gambar.
+/// Gaya kartu bagikan: langit malam, peta OSM, atau stiker transparan.
+enum CardStyle { langit, peta, stiker }
+
+/// Pratinjau kartu (3 gaya) lalu bagikan sebagai gambar 1080×1350.
 Future<void> shareCardSheet(BuildContext context, Activity a) async {
   final key = GlobalKey();
+  var style = CardStyle.langit;
   await showAppSheet(
     context: context,
-    builder: (ctx) => Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Text('Bagikan aktivitas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
-        Center(child: RepaintBoundary(key: key, child: ShareCard(a: a))),
-        const SizedBox(height: 14),
-        FilledButton.icon(
-          style: FilledButton.styleFrom(backgroundColor: kTrack, padding: const EdgeInsets.symmetric(vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-          onPressed: () async {
-            try {
-              final b = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-              final img = await b.toImage(pixelRatio: 3);
-              final data = await img.toByteData(format: ui.ImageByteFormat.png);
-              final dir = await getTemporaryDirectory();
-              final f = File('${dir.path}/IngetZeon_${a.id}.png');
-              await f.writeAsBytes(data!.buffer.asUint8List());
-              await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'image/png')], text: '${a.title} · ${fmtKm(a.distance)} km #IngetZeon'));
-            } catch (_) {
-              if (ctx.mounted) showToast(ctx, tr('Gambar belum bisa dibagikan. Coba lagi.'));
-            }
-          },
-          icon: const Icon(Icons.ios_share_rounded),
-          label: const Text('Bagikan gambar', style: TextStyle(fontWeight: FontWeight.w700)),
-        ),
-      ]),
-    ),
+    builder: (ctx) => StatefulBuilder(builder: (ctx, setS) {
+      final dark = Theme.of(ctx).brightness == Brightness.dark;
+      final note = switch (style) {
+        CardStyle.langit => 'Gaya langit malam IngetZeon.',
+        CardStyle.peta => 'Peta © OpenStreetMap. Butuh internet untuk memuat peta.',
+        CardStyle.stiker => 'Latar transparan — tempel di atas foto Story Instagram/WhatsApp.',
+      };
+      return SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          const Text('Bagikan aktivitas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final (s, label) in const [(CardStyle.langit, '🌙 Langit'), (CardStyle.peta, '🗺️ Peta'), (CardStyle.stiker, '✨ Stiker')])
+              ChoiceChip(
+                label: Text(label),
+                selected: style == s,
+                showCheckmark: false,
+                selectedColor: kTrack.withValues(alpha: dark ? .3 : .14),
+                side: BorderSide(color: style == s ? kTrack : context.line),
+                onSelected: (_) => setS(() => style = s),
+              ),
+          ]),
+          const SizedBox(height: 12),
+          AspectRatio(
+            aspectRatio: 4 / 5,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: CustomPaint(
+                painter: style == CardStyle.stiker ? const _CheckerPainter() : null,
+                child: FittedBox(child: RepaintBoundary(key: key, child: ShareCard(a: a, style: style))),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(note, style: TextStyle(fontSize: 12.5, color: context.muted)),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(backgroundColor: kTrack, padding: const EdgeInsets.symmetric(vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+            onPressed: () async {
+              try {
+                final b = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+                final img = await b.toImage(pixelRatio: 3);
+                final data = await img.toByteData(format: ui.ImageByteFormat.png);
+                final dir = await getTemporaryDirectory();
+                final f = File('${dir.path}/IngetZeon_${a.id}_${style.name}.png');
+                await f.writeAsBytes(data!.buffer.asUint8List());
+                await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: 'image/png')], text: '${a.title} · ${fmtKm(a.distance)} km #IngetZeon'));
+              } catch (_) {
+                if (ctx.mounted) showToast(ctx, tr('Gambar belum bisa dibagikan. Coba lagi.'));
+              }
+            },
+            icon: const Icon(Icons.ios_share_rounded),
+            label: const Text('Bagikan gambar', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ]),
+      );
+    }),
   );
 }
 
+/// Kartu 360×450 (diambil ×3 = 1080×1350, rasio 4:5 untuk Story/feed).
 class ShareCard extends StatelessWidget {
-  const ShareCard({super.key, required this.a});
+  const ShareCard({super.key, required this.a, this.style = CardStyle.langit});
   final Activity a;
+  final CardStyle style;
+
+  static const _shadow = [Shadow(color: Color(0x73000000), blurRadius: 5, offset: Offset(0, 1))];
+
   @override
   Widget build(BuildContext context) {
     final st = a.stats;
-    return Container(
-      width: 300,
-      height: 380,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF0E1A4A), Color(0xFF1E3A8A), Color(0xFF3B5BC4)]),
-      ),
-      child: CustomPaint(
-        painter: const HillsPainter(),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+    final sticker = style == CardStyle.stiker, map = style == CardStyle.peta;
+    final mute = sticker ? const Color(0xEBFFFFFF) : const Color(0xB8FFFFFF);
+    final sh = sticker ? _shadow : null;
+    final extra = [if (st.elevGain >= 1) '↑ ${st.elevGain.round()} m', if (a.kcal >= 1) '${a.kcal.round()} ${tr('kkal')}'].join('   ·   ');
+    Widget stat(String label, String value, String unit) => Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(15, 0, 8, 0),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+              Text(label, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: mute, fontSize: 10, fontWeight: FontWeight.w500, shadows: sh)),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
+                  Text(value, translate: false, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700, height: 1.1, letterSpacing: -.3, shadows: sh)),
+                  if (unit.isNotEmpty) ...[
+                    const SizedBox(width: 3),
+                    Text(unit, translate: false, style: TextStyle(color: mute, fontSize: 10, fontWeight: FontWeight.w600, shadows: sh)),
+                  ],
+                ]),
+              ),
+            ]),
+          ),
+        );
+    Widget divider() => sticker ? const SizedBox() : Container(width: .7, height: 30, color: const Color(0x29FFFFFF));
+    return SizedBox(
+      width: 360,
+      height: 450,
+      child: Stack(children: [
+        // latar
+        if (map && showMapTiles)
+          Positioned.fill(child: IgnorePointer(child: RouteMap(segments: a.segments, interactive: false, attribution: false, fitPadding: const EdgeInsets.fromLTRB(60, 120, 60, 170))))
+        else if (!sticker)
+          const Positioned.fill(child: CustomPaint(painter: _CardSkyPainter())),
+        if (map && showMapTiles) ...[
+          Positioned(left: 0, right: 0, top: 0, height: 120, child: _fade(const Color(0xEB0A1238), const Color(0x000A1238))),
+          Positioned(left: 0, right: 0, bottom: 0, height: 175, child: _fade(const Color(0x000A1238), const Color(0xF20A1238), mid: const Color(0xDB0A1238))),
+          const Positioned(right: 24, top: 304, child: Text('© OpenStreetMap', translate: false, style: TextStyle(color: Color(0xBFFFFFFF), fontSize: 7.5, fontWeight: FontWeight.w500))),
+        ] else
+          Positioned(left: 40, right: 40, top: 107, height: 193, child: CustomPaint(painter: _CardRoutePainter(a.segments, color: sticker ? Colors.white : const Color(0xFFFFE7A8), glow: sticker ? const Color(0x59000000) : const Color(0x590A1238)))),
+        // kepala
+        Positioned(
+          left: 24,
+          right: 70,
+          top: 24,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('${a.type.emoji} ${a.title}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
-            Text('${fmtDateShort(a.start)} · ${fmtTime(a.start)}', translate: false, style: const TextStyle(color: Color(0xCCFFFFFF), fontSize: 12)),
-            Expanded(child: CustomPaint(painter: RoutePainter(a.segments, color: const Color(0xFFFDE68A), width: 4), child: const SizedBox.expand())),
             Row(children: [
-              Expanded(child: StatBox(label: tr('Jarak'), value: fmtKm(st.distance), unit: 'km', light: true)),
-              Expanded(child: StatBox(label: tr(paceLabel(a.type)), value: paceOrSpeed(a.type, st.distance, st.moving), unit: paceUnit(a.type), light: true)),
-              Expanded(child: StatBox(label: tr('Waktu'), value: fmtDur(st.moving), light: true)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: sticker ? 0 : 9, vertical: 4),
+                decoration: BoxDecoration(color: sticker ? null : const Color(0x29FFFFFF), borderRadius: BorderRadius.circular(20)),
+                child: Text('${a.type.emoji}  ${tr(a.type.label)}', translate: false, style: TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w600, shadows: sh)),
+              ),
+              const SizedBox(width: 8),
+              Flexible(child: Text('${fmtDateShort(a.start)} · ${fmtTime(a.start)}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: mute, fontSize: 10.5, fontWeight: FontWeight.w500, shadows: sh))),
             ]),
             const SizedBox(height: 10),
-            const Text('IngetZeon', translate: false, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: .3)),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(a.title, translate: false, maxLines: 1, style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w700, height: 1.15, letterSpacing: -.3, shadows: sh)),
+            ),
           ]),
         ),
-      ),
+        // panel angka
+        Positioned(
+          left: 20,
+          right: 20,
+          top: 323,
+          height: 70,
+          child: Container(
+            decoration: sticker ? null : BoxDecoration(color: const Color(0x17FFFFFF), borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0x29FFFFFF), width: .7)),
+            child: Row(children: [
+              stat(tr('Jarak'), fmtKm(st.distance), 'km'),
+              divider(),
+              stat(tr(paceLabel(a.type)), paceOrSpeed(a.type, st.distance, st.moving), paceUnit(a.type).trim()),
+              divider(),
+              stat(tr('Waktu'), fmtDur(st.moving), ''),
+            ]),
+          ),
+        ),
+        // kaki
+        Positioned(
+          left: 24,
+          right: 24,
+          top: 409,
+          height: 21,
+          child: Row(children: [
+            Container(
+              width: 21,
+              height: 21,
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6), boxShadow: sticker ? const [BoxShadow(color: Color(0x59000000), blurRadius: 5)] : null),
+              child: const Icon(Icons.notifications_none_rounded, size: 14, color: Color(0xFF5B54E8)),
+            ),
+            const SizedBox(width: 7),
+            Text('IngetZeon', translate: false, style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700, shadows: sh)),
+            const Spacer(),
+            Text(extra, translate: false, style: TextStyle(color: mute, fontSize: 10, fontWeight: FontWeight.w500, shadows: sh)),
+          ]),
+        ),
+      ]),
     );
   }
+
+  static Widget _fade(Color a, Color b, {Color? mid}) => DecoratedBox(
+        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [a, if (mid != null) mid, b], stops: mid != null ? const [0, .45, 1] : null)),
+      );
+}
+
+/// Langit malam: gradasi, bintang (tetap), bulan sabit, dua bukit.
+class _CardSkyPainter extends CustomPainter {
+  const _CardSkyPainter();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height, s = w / 360;
+    canvas.drawRect(Offset.zero & size, Paint()..shader = const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF0A1238), Color(0xFF1A2F7A), Color(0xFF2D4FB8)], stops: [0, .55, 1]).createShader(Offset.zero & size));
+    var seed = 7;
+    double rnd() => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    for (var i = 0; i < 46; i++) {
+      final x = rnd() * w, y = rnd() * h * .62, r = (1.2 + rnd() * 2.2) / 3 * s;
+      canvas.drawCircle(Offset(x, y), r, Paint()..color = Colors.white.withValues(alpha: .25 + rnd() * .6));
+    }
+    // bulan sabit
+    canvas.saveLayer(Rect.fromLTWH(290 * s, 20 * s, 50 * s, 50 * s), Paint());
+    canvas.drawCircle(Offset(313.3 * s, 43.3 * s), 14 * s, Paint()..color = const Color(0xFFFDE68A));
+    canvas.drawCircle(Offset(320 * s, 38 * s), 12.7 * s, Paint()..blendMode = BlendMode.clear);
+    canvas.restore();
+    canvas.drawOval(Rect.fromCenter(center: Offset(83 * s, h + 23 * s), width: 520 * s, height: 220 * s), Paint()..color = const Color(0xFF1C2F74));
+    canvas.drawOval(Rect.fromCenter(center: Offset(300 * s, h + 37 * s), width: 480 * s, height: 200 * s), Paint()..color = const Color(0xFF16265E));
+  }
+
+  @override
+  bool shouldRepaint(_CardSkyPainter old) => false;
+}
+
+/// Rute untuk kartu: garis tebal + bayangan lembut, titik awal/akhir bercincin putih.
+class _CardRoutePainter extends CustomPainter {
+  _CardRoutePainter(this.segments, {required this.color, required this.glow});
+  final List<List<TrackPoint>> segments;
+  final Color color, glow;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final pts = [for (final s in segments) ...s];
+    if (pts.length < 2) return;
+    final k = math.cos(pts.first.lat * math.pi / 180);
+    double x(TrackPoint p) => p.lon * k;
+    double y(TrackPoint p) => -p.lat;
+    final minX = pts.map(x).reduce(math.min), maxX = pts.map(x).reduce(math.max);
+    final minY = pts.map(y).reduce(math.min), maxY = pts.map(y).reduce(math.max);
+    final w = math.max(1e-9, maxX - minX), h = math.max(1e-9, maxY - minY);
+    const pad = 8.0;
+    final scale = math.min((size.width - pad * 2) / w, (size.height - pad * 2) / h);
+    final ox = (size.width - w * scale) / 2, oy = (size.height - h * scale) / 2;
+    Offset o(TrackPoint p) => Offset(ox + (x(p) - minX) * scale, oy + (y(p) - minY) * scale);
+    final paths = <Path>[];
+    for (final s in segments) {
+      if (s.length < 2) continue;
+      final path = Path()..moveTo(o(s.first).dx, o(s.first).dy);
+      for (final p in s.skip(1)) {
+        path.lineTo(o(p).dx, o(p).dy);
+      }
+      paths.add(path);
+    }
+    Paint line(Color c, double wd) => Paint()
+      ..color = c
+      ..strokeWidth = wd
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final g = line(glow, 8.3)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+    final l = line(color, 4.3);
+    for (final p in paths) {
+      canvas.drawPath(p, g);
+    }
+    for (final p in paths) {
+      canvas.drawPath(p, l);
+    }
+    for (final (p, c) in [(pts.first, const Color(0xFF10B981)), (pts.last, const Color(0xFFEF4444))]) {
+      canvas.drawCircle(o(p), 6.6, Paint()..color = Colors.white);
+      canvas.drawCircle(o(p), 4.3, Paint()..color = c);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CardRoutePainter old) => old.segments != segments || old.color != color;
+}
+
+/// Kotak-kotak abu tipis (penanda latar transparan) di pratinjau stiker.
+class _CheckerPainter extends CustomPainter {
+  const _CheckerPainter();
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFF4F5F8));
+    final p = Paint()..color = const Color(0xFFD9DCE6);
+    const c = 12.0;
+    for (var y = 0.0; y < size.height; y += c) {
+      for (var x = ((y / c).round().isOdd ? c : 0.0); x < size.width; x += c * 2) {
+        canvas.drawRect(Rect.fromLTWH(x, y, c, c), p);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CheckerPainter old) => false;
 }

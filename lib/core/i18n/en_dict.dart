@@ -3610,4 +3610,10 @@ const Map<String, String> kEnDict = {
   'kilometer': 'kilometers',
   'Lanjutkan': 'Resume',
   'Memakai Google Translate gratis. Isi kunci Gemini di Profil untuk hasil yang lebih natural.': 'Using free Google Translate. Add a Gemini key in Profile for more natural results.',
+  '🌙 Langit': '🌙 Sky',
+  '🗺️ Peta': '🗺️ Map',
+  '✨ Stiker': '✨ Sticker',
+  'Gaya langit malam IngetZeon.': 'IngetZeon night-sky style.',
+  'Peta © OpenStreetMap. Butuh internet untuk memuat peta.': 'Map © OpenStreetMap. Needs internet to load the map.',
+  'Latar transparan — tempel di atas foto Story Instagram/WhatsApp.': 'Transparent background — place it on an Instagram/WhatsApp Story photo.',
 };

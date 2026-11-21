@@ -117,9 +117,12 @@ void main() {
     }
     testWidgets('kartu bagikan tampil', (t) async {
       await t.binding.setSurfaceSize(const Size(360, 800));
-      await t.pumpWidget(MaterialApp(home: Scaffold(body: Center(child: ShareCard(a: act('x', 7.2))))));
-      await t.pump();
-      expect(find.text('IngetZeon'), findsOneWidget);
+      for (final style in CardStyle.values) {
+        await t.pumpWidget(MaterialApp(home: Scaffold(body: Center(child: ShareCard(a: act('x', 7.2), style: style)))));
+        await t.pump();
+        expect(find.text('IngetZeon'), findsOneWidget);
+        expect(find.text('Jarak'), findsOneWidget);
+      }
       await t.binding.setSurfaceSize(null);
     });
   });
