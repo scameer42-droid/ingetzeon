@@ -422,7 +422,7 @@ class FeatureColors {
   static const english = Color(0xFF4F46E5);
   static const translate = Color(0xFF0284C7);
   static const vital = Color(0xFFDC2626);
-  static const track = Color(0xFF65A30D);
+  static const track = Color(0xFFF4511E);
 
   /// Gradasi lembut satu warna untuk kartu utama fitur.
   static LinearGradient hero(Color c) => LinearGradient(

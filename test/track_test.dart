@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ingetzeon/core/i18n/i18n.dart';
 import 'package:ingetzeon/presentation/screens/track/track_detail_screen.dart';
+import 'package:ingetzeon/presentation/screens/track/track_record_screen.dart';
+import 'package:ingetzeon/presentation/screens/track/track_save_screen.dart';
 import 'package:ingetzeon/presentation/screens/track/track_screen.dart';
 import 'package:ingetzeon/presentation/screens/track/track_widgets.dart';
 import 'package:ingetzeon/presentation/widgets/common.dart';
@@ -23,6 +25,20 @@ Activity act(String id, double km, {ActivityType type = ActivityType.lari, doubl
   final secs = (km * 1000 / mps).round();
   final start = DateTime.now().subtract(Duration(days: daysAgo, hours: 1));
   return Activity(id: id, type: type, start: start, title: autoTitle(type, start), segments: [line(secs, mps, start: start)], elapsed: secs + 30, kcal: 300);
+}
+
+class _FakeRec extends RecorderNotifier {
+  _FakeRec(this.init);
+  final RecState init;
+  @override
+  RecState build() => init;
+  @override
+  Future<String?> warmUp() async => null;
+}
+
+RecState _recording(RecStatus status) {
+  final segs = [line(900, 3)];
+  return RecState(status: status, type: ActivityType.lari, segments: segs, elapsedMs: 905000, here: segs.first.last, stats: TrackStats.compute(segs, ActivityType.lari), gpsOk: true, laps: const [(1000.0, 333)]);
 }
 
 class _FakeTrack extends TrackNotifier {
@@ -87,6 +103,29 @@ void main() {
       expect(activityKcal(ActivityType.lari, 5000, 1800, 60), closeTo(11.0 * 60 * .5, 1));
       expect(autoTitle(ActivityType.sepeda, DateTime(2026, 1, 1, 7)), 'Sepeda pagi');
     });
+    test('pace split, lap, usaha', () {
+      final st = TrackStats.compute([line(1200, 3)], ActivityType.lari);
+      expect(fmtPace(currentSplitPace(st)), '5:33');
+      final laps = lapsFrom(const [(1000.0, 333), (2500.0, 833)], st);
+      expect(laps.length, 3);
+      expect(laps[1].meters, closeTo(1500, 1));
+      expect(laps.last.meters, closeTo(1100, 25));
+      expect(rpeLabel(7), 'Berat');
+      expect(rpeLabel(0), '');
+    });
+    test('simpan & muat usaha + lap', () {
+      final a = Activity(id: 'x', type: ActivityType.lari, start: DateTime(2026, 11, 20, 6), title: 'Lari pagi', segments: [line(60, 3)], elapsed: 60, kcal: 10, rpe: 6, laps: const [(100.0, 33)]);
+      final b = Activity.fromMap(a.toMap())!;
+      expect(b.rpe, 6);
+      expect(b.laps.single.$1, 100);
+    });
+    test('minggu beruntun & peringkat medali', () {
+      final s = TrackState(activities: [act('a', 5.3), act('b', 5.1, mps: 2.8, daysAgo: 7), act('c', 5.2, mps: 3.2, daysAgo: 14)]);
+      expect(s.streakWeeks(DateTime.now()), greaterThanOrEqualTo(2));
+      final r = s.ranking(ActivityType.lari, 5000);
+      expect(r.length, 3);
+      expect(r.first.activity.id, 'c');
+    });
     test('format', () {
       expect(fmtDur(3725), '1:02:05');
       expect(fmtDur(605), '10:05');
@@ -103,12 +142,39 @@ void main() {
           await t.binding.setSurfaceSize(size);
           await t.pumpWidget(_app(const TrackScreen()));
           await t.pump(const Duration(milliseconds: 300));
-          expect(find.byType(FeatureHero), findsOneWidget);
+          expect(find.byType(FloatingActionButton), findsOneWidget);
           await _scrollAll(t);
           expect(find.byType(ActivityCard), findsWidgets);
           await t.pumpWidget(_app(const TrackDetailScreen(id: 'b')));
           await t.pump(const Duration(milliseconds: 300));
           expect(find.textContaining('10,4'), findsWidgets);
+          await _scrollAll(t);
+          await t.pumpWidget(const SizedBox());
+          await t.binding.setSurfaceSize(null);
+        });
+      }
+    }
+    for (final size in const [Size(360, 640), Size(412, 900)]) {
+      for (final lang in ['id', 'en']) {
+        testWidgets('layar rekam ${size.width.toInt()}x${size.height.toInt()} $lang', (t) async {
+          I18n.setLang(lang);
+          await t.binding.setSurfaceSize(size);
+          for (final st in [const RecState(gpsOk: true), _recording(RecStatus.recording), _recording(RecStatus.paused)]) {
+            await t.pumpWidget(ProviderScope(
+              overrides: [trackProvider.overrideWith(_FakeTrack.new), recorderProvider.overrideWith(() => _FakeRec(st))],
+              child: const MaterialApp(home: TrackRecordScreen()),
+            ));
+            await t.pump(const Duration(milliseconds: 200));
+            if (st.active) {
+              expect(find.textContaining('2,70'), findsWidgets);
+              await t.tap(find.byIcon(Icons.map_outlined));
+              await t.pump(const Duration(milliseconds: 200));
+              expect(find.textContaining('2,70'), findsWidgets);
+            }
+            await t.pumpWidget(const SizedBox());
+          }
+          await t.pumpWidget(_app(TrackSaveScreen(a: act('z', 3.1))));
+          await t.pump(const Duration(milliseconds: 200));
           await _scrollAll(t);
           await t.pumpWidget(const SizedBox());
           await t.binding.setSurfaceSize(null);

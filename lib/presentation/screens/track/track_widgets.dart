@@ -1,12 +1,14 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide Text;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 
 import '../../../core/i18n/tr_text.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../providers/settings_provider.dart';
 import '../../../providers/track_provider.dart';
 import '../../../services/track_logic.dart';
 import '../../widgets/common.dart';
@@ -179,51 +181,108 @@ class StatBox extends StatelessWidget {
   }
 }
 
-/// Kartu riwayat aktivitas: bentuk rute + judul + angka utama.
-class ActivityCard extends StatelessWidget {
+/// Kartu aktivitas gaya feed Strava: profil + waktu, judul, angka utama, pratinjau rute lebar.
+class ActivityCard extends ConsumerWidget {
   const ActivityCard({super.key, required this.a, required this.onTap});
   final Activity a;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final st = a.stats;
-    return SoftCard(
-      padding: const EdgeInsets.all(14),
-      onTap: onTap,
-      child: Row(children: [
-        Container(
-          width: 76,
-          height: 76,
-          decoration: BoxDecoration(color: kTrack.withValues(alpha: context.isDark ? .16 : .08), borderRadius: BorderRadius.circular(14)),
-          child: CustomPaint(painter: RoutePainter(a.segments, width: 2.6)),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('${a.type.emoji} ${a.title}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w700, color: context.ink)),
-            const SizedBox(height: 2),
-            Text('${tr(dayLabel(a.start))} · ${fmtTime(a.start)}', translate: false, style: TextStyle(fontSize: 12.5, color: context.muted)),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: _Mini('${fmtKm(st.distance)} km', tr('Jarak'))),
-              Expanded(child: _Mini('${paceOrSpeed(a.type, st.distance, st.moving)}${paceUnit(a.type)}', tr(paceLabel(a.type)))),
-              Expanded(child: _Mini(fmtDur(st.moving), tr('Waktu'))),
-            ]),
+    final set = ref.watch(settingsProvider);
+    final name = set.name.trim().isEmpty ? tr('Kamu') : set.name.trim();
+    return Container(
+      decoration: BoxDecoration(color: context.card, borderRadius: BorderRadius.circular(18), border: Border.all(color: context.line)),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+              child: Row(children: [
+                UserAvatar(name: name, path: set.avatarPath, size: 38, radius: 19),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(name, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: context.ink)),
+                    Text('${a.type.emoji} ${tr(dayLabel(a.start))} · ${fmtTime(a.start)}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: context.muted)),
+                  ]),
+                ),
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+              child: Text(a.title, translate: false, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: context.ink, height: 1.25)),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+              child: Row(children: [
+                Expanded(child: _Mini(tr('Jarak'), fmtKm(st.distance), 'km')),
+                _VLine(),
+                Expanded(child: _Mini(tr(paceLabel(a.type)), paceOrSpeed(a.type, st.distance, st.moving), paceUnit(a.type))),
+                _VLine(),
+                Expanded(child: _Mini(tr('Waktu'), fmtDur(st.moving), '')),
+              ]),
+            ),
+            Container(
+              height: 150,
+              color: kTrack.withValues(alpha: context.isDark ? .10 : .06),
+              child: CustomPaint(painter: _GridPainter(context.line.withValues(alpha: .7)), child: CustomPaint(painter: RoutePainter(a.segments, width: 3.4), child: const SizedBox.expand())),
+            ),
           ]),
         ),
-      ]),
+      ),
     );
   }
 }
 
 class _Mini extends StatelessWidget {
-  const _Mini(this.value, this.label);
-  final String value, label;
+  const _Mini(this.label, this.value, this.unit);
+  final String label, value, unit;
   @override
-  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, translate: false, style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700, color: context.ink))),
-        Text(label, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11.5, color: context.muted)),
-      ]);
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(left: 2, right: 6),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11.5, color: context.muted)),
+          const SizedBox(height: 2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
+              Text(value, translate: false, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: context.ink)),
+              if (unit.isNotEmpty) Text(' $unit', translate: false, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: context.muted)),
+            ]),
+          ),
+        ]),
+      );
+}
+
+class _VLine extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(width: 1, height: 30, margin: const EdgeInsets.symmetric(horizontal: 8), color: context.line);
+}
+
+/// Garis kisi tipis di belakang pratinjau rute (kesan peta).
+class _GridPainter extends CustomPainter {
+  _GridPainter(this.color);
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+    for (var x = 24.0; x < size.width; x += 32) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), p);
+    }
+    for (var y = 20.0; y < size.height; y += 32) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GridPainter old) => old.color != color;
 }
 
 /// Pilihan jenis aktivitas.
@@ -243,3 +302,105 @@ class TypeChips extends StatelessWidget {
           ),
       ]);
 }
+
+/// Tombol bulat dengan label di bawahnya (kontrol rekam gaya Strava).
+class RoundBtn extends StatelessWidget {
+  const RoundBtn({super.key, required this.icon, required this.label, required this.onTap, this.size = 56, this.bg, this.fg, this.big = false});
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+  final double size;
+  final Color? bg, fg;
+  final bool big;
+  @override
+  Widget build(BuildContext context) {
+    final b = bg ?? context.card2;
+    return Semantics(
+      button: true,
+      label: tr(label),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Material(
+          color: b,
+          shape: CircleBorder(side: bg == null ? BorderSide(color: context.line) : BorderSide.none),
+          elevation: big ? 3 : 0,
+          shadowColor: b.withValues(alpha: .5),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox(width: size, height: size, child: Icon(icon, size: size * (big ? .44 : .42), color: fg ?? context.ink)),
+          ),
+        ),
+        const SizedBox(height: 6),
+        SizedBox(
+          width: math.max(size + 16, 74),
+          child: Text(label, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.muted)),
+        ),
+      ]),
+    );
+  }
+}
+
+/// Lembar pilih jenis aktivitas (daftar dengan centang).
+Future<ActivityType?> pickActivityType(BuildContext context, ActivityType current) => showAppSheet<ActivityType>(
+      context: context,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          const Padding(padding: EdgeInsets.fromLTRB(8, 0, 8, 8), child: Text('Pilih jenis aktivitas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700))),
+          for (final t in ActivityType.values)
+            ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              leading: Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: kTrack.withValues(alpha: ctx.isDark ? .2 : .1), shape: BoxShape.circle),
+                child: Text(t.emoji, translate: false, style: const TextStyle(fontSize: 20)),
+              ),
+              title: Text(t.label, style: TextStyle(fontWeight: FontWeight.w700, color: ctx.ink)),
+              subtitle: Text(t.usesSpeed ? 'Kecepatan km/jam' : 'Pace menit/km', style: TextStyle(fontSize: 12.5, color: ctx.muted)),
+              trailing: t == current ? const Icon(Icons.check_circle_rounded, color: kTrack) : Icon(Icons.circle_outlined, color: ctx.faint),
+              onTap: () => Navigator.pop(ctx, t),
+            ),
+        ]),
+      ),
+    );
+
+/// Pengaturan rekam: target mingguan, aba-aba suara, jeda otomatis.
+Future<void> showTrackSettings(BuildContext context) => showAppSheet(
+      context: context,
+      builder: (ctx) => Consumer(builder: (ctx, ref, _) {
+        final s = ref.watch(trackProvider);
+        final n = ref.read(trackProvider.notifier);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            const Text('Pengaturan rekam', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 10),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              activeThumbColor: kTrack,
+              title: const Text('Jeda otomatis', style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text('Waktu berhenti sendiri saat kamu diam (lampu merah, istirahat)', style: TextStyle(color: ctx.muted, fontSize: 12.5)),
+              value: s.autoPause,
+              onChanged: n.setAutoPause,
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              activeThumbColor: kTrack,
+              title: const Text('Aba-aba suara tiap 1 km', style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text('Jarak, waktu, dan pace dibacakan', style: TextStyle(color: ctx.muted, fontSize: 12.5)),
+              value: s.voice,
+              onChanged: n.setVoice,
+            ),
+            const SizedBox(height: 4),
+            Row(children: [
+              const Expanded(child: Text('Target jarak per minggu', style: TextStyle(fontWeight: FontWeight.w600))),
+              IconButton(onPressed: () => n.setGoal(s.weeklyGoalKm - 5), icon: const Icon(Icons.remove_circle_outline_rounded)),
+              Text('${s.weeklyGoalKm} km', translate: false, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              IconButton(onPressed: () => n.setGoal(s.weeklyGoalKm + 5), icon: const Icon(Icons.add_circle_outline_rounded)),
+            ]),
+          ]),
+        );
+      }),
+    );

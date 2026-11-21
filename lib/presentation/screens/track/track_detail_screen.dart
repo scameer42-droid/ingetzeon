@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/i18n/tr_text.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../providers/settings_provider.dart';
 import '../../../providers/track_provider.dart';
 import '../../../services/track_logic.dart';
 import '../../widgets/common.dart';
@@ -19,57 +20,10 @@ import 'track_widgets.dart';
 
 void openActivity(BuildContext context, Activity a) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TrackDetailScreen(id: a.id)));
 
-/// Lembar simpan setelah selesai merekam: judul, jenis, catatan. null = dibuang.
-Future<Activity?> saveActivitySheet(BuildContext context, WidgetRef ref, Activity a) async {
-  final title = TextEditingController(text: a.title), note = TextEditingController();
-  var type = a.type;
-  final res = await showAppSheet<Activity>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(builder: (ctx, setS) {
-      final st = a.stats;
-      return Padding(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.viewInsetsOf(ctx).bottom),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Simpan aktivitas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(child: StatBox(label: tr('Jarak'), value: fmtKm(st.distance), unit: 'km')),
-            Expanded(child: StatBox(label: tr('Waktu'), value: fmtDur(st.moving))),
-            Expanded(child: StatBox(label: tr(paceLabel(type)), value: paceOrSpeed(type, st.distance, st.moving), unit: paceUnit(type))),
-          ]),
-          const SizedBox(height: 16),
-          TextField(controller: title, decoration: InputDecoration(labelText: tr('Judul'))),
-          const SizedBox(height: 12),
-          TextField(controller: note, maxLines: 2, decoration: InputDecoration(labelText: tr('Catatan (opsional)'), hintText: tr('Gimana rasanya hari ini?'))),
-          const SizedBox(height: 12),
-          TypeChips(value: type, onChanged: (t) => setS(() => type = t)),
-          const SizedBox(height: 16),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: kTrack, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
-            onPressed: () async {
-              final t = title.text.trim().isEmpty ? a.title : title.text.trim();
-              final saved = await ref.read(trackProvider.notifier).add(a.copyWith(title: t, note: note.text.trim(), type: type));
-              if (ctx.mounted) Navigator.pop(ctx, saved);
-            },
-            child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15.5)),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            onPressed: () async {
-              if (await confirmDialog(ctx, title: 'Buang aktivitas ini?', message: 'Rute dan waktunya tidak disimpan.', ok: 'Buang', danger: true)) {
-                if (ctx.mounted) Navigator.pop(ctx);
-              }
-            },
-            child: const Text('Buang'),
-          ),
-        ]),
-      );
-    }),
-  );
-  return res;
-}
+const _medals = ['🥇', '🥈', '🥉'];
 
-/// Detail satu aktivitas: peta, angka, split per km, grafik elevasi, rekor, bagikan, GPX.
+/// Detail aktivitas gaya Strava: peta, profil + judul, kisi angka, split, grafik pace & elevasi,
+/// upaya terbaik bermedali, lap, bagikan, GPX.
 class TrackDetailScreen extends ConsumerWidget {
   const TrackDetailScreen({super.key, required this.id});
   final String id;
@@ -77,17 +31,24 @@ class TrackDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(trackProvider);
+    final set = ref.watch(settingsProvider);
     final a = s.activities.where((x) => x.id == id).firstOrNull;
     if (a == null) return Scaffold(appBar: AppBar(), body: const Center(child: Text('Aktivitas tidak ditemukan.')));
     final st = a.stats;
-    final prs = {for (final p in s.bestEfforts(type: a.type)) p.label: p};
+    final name = set.name.trim().isEmpty ? tr('Kamu') : set.name.trim();
     final efforts = [
       for (final (m, label) in bestDistances)
-        if (st.bestEffort(m) != null) (label: label, m: m, secs: st.bestEffort(m)!),
+        if (st.bestEffort(m) case final secs?) (label: label, m: m, secs: secs, rank: s.ranking(a.type, m).indexWhere((r) => r.activity.id == a.id)),
     ];
+    final laps = lapsFrom(a.laps, st);
     final hasAlt = a.points.any((p) => p.alt != null);
+    Widget cell(String label, String value, [String unit = '']) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: StatBox(label: label, value: value, unit: unit),
+        );
     return Scaffold(
       appBar: AppBar(title: Text('${a.type.emoji} ${tr(a.type.label)}', translate: false), centerTitle: false, actions: [
+        IconButton(tooltip: tr('Bagikan'), icon: const Icon(Icons.ios_share_rounded), onPressed: () => shareCardSheet(context, a)),
         PopupMenuButton<String>(
           onSelected: (v) async {
             if (v == 'edit') await _edit(context, ref, a);
@@ -98,43 +59,67 @@ class TrackDetailScreen extends ConsumerWidget {
             }
           },
           itemBuilder: (_) => [
-            PopupMenuItem(value: 'edit', child: Text(tr('Ubah judul & catatan'), translate: false)),
+            PopupMenuItem(value: 'edit', child: Text(tr('Ubah aktivitas'), translate: false)),
             PopupMenuItem(value: 'gpx', child: Text(tr('Ekspor GPX'), translate: false)),
             PopupMenuItem(value: 'del', child: Text(tr('Hapus'), translate: false)),
           ],
         ),
       ]),
       body: ListView(padding: const EdgeInsets.only(bottom: 40), children: [
-        SizedBox(height: 280, child: RouteMap(segments: a.segments, interactive: true)),
+        SizedBox(height: 290, child: RouteMap(segments: a.segments, interactive: true)),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text(a.title, translate: false, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: context.ink)),
-            const SizedBox(height: 2),
-            Text('${fmtDateLong(a.start)} · ${fmtTime(a.start)}', translate: false, style: TextStyle(color: context.muted, fontSize: 13)),
+            Row(children: [
+              UserAvatar(name: name, path: set.avatarPath, size: 42, radius: 21),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(name, translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: context.ink)),
+                  Text('${fmtDateLong(a.start)} · ${fmtTime(a.start)}', translate: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: context.muted, fontSize: 12.5)),
+                ]),
+              ),
+            ]),
+            const SizedBox(height: 14),
+            Text(a.title, translate: false, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: context.ink, height: 1.2, letterSpacing: -.3)),
             if (a.note.isNotEmpty) ...[const SizedBox(height: 8), Text(a.note, translate: false, style: TextStyle(color: context.ink, height: 1.45))],
+            const SizedBox(height: 14),
+            Divider(height: 1, color: context.line),
+            Row(children: [
+              Expanded(child: cell(tr('Jarak'), fmtKm(st.distance), 'km')),
+              Expanded(child: cell(tr(paceLabel(a.type)), paceOrSpeed(a.type, st.distance, st.moving), paceUnit(a.type))),
+              Expanded(child: cell(tr('Waktu bergerak'), fmtDur(st.moving))),
+            ]),
+            Divider(height: 1, color: context.line),
+            Row(children: [
+              Expanded(child: cell(tr('Elevasi naik'), '${st.elevGain.round()}', 'm')),
+              Expanded(child: cell(tr('Waktu total'), fmtDur(math.max(a.elapsed, st.moving)))),
+              Expanded(child: cell(tr('Kalori'), '${a.kcal.round()}', tr('kkal'))),
+            ]),
+            Divider(height: 1, color: context.line),
+            if (a.rpe > 0) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(children: [
+                  Text('Usaha', style: TextStyle(fontSize: 12, color: context.muted, fontWeight: FontWeight.w600)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(99),
+                      child: LinearProgressIndicator(value: a.rpe / 10, minHeight: 8, color: kTrack, backgroundColor: kTrack.withValues(alpha: .15)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text('${a.rpe}/10 · ${tr(rpeLabel(a.rpe))}', translate: false, style: TextStyle(fontWeight: FontWeight.w700, color: context.ink)),
+                ]),
+              ),
+              Divider(height: 1, color: context.line),
+            ],
             const SizedBox(height: 16),
-            SoftCard(
-              padding: const EdgeInsets.all(16),
-              child: Column(children: [
-                Row(children: [
-                  Expanded(child: StatBox(label: tr('Jarak'), value: fmtKm(st.distance), unit: 'km')),
-                  Expanded(child: StatBox(label: tr(paceLabel(a.type)), value: paceOrSpeed(a.type, st.distance, st.moving), unit: paceUnit(a.type))),
-                  Expanded(child: StatBox(label: tr('Waktu bergerak'), value: fmtDur(st.moving))),
-                ]),
-                const SizedBox(height: 14),
-                Row(children: [
-                  Expanded(child: StatBox(label: tr('Elevasi naik'), value: '${st.elevGain.round()}', unit: 'm')),
-                  Expanded(child: StatBox(label: tr('Kalori'), value: '${a.kcal.round()}', unit: 'kkal')),
-                  Expanded(child: StatBox(label: tr('Waktu total'), value: fmtDur(math.max(a.elapsed, st.moving)))),
-                ]),
-              ]),
-            ),
-            const SizedBox(height: 12),
             Row(children: [
               Expanded(
                 child: FilledButton.icon(
-                  style: FilledButton.styleFrom(backgroundColor: kTrack, minimumSize: const Size.fromHeight(48), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                  style: FilledButton.styleFrom(backgroundColor: kTrack, minimumSize: const Size.fromHeight(50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                   onPressed: () => shareCardSheet(context, a),
                   icon: const Icon(Icons.ios_share_rounded),
                   label: const Text('Bagikan', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -143,7 +128,7 @@ class TrackDetailScreen extends ConsumerWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(foregroundColor: kTrack, minimumSize: const Size.fromHeight(48), side: BorderSide(color: kTrack.withValues(alpha: .4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                  style: OutlinedButton.styleFrom(foregroundColor: context.ink, minimumSize: const Size.fromHeight(50), side: BorderSide(color: context.line), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                   onPressed: () => _gpx(context, a),
                   icon: const Icon(Icons.file_download_outlined),
                   label: const Text('GPX', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -151,23 +136,52 @@ class TrackDetailScreen extends ConsumerWidget {
               ),
             ]),
             if (st.splits.isNotEmpty) ...[
-              const SectionHeader('Split per km'),
+              const SectionHeader('Split'),
               _Splits(a),
             ],
+            if (st.cumDist.length >= 10 && st.distance >= 200) ...[
+              SectionHeader(a.type.usesSpeed ? 'Kecepatan' : 'Pace'),
+              SoftCard(padding: const EdgeInsets.fromLTRB(6, 16, 14, 6), child: SizedBox(height: 150, child: _PaceChart(a))),
+            ],
             if (hasAlt && st.cumDist.length >= 2 && st.distance >= 100) ...[
-              const SectionHeader('Profil elevasi'),
+              const SectionHeader('Elevasi'),
               SoftCard(padding: const EdgeInsets.fromLTRB(6, 16, 14, 6), child: SizedBox(height: 150, child: _ElevChart(st))),
             ],
             if (efforts.isNotEmpty) ...[
               const SectionHeader('Upaya terbaik'),
               ListGroup(children: [
                 for (final e in efforts)
-                  AppListRow(
-                    icon: Icons.emoji_events_outlined,
-                    color: prs[e.label]?.activity.id == a.id ? const Color(0xFFF59E0B) : kTrack,
-                    title: e.label,
-                    subtitle: '${fmtDur(e.secs)} · ${fmtPace(e.secs / (e.m / 1000))}/km${prs[e.label]?.activity.id == a.id ? ' · ${tr('Rekor pribadi!')}' : ''}',
-                    chevron: false,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                    child: Row(children: [
+                      SizedBox(width: 34, child: Text(e.rank >= 0 && e.rank < 3 ? _medals[e.rank] : '·', translate: false, style: TextStyle(fontSize: e.rank >= 0 && e.rank < 3 ? 22 : 18, color: context.faint))),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(tr(e.label), translate: false, style: TextStyle(fontWeight: FontWeight.w700, color: context.ink)),
+                          Text(
+                            e.rank == 0 ? tr('Rekor pribadi!') : e.rank == 1 ? tr('Tercepat ke-2') : e.rank == 2 ? tr('Tercepat ke-3') : '${fmtPace(e.secs / (e.m / 1000))} /km',
+                            translate: false,
+                            style: TextStyle(fontSize: 12.5, color: e.rank >= 0 && e.rank < 3 ? kTrack : context.muted, fontWeight: FontWeight.w600),
+                          ),
+                        ]),
+                      ),
+                      Text(fmtDur(e.secs), translate: false, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: context.ink)),
+                    ]),
+                  ),
+              ]),
+            ],
+            if (laps.length >= 2) ...[
+              const SectionHeader('Lap'),
+              ListGroup(children: [
+                for (final l in laps)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(children: [
+                      SizedBox(width: 56, child: Text('${tr('Lap')} ${l.index}', translate: false, style: TextStyle(fontWeight: FontWeight.w700, color: context.ink))),
+                      Expanded(child: Text('${fmtKm(l.meters)} km', translate: false, style: TextStyle(color: context.muted))),
+                      Text(fmtDur(l.secs), translate: false, style: TextStyle(color: context.muted)),
+                      SizedBox(width: 92, child: Text('${paceOrSpeed(a.type, l.meters, l.secs)} ${paceUnit(a.type)}', translate: false, textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.w700, color: context.ink))),
+                    ]),
                   ),
               ]),
             ],
@@ -179,9 +193,10 @@ class TrackDetailScreen extends ConsumerWidget {
 
   Future<void> _edit(BuildContext context, WidgetRef ref, Activity a) async {
     final t = TextEditingController(text: a.title), n = TextEditingController(text: a.note);
+    var rpe = a.rpe.toDouble();
     await showAppSheet(
       context: context,
-      builder: (ctx) => Padding(
+      builder: (ctx) => StatefulBuilder(builder: (ctx, setS) => Padding(
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20 + MediaQuery.viewInsetsOf(ctx).bottom),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           const Text('Ubah aktivitas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
@@ -189,18 +204,83 @@ class TrackDetailScreen extends ConsumerWidget {
           TextField(controller: t, decoration: InputDecoration(labelText: tr('Judul'))),
           const SizedBox(height: 12),
           TextField(controller: n, maxLines: 3, decoration: InputDecoration(labelText: tr('Catatan (opsional)'))),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          Text(rpe.round() == 0 ? tr('Usaha: belum diisi') : '${tr('Usaha')}: ${rpe.round()}/10 · ${tr(rpeLabel(rpe.round()))}', translate: false, style: TextStyle(fontWeight: FontWeight.w600, color: ctx.ink)),
+          SliderTheme(
+            data: SliderTheme.of(ctx).copyWith(activeTrackColor: kTrack, thumbColor: kTrack, inactiveTrackColor: kTrack.withValues(alpha: .18)),
+            child: Slider(value: rpe, min: 0, max: 10, divisions: 10, onChanged: (v) => setS(() => rpe = v)),
+          ),
+          const SizedBox(height: 8),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: kTrack, padding: const EdgeInsets.symmetric(vertical: 16)),
             onPressed: () async {
-              await ref.read(trackProvider.notifier).update(a.copyWith(title: t.text.trim().isEmpty ? a.title : t.text.trim(), note: n.text.trim()));
+              await ref.read(trackProvider.notifier).update(a.copyWith(title: t.text.trim().isEmpty ? a.title : t.text.trim(), note: n.text.trim(), rpe: rpe.round()));
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('Simpan', style: TextStyle(fontWeight: FontWeight.w700)),
           ),
         ]),
-      ),
+      )),
     );
+  }
+}
+
+/// Grafik pace (atau kecepatan sepeda) sepanjang jarak, dihaluskan per ±150 m.
+class _PaceChart extends StatelessWidget {
+  const _PaceChart(this.a);
+  final Activity a;
+  @override
+  Widget build(BuildContext context) {
+    final st = a.stats, speed = a.type.usesSpeed;
+    final n = st.cumDist.length;
+    final spots = <FlSpot>[];
+    var j = 0, k = 0;
+    const win = 150.0;
+    for (var i = 0; i < n; i += math.max(1, n ~/ 120)) {
+      final d = st.cumDist[i];
+      while (j < n - 1 && st.cumDist[j] < d - win) {
+        j++;
+      }
+      while (k < n - 1 && st.cumDist[k] < d + win) {
+        k++;
+      }
+      final dd = st.cumDist[k] - st.cumDist[j], tt = st.cumTime[k] - st.cumTime[j];
+      if (dd < 50 || tt <= 0) continue;
+      final kmh = dd / tt * 3.6;
+      // pace dibalik (makin cepat makin tinggi) seperti Strava
+      spots.add(FlSpot(d / 1000, speed ? kmh : -math.min(1200, 3600 / kmh)));
+    }
+    if (spots.length < 2) return const SizedBox.shrink();
+    final ys = spots.map((s) => s.y);
+    final lo = ys.reduce(math.min), hi = ys.reduce(math.max);
+    final pad = math.max(speed ? 1.0 : 15.0, (hi - lo) * .15);
+    final avg = speed ? st.avgKmh : -st.avgPace;
+    String lab(double v) => speed ? v.toStringAsFixed(0) : fmtPace(-v);
+    return LineChart(LineChartData(
+      minY: lo - pad,
+      maxY: hi + pad,
+      gridData: FlGridData(show: true, drawVerticalLine: false, getDrawingHorizontalLine: (_) => FlLine(color: context.faint.withValues(alpha: .18), strokeWidth: 1)),
+      borderData: FlBorderData(show: false),
+      lineTouchData: const LineTouchData(enabled: false),
+      extraLinesData: ExtraLinesData(horizontalLines: [HorizontalLine(y: avg, color: context.muted.withValues(alpha: .6), strokeWidth: 1, dashArray: [4, 4])]),
+      titlesData: FlTitlesData(
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40, getTitlesWidget: (v, m) => v == m.min || v == m.max ? const SizedBox.shrink() : Text(lab(v), translate: false, style: TextStyle(fontSize: 11, color: context.muted)))),
+        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 22, getTitlesWidget: (v, m) => v == m.min || v == m.max ? const SizedBox.shrink() : Text('${v.toStringAsFixed(1).replaceAll('.', ',')} km', translate: false, style: TextStyle(fontSize: 10.5, color: context.muted)))),
+      ),
+      lineBarsData: [
+        LineChartBarData(
+          spots: spots,
+          isCurved: true,
+          preventCurveOverShooting: true,
+          color: const Color(0xFF2563EB),
+          barWidth: 2.2,
+          dotData: const FlDotData(show: false),
+          belowBarData: BarAreaData(show: true, color: const Color(0xFF2563EB).withValues(alpha: .12), applyCutOffY: true, cutOffY: lo - pad),
+        ),
+      ],
+    ));
   }
 }
 

@@ -25,6 +25,8 @@ class Activity {
     required this.segments,
     required this.elapsed,
     required this.kcal,
+    this.rpe = 0,
+    this.laps = const [],
   });
   final String id;
   final ActivityType type;
@@ -33,6 +35,8 @@ class Activity {
   final List<List<TrackPoint>> segments;
   final int elapsed; // detik, tanpa jeda manual
   final double kcal;
+  final int rpe; // usaha 1–10 (0 = tidak diisi)
+  final List<(double, int)> laps; // penanda lap kumulatif [meter, detik bergerak]
 
   TrackStats? _stats;
   TrackStats get stats => _stats ??= TrackStats.compute(segments, type);
@@ -40,7 +44,7 @@ class Activity {
   int get moving => stats.moving;
   List<TrackPoint> get points => [for (final s in segments) ...s];
 
-  Activity copyWith({String? title, String? note, ActivityType? type}) => Activity(
+  Activity copyWith({String? title, String? note, ActivityType? type, int? rpe}) => Activity(
         id: id,
         type: type ?? this.type,
         start: start,
@@ -49,6 +53,8 @@ class Activity {
         segments: segments,
         elapsed: elapsed,
         kcal: kcal,
+        rpe: rpe ?? this.rpe,
+        laps: laps,
       );
 
   Map<String, dynamic> toMap() => {
@@ -59,6 +65,8 @@ class Activity {
         'no': note,
         'el': elapsed,
         'kc': kcal,
+        if (rpe > 0) 'rp': rpe,
+        if (laps.isNotEmpty) 'lp': [for (final (m, s) in laps) [m.round(), s]],
         'sg': [for (final s in segments) [for (final p in s) p.toList()]],
       };
 
@@ -72,6 +80,8 @@ class Activity {
         note: '${m['no'] ?? ''}',
         elapsed: (m['el'] as num?)?.toInt() ?? 0,
         kcal: (m['kc'] as num?)?.toDouble() ?? 0,
+        rpe: (m['rp'] as num?)?.toInt() ?? 0,
+        laps: [for (final l in (m['lp'] as List? ?? const [])) (((l as List)[0] as num).toDouble(), (l[1] as num).toInt())],
         segments: [for (final s in (m['sg'] as List? ?? const [])) [for (final p in (s as List)) TrackPoint.fromList(p as List)]],
       );
     } catch (_) {
@@ -84,13 +94,40 @@ class Activity {
 typedef BestEffort = ({String label, double meters, int secs, Activity activity});
 
 class TrackState {
-  const TrackState({this.activities = const [], this.weeklyGoalKm = 20, this.voice = true});
+  const TrackState({this.activities = const [], this.weeklyGoalKm = 20, this.voice = true, this.autoPause = true});
   final List<Activity> activities; // terbaru di depan
   final int weeklyGoalKm;
-  final bool voice;
+  final bool voice, autoPause;
 
-  TrackState copyWith({List<Activity>? activities, int? weeklyGoalKm, bool? voice}) =>
-      TrackState(activities: activities ?? this.activities, weeklyGoalKm: weeklyGoalKm ?? this.weeklyGoalKm, voice: voice ?? this.voice);
+  TrackState copyWith({List<Activity>? activities, int? weeklyGoalKm, bool? voice, bool? autoPause}) => TrackState(
+      activities: activities ?? this.activities, weeklyGoalKm: weeklyGoalKm ?? this.weeklyGoalKm, voice: voice ?? this.voice, autoPause: autoPause ?? this.autoPause);
+
+  /// Aktivitas sesuai filter jenis (null = semua).
+  List<Activity> of(ActivityType? t) => t == null ? activities : activities.where((a) => a.type == t).toList();
+
+  /// Aktivitas dalam rentang [from, to).
+  List<Activity> between(DateTime from, DateTime to, [ActivityType? t]) => of(t).where((a) => !a.start.isBefore(from) && a.start.isBefore(to)).toList();
+
+  /// Minggu beruntun (berakhir minggu ini atau minggu lalu) yang punya minimal satu aktivitas.
+  int streakWeeks(DateTime now) {
+    var w = weekStart(now);
+    if (between(w, w.add(const Duration(days: 7))).isEmpty) w = w.subtract(const Duration(days: 7));
+    var n = 0;
+    while (between(w, w.add(const Duration(days: 7))).isNotEmpty) {
+      n++;
+      w = w.subtract(const Duration(days: 7));
+    }
+    return n;
+  }
+
+  /// Peringkat waktu tercepat (maks. 3) untuk satu jarak & jenis — untuk medali 🥇🥈🥉.
+  List<({Activity activity, int secs})> ranking(ActivityType type, double meters) {
+    final r = [
+      for (final a in of(type))
+        if (a.stats.bestEffort(meters) case final s?) (activity: a, secs: s),
+    ]..sort((x, y) => x.secs.compareTo(y.secs));
+    return r.take(3).toList();
+  }
 
   static DateTime weekStart(DateTime d) => DateTime(d.year, d.month, d.day).subtract(Duration(days: d.weekday - 1));
 
@@ -118,11 +155,12 @@ class TrackState {
   Activity? get longest => activities.isEmpty ? null : activities.reduce((a, b) => a.distance >= b.distance ? a : b);
   Activity? get mostClimb => activities.isEmpty ? null : activities.reduce((a, b) => a.stats.elevGain >= b.stats.elevGain ? a : b);
 
-  Map<String, dynamic> toMap() => {'a': activities.map((a) => a.toMap()).toList(), 'g': weeklyGoalKm, 'v': voice};
+  Map<String, dynamic> toMap() => {'a': activities.map((a) => a.toMap()).toList(), 'g': weeklyGoalKm, 'v': voice, 'ap': autoPause};
   factory TrackState.fromMap(Map m) => TrackState(
         activities: ((m['a'] as List?) ?? const []).whereType<Map>().map(Activity.fromMap).whereType<Activity>().toList(),
         weeklyGoalKm: (m['g'] as num?)?.toInt() ?? 20,
         voice: m['v'] != false,
+        autoPause: m['ap'] != false,
       );
 }
 
@@ -154,6 +192,7 @@ class TrackNotifier extends Notifier<TrackState> {
   Future<void> remove(String id) => _save(state.copyWith(activities: state.activities.where((a) => a.id != id).toList()));
   Future<void> setGoal(int km) => _save(state.copyWith(weeklyGoalKm: km.clamp(1, 1000).toInt()));
   Future<void> setVoice(bool v) => _save(state.copyWith(voice: v));
+  Future<void> setAutoPause(bool v) => _save(state.copyWith(autoPause: v));
 }
 
 final trackProvider = NotifierProvider<TrackNotifier, TrackState>(TrackNotifier.new);
@@ -163,7 +202,7 @@ final trackProvider = NotifierProvider<TrackNotifier, TrackState>(TrackNotifier.
 enum RecStatus { idle, recording, paused }
 
 class RecState {
-  const RecState({this.status = RecStatus.idle, this.type = ActivityType.lari, this.segments = const [], this.elapsedMs = 0, this.here, this.stats, this.gpsOk = false, this.error});
+  const RecState({this.status = RecStatus.idle, this.type = ActivityType.lari, this.segments = const [], this.elapsedMs = 0, this.here, this.stats, this.gpsOk = false, this.error, this.autoPaused = false, this.laps = const []});
   final RecStatus status;
   final ActivityType type;
   final List<List<TrackPoint>> segments;
@@ -172,9 +211,11 @@ class RecState {
   final TrackStats? stats;
   final bool gpsOk; // akurasi sudah cukup
   final String? error;
+  final bool autoPaused; // berhenti sebentar → waktu ikut berhenti (seperti Auto-Pause Strava)
+  final List<(double, int)> laps;
 
   bool get active => status != RecStatus.idle;
-  RecState copyWith({RecStatus? status, ActivityType? type, List<List<TrackPoint>>? segments, int? elapsedMs, TrackPoint? here, TrackStats? stats, bool? gpsOk, String? error}) => RecState(
+  RecState copyWith({RecStatus? status, ActivityType? type, List<List<TrackPoint>>? segments, int? elapsedMs, TrackPoint? here, TrackStats? stats, bool? gpsOk, String? error, bool? autoPaused, List<(double, int)>? laps}) => RecState(
         status: status ?? this.status,
         type: type ?? this.type,
         segments: segments ?? this.segments,
@@ -183,6 +224,8 @@ class RecState {
         stats: stats ?? this.stats,
         gpsOk: gpsOk ?? this.gpsOk,
         error: error,
+        autoPaused: autoPaused ?? this.autoPaused,
+        laps: laps ?? this.laps,
       );
 }
 
@@ -196,6 +239,7 @@ class RecorderNotifier extends Notifier<RecState> {
   int _accMs = 0;
   int _lastKm = 0;
   DateTime? _startedAt;
+  DateTime _lastMove = DateTime.now();
 
   @override
   RecState build() {
@@ -249,6 +293,24 @@ class RecorderNotifier extends Notifier<RecState> {
       state = state.copyWith(here: p, gpsOk: good);
       return;
     }
+    // jeda otomatis: lanjut lagi begitu bergerak
+    final prev = state.here;
+    final dt = prev == null ? 0.0 : p.t.difference(prev.t).inMilliseconds / 1000;
+    final v = pos.speed.isFinite && pos.speed > 0 ? pos.speed : (prev == null || dt <= 0 ? 0.0 : haversine(prev.lat, prev.lon, p.lat, p.lon) / dt);
+    final moving = v >= state.type.minMoving;
+    if (moving && pos.accuracy <= 35) {
+      _lastMove = DateTime.now();
+      if (state.autoPaused) {
+        _since = DateTime.now();
+        _filter!.reset();
+        state = state.copyWith(autoPaused: false, segments: [...state.segments, []]);
+        _say(tr('Lanjut otomatis'));
+      }
+    }
+    if (state.autoPaused) {
+      state = state.copyWith(here: p, gpsOk: good);
+      return;
+    }
     if (_filter!.accept(p)) {
       final segs = [...state.segments];
       segs[segs.length - 1] = [...segs.last, p];
@@ -266,33 +328,55 @@ class RecorderNotifier extends Notifier<RecState> {
     _accMs = 0;
     _since = DateTime.now();
     _lastKm = 0;
+    _lastMove = DateTime.now();
     state = RecState(status: RecStatus.recording, type: state.type, segments: const [[]], here: state.here, gpsOk: state.gpsOk);
     _listen();
     WakelockPlus.enable().catchError((_) {});
     _tick ??= Timer.periodic(const Duration(seconds: 1), (_) {
-      if (state.status == RecStatus.recording) state = state.copyWith(elapsedMs: _accMs + DateTime.now().difference(_since!).inMilliseconds);
+      if (state.status != RecStatus.recording || state.autoPaused) return;
+      final now = DateTime.now();
+      if (ref.read(trackProvider).autoPause && now.difference(_lastMove).inSeconds >= 8) {
+        _accMs += now.difference(_since!).inMilliseconds;
+        state = state.copyWith(autoPaused: true, elapsedMs: _accMs);
+        _say(tr('Jeda otomatis'));
+        return;
+      }
+      state = state.copyWith(elapsedMs: _accMs + now.difference(_since!).inMilliseconds);
     });
     _say('${tr('Mulai')} ${tr(state.type.label).toLowerCase()}');
   }
 
   void pause() {
     if (state.status != RecStatus.recording) return;
-    _accMs += DateTime.now().difference(_since!).inMilliseconds;
-    state = state.copyWith(status: RecStatus.paused, elapsedMs: _accMs);
+    if (!state.autoPaused) _accMs += DateTime.now().difference(_since!).inMilliseconds;
+    state = state.copyWith(status: RecStatus.paused, elapsedMs: _accMs, autoPaused: false);
     _say(tr('Dijeda'));
   }
 
   void resume() {
     if (state.status != RecStatus.paused) return;
     _since = DateTime.now();
+    _lastMove = DateTime.now();
     _filter!.reset();
     state = state.copyWith(status: RecStatus.recording, segments: [...state.segments, []]);
     _say(tr('Lanjutkan'));
   }
 
+  /// Tandai lap (tombol Lap seperti Strava).
+  void lap() {
+    if (!state.active) return;
+    final st = state.stats;
+    final m = st?.distance ?? 0, s = st?.moving ?? 0;
+    final prev = state.laps.isEmpty ? (0.0, 0) : state.laps.last;
+    if (m - prev.$1 < 10) return;
+    state = state.copyWith(laps: [...state.laps, (m, s)]);
+    _say('${tr('Lap')} ${state.laps.length}. ${fmtKm(m - prev.$1)} ${tr('kilometer')}');
+  }
+
   /// Hentikan perekaman. Mengembalikan aktivitas (belum disimpan) bila ada jarak tercatat.
   Activity? finish() {
-    if (state.status == RecStatus.recording) _accMs += DateTime.now().difference(_since!).inMilliseconds;
+    if (state.status == RecStatus.recording && !state.autoPaused) _accMs += DateTime.now().difference(_since!).inMilliseconds;
+    final laps = state.laps;
     final segs = state.segments.where((s) => s.length >= 2).map((s) => thin(s, 2500)).toList();
     final type = state.type;
     final started = _startedAt ?? DateTime.now();
@@ -310,6 +394,7 @@ class RecorderNotifier extends Notifier<RecState> {
       segments: segs,
       elapsed: elapsed,
       kcal: activityKcal(type, st.distance, st.moving, kg),
+      laps: laps,
     );
   }
 

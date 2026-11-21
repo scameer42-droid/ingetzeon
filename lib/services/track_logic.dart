@@ -256,3 +256,29 @@ String autoTitle(ActivityType t, DateTime at) {
   final part = h < 4 ? 'malam' : h < 11 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam';
   return '${t.label} $part';
 }
+
+/// Pace km yang sedang berjalan (detik/km), seperti "Pace split" di Strava. 0 bila belum cukup jarak.
+double currentSplitPace(TrackStats st) {
+  final full = (st.distance / 1000).floor();
+  final doneSecs = st.splits.where((s) => s.meters >= 999).take(full).fold(0, (a, s) => a + s.secs);
+  final d = st.distance - full * 1000, t = st.moving - doneSecs;
+  if (d < 50 || t <= 0) return full > 0 && st.splits.isNotEmpty ? st.splits[full - 1].pace : 0;
+  return t / (d / 1000);
+}
+
+/// Lap dari penanda kumulatif [meter, detik bergerak] + sisa sampai akhir aktivitas.
+List<Split> lapsFrom(List<(double, int)> marks, TrackStats st) {
+  if (marks.isEmpty) return const [];
+  final out = <Split>[];
+  var pd = 0.0, pt = 0;
+  for (final (m, s) in [...marks, (st.distance, st.moving)]) {
+    if (m - pd < 10) continue;
+    out.add(Split(out.length + 1, m - pd, s - pt, 0));
+    pd = m;
+    pt = s;
+  }
+  return out;
+}
+
+/// Label usaha (RPE 1–10) seperti "Perceived Exertion" Strava.
+String rpeLabel(int v) => v <= 0 ? '' : v <= 3 ? 'Ringan' : v <= 6 ? 'Sedang' : v <= 8 ? 'Berat' : 'Maksimal';
